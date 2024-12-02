@@ -6,9 +6,9 @@ import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/He
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
-import { OpeningBalanceList } from './OpeningBalanceList'
+import { OpeningBalanceList } from './PettyCashList'
 import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/impl/registerAccountIml'
-import { OpeningBalanceDelete, OpeningBalanceGetOne, OpeningBalanceInsert } from '../impl/openingBalanceIml'
+import { OpeningBalanceDelete, OpeningBalanceGetOne, OpeningBalanceInsert } from '../impl/PettyCashImp'
 
 export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel>) => {
 
@@ -25,10 +25,10 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     <>
       <Quantom_Grid container>
 
-        <RegisterAccountLOV onChange={(sel)=>{
+        {/* <RegisterAccountLOV onChange={(sel)=>{
             props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
             } 
-            selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/> 
+            selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/>  */}
         
       </Quantom_Grid>
     </>

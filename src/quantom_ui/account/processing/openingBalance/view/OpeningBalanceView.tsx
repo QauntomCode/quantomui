@@ -49,6 +49,6 @@ export const RegisterAccountLOV=(props?:RegisterAccountLOVProps)=>{
    return(
       <Quantom_LOV onChange={props?.onChange} 
          selected={props?.selected} 
-         FillDtaMethod={handleRegisterAccount} label='Sub Sub Account' />
+         FillDtaMethod={handleRegisterAccount} label='GL Account' />
    )
 }

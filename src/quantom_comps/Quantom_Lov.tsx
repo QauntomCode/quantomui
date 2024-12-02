@@ -21,6 +21,9 @@ export interface Quantom_LOV_PROPS{
 }
 
 export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
+  
+    // const methodFilterId= React.useRef<number>(1)
+
     const [search,setSearch]=React.useState('')
     const [open,setOpen]=React.useState(false);
     const [values,setValues]=React.useState<CommonCodeName[]>([])
@@ -54,25 +57,51 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
       handleValues();
     },[search])
 
-    
+    let METHOD_FILTER_ID=0;
     const handleValues=async()=>{
-         let res= await FilterData();
-         console.log('all daa is',props?.data)
-         console.log('filtered data is',res)
-        setValues([...res])
+       METHOD_FILTER_ID= METHOD_FILTER_ID+1;
+       let res= await FilterData(100,METHOD_FILTER_ID);
+       console.log('all daa is',props?.data)
+       console.log('filtered data is',res)
+       setValues([...res])
     }
 
-    const FilterData=async():Promise<CommonCodeName[]>=>{
+    const FilterData=async(limit:number,queryId?:number):Promise<CommonCodeName[]>=>{
       if(!allValues || allValues?.length<1){
         let vals= await props?.FillDtaMethod?.();
-        // alert('all values method is called')
-        setAllValues([...vals??[]]);
+        let nVals= vals?.splice(0,limit)
+        setAllValues([...nVals??[]]);
       }
       if(search==='')
       {
-        return(Promise.resolve([...allValues??[]]))
+        let nVals= allValues?.splice(0,limit);
+        return(Promise.resolve([...nVals??[]]))
       }
-      let res=  allValues?.filter?.(x=>x.Name?.toLowerCase().includes(search?.toLowerCase()));
+      // let res=  allValues?.filter?.((x)=>{
+      //   if(queryId!==METHOD_FILTER_ID)
+      //   {
+      //      return false;
+      //   }
+      //      x.Name?.toLowerCase().includes(search?.toLowerCase())
+      // });
+
+      let res:any[]= [];
+      let upperSearch= search?.toUpperCase();
+      for(let i=0;i<(allValues?.length??0);i++){
+         if(queryId!== METHOD_FILTER_ID){
+            console.log('out with id is changed')
+            return Promise.resolve([]);
+         }
+         if(res.length>=limit){
+           console.log("out with break limit is exceed")
+          break;
+         }
+         let isOk= allValues[i]?.Code?.toUpperCase()?.includes(upperSearch) || allValues[i]?.Name?.toUpperCase()?.includes(upperSearch);
+         if(isOk){
+          res?.push(allValues[i])
+         }
+      }
+
       return Promise.resolve([...res??[]]);
     }
 

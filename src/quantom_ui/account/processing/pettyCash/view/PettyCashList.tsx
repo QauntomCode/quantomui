@@ -6,7 +6,7 @@ import { OpeningBalanceModel } from '../model/PettyCashModel'
 import { useSelector } from 'react-redux'
 import store, { full_component_state } from '../../../../../redux/store'
 import { set_list_data } from '../../../../../redux/reduxSlice'
-import { OpeningBalanceGetAll } from '../impl/openingBalanceIml'
+import { OpeningBalanceGetAll } from '../impl/PettyCashImp'
 import { QUANTOM_Table } from '../../../config/mainAccount/view/MainAccountView'
 
 export const OpeningBalanceList = (props?:MenuComponentProps<OpeningBalanceModel>) => {
