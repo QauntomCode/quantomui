@@ -1,0 +1,26 @@
+ .ag-floating-filter {
+    height: 20px; /* Adjust to your desired height */
+    line-height: 20px; /* Match the height for proper alignment */
+    padding: 2px; /* Optional: Adjust padding for a snug fit */
+  }
+  
+  .ag-input-field-input .ag-text-field-input {
+    font-size: 2px; /* Adjust font size if necessary */
+  }
+  alpine .ag-floating-filter-input {
+    font-size: 2px; /* Adjust to your desired font size */
+  }
+  .ag-header-cell-text{
+    font-size:  11px;
+    font-family:'Oswald';
+   
+  }
+  
+ 
+  .ag-header-row .ag-header-row-column{
+    font-weight: 'bold';
+  }
+
+  .ag-header-cell  {
+    height: 20px;
+  }

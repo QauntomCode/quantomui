@@ -1,0 +1,267 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type { RootState } from './store'
+
+import { AppContainerModel } from '../quantom_comps/AppContainer/Model/AppContainerModel';
+import { AppContainerMenus } from '../quantom_comps/AppContainer/Model/AppContainerModelMenus';
+import { BasicKeysProps } from '../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
+import { HttpResponse } from '../HTTP/QuantomHttpMethods';
+import { ExposureTwoTone, Settings } from '@mui/icons-material';
+
+interface FormsState {
+    FormsState?:QuantomFormState<any>[];
+    OpenMenus?:AppContainerModel,
+    Font?:FontSettings,
+}
+
+export interface FontSettings{
+   RegularFont?:string;
+   HeaderFont?:string;
+   H1FontSize?:string;
+   H2FontSize?:string;
+   H3FontSize?:string;
+   H4FontSize?:string;
+
+   RegularFontSize?:string;
+}
+
+export interface QuantomFormState<T>{
+  stateKey?:string;
+  recordKeyNo?:string;
+  MenuCode?:string;
+  FormId?:string;
+  QuantomFormCoreState?:T;
+  KeyValues?:(t?:T)=>KeyValues;
+
+  SaveMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
+  DeleteMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
+  GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
+  SetBasicKeysMethod?:()=>BasicKeysProps;
+  compSettings?:ComponentSettings;
+  listData?:unknown[];
+  FormState?:'FORM'|'LIST'
+}
+
+export interface ComponentSettings{
+      wWillHideToolbar?:boolean;
+}
+
+
+export interface ComponentSettingsPayloadType{
+  settings?:ComponentSettings;
+  stateKey?:string;
+}
+export interface ComponentPrimaryKeyPayloadType{
+  keyNo?:string;
+  stateKey?:string;
+}
+
+export interface ComponentFormStatePayloadType{
+  FormState?:'FORM'|'LIST'
+  stateKey?:string;
+}
+export interface ComponentListPropsPayloadType{
+  ListData?:unknown[]
+  stateKey?:string;
+}
+export interface StateMethodPayloadType<T>{
+   method?:(payLoad:T)=>Promise<HttpResponse<T>>;
+   stateKey?:string;
+}
+export interface StateMethodGetOnePayloadType<T>{
+  method?:(keyNo?:string)=>Promise<HttpResponse<T>>;
+  stateKey?:string;
+}
+
+export interface setBasicKeysPayloadType{
+  method?:()=>BasicKeysProps;
+  stateKey?:string;
+}
+interface KeyValues{
+    KeyNo?:string;
+    Date?:string;
+
+}
+
+  const initialState:FormsState = {
+    FormsState:[],
+    OpenMenus:{Menus:[
+      {
+        MenuCode:'001',
+        MenuCaption:'All Menus',
+        UniqueKeyNo:"INITIAL_STATE"
+      },
+    ]},
+    Font:{
+      H1FontSize:'20px',
+      H2FontSize:'18px',
+      H3FontSize:'16px',
+      RegularFont:'roboto',
+      HeaderFont:'Oswald',
+      RegularFontSize:'14px'
+    }
+  }
+
+  export const formsSlice = createSlice({
+    name: 'form_state',
+    initialState,
+    reducers: {
+      set_state: (state,action:PayloadAction<QuantomFormState<any>>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, ...action.payload } 
+              : formState
+      );
+  
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+      set_save_method: (state,action:PayloadAction<StateMethodPayloadType<any>>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, SaveMethod:action?.payload?.method } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+      set_delete_method: (state,action:PayloadAction<StateMethodPayloadType<any>>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, DeleteMethod:action?.payload?.method } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+      set_get_one_method: (state,action:PayloadAction<StateMethodGetOnePayloadType<unknown>>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, GetOneMethod:action?.payload?.method } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
+      set_basic_keys_method: (state,action:PayloadAction<setBasicKeysPayloadType>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, SetBasicKeysMethod:action?.payload?.method } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
+      set_component_settings: (state,action:PayloadAction<ComponentSettingsPayloadType>) => {
+
+        // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, compSettings:{...action?.payload?.settings} } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
+      set_component_record_key: (state,action:PayloadAction<ComponentPrimaryKeyPayloadType>) => {
+
+        // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, recordKeyNo:action.payload.keyNo } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+      change_form_state: (state,action:PayloadAction<ComponentFormStatePayloadType>) => {
+
+        // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, FormState:action?.payload?.FormState } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
+      set_list_data: (state,action:PayloadAction<ComponentListPropsPayloadType>) => {
+
+        // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, listData:[...action?.payload?.ListData??[]] } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+      create_initial_state:(state,action:PayloadAction<QuantomFormState<any>>)=>{
+        let s= {...state};
+        let oldObj= s?.FormsState?.find(x=>x.stateKey===action.payload.stateKey);
+        if(!oldObj){
+          s={...s,FormsState:[...s?.FormsState||[],{...action.payload}]}
+          state={...s};
+          return state;
+        }
+      },
+      open_new_menu:(state,action:PayloadAction<AppContainerMenus|undefined>)=>{
+        let s= {...state};
+        s.OpenMenus={Menus:[...s.OpenMenus?.Menus??[],{...action?.payload}]}
+        state={...s};
+        return state;
+      },
+      remove_menu_by_index:(state,action:PayloadAction<number|undefined>)=>{
+        let s= {...state};
+        let index= action.payload??-1;
+        var menus=[...s?.OpenMenus?.Menus??[]]
+        let obj= menus?.[index];
+        if(obj){
+          menus?.splice(index,1);
+        }
+        console.log('menus are ',menus)
+
+        state={...state,OpenMenus:{...state.OpenMenus,Menus:[...menus]}}
+        return state;
+      },
+    },
+  })
+
+  export const {
+    set_state,
+    create_initial_state,
+    open_new_menu,
+    remove_menu_by_index,
+    set_save_method,
+    set_delete_method,
+    set_get_one_method,
+    set_basic_keys_method,
+    set_component_settings,
+    change_form_state,
+    set_list_data,
+    set_component_record_key,
+  } = formsSlice.actions
+
+  // const counterReducer = counterSlice.reducer //This is stored in the main store
+  
