@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { useRef } from 'react'
 import { Quantom_Input } from './base_comps'
-import { Alert, Dialog, DialogContent,Grid, Paper, TextField } from '@mui/material'
+import {  Dialog, DialogContent,Grid, Paper } from '@mui/material'
 
 
 
@@ -59,22 +59,27 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
 
     let METHOD_FILTER_ID=0;
     const handleValues=async()=>{
+      if(!allValues || allValues?.length<1){
+        alert('not found data')
+        let vals= await props?.FillDtaMethod?.();
+        //let nVals= vals?.splice(0,limit)
+        console.log('all values are',vals)
+        setAllValues([...vals??[]]);
+      }
        METHOD_FILTER_ID= METHOD_FILTER_ID+1;
-       let res= await FilterData(100,METHOD_FILTER_ID);
+       let nId= METHOD_FILTER_ID;
+       let res= await FilterData(100,nId);
        console.log('all daa is',props?.data)
        console.log('filtered data is',res)
-       setValues([...res])
+      //  setValues([...res])
     }
 
     const FilterData=async(limit:number,queryId?:number):Promise<CommonCodeName[]>=>{
-      if(!allValues || allValues?.length<1){
-        let vals= await props?.FillDtaMethod?.();
-        let nVals= vals?.splice(0,limit)
-        setAllValues([...nVals??[]]);
-      }
+     
       if(search==='')
       {
         let nVals= allValues?.splice(0,limit);
+        // alert('serarc is empty '+allValues?.length)
         return(Promise.resolve([...nVals??[]]))
       }
       // let res=  allValues?.filter?.((x)=>{
@@ -88,17 +93,17 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
       let res:any[]= [];
       let upperSearch= search?.toUpperCase();
       for(let i=0;i<(allValues?.length??0);i++){
-         if(queryId!== METHOD_FILTER_ID){
-            console.log('out with id is changed')
-            return Promise.resolve([]);
-         }
+        //  if(queryId!== METHOD_FILTER_ID){
+        //     console.log('out with id is changed')
+        //     return Promise.resolve([]);
+        //  }
          if(res.length>=limit){
            console.log("out with break limit is exceed")
           break;
          }
          let isOk= allValues[i]?.Code?.toUpperCase()?.includes(upperSearch) || allValues[i]?.Name?.toUpperCase()?.includes(upperSearch);
          if(isOk){
-          res?.push(allValues[i])
+          res?.push({...allValues[i]})
          }
       }
 
@@ -207,9 +212,10 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
                 <div 
                       onKeyDown={(e)=>{
                         handleKeyEvent(e,item)
-                      }} 
+                      }}
+                       
                       style={{outline:focusedIndex===index?'2px solid blue':'none'}} 
-                      key={index} ref={(el)=>{gridRowsRef.current[index]=el}}  
+                      key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
                       onClick={()=>{setFocusedIndex(index) ; }}
                       onDoubleClick={()=>{handleSelection(item) }
                 } tabIndex={-1} >

@@ -9,6 +9,8 @@ import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_c
 import { OpeningBalanceList } from './OpeningBalanceList'
 import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/impl/registerAccountIml'
 import { OpeningBalanceDelete, OpeningBalanceGetOne, OpeningBalanceInsert } from '../impl/openingBalanceIml'
+import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
+import dayjs from 'dayjs'
 
 export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel>) => {
 
@@ -25,6 +27,14 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     <>
       <Quantom_Grid container>
 
+        <Quantom_Grid container spacing={.5}>
+        <Quantom_Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+          <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
+        </Quantom_Grid>
+        <Quantom_Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+          <QUANTOM_Date disabled label='OP Code' value={dayjs(props?.state?.Date??new Date())} />
+        </Quantom_Grid>
+        </Quantom_Grid>
         <RegisterAccountLOV onChange={(sel)=>{
             props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
             } 

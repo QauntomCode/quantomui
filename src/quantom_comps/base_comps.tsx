@@ -4,6 +4,8 @@ import Paper from '@mui/material/Paper';
 import { Variant } from '@testing-library/react';
 import React from 'react';
 
+
+
 export const Quantom_Grid=Grid;
 export const Quantom_Paper=Paper;
 
@@ -85,3 +87,7 @@ export const Quantom_Button=(props?:Quantom_ButtonProps)=>{
     <Button variant='outlined' fullWidth size='small'  onClick={props?.onClick} {...props?.baseProps}>{props?.text}</Button>
   )
 }
+
+
+
+
