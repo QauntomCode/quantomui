@@ -249,10 +249,10 @@ export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
   },[])
   return(
     <>
-       <Grid container spacing={1.5} display={'flex'}>
+       <Quantom_Grid container spacing={1.5} display={'flex'}>
            {AllCompMenus?.map((item,index)=>{
                return(
-                  <Grid item xs={4} sx={{fontWeight:'bold',fontSize:'12px'}} >
+                  <Quantom_Grid item xs={4} sx={{fontWeight:'bold',fontSize:'12px'}} >
                     <Paper onClick={async()=>{
                        let res= await generateGUID();
                        console.warn('this is my response of ',res)
@@ -264,10 +264,10 @@ export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
                     }} sx={{padding:'10px 0px',flex:1 ,display:"flex", justifyContent:'center'}}>
                       {item?.MenuCaption}
                     </Paper>
-                  </Grid>
+                  </Quantom_Grid>
                )
            })}
-       </Grid>
+       </Quantom_Grid>
     </>
   )
 }

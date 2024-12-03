@@ -10,6 +10,7 @@ import { CommonCodeName, Quantom_LOV } from '../../../../quantom_comps/Quantom_L
 import { MenuComponentProps } from '../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 import { Script } from 'vm';
 import { Email } from '@mui/icons-material';
+import Grid2 from '@mui/material/Unstable_Grid2';
 
 interface Email{
   email?:string;
@@ -33,7 +34,7 @@ export const SaleComponent =(props?:MenuComponentProps<Email>) => {
 
   return (
 
-    <Grid container sx={{px:2}}>
+    <Grid2 container sx={{px:2}}>
          {/* <div>UniqueId  is {props?.UniqueId}</div> */}
         <Quantom_Input value={props?.state?.email} onChange={(e)=>{
             props?.setState?.({...props?.state,email:e.target.value})
@@ -56,7 +57,7 @@ export const SaleComponent =(props?:MenuComponentProps<Email>) => {
         
       
 
-    </Grid>
+    </Grid2>
   )
 }
 

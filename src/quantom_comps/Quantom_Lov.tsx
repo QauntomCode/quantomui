@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { useRef } from 'react'
-import { Quantom_Input } from './base_comps'
+import { Quantom_Grid, Quantom_Input } from './base_comps'
 import {  Dialog, DialogContent,Grid, Paper } from '@mui/material'
 
 
@@ -229,11 +229,11 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
                       onClick={()=>{setFocusedIndex(index) ; }}
                       onDoubleClick={()=>{handleSelection(item) }
                 } tabIndex={-1} >
-                    <Grid  container component={Paper} spacing={1} sx={{fontFamily:'roboto',fontSize:'13px',marginBottom:.5,paddingTop:'2px',paddingBottom:'2px'
+                    <Quantom_Grid  container component={Paper} spacing={1} sx={{fontFamily:'roboto',fontSize:'13px',marginBottom:.5,paddingTop:'2px',paddingBottom:'2px'
                     }}>
-                        <Grid item lg={4}>{item.Code}</Grid>
-                        <Grid item  lg={8}>{item.Name}</Grid>
-                    </Grid>
+                        <Quantom_Grid item lg={4}>{item.Code}</Quantom_Grid>
+                        <Quantom_Grid item  lg={8}>{item.Name}</Quantom_Grid>
+                    </Quantom_Grid>
                 </div>
               )
             })

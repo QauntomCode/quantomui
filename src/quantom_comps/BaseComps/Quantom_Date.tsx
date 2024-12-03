@@ -20,9 +20,10 @@ export const QUANTOM_Date =<TDate extends PickerValidDate, TEnableAccessibleFiel
         value={props?.value}
         sx={intputSx}
         
+        
         onChange={props?.onChange}
         // slotProps={{textField:{size:'samll',Component:Paper}}}
-         slotProps={{ textField: { size: 'small',component:Paper,InputLabelProps:{shrink:true}/*sx:{intputSx},InputLabelProps:{shrink:true}*/ } }}
+         slotProps={{ textField: { fullWidth:true, size: 'small',component:Paper,InputLabelProps:{shrink:true}/*sx:{intputSx},InputLabelProps:{shrink:true}*/ } }}
         
        />
    

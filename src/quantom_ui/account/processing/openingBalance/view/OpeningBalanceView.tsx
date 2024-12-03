@@ -11,6 +11,8 @@ import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/imp
 import { OpeningBalanceDelete, OpeningBalanceGetOne, OpeningBalanceInsert } from '../impl/openingBalanceIml'
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
 import dayjs from 'dayjs'
+import { Paper } from '@mui/material'
+import { safeParseToNumber } from '../../../../../CommonMethods'
 
 export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel>) => {
 
@@ -25,31 +27,41 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     
   return (
     <>
-      <Quantom_Grid container>
 
-        
-        <Quantom_Grid display={'flex'} flex={1} container xs={12} sm={6} md={4} lg={3} xl={2}>
-          <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
+       <Quantom_Grid container spacing={0.5}>
+          <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
+            <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
+          </Quantom_Grid>
+          <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
+            <QUANTOM_Date disabled label='OP Code' value={dayjs(props?.state?.Date??new Date())}
+                onChange={(date)=>{
+                  props?.setState?.({...props?.state,Date:date?.toDate()})
+                }} />
+          </Quantom_Grid>
         </Quantom_Grid>
-        <Quantom_Grid display={'flex'} flex={1} container xs={12} sm={6} md={4} lg={3} xl={2}>
-          <QUANTOM_Date disabled label='OP Code' value={dayjs(props?.state?.Date??new Date())} />
-        </Quantom_Grid>
-        <Quantom_Grid container xs={6}>
-          <Quantom_Input label='Amount'/>
-        </Quantom_Grid>
-        <Quantom_Grid container>
-          <Quantom_Input label='Type'/>
-        </Quantom_Grid>
-       
+        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
         <RegisterAccountLOV onChange={(sel)=>{
             props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
             } 
             selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/> 
-        
-        <Quantom_Grid container>
-          <Quantom_Input label='Remarks'/>
         </Quantom_Grid>
-      </Quantom_Grid>
+        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
+          <Quantom_Input label='Type'/>
+        </Quantom_Grid>
+        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
+          <Quantom_Input value={props?.state?.Amount} label='Amount' onChange={(e)=>{
+            props?.setState?.({...props?.state, Amount:safeParseToNumber(e?.target?.value)})
+          }}/>
+        </Quantom_Grid>
+      
+        
+        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
+          <Quantom_Input label='Remarks' value={props?.state?.Remarks} onChange={(e)=>{
+             props?.setState?.({...props?.state,Remarks:e?.target?.value}) 
+          }
+          }/>
+        </Quantom_Grid>
+      {/* </Quantom_Grid> */}
     </>
   )
 }
