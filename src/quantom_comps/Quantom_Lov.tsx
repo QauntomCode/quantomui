@@ -37,8 +37,20 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
     const inputRef = useRef<any>(null);
 
     React.useEffect(()=>{
-      handleValues();
+      // handleValues();
+      async function loadAllValues(){
+        // if(!allValues || allValues?.length<1){
+          // alert('not found data')
+          let vals= await props?.FillDtaMethod?.();
+          //let nVals= vals?.splice(0,limit)
+          console.log('all values are',vals)
+          setAllValues([...vals??[]]);
+        // }
+      }
+      loadAllValues();
     },[])
+
+
 
     React.useEffect(()=>{
       if(open){
@@ -59,28 +71,24 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
 
     let METHOD_FILTER_ID=0;
     const handleValues=async()=>{
-      if(!allValues || allValues?.length<1){
-        alert('not found data')
-        let vals= await props?.FillDtaMethod?.();
-        //let nVals= vals?.splice(0,limit)
-        console.log('all values are',vals)
-        setAllValues([...vals??[]]);
-      }
+     
        METHOD_FILTER_ID= METHOD_FILTER_ID+1;
        let nId= METHOD_FILTER_ID;
        let res= await FilterData(100,nId);
-       console.log('all daa is',props?.data)
-       console.log('filtered data is',res)
+      //  console.log('all daa is',props?.data)
+      //  console.log('filtered data is',res)
       //  setValues([...res])
     }
 
-    const FilterData=async(limit:number,queryId?:number):Promise<CommonCodeName[]>=>{
+    const FilterData=async(limit:number,queryId?:number)=>{
      
+      let tValus=[...allValues];
       if(search==='')
       {
-        let nVals= allValues?.splice(0,limit);
+        let nVals= tValus?.splice(0,limit);
+        setValues([...nVals])
         // alert('serarc is empty '+allValues?.length)
-        return(Promise.resolve([...nVals??[]]))
+        //return(Promise.resolve([...nVals??[]]))
       }
       // let res=  allValues?.filter?.((x)=>{
       //   if(queryId!==METHOD_FILTER_ID)
@@ -92,22 +100,24 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
 
       let res:any[]= [];
       let upperSearch= search?.toUpperCase();
-      for(let i=0;i<(allValues?.length??0);i++){
-        //  if(queryId!== METHOD_FILTER_ID){
-        //     console.log('out with id is changed')
-        //     return Promise.resolve([]);
-        //  }
+      for(let i=0;i<(tValus?.length??0);i++){
+         if(queryId!== METHOD_FILTER_ID){
+            console.log('out with id is changed')
+            return;
+            //return Promise.resolve([]);
+         }
          if(res.length>=limit){
            console.log("out with break limit is exceed")
           break;
          }
-         let isOk= allValues[i]?.Code?.toUpperCase()?.includes(upperSearch) || allValues[i]?.Name?.toUpperCase()?.includes(upperSearch);
+         let isOk= tValus[i]?.Code?.toUpperCase()?.includes(upperSearch) || allValues[i]?.Name?.toUpperCase()?.includes(upperSearch);
          if(isOk){
-          res?.push({...allValues[i]})
+          res?.push({...tValus[i]})
          }
       }
 
-      return Promise.resolve([...res??[]]);
+        setValues([...res])
+      //return Promise.resolve([...res??[]]);
     }
 
     const handleKeyEvent = (event:React.KeyboardEvent<HTMLDivElement>,selected?:CommonCodeName) => {
