@@ -27,3 +27,9 @@ export const ACCOUNT_OPENING_BALANCE_UPDATE_URL = "Account/opening/Update";
 export const ACCOUNT_OPENING_BALANCE_DELETE_URL = "Account/opening/Delete";
 export const ACCOUNT_OPENING_BALANCE_GET_ALL_URL = "Account/opening/GetAll";
 export const ACCOUNT_OPENING_BALANCE_GET_ONE_URL = "Account/opening/GetOne";
+
+export const ACCOUNT_PETTY_CASH_REPORT_URL = "Account/AccountReports/GetExpenseReport";
+export const ACCOUNT_PETTY_CASH_INSERT_URL = "Account/pettyCash/insert";
+export const ACCOUNT_PETTY_CASH_DELETE_URL = "Account/pettyCash/Delete";
+export const ACCOUNT_PETTY_CASH_GET_ALL_URL = "Account/pettyCash/GetAll";
+export const ACCOUNT_PETTY_CASH_GET_ONE_URL = "Account/pettyCash/GetOne";

@@ -2,14 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
-import { OpeningBalanceModel } from '../model/PettyCashModel'
+import { PettyCashModel } from '../model/PettyCashModel'
 import { useSelector } from 'react-redux'
 import store, { full_component_state } from '../../../../../redux/store'
 import { set_list_data } from '../../../../../redux/reduxSlice'
 import { OpeningBalanceGetAll } from '../impl/PettyCashImp'
 import { QUANTOM_Table } from '../../../config/mainAccount/view/MainAccountView'
 
-export const OpeningBalanceList = (props?:MenuComponentProps<OpeningBalanceModel>) => {
+export const OpeningBalanceList = (props?:MenuComponentProps<PettyCashModel>) => {
   const listData= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""))?.listData
 
   React.useEffect(()=>{

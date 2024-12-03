@@ -1,7 +1,8 @@
 import { Button, ButtonProps, TextField, TextFieldProps } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Grid2 from '@mui/material/Unstable_Grid2';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+// import Grid2 from '@mui/material/Unstable_Grid2';
 import { Variant } from '@testing-library/react';
 import React from 'react';
 
@@ -15,11 +16,11 @@ interface Quantom_Container_Props{
 }
 export const Quantom_Container= (props?:Quantom_Container_Props)=>{
     return(
-       <Grid2 sx={{px:1}} >
+       <Grid>
           {
             props?.children
           }
-       </Grid2>
+       </Grid>
     )
 }
 

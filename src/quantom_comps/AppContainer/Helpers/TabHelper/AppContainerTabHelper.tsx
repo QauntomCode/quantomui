@@ -2,10 +2,10 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode } from 'react'
 import { useSelector } from 'react-redux';
-import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings } from '../../../../redux/store';
+import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
-import { Alert, Box, Grid, Paper, Snackbar, useTheme } from '@mui/material';
-import { change_form_state, ComponentSettings, open_new_menu, set_basic_keys_method, set_component_record_key, set_component_settings, set_delete_method, set_get_one_method, set_save_method } from '../../../../redux/reduxSlice';
+import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
+import { change_form_state, ComponentSettings, open_new_menu, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
 import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -21,6 +21,11 @@ import { HTTP_RESPONSE_TYPE, HttpResponse } from '../../../../HTTP/QuantomHttpMe
 import { SubSubAccountView } from '../../../../quantom_ui/account/config/subSubAccount/view/SubSubAccountView';
 import { RegisterAccountView } from '../../../../quantom_ui/account/config/registerAccount/view/RegisterAccountView';
 import { OpeningBalanceView } from '../../../../quantom_ui/account/processing/openingBalance/view/OpeningBalanceView';
+import { GetLocationsByUserId } from '../../../../quantom_ui/Settings/Location/impl/LocationImpl';
+import { LocationModel } from '../../../../quantom_ui/Settings/Location/Model/LocationModel';
+import { Pettycashview } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
+import { Padding } from '@mui/icons-material';
+import { hover } from '@testing-library/user-event/dist/hover';
 
 export const AppContainerTabHelper = () => {
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
@@ -28,7 +33,6 @@ export const AppContainerTabHelper = () => {
         return{
           Caption:item.MenuCaption,
           Component:(<MenuComponentRenderer MenuCode={item?.MenuCode} UniqueId={item.UniqueKeyNo}/>)
-
         }
     })??[];   
   return (
@@ -55,6 +59,7 @@ export interface MenuContainerProps<T>{
 export interface BasicKeysProps{
     keyNoPropName?:string;
     keyDatePropsName?:string;
+    // WillShowLocationDialog?:boolean;
 }
 export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   
@@ -70,6 +75,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const state = useSelector((state:any)=>form_state_selector<T>(state,nProps?.UniqueId||""));
   const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
   const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
+  const selLocaion= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
     if(fullState?.recordKeyNo)
@@ -132,9 +138,22 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
 
   const obj=AllCompMenus?.find(x=>x.MenuCode===props?.MenuCode);
   const selectedComponent=obj?.GetComponent?.({...nProps,state:state})
+
+   const willShowLocation=():boolean=>{
+      if(settings?.willShowLocations)
+        { 
+           if(!selLocaion?.LocId || selLocaion?.LocId===undefined || selLocaion?.LocId===null || selLocaion?.LocId===''){
+               return true;
+           }
+          }
+      return false;
+        }
+
+  alert(selLocaion?.LocId)
   return(
     <div>
       <QUANTOM_Toast {...alertProps}/>
+      <UserLocationsModalComp open={willShowLocation()} basProps={{...nProps}}/>
     {
       settings?.wWillHideToolbar?(<></>):(
        <QuantomToolBarComp showToast={(message)=>{setAlertProps({...alertProps,number:(alertProps?.number??0)+1,message:message})}} baseProps={{...nProps}}/>
@@ -147,6 +166,51 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       
     </div>
   )
+}
+
+interface UserLocationsModalProps<T>{
+  open?:boolean;
+  onSelection?:(loc?:LocationModel)=>void;
+  basProps?:MenuContainerProps<T>
+}
+export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
+    const locs= useSelector((state:any)=> get_current_user_locations(state));
+    const font= useQuantomFonts();
+    React.useEffect(()=>{
+         async function method() {
+          if(!locs || (locs?.length??0)<1){
+            let cLocs=await GetLocationsByUserId();
+            console.warn('user locations from http are',cLocs)
+            store?.dispatch(set_user_locations(cLocs));
+           }
+         }
+         method();
+    },[locs])
+
+    return(
+      <>
+        <Dialog open={props?.open??false}>
+          <DialogContent>
+             {
+              locs?.map((x,index)=>
+                (
+                 <Quantom_Grid container component={Paper}  sx={{fontFamily:font.HeaderFont,fontSiz:font.HeaderFont,marginTop:'5px',hover:{
+                   cursor:'pointer'
+                 }}}>
+                  <div onClick={()=>{
+                     store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:x}));
+                  }} style={{width:'100%',height:'100%'}}>
+                    {x?.LocName}
+                  </div>
+                  
+                  </Quantom_Grid>
+                )
+              )
+             }
+          </DialogContent>
+        </Dialog>
+      </>
+    )
 }
 
 export interface ToolBarButtonProps{
@@ -212,6 +276,11 @@ export const AccountMenus:MenuInfoModel<any>[]=[
     MenuCode:"001-006",
     MenuCaption:"Opening Balance",
     GetComponent:(props?:MenuComponentProps<any>)=>(<OpeningBalanceView {...props}/>)
+  },
+  {
+    MenuCode:"001-009",
+    MenuCaption:"Petty Cash",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<Pettycashview {...props}/>)
   },
 ]
 

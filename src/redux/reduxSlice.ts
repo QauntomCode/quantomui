@@ -5,12 +5,13 @@ import { AppContainerModel } from '../quantom_comps/AppContainer/Model/AppContai
 import { AppContainerMenus } from '../quantom_comps/AppContainer/Model/AppContainerModelMenus';
 import { BasicKeysProps } from '../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 import { HttpResponse } from '../HTTP/QuantomHttpMethods';
-import { ExposureTwoTone, Settings } from '@mui/icons-material';
+import { LocationModel } from '../quantom_ui/Settings/Location/Model/LocationModel';
 
 interface FormsState {
     FormsState?:QuantomFormState<any>[];
     OpenMenus?:AppContainerModel,
     Font?:FontSettings,
+    UserLocations?:LocationModel[];
 }
 
 export interface FontSettings{
@@ -20,7 +21,6 @@ export interface FontSettings{
    H2FontSize?:string;
    H3FontSize?:string;
    H4FontSize?:string;
-
    RegularFontSize?:string;
 }
 
@@ -31,7 +31,7 @@ export interface QuantomFormState<T>{
   FormId?:string;
   QuantomFormCoreState?:T;
   KeyValues?:(t?:T)=>KeyValues;
-
+  Location?:LocationModel;
   SaveMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
   DeleteMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
   GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
@@ -43,11 +43,16 @@ export interface QuantomFormState<T>{
 
 export interface ComponentSettings{
       wWillHideToolbar?:boolean;
+      willShowLocations?:boolean;
 }
 
 
 export interface ComponentSettingsPayloadType{
   settings?:ComponentSettings;
+  stateKey?:string;
+}
+export interface ComponentSelectedLocationPayloadType{
+  Location?:LocationModel;
   stateKey?:string;
 }
 export interface ComponentPrimaryKeyPayloadType{
@@ -98,7 +103,8 @@ interface KeyValues{
       RegularFont:'roboto',
       HeaderFont:'Oswald',
       RegularFontSize:'14px'
-    }
+    },
+
   }
 
   export const formsSlice = createSlice({
@@ -177,6 +183,20 @@ interface KeyValues{
       };
       },
 
+      set_component_selected_locations: (state,action:PayloadAction<ComponentSelectedLocationPayloadType>) => {
+
+        // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, Location:{...action?.payload?.Location} } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
       set_component_record_key: (state,action:PayloadAction<ComponentPrimaryKeyPayloadType>) => {
 
         // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
@@ -245,6 +265,11 @@ interface KeyValues{
         state={...state,OpenMenus:{...state.OpenMenus,Menus:[...menus]}}
         return state;
       },
+
+      set_user_locations:(state,action:PayloadAction<LocationModel[]>)=>{
+        state= {...state,UserLocations:[...action?.payload]};
+        return state;
+      },
     },
   })
 
@@ -261,6 +286,8 @@ interface KeyValues{
     change_form_state,
     set_list_data,
     set_component_record_key,
+    set_user_locations,
+    set_component_selected_locations
   } = formsSlice.actions
 
   // const counterReducer = counterSlice.reducer //This is stored in the main store

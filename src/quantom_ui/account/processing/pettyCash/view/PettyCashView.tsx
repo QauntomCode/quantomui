@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
-import {  OpeningBalanceModel } from '../model/PettyCashModel'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import {  PettyCashModel } from '../model/PettyCashModel'
+import { BasicKeysProps, MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
@@ -10,7 +10,7 @@ import { OpeningBalanceList } from './PettyCashList'
 import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/impl/registerAccountIml'
 import { OpeningBalanceDelete, OpeningBalanceGetOne, OpeningBalanceInsert } from '../impl/PettyCashImp'
 
-export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel>) => {
+export const Pettycashview = (props?:MenuComponentProps<PettyCashModel>) => {
 
 
     React.useEffect(()=>{
@@ -18,6 +18,7 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
      props?.setDeleteMethod?.((payload)=>OpeningBalanceDelete(payload))
      props?.setListComponent?.((<OpeningBalanceList {...props}/>))
      props?.setGetOneMethod?.((payload)=>OpeningBalanceGetOne(payload))
+     props?.setCompSettings?.({willShowLocations:true})
     },[])
 
     
