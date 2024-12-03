@@ -27,19 +27,28 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     <>
       <Quantom_Grid container>
 
-        <Quantom_Grid container spacing={.5}>
-        <Quantom_Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+        
+        <Quantom_Grid display={'flex'} flex={1} container xs={12} sm={6} md={4} lg={3} xl={2}>
           <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
         </Quantom_Grid>
-        <Quantom_Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+        <Quantom_Grid display={'flex'} flex={1} container xs={12} sm={6} md={4} lg={3} xl={2}>
           <QUANTOM_Date disabled label='OP Code' value={dayjs(props?.state?.Date??new Date())} />
         </Quantom_Grid>
+        <Quantom_Grid container xs={6}>
+          <Quantom_Input label='Amount'/>
         </Quantom_Grid>
+        <Quantom_Grid container>
+          <Quantom_Input label='Type'/>
+        </Quantom_Grid>
+       
         <RegisterAccountLOV onChange={(sel)=>{
             props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
             } 
             selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/> 
         
+        <Quantom_Grid container>
+          <Quantom_Input label='Remarks'/>
+        </Quantom_Grid>
       </Quantom_Grid>
     </>
   )
