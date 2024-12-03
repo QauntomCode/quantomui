@@ -18,6 +18,7 @@ export interface Quantom_LOV_PROPS{
   selected?:CommonCodeName;
   onChange?:(obj?:CommonCodeName)=>void;
   FillDtaMethod?:()=>Promise<CommonCodeName[]>
+  selectedIndex?:number;
 }
 
 export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
@@ -45,6 +46,10 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
           //let nVals= vals?.splice(0,limit)
           console.log('all values are',vals)
           setAllValues([...vals??[]]);
+          if(!props?.selected && props?.selectedIndex!==undefined){
+            let nVal= vals?.[props?.selectedIndex??0];
+            props?.onChange?.(nVal);
+          }
         // }
       }
       loadAllValues();

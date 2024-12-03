@@ -32,7 +32,6 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
     
   return (
     <>
-      <Quantom_Grid container>
          <Quantom_Grid container spacing={.5}>
             <Quantom_Grid item xs={4} md={3} lg={2}>
                <Quantom_Input disabled label='Main Code' value={props?.state?.subSubAccount?.subAccount?.mainAccount?.Code} />
@@ -62,7 +61,6 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
                 selected={{Code:props?.state?.subSubAccount?.Code,Name:props?.state?.subSubAccount?.Name}} 
                 FillDtaMethod={handleSubAccounts} label='Sub Sub Account' />
             </Quantom_Grid>
-         </Quantom_Grid>
         
             
          {/* </Quantom_LOV> */}

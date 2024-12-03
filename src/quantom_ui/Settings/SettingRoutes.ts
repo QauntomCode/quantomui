@@ -1,0 +1,1 @@
+export const SETTING_LOCATION_GET_ALL_LOCATIONS_BY_USER_URL = "Location/GetLocationByUserId";

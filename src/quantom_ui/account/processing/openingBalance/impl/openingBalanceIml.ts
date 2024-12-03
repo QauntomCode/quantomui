@@ -1,15 +1,22 @@
 import { HttpResponse, QuantomGET, QuantomPOST } from "../../../../../HTTP/QuantomHttpMethods";
-import { ACCOUNT_OPENING_BALANCE_DELETE_URL, ACCOUNT_OPENING_BALANCE_GET_ALL_URL, ACCOUNT_OPENING_BALANCE_GET_ONE_URL, ACCOUNT_OPENING_BALANCE_INSERT_URL } from "../../../account_urls";
+import { ACCOUNT_OPENING_BALANCE_DELETE_URL, ACCOUNT_OPENING_BALANCE_GET_ALL_URL, ACCOUNT_OPENING_BALANCE_GET_ONE_URL , ACCOUNT_OPENING_BALANCE_INSERT_URL, ACCOUNT_OPENING_BALANCE_UPDATE_URL } from "../../../account_urls";
 import { OpeningBalanceModel } from "../model/OpeningBalanceModel";
 // import { SubAccountModel } from "../model/SubAccountModel";
 
 export const OpeningBalanceInsert=async(model?:OpeningBalanceModel):Promise<HttpResponse<OpeningBalanceModel>>=>{
 
    let url= ACCOUNT_OPENING_BALANCE_INSERT_URL;
-   if(model?.Code){
-      url=ACCOUNT_OPENING_BALANCE_DELETE_URL;
+   if(model?.OpCode){
+      url=ACCOUNT_OPENING_BALANCE_UPDATE_URL;
    }
-   let res= await QuantomPOST<OpeningBalanceModel>(url,true,model);
+   let nModel={...model}
+   // alert(nModel?.Date)
+   if(nModel && (!nModel?.Date || !nModel?.Date===undefined)){
+      // alert(nModel?.Date)
+
+      nModel.Date=new Date();
+   }
+   let res= await QuantomPOST<OpeningBalanceModel>(url,true,nModel);
    return res;
 }
 

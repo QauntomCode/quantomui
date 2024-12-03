@@ -26,15 +26,16 @@ export const OpeningBalanceList = (props?:MenuComponentProps<OpeningBalanceModel
     <>
       <QUANTOM_Table height='400px' columns={
         [
-          {field:"Code",width:350,header:'Code'},
-          {field:'Name',header:'Name'},
-          {field:'Balance',header:'Balance'},
-          {field:'subSubAccount.Name',header:'Sub Sub Account'},
-          {field:'subSubAccount.subAccount.Name',header:'Sub Account'},
-          {field:'subSubAccount.subAccount.mainAccount.Name',header:'Main Account'}
+          {field:"location.LocName",width:350,header:'Location'},
+          {field:'OpCode',header:'OPCode'},
+          {field:'Date',header:'Date',dataType:'date'},
+          {field:'registerAccount.Name',header:'GL Account',},
+          {field:'Debit',header:'Debit'},
+          {field:'Credit',header:'Credit'},
+          {field:'Remarks',header:'Remarks'}
         ]} data={listData}
         onViewButtonClick={(data)=>{
-            props?.setPrimaryKeyNo?.(data?.Code)
+            props?.setPrimaryKeyNo?.(data?.OpCode)
         }}/>
     </>
   )

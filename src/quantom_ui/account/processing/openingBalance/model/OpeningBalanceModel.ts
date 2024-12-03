@@ -1,5 +1,6 @@
 // import { SubAccountModel } from "../../subAccount/model/SubAccountModel";
 
+import { LocationModel } from "../../../../Settings/Location/Model/LocationModel";
 import { RegisterAccountModel } from "../../../config/registerAccount/model/registerAccountModel";
 
 export interface OpeningBalanceModel {
@@ -13,9 +14,9 @@ export interface OpeningBalanceModel {
   LocCode?: string;
   BPCode?: string;
   Amount?:number;
-
+  location?:LocationModel;
   registerAccount?: RegisterAccountModel;
-  location?: Location;
+  
   // user?: User;
   // BP?: BusinessPartner;
 }

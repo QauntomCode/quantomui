@@ -8,6 +8,7 @@ import { ColDef, ModuleRegistry,ClientSideRowModelModule } from 'ag-grid-communi
 import { Quantom_Grid } from '../../../../../quantom_comps/base_comps';
 import { Paper } from '@mui/material';
 import ViewButtonIcon from '@mui/icons-material/VisibilityTwoTone';
+import dayjs from 'dayjs';
 
 export const MainAccountView = (props?:MenuComponentProps<MainAccountModel>) => {
     const[accounts,setAccounts]=React.useState<MainAccountModel[]>([])
@@ -44,6 +45,7 @@ export interface QuantomGridColumns{
     caption?:string;
     width?:number;
     header?:string;
+    dataType?:'string'|'date'|'number'
 }
 
 export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
@@ -58,7 +60,20 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
         let cols=
         props?.columns?.map((item,index)=>{
             // { field: "name", cellStyle: { fontWeight: "bold" } },
-           let obj:any= { field:item?.field,maxWidth:item?.width,cellStyle:{fontSize:'11px',fontFamily:'roboto'},headerName:item?.header};
+           let obj:any= 
+                    { 
+                        field:item?.field,
+                        maxWidth:item?.width,
+                        cellStyle:{fontSize:'11px',fontFamily:'roboto'},
+                        headerName:item?.header,
+                    };
+
+           if(item?.dataType==='date'){
+               obj.valueFormatter= (params:any) => {
+                const rawValue = params.value;
+                return rawValue ? dayjs(rawValue).format('DD-MMM-YYYY') : '';
+               }
+           }
            return obj;
         });
 

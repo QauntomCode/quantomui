@@ -23,7 +23,7 @@ export const ACCOUNT_REGISTER_ACCOUNT_GET_ONE_URL = "Account/registerAccount/Get
 
 
 export const ACCOUNT_OPENING_BALANCE_INSERT_URL = "Account/opening/insert";
+export const ACCOUNT_OPENING_BALANCE_UPDATE_URL = "Account/opening/Update";
 export const ACCOUNT_OPENING_BALANCE_DELETE_URL = "Account/opening/Delete";
 export const ACCOUNT_OPENING_BALANCE_GET_ALL_URL = "Account/opening/GetAll";
 export const ACCOUNT_OPENING_BALANCE_GET_ONE_URL = "Account/opening/GetOne";
-export const ACCOUNT_OPENING_BALANCE_GET_UPDATE_URL = "Account/opening/Update";
