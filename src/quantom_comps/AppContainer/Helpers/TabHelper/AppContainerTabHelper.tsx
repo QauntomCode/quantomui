@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
-import { change_form_state, ComponentSettings, open_new_menu, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method, set_locaitoin_init_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
+import { change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
 import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -23,7 +23,7 @@ import { RegisterAccountView } from '../../../../quantom_ui/account/config/regis
 import { OpeningBalanceView } from '../../../../quantom_ui/account/processing/openingBalance/view/OpeningBalanceView';
 import { GetLocationsByUserId } from '../../../../quantom_ui/Settings/Location/impl/LocationImpl';
 import { LocationModel } from '../../../../quantom_ui/Settings/Location/Model/LocationModel';
-import { Pettycashview } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
+import { PettyCashView } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
 import { Padding } from '@mui/icons-material';
 import { hover } from '@testing-library/user-event/dist/hover';
 import { isNullOrEmpty, safeParseToNumber } from '../../../../CommonMethods';
@@ -47,6 +47,7 @@ export interface MenuContainerProps<T>{
     MenuCode?:string;
     UniqueId?:string;
     state?:T;
+    fullState?:QuantomFormState<T>;
     setState?:(state?:T)=>void;
     setSaveMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
     setDeleteMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
@@ -56,6 +57,8 @@ export interface MenuContainerProps<T>{
     setListComponent?:(comp?:ReactNode)=>void;
     setPrimaryKeyNo?:(keyNo?:string)=>void;
     setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
+    setAfterResetMethod?:(method?:(loc?:LocationModel)=>void)=>void;
+
 }
 
 export interface BasicKeysProps{
@@ -77,13 +80,13 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const state = useSelector((state:any)=>form_state_selector<T>(state,nProps?.UniqueId||""));
   const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
   const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
-  const selLocaion= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
+  const selLocation= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
 
   React.useEffect(()=>{
-    if(!isNullOrEmpty(selLocaion?.LocId)){
-      fullState?.LocationInitMethod?.(selLocaion);
+    if(!isNullOrEmpty(selLocation?.LocId)){
+      fullState?.LocationInitMethod?.(selLocation);
     }
-  },[selLocaion])
+  },[selLocation])
 
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
@@ -134,8 +137,14 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
    }
 
    nProps.setInitOnLocationChange=(method)=>{
-    store?.dispatch(set_locaitoin_init_method({stateKey:props?.UniqueId,method:method}))
+    store?.dispatch(set_location_init_method({stateKey:props?.UniqueId,method:method}))
    }
+
+   nProps.setAfterResetMethod=(method)=>{
+    store?.dispatch(set_after_reset_method({stateKey:props?.UniqueId,method:method}))
+   }
+
+
    nProps.setPrimaryKeyNo=(keyNo?:string)=>{
       if(keyNo){
         store?.dispatch(set_component_record_key({stateKey:props?.UniqueId,keyNo:keyNo}));
@@ -154,7 +163,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
    const willShowLocation=():boolean=>{
       if(settings?.willShowLocations)
         { 
-           if(!selLocaion?.LocId || selLocaion?.LocId===undefined || selLocaion?.LocId===null || selLocaion?.LocId===''){
+           if(!selLocation?.LocId || selLocation?.LocId===undefined || selLocation?.LocId===null || selLocation?.LocId===''){
                return true;
            }
           }
@@ -197,6 +206,10 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
            }
          }
          method();
+
+         if(locs?.length===1){
+            store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
+         }
     },[locs])
 
     return(
@@ -292,7 +305,7 @@ export const AccountMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"001-009",
     MenuCaption:"Petty Cash",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<Pettycashview {...props}/>)
+    GetComponent:(props?:MenuComponentProps<any>)=>(<PettyCashView {...props}/>)
   },
 ]
 
@@ -380,7 +393,15 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   <Quantom_Grid container sx={{display:'flex'}}>
           <ToolBarButton Label='New' onClick={()=>{
             let resetState:any= {};
-             props?.baseProps?.setState?.(resetState)
+             props?.baseProps?.setState?.(resetState);
+             setTimeout(() => {
+              state?.AfterReset?.(state?.Location);
+               setTimeout(() => {
+                  console.log(state?.QuantomFormCoreState)
+               }, (500));
+             }, 100);
+             
+             
           }}>
              <NewButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
           </ToolBarButton>
@@ -394,7 +415,8 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
                if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
                  let res:any= x?.Response??{};
                    props?.baseProps?.setState?.({...res})
-                    props?.showToast?.('Saved Successfully');
+                   props?.showToast?.('Saved Successfully')
+                  
                }
                else{
                  console.error('some thing invalid happen')
@@ -406,7 +428,10 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
           </ToolBarButton>
           <ToolBarButton onClick={()=>{
             let resetState:any= {};
-             props?.baseProps?.setState?.(resetState)
+             props?.baseProps?.setState?.(resetState);
+             setTimeout(() => {
+              state?.AfterReset?.(state?.Location)
+             }, 100);
           }} Label='Cancel'>
              <CancelButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}/>
           </ToolBarButton>

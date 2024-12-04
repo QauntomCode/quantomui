@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from './store'
-
 import { AppContainerModel } from '../quantom_comps/AppContainer/Model/AppContainerModel';
 import { AppContainerMenus } from '../quantom_comps/AppContainer/Model/AppContainerModelMenus';
 import { BasicKeysProps } from '../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
@@ -36,8 +34,8 @@ export interface QuantomFormState<T>{
   DeleteMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
   GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
   LocationInitMethod?:(location?:LocationModel)=>void;
-
   SetBasicKeysMethod?:()=>BasicKeysProps;
+  AfterReset?:(location?:LocationModel)=>void;
   compSettings?:ComponentSettings;
   listData?:unknown[];
   FormState?:'FORM'|'LIST'
@@ -154,10 +152,22 @@ interface KeyValues{
       };
       },
 
-      set_locaitoin_init_method: (state,action:PayloadAction<LocationChangeMethodPayload>) => {
+      set_location_init_method: (state,action:PayloadAction<LocationChangeMethodPayload>) => {
         const updatedFormsState = state.FormsState?.map(formState => 
           formState.stateKey === action.payload.stateKey 
               ? { ...formState, LocationInitMethod:action?.payload?.method } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
+      set_after_reset_method: (state,action:PayloadAction<LocationChangeMethodPayload>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, AfterReset:action?.payload?.method } 
               : formState
       );
       return {
@@ -308,7 +318,8 @@ interface KeyValues{
     set_component_record_key,
     set_user_locations,
     set_component_selected_locations,
-    set_locaitoin_init_method
+    set_location_init_method,
+    set_after_reset_method,
   } = formsSlice.actions
 
   // const counterReducer = counterSlice.reducer //This is stored in the main store

@@ -6,22 +6,22 @@ import { BasicKeysProps, MenuComponentProps } from '../../../../../quantom_comps
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
-import { OpeningBalanceList } from './PettyCashList'
+import { PettyCashList } from './PettyCashList'
 import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/impl/registerAccountIml'
 import { PettyCashDelete, PettyCashGetOne,PettyCashInsert } from '../impl/PettyCashImp'
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
 import dayjs from 'dayjs'
 import { safeParseToNumber } from '../../../../../CommonMethods'
-import { Code } from '@mui/icons-material'
 
-export const Pettycashview = (props?:MenuComponentProps<PettyCashModel>) => {
+export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
 
 
     React.useEffect(()=>{
      props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,LocId:loc?.LocId,Date:new Date()})))
+     props?.setAfterResetMethod?.((loc)=>(props?.setState?.({LocId:loc?.LocId,Date:new Date()})))
      props?.setSaveMethod?.((payload)=>PettyCashInsert(payload))
      props?.setDeleteMethod?.((payload)=>PettyCashDelete(payload))
-     props?.setListComponent?.((<OpeningBalanceList {...props}/>))
+     props?.setListComponent?.((<PettyCashList {...props}/>))
      props?.setGetOneMethod?.((payload)=>PettyCashGetOne(payload))
      props?.setCompSettings?.({willShowLocations:true})
     },[]);
@@ -83,9 +83,9 @@ export const Pettycashview = (props?:MenuComponentProps<PettyCashModel>) => {
       <Quantom_Grid container xs={12} md={8} lg={6} xl={4}>
          <RegisterAccountLOV 
                 
-                selected={{Code:props?.state?.GlAccount,Name:props?.state?.GlAccountRegisterAccount?.Name}}  
+                selected={{Code:props?.state?.GlAccount,Name:props?.state?.glAccountRegisterAccount?.Name}}  
                 onChange={(selected)=>{
-                     props?.setState?.({...props?.state,GlAccount:selected?.Code,GlAccountRegisterAccount:selected})
+                     props?.setState?.({...props?.state,GlAccount:selected?.Code,glAccountRegisterAccount:selected})
                 }}
           />
         </Quantom_Grid>

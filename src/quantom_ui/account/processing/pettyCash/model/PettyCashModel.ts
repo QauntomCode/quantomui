@@ -21,7 +21,7 @@ export class PettyCashModel {
    VCode?: string;
    Location?: Location;
    // CashRegisterAccount?: RegisterAccountModel;
-   GlAccountRegisterAccount?: RegisterAccountModel;
+   glAccountRegisterAccount?: RegisterAccountModel;
    // FinancialYear?: FinancialYear;
    DayClosed?: boolean;
 }

@@ -24,13 +24,13 @@ import { createTheme } from '@mui/material/styles';
 //     },
 //   },
 // });
-
+export const QuantomColors={SelectedElementTextColor:"#F1F3F3"}
 const QuantomTheme = createTheme({
     palette: {
       primary: {
         main:  "#16423C",
         dark: '#004ba0',
-        contrastText: '#004ba0',
+        contrastText: QuantomColors.SelectedElementTextColor,
         light:'rgba(22, 66, 60, .6)'
       },
       secondary: {
@@ -47,5 +47,5 @@ const QuantomTheme = createTheme({
     },
   });
 
-export const QuantomColors={SelectedElementTextColor:"#F1F3F3"}
+
 export default QuantomTheme;
