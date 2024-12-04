@@ -45,7 +45,9 @@ const QuantomTheme = createTheme({
         secondary:'#2c2e2c'
       },
     },
-  });
+
+  }
+);
 
 
 export default QuantomTheme;

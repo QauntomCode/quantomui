@@ -45,5 +45,5 @@ const intputSx={ marginTop:'10px','& .MuiInputLabel-root': {
     fontFamily:'Oswald'
   }, '& .MuiInputBase-input': {
     fontFamily:'Ubuntu',
-    fontSize: '12px', // Change this value to adjust the input font size
+    fontSize: '9.5px', // Change this value to adjust the input font size
   }}

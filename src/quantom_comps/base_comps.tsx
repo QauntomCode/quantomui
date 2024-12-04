@@ -1,7 +1,9 @@
+import { Height, Margin, Padding } from '@mui/icons-material';
 import { Button, ButtonProps, TextField, TextFieldProps } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+// import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 // import Grid2 from '@mui/material/Unstable_Grid2';
 import { Variant } from '@testing-library/react';
 import React from 'react';
@@ -51,13 +53,18 @@ export const Quantom_Input=(props: {
           disabled={props?.disabled}
           sx={
             { marginTop:'10px','& .MuiInputLabel-root': {
-            fontSize: '16px',
+            fontSize: '13px',
             fontWeight:'900',
             fontFamily:'Oswald'
-          }, '& .MuiInputBase-input': {
+          }, 
+          '& .MuiInputBase-input': {
             fontFamily:'Ubuntu',
-            fontSize: '12px', // Change this value to adjust the input font size
-          }}}
+            fontWeight:'700',       
+            fontSize: '9.5px', // Change this value to adjust the input font size
+            Height:'2px',
+          }
+         
+        }}
           InputLabelProps={
               {
                 shrink:true,

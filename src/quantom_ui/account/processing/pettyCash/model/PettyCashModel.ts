@@ -5,7 +5,7 @@ export enum PaymentType {
    Received
 }
 
-export class PettyCashModel {
+export interface PettyCashModel {
    Code?: string;
    Remarks?: string;
    Date?: Date;

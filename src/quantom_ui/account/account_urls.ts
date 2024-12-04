@@ -33,3 +33,9 @@ export const ACCOUNT_PETTY_CASH_INSERT_URL = "Account/pettyCash/insert";
 export const ACCOUNT_PETTY_CASH_DELETE_URL = "Account/pettyCash/Delete";
 export const ACCOUNT_PETTY_CASH_GET_ALL_URL = "Account/pettyCash/GetAll";
 export const ACCOUNT_PETTY_CASH_GET_ONE_URL = "Account/pettyCash/GetOne";
+
+
+export const ACCOUNT_VOUCHER_INSERT_URL = "Account/voucher/insert";
+export const ACCOUNT_VOUCHER_DELETE_URL = "Account/voucher/Delete";
+export const ACCOUNT_VOUCHER_GET_ALL_URL = "Account/voucher/GetAll";
+export const ACCOUNT_VOUCHER_GET_ONE_URL = "Account/voucher/GetOne";

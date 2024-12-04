@@ -27,6 +27,7 @@ import { PettyCashView } from '../../../../quantom_ui/account/processing/pettyCa
 import { Padding } from '@mui/icons-material';
 import { hover } from '@testing-library/user-event/dist/hover';
 import { isNullOrEmpty, safeParseToNumber } from '../../../../CommonMethods';
+import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/view/VoucherView';
 
 export const AppContainerTabHelper = () => {
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
@@ -306,6 +307,11 @@ export const AccountMenus:MenuInfoModel<any>[]=[
     MenuCode:"001-009",
     MenuCaption:"Petty Cash",
     GetComponent:(props?:MenuComponentProps<any>)=>(<PettyCashView {...props}/>)
+  },
+  {
+    MenuCode:"001-008",
+    MenuCaption:"Voucher",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<VoucherView {...props}/>)
   },
 ]
 
