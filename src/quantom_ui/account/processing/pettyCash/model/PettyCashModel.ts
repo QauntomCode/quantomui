@@ -1,8 +1,8 @@
 import { RegisterAccountModel } from "../../../config/registerAccount/model/registerAccountModel";
 
-export enum Paymentype {
-   Paid = "Paid",
-   Received = "Received"
+export enum PaymentType {
+   Paid,
+   Received
 }
 
 export class PettyCashModel {
@@ -16,7 +16,7 @@ export class PettyCashModel {
    TotalAmount?: number;
    CashAccount?: string;
    GlAccount?: string;
-   PayType?: Paymentype;
+   PayType?: PaymentType;
    FId?: string;
    VCode?: string;
    Location?: Location;

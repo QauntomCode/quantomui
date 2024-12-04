@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
-import {  Paymentype, PettyCashModel } from '../model/PettyCashModel'
-import { BasicKeysProps, MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import {  PaymentType, PettyCashModel } from '../model/PettyCashModel'
+import {  MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 import { PettyCashList } from './PettyCashList'
-import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/impl/registerAccountIml'
 import { PettyCashDelete, PettyCashGetOne,PettyCashInsert } from '../impl/PettyCashImp'
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
 import dayjs from 'dayjs'
 import { safeParseToNumber } from '../../../../../CommonMethods'
+import { RegisterAccountLOV } from '../../openingBalance/view/OpeningBalanceView'
 
 export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
 
@@ -45,7 +45,9 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
     }
 
     const getSelected=():CommonCodeName=>{
-       if(props?.state?.PayType=== Paymentype.Received){
+
+        // alert(Paymentype[props?.state?.PayType??Paymentype.Paid])
+       if( props?.state?.PayType===  PaymentType.Received){
         return {Code:receive,Name:receive}
        }
        else{
@@ -55,10 +57,10 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
 
     const setPayType=(type?:string):void=>{
       if(type=== receive){
-        props?.setState?.({...props?.state,PayType:Paymentype.Received})
+        props?.setState?.({...props?.state,PayType:PaymentType.Received})
       }
       else{
-        props?.setState?.({...props?.state,PayType:Paymentype.Paid})
+        props?.setState?.({...props?.state,PayType:PaymentType.Paid})
       }
    }
     
@@ -75,7 +77,7 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
       </Quantom_Grid>
 
       <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
-         <Quantom_LOV label='Type' getData={handlePayReceive} 
+         <Quantom_LOV label='Type' FillDtaMethod={handlePayReceive} 
                       selected={getSelected()} 
                       onChange={(sel)=>{setPayType(sel?.Code)}} />
       </Quantom_Grid>
@@ -108,18 +110,4 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
 
 
 
- interface RegisterAccountLOVProps{
- selected?:CommonCodeName;
- onChange?:(sel?:CommonCodeName)=>void;  
-}
-export const RegisterAccountLOV=(props?:RegisterAccountLOVProps)=>{
-   const handleRegisterAccount=async()=>{
-      let res= await RegisterAccountGetCodeName();
-      return Promise.resolve(res);
-   }
-   return(
-      <Quantom_LOV onChange={props?.onChange} 
-         selected={props?.selected} 
-         FillDtaMethod={handleRegisterAccount} label='GL Account' />
-   )
-}
+ 

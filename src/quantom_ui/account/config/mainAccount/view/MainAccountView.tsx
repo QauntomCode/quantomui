@@ -36,6 +36,7 @@ export const MainAccountView = (props?:MenuComponentProps<MainAccountModel>) => 
 export interface QuantomGridProps<T>{
    data?:T[];
    columns?:QuantomGridColumns[];
+   valueFormatter?: (params:any)=>void;
    height?:string;
    onViewButtonClick?:(lineData?:any)=>void;
 }
@@ -46,6 +47,7 @@ export interface QuantomGridColumns{
     width?:number;
     header?:string;
     dataType?:'string'|'date'|'number'
+    valueFormatter?: (params:any)=>any;
 }
 
 export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
@@ -66,8 +68,12 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                         maxWidth:item?.width,
                         cellStyle:{fontSize:'11px',fontFamily:'roboto'},
                         headerName:item?.header,
+                        
                     };
 
+            if(item?.valueFormatter){
+                obj.valueFormatter=item?.valueFormatter
+            }
            if(item?.dataType==='date'){
                obj.valueFormatter= (params:any) => {
                 const rawValue = params.value;

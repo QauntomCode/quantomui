@@ -53,7 +53,20 @@ export const PettyCashList = (props?:MenuComponentProps<PettyCashModel>) => {
       </Quantom_Grid>
       <QUANTOM_Table height='400px' columns={
         [
-          {field:"Code",width:350,header:'Code'},
+          {field:"Location.LocName",width:200,header:'Location'},
+          {field:"Code",width:120,header:'Code'},
+          {field:"Date",width:170,header:'Date',dataType:'date'},
+          {field:"PayType",width:80,header:'Type',valueFormatter:(data:any)=>{
+            if(data?.value===1){
+              return "Receive"
+            }
+            else return "Pay"
+          }
+          },
+          {field:"glAccountRegisterAccount.Name",width:300,header:'Name',},
+          {field:"TotalAmount",width:90,header:'Amount'},
+          {field:"Remarks",width:190,header:'Remarks'},
+
         ]} data={listData}
         onViewButtonClick={(data)=>{
             props?.setPrimaryKeyNo?.(data?.Code)
