@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
-import { change_form_state, ComponentSettings, open_new_menu, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
+import { change_form_state, ComponentSettings, open_new_menu, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method, set_locaitoin_init_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
 import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -26,6 +26,7 @@ import { LocationModel } from '../../../../quantom_ui/Settings/Location/Model/Lo
 import { Pettycashview } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
 import { Padding } from '@mui/icons-material';
 import { hover } from '@testing-library/user-event/dist/hover';
+import { isNullOrEmpty, safeParseToNumber } from '../../../../CommonMethods';
 
 export const AppContainerTabHelper = () => {
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
@@ -54,6 +55,7 @@ export interface MenuContainerProps<T>{
     setCompSettings?:(settings?:ComponentSettings)=>void;
     setListComponent?:(comp?:ReactNode)=>void;
     setPrimaryKeyNo?:(keyNo?:string)=>void;
+    setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
 }
 
 export interface BasicKeysProps{
@@ -76,6 +78,13 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
   const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
   const selLocaion= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
+
+  React.useEffect(()=>{
+    if(!isNullOrEmpty(selLocaion?.LocId)){
+      fullState?.LocationInitMethod?.(selLocaion);
+    }
+  },[selLocaion])
+
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
     if(fullState?.recordKeyNo)
@@ -124,6 +133,9 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
     store?.dispatch(set_component_settings({stateKey:props?.UniqueId,settings:settings}))
    }
 
+   nProps.setInitOnLocationChange=(method)=>{
+    store?.dispatch(set_locaitoin_init_method({stateKey:props?.UniqueId,method:method}))
+   }
    nProps.setPrimaryKeyNo=(keyNo?:string)=>{
       if(keyNo){
         store?.dispatch(set_component_record_key({stateKey:props?.UniqueId,keyNo:keyNo}));
@@ -146,10 +158,10 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
                return true;
            }
           }
-      return false;
+           return false;
         }
 
-  alert(selLocaion?.LocId)
+  // alert(selLocaion?.LocId)
   return(
     <div>
       <QUANTOM_Toast {...alertProps}/>
@@ -460,6 +472,7 @@ const QUANTOM_Toast=(props?:QUANTOM_ToastProps)=>{
       </Snackbar>
   )
 }
+
 
 
 

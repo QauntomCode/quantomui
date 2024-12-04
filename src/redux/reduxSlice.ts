@@ -35,6 +35,8 @@ export interface QuantomFormState<T>{
   SaveMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
   DeleteMethod?:(payload?:T)=>Promise<HttpResponse<T>>;
   GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
+  LocationInitMethod?:(location?:LocationModel)=>void;
+
   SetBasicKeysMethod?:()=>BasicKeysProps;
   compSettings?:ComponentSettings;
   listData?:unknown[];
@@ -72,6 +74,12 @@ export interface StateMethodPayloadType<T>{
    method?:(payLoad:T)=>Promise<HttpResponse<T>>;
    stateKey?:string;
 }
+
+export interface LocationChangeMethodPayload{
+  method?:(loc?:LocationModel)=>void;
+  stateKey?:string;
+}
+
 export interface StateMethodGetOnePayloadType<T>{
   method?:(keyNo?:string)=>Promise<HttpResponse<T>>;
   stateKey?:string;
@@ -138,6 +146,18 @@ interface KeyValues{
         const updatedFormsState = state.FormsState?.map(formState => 
           formState.stateKey === action.payload.stateKey 
               ? { ...formState, DeleteMethod:action?.payload?.method } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
+
+      set_locaitoin_init_method: (state,action:PayloadAction<LocationChangeMethodPayload>) => {
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, LocationInitMethod:action?.payload?.method } 
               : formState
       );
       return {
@@ -287,7 +307,8 @@ interface KeyValues{
     set_list_data,
     set_component_record_key,
     set_user_locations,
-    set_component_selected_locations
+    set_component_selected_locations,
+    set_locaitoin_init_method
   } = formsSlice.actions
 
   // const counterReducer = counterSlice.reducer //This is stored in the main store

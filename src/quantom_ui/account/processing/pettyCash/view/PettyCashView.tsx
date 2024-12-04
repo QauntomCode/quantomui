@@ -1,37 +1,107 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
-import {  PettyCashModel } from '../model/PettyCashModel'
+import {  Paymentype, PettyCashModel } from '../model/PettyCashModel'
 import { BasicKeysProps, MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 import { OpeningBalanceList } from './PettyCashList'
 import {  RegisterAccountGetCodeName } from '../../../config/registerAccount/impl/registerAccountIml'
-import { OpeningBalanceDelete, OpeningBalanceGetOne, OpeningBalanceInsert } from '../impl/PettyCashImp'
+import { PettyCashDelete, PettyCashGetOne,PettyCashInsert } from '../impl/PettyCashImp'
+import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
+import dayjs from 'dayjs'
+import { safeParseToNumber } from '../../../../../CommonMethods'
+import { Code } from '@mui/icons-material'
 
 export const Pettycashview = (props?:MenuComponentProps<PettyCashModel>) => {
 
 
     React.useEffect(()=>{
-     props?.setSaveMethod?.((payload)=>OpeningBalanceInsert(payload))
-     props?.setDeleteMethod?.((payload)=>OpeningBalanceDelete(payload))
+     props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,LocId:loc?.LocId,Date:new Date()})))
+     props?.setSaveMethod?.((payload)=>PettyCashInsert(payload))
+     props?.setDeleteMethod?.((payload)=>PettyCashDelete(payload))
      props?.setListComponent?.((<OpeningBalanceList {...props}/>))
-     props?.setGetOneMethod?.((payload)=>OpeningBalanceGetOne(payload))
+     props?.setGetOneMethod?.((payload)=>PettyCashGetOne(payload))
      props?.setCompSettings?.({willShowLocations:true})
-    },[])
+    },[]);
 
+    const pay='Pay';
+    const receive='Receive'
+
+    const handlePayReceive=()=>{
+      let obj:CommonCodeName[]=[
+        {
+          Code:pay,
+          Name:pay  
+        },
+        {
+          Code:receive,
+          Name:receive
+        }
+      ]
+
+      return Promise.resolve(obj);
+    }
+
+    const getSelected=():CommonCodeName=>{
+       if(props?.state?.PayType=== Paymentype.Received){
+        return {Code:receive,Name:receive}
+       }
+       else{
+        return {Code:pay,Name:pay}
+       }
+    }
+
+    const setPayType=(type?:string):void=>{
+      if(type=== receive){
+        props?.setState?.({...props?.state,PayType:Paymentype.Received})
+      }
+      else{
+        props?.setState?.({...props?.state,PayType:Paymentype.Paid})
+      }
+   }
     
   return (
     <>
-      <Quantom_Grid container>
-
-        {/* <RegisterAccountLOV onChange={(sel)=>{
-            props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
-            } 
-            selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/>  */}
-        
+      <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+         <Quantom_Input label="Code" value={props?.state?.Code} disabled/>
       </Quantom_Grid>
+      <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+         <QUANTOM_Date 
+              value={dayjs( props?.state?.Date)} 
+              onChange={(val)=>props?.setState?.({...props?.state,Date:val?.toDate()})} 
+              label='Date' />
+      </Quantom_Grid>
+
+      <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+         <Quantom_LOV label='Type' getData={handlePayReceive} 
+                      selected={getSelected()} 
+                      onChange={(sel)=>{setPayType(sel?.Code)}} />
+      </Quantom_Grid>
+
+      <Quantom_Grid container xs={12} md={8} lg={6} xl={4}>
+         <RegisterAccountLOV 
+                
+                selected={{Code:props?.state?.GlAccount,Name:props?.state?.GlAccountRegisterAccount?.Name}}  
+                onChange={(selected)=>{
+                     props?.setState?.({...props?.state,GlAccount:selected?.Code,GlAccountRegisterAccount:selected})
+                }}
+          />
+        </Quantom_Grid>
+        <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+            <Quantom_Input label="Amount" value={props?.state?.TotalAmount} 
+                    onChange={(val)=>props?.setState?.({...props?.state,TotalAmount:safeParseToNumber(val.target?.value)})}/>
+        </Quantom_Grid>
+
+        <Quantom_Grid container xs={12} md={8} lg={6} xl={4}>
+            <Quantom_Input label="Remarks" 
+                  value={props?.state?.Remarks} 
+                  onChange={(e)=>{props?.setState?.({...props?.state,Remarks:e.target.value})}}/>
+         
+        </Quantom_Grid>
+      
+
     </>
   )
 }
@@ -50,6 +120,6 @@ export const RegisterAccountLOV=(props?:RegisterAccountLOVProps)=>{
    return(
       <Quantom_LOV onChange={props?.onChange} 
          selected={props?.selected} 
-         FillDtaMethod={handleRegisterAccount} label='Sub Sub Account' />
+         FillDtaMethod={handleRegisterAccount} label='GL Account' />
    )
 }

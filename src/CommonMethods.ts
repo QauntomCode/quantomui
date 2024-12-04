@@ -7,3 +7,6 @@ export const safeParseToNumber=(value: any): number=> {
     const parsed = parseFloat(value);
     return isNaN(parsed)||parsed===0 ? 0 : parsed;
 }
+export function isNullOrEmpty(value: string | null | undefined): boolean {
+  return value === null || value === undefined || value.trim() === "";
+}
