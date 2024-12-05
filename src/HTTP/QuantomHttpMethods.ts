@@ -19,6 +19,7 @@ export const QuantomGET=async<T>(url: string, isUseToke?: boolean): Promise<Http
         {
           
             const baseUrl= "https://localhost:44342/api/";
+
             //this._token= await this.getToken();
             // console.log(this._token);
             let fullUrl = baseUrl + url;
