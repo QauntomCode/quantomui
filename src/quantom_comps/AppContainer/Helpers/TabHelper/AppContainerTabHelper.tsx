@@ -59,7 +59,7 @@ export interface MenuContainerProps<T>{
     setPrimaryKeyNo?:(keyNo?:string)=>void;
     setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
     setAfterResetMethod?:(method?:(loc?:LocationModel)=>void)=>void;
-
+    errorToast?:(message?:string)=>void;
 }
 
 export interface BasicKeysProps{
@@ -154,7 +154,9 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
    nProps.setListComponent=(comp)=>{
       setListComp(comp);
    }
-
+   nProps.errorToast=(message)=>{
+    setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'error'})
+   }
 
   
 
@@ -178,7 +180,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <UserLocationsModalComp open={willShowLocation()} basProps={{...nProps}}/>
     {
       settings?.wWillHideToolbar?(<></>):(
-       <QuantomToolBarComp showToast={(message)=>{setAlertProps({...alertProps,number:(alertProps?.number??0)+1,message:message})}} baseProps={{...nProps}}/>
+       <QuantomToolBarComp showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
       )
     }
       
@@ -215,19 +217,19 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
 
     return(
       <>
-        <Dialog open={props?.open??false}>
+        <Dialog fullWidth open={props?.open??false}>
           <DialogContent>
              {
               locs?.map((x,index)=>
                 (
-                 <Quantom_Grid container component={Paper}  sx={{fontFamily:font.HeaderFont,fontSiz:font.HeaderFont,marginTop:'5px',hover:{
+                 <Quantom_Grid container component={Paper}  sx={{fontFamily:font.HeaderFont,fontSiz:font.H3FontSize,marginTop:'5px',hover:{
                    cursor:'pointer'
                  }}}>
-                  <div onClick={()=>{
+                  <Box onClick={()=>{
                      store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:x}));
-                  }} style={{width:'100%',height:'100%'}}>
+                  }} sx={{width:'100%',height:'100%',fontSize:font.H4FontSize,fontFamily:font.RegularFont,marginLeft:'10px',paddingTop:'5px',paddingBottom:'5px'}}>
                     {x?.LocName}
-                  </div>
+                  </Box>
                   
                   </Quantom_Grid>
                 )
@@ -473,6 +475,7 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
 interface QUANTOM_ToastProps{
   number?:number;
   message?:string;
+  severity?: 'success'|'error';
 }
 const QUANTOM_Toast=(props?:QUANTOM_ToastProps)=>{
   const[open,setOpen]=React.useState(false);
@@ -496,8 +499,9 @@ const QUANTOM_Toast=(props?:QUANTOM_ToastProps)=>{
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }} // Adjust position
       >
         <Alert 
-         sx={{ backgroundColor: theme?.palette?.primary?.light}}
-        onClose={handleClose} severity="success" variant="filled" >
+         
+         sx={{ backgroundColor: (props?.severity??'success')==='success'?(theme?.palette?.primary?.light):(theme?.palette?.error?.main)}}
+        onClose={handleClose} severity={props?.severity??'success'} variant="filled" >
           {props?.message}
         </Alert>
       </Snackbar>

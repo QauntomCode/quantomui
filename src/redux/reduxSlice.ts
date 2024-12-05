@@ -106,7 +106,8 @@ interface KeyValues{
       H1FontSize:'20px',
       H2FontSize:'18px',
       H3FontSize:'16px',
-      RegularFont:'roboto',
+      H4FontSize:'10px',
+      RegularFont:'ubuntu',
       HeaderFont:'Oswald',
       RegularFontSize:'14px'
     },
