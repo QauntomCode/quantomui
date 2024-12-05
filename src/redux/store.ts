@@ -80,7 +80,7 @@ export const useQuantomFonts=(state?:RootState):FontSettings=>{
         H3FontSize:'16px',
         H4FontSize:'13px',
         RegularFont:'roboto',
-        HeaderFont:'Oswald',
+        HeaderFont:'kanit',
         RegularFontSize:'12px'
       }
 

@@ -3,7 +3,7 @@
 import React from 'react'
 import {  MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
-import { PettyCashList } from './PettyCashList'
+
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
 import dayjs from 'dayjs'
 import { safeParseToNumber } from '../../../../../CommonMethods'
@@ -11,10 +11,11 @@ import { RegisterAccountLOV } from '../../openingBalance/view/OpeningBalanceView
 import { VMVoucherModel } from '../model/VmVoucherModel'
 import { VoucherDelete, VoucherGetOne, VoucherInsert } from '../impl/vouchreImpl'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Box, Button, IconButton, Paper } from '@mui/material'
+import { Box, Button, Paper } from '@mui/material'
 import { VoucherDetailModel } from '../model/VoucherDetailModel'
 import { useQuantomFonts } from '../../../../../redux/store'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import { VoucherList } from './VoucherList'
 
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
@@ -25,7 +26,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
      props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,LocId:loc?.LocId,VDate:new Date()}})))
      props?.setSaveMethod?.((payload)=>VoucherInsert(payload))
      props?.setDeleteMethod?.((payload)=>VoucherDelete(payload))
-     props?.setListComponent?.((<PettyCashList {...props}/>))
+     props?.setListComponent?.((<VoucherList {...props}/>))
      props?.setGetOneMethod?.((payload)=>VoucherGetOne(payload))
      props?.setCompSettings?.({willShowLocations:true})
     },[]);
@@ -34,7 +35,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
 
     const totalDebit= parseFloat( props?.state?.details?.reduce((sum,cur)=>sum+parseFloat(cur?.Debit?.toString()??"0"),0).toString()??"0");
     const totalCredit= parseFloat(props?.state?.details?.reduce((sum,cur)=>sum+safeParseToNumber(cur?.Credit?.toString()??"0"),0).toString()??"0");
-    
+    const vDetailRef= React.useRef<any>(null);
   return (
     <>
       <Quantom_Grid container  spacing={.5}>
@@ -65,14 +66,14 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
                   value={props?.state?.voucher?.VRemarks} 
                   onChange={(e)=>{props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VRemarks:e.target.value}})}}/>
          
-        </Quantom_Grid>
+          </Quantom_Grid>
         </Quantom_Grid>
         
 
         <Quantom_Grid container sx={{marginTop:'10px'}} display='flex' justifyContent='center' alignItems='center'   spacing={.5}>
            <Quantom_Grid item xs={lineSize.GL_ACCOUNT_SIZE}>
-               <RegisterAccountLOV  selected={{ Code:vDetail?.registerAccount?.Code,Name:vDetail?.registerAccount?.Name}}
-                          onChange={(selected)=>{setVDetail({...vDetail,registerAccount:selected})}}/>
+               <RegisterAccountLOV  ref={vDetailRef} selected={{ Code:vDetail?.registerAccount?.Code,Name:vDetail?.registerAccount?.Name}}
+                          onChange={(selected)=>{setVDetail({...vDetail,Code:selected?.Code,registerAccount:selected})}}/>
            </Quantom_Grid>
            <Quantom_Grid item xs={lineSize.NARRATION_SIZE}>
                <Quantom_Input label='Narration' value={vDetail?.Remarks} onChange={(e)=>{setVDetail({...vDetail,Remarks:e.target.value})}}/>
@@ -88,12 +89,18 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
              <Button onClick={()=>{
                 if(!vDetail?.registerAccount?.Code){
                   props?.errorToast?.('Select GlAccount first')
+                  return;
                 }
                 if(!vDetail?.Debit && !vDetail?.Credit){
                   props?.errorToast?.('Enter Debit or Credit')
+                  return;
                 }
                 props?.setState?.({...props?.state, details:[...props?.state?.details??[],{...vDetail,registerAccount:{...vDetail?.registerAccount}}]})
                 setVDetail({});
+                if(vDetailRef?.current){
+                  alert('have current ref')
+                }
+                vDetailRef?.current?.focus();
              }} sx={{marginTop:'10px'}} fullWidth size='small' variant='contained'>
                 <AddCircleIcon fontSize='medium'/>
              </Button>

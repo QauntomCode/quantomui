@@ -40,10 +40,11 @@ export const QUANTOM_Date =<TDate extends PickerValidDate, TEnableAccessibleFiel
 
 
 const intputSx={ marginTop:'10px','& .MuiInputLabel-root': {
-    fontSize: '16px',
+    fontSize: '13px',
     fontWeight:'900',
     fontFamily:'Oswald'
   }, '& .MuiInputBase-input': {
     fontFamily:'Ubuntu',
+    fontWeight:500,
     fontSize: '9.5px', // Change this value to adjust the input font size
   }}

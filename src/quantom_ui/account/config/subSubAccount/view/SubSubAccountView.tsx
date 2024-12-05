@@ -32,24 +32,39 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
     
   return (
     <>
-      <Quantom_Grid container>
-         <Quantom_Grid container>
-            <Quantom_Input disabled label='Main Account' value={props?.state?.subAccount?.mainAccount?.Name} />
+      
+         <Quantom_Grid container  spacing={.5}>
+               <Quantom_Grid item md={2}>
+                  <Quantom_Input disabled label='Main Code' value={props?.state?.subAccount?.mainAccount?.Code} />
+               </Quantom_Grid> 
+               <Quantom_Grid item md={4.5}>
+                  <Quantom_Input disabled label='Main Name' value={props?.state?.subAccount?.mainAccount?.Name} />
+               </Quantom_Grid>
          </Quantom_Grid>
-        <Quantom_LOV onChange={async(selected)=>{
-                let res= await SubAccountGetOne(selected?.Code);
-                props?.setState?.({...props?.state,subAccount:{...res?.Response},SubCode:selected?.Code})
-                console.log('state of sub account is ',props?.state)
-        }} selected={{Code:props?.state?.subAccount?.Code,Name:props?.state?.subAccount?.Name}} FillDtaMethod={handleSubAccounts} label='Sub Account'></Quantom_LOV>
-      </Quantom_Grid>
-      <Quantom_Grid container spacing={.5}>
-         <Quantom_Grid item xs={4} md={3} lg={2}>
-            <Quantom_Input disabled label='Code' value={props?.state?.Code} />
+
+         <Quantom_Grid container  spacing={.5}>
+               <Quantom_Grid item md={2}>
+                  <Quantom_Input disabled label='Sub Code' value={props?.state?.subAccount?.Code} />
+               </Quantom_Grid> 
+               <Quantom_Grid item md={4.5}>
+                     <Quantom_LOV onChange={async(selected)=>{
+                           let res= await SubAccountGetOne(selected?.Code);
+                           props?.setState?.({...props?.state,subAccount:{...res?.Response},SubCode:selected?.Code})
+                           console.log('state of sub account is ',props?.state)
+                  }} selected={{Code:props?.state?.subAccount?.Code,Name:props?.state?.subAccount?.Name}} FillDtaMethod={handleSubAccounts} label='Sub Account'/>
+               </Quantom_Grid>
          </Quantom_Grid>
-         <Quantom_Grid item xs={8} md={9} lg={10}>
-            <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
+
+         <Quantom_Grid container  spacing={.5}>
+               <Quantom_Grid item md={2}>
+                  <Quantom_Input disabled label='Code' value={props?.state?.Code} />
+               </Quantom_Grid>
+               <Quantom_Grid item md={4.5}>
+                  <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
+               </Quantom_Grid>
          </Quantom_Grid>
-      </Quantom_Grid>
+          
+      
     </>
   )
 }

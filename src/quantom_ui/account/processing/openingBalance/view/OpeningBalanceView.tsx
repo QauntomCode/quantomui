@@ -82,14 +82,21 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
  interface RegisterAccountLOVProps{
  selected?:CommonCodeName;
  onChange?:(sel?:CommonCodeName)=>void;  
+ ref?: React.Ref<any>;
 }
 export const RegisterAccountLOV=(props?:RegisterAccountLOVProps)=>{
-   const handleRegisterAccount=async()=>{
+   React.useEffect(()=>{
+      if(props?.ref){
+        alert('ref is')
+      }
+   },[]) 
+  const handleRegisterAccount=async()=>{
       let res= await RegisterAccountGetCodeName();
       return Promise.resolve(res);
    }
    return(
       <Quantom_LOV onChange={props?.onChange} 
+         ref={props?.ref}
          selected={props?.selected} 
          FillDtaMethod={handleRegisterAccount} label='GL Account' />
    )

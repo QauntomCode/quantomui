@@ -10,15 +10,12 @@ import { QUANTOM_Table } from '../../../config/mainAccount/view/MainAccountView'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
 import dayjs from 'dayjs'
-import { Box,  Paper } from '@mui/material'
-import { useTheme } from "@mui/material/styles";
-import SearchButtonIcon from '@mui/icons-material/FindInPageOutlined';
 import { VMVoucherModel } from '../model/VmVoucherModel'
 import { VoucherGetAll } from '../impl/vouchreImpl'
 import { QuantomListSearchButton } from '../../pettyCash/view/PettyCashList'
 
 
-export const PettyCashList = (props?:MenuComponentProps<VMVoucherModel>) => {
+export const VoucherList = (props?:MenuComponentProps<VMVoucherModel>) => {
   const location= useSelector((state:any)=>get_component_selected_locations(state,props?.UniqueId??""));
   const listData= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""))?.listData
   const[fromDate,setFromDate]=React.useState(new Date())
@@ -55,23 +52,18 @@ export const PettyCashList = (props?:MenuComponentProps<VMVoucherModel>) => {
       </Quantom_Grid>
       <QUANTOM_Table height='400px' columns={
         [
-          {field:"Location.LocName",width:200,header:'Location'},
-          {field:"Code",width:120,header:'Code'},
-          {field:"Date",width:170,header:'Date',dataType:'date'},
-          {field:"PayType",width:80,header:'Type',valueFormatter:(data:any)=>{
-            if(data?.value===1){
-              return "Receive"
-            }
-            else return "Pay"
-          }
-          },
-          {field:"glAccountRegisterAccount.Name",width:300,header:'Name',},
-          {field:"TotalAmount",width:90,header:'Amount'},
-          {field:"Remarks",width:190,header:'Remarks'},
+          {field:"VCode",width:200,header:'VCode'},
+          {field:"VDate",width:130,header:'VDate', dataType:'date'},
+          {field:"VType",width:300,header:'VType', },
+          {field:"EffectedHeads",width:400,header:'Account Heads', },
+          {field:"VRemarks",width:300,header:'Remarks', },
+          {field:"FormName",width:150,header:'FormName', },
+
+          
 
         ]} data={listData}
         onViewButtonClick={(data)=>{
-            props?.setPrimaryKeyNo?.(data?.Code)
+            props?.setPrimaryKeyNo?.(data?.VCode)
         }}/>
     </>
   )

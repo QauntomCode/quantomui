@@ -7,6 +7,7 @@ import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 // import Grid2 from '@mui/material/Unstable_Grid2';
 import { Variant } from '@testing-library/react';
 import React from 'react';
+import { useQuantomFonts } from '../redux/store';
 
 
 
@@ -46,6 +47,8 @@ export const Quantom_Input=(props: {
      return "";
 
   }
+
+  const font= useQuantomFonts();
   return(
     <TextField
           component={Paper}
@@ -53,14 +56,15 @@ export const Quantom_Input=(props: {
           disabled={props?.disabled}
           sx={
             { marginTop:'10px','& .MuiInputLabel-root': {
-            fontSize: '13px',
-            fontWeight:'900',
-            fontFamily:'Oswald'
+            fontSize: font.H3FontSize,
+            fontWeight:'700',
+            fontFamily:font.HeaderFont,
+            letterSpacing:1.1
           }, 
           '& .MuiInputBase-input': {
             fontFamily:'Ubuntu',
             fontWeight:'700',       
-            fontSize: '9.5px', // Change this value to adjust the input font size
+            fontSize: '11px', // Change this value to adjust the input font size
             Height:'2px',
           }
          

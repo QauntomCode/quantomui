@@ -128,18 +128,8 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                     //   }}
                 />
         </div>
+
         </Quantom_Grid>
     )
 }
 
-
-
-const ViewButton=(props?:any)=>{
-    return(
-        <div onClick={()=>{
-            console.log(props.data)
-        }} style={{display:'flex',justifyContent:'center'}}>
-            <ViewButtonIcon fontSize='small'/>
-        </div>
-    )
-}

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React, { useRef } from 'react'
+import React, { useImperativeHandle, useRef } from 'react'
 import { Quantom_Grid, Quantom_Input } from './base_comps'
 import {  Dialog, DialogContent,Grid, Paper } from '@mui/material'
 
@@ -19,6 +19,7 @@ export interface Quantom_LOV_PROPS{
   onChange?:(obj?:CommonCodeName)=>void;
   FillDtaMethod?:()=>Promise<CommonCodeName[]>
   selectedIndex?:number;
+  ref?: React.Ref<any>;
 }
 
 export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
@@ -36,6 +37,8 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
     const gridRowsRef= useRef<any[]>([]);
 
     const inputRef = useRef<any>(null);
+
+    useImperativeHandle(props?.ref, () => inputRef.current);
 
     React.useEffect(()=>{
       // handleValues();
