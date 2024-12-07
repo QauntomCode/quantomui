@@ -34,7 +34,9 @@ const QuantomTheme = createTheme({
         light:'rgba(22, 66, 60, .6)'
       },
       secondary: {
-        main:  "#6A9C89",
+        main:  "#8c9c94",
+        contrastText:'#4d524f',
+        light:'#baccc3'
       },
       background: {
         default: "#E9EFEC",

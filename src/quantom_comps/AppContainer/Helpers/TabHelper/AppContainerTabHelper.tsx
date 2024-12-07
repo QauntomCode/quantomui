@@ -28,6 +28,7 @@ import { Padding } from '@mui/icons-material';
 import { hover } from '@testing-library/user-event/dist/hover';
 import { isNullOrEmpty, safeParseToNumber } from '../../../../CommonMethods';
 import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/view/VoucherView';
+import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/LedgerView'
 
 export const AppContainerTabHelper = () => {
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
@@ -314,6 +315,11 @@ export const AccountMenus:MenuInfoModel<any>[]=[
     MenuCode:"001-008",
     MenuCaption:"Voucher",
     GetComponent:(props?:MenuComponentProps<any>)=>(<VoucherView {...props}/>)
+  },
+  {
+    MenuCode:"002-001",
+    MenuCaption:"General Ledger",
+    GetComponent:(props?:MenuContainerProps<any>)=>(<LedgerView {...props}/>)
   },
 ]
 
