@@ -396,20 +396,19 @@ interface QuantomToolBarCompProps<T>{
 
 export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const state = useSelector((state:any)=>full_component_state<T>(state,props?.baseProps?.UniqueId||""));
-  
+  const ResetState=()=>{
+    let resetState:any= {};
+    if(!state?.AfterReset){
+      props?.baseProps?.setState?.(resetState);
+    }
+    else{
+      state?.AfterReset?.(state?.Location);
+    }
+  }
   return(
   <Quantom_Grid container sx={{display:'flex'}}>
           <ToolBarButton Label='New' onClick={()=>{
-            let resetState:any= {};
-             props?.baseProps?.setState?.(resetState);
-             setTimeout(() => {
-              state?.AfterReset?.(state?.Location);
-               setTimeout(() => {
-                  console.log(state?.QuantomFormCoreState)
-               }, (500));
-             }, 100);
-             
-             
+            ResetState();
           }}>
              <NewButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
           </ToolBarButton>
@@ -435,11 +434,13 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
              <SaveButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
           </ToolBarButton>
           <ToolBarButton onClick={()=>{
-            let resetState:any= {};
-             props?.baseProps?.setState?.(resetState);
-             setTimeout(() => {
-              state?.AfterReset?.(state?.Location)
-             }, 100);
+            // let resetState:any= {};
+            //  props?.baseProps?.setState?.(resetState);
+            //  setTimeout(() => {
+            //   state?.AfterReset?.(state?.Location)
+            //  }, 100);
+
+            ResetState();
           }} Label='Cancel'>
              <CancelButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}/>
           </ToolBarButton>

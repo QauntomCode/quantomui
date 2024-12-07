@@ -22,8 +22,8 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
 
 
     React.useEffect(()=>{
-     props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,LocId:loc?.LocId,VDate:new Date()}})))
-     props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,LocId:loc?.LocId,VDate:new Date()}})))
+     props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
+     props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
      props?.setSaveMethod?.((payload)=>VoucherInsert(payload))
      props?.setDeleteMethod?.((payload)=>VoucherDelete(payload))
      props?.setListComponent?.((<VoucherList {...props}/>))
