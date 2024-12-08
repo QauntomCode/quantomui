@@ -12,6 +12,7 @@ import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Dat
 import dayjs from 'dayjs'
 import { safeParseToNumber } from '../../../../../CommonMethods'
 import { RegisterAccountLOV } from '../../openingBalance/view/OpeningBalanceView'
+import { GroupContainer } from '../../voucher/view/VoucherView'
 
 export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
 
@@ -66,6 +67,7 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
     
   return (
     <>
+    <GroupContainer Label='Petty Cash Info'>
       <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
          <Quantom_Input label="Code" value={props?.state?.Code} disabled/>
       </Quantom_Grid>
@@ -102,7 +104,7 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
                   onChange={(e)=>{props?.setState?.({...props?.state,Remarks:e.target.value})}}/>
          
         </Quantom_Grid>
-      
+        </GroupContainer>
 
     </>
   )

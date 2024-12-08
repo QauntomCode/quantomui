@@ -9,6 +9,7 @@ import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_c
 import { RegisterAccountDelete, RegisterAccountGetOne, RegisterAccountInsert } from '../impl/registerAccountIml'
 import { RegisterAccountList } from './RegisterAccountList'
 import { SubSubAccountGetAll, SubSubAccountGetOne } from '../../subSubAccount/impl/subSubAccountImpl'
+import { GroupContainer } from '../../../processing/voucher/view/VoucherView'
 
 export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountModel>) => {
 
@@ -32,6 +33,7 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
     
   return (
     <>
+        <GroupContainer Label='Group Info'>
          <Quantom_Grid container spacing={.5}>
             <Quantom_Grid item xs={4} md={3} lg={2}>
                <Quantom_Input disabled label='Main Code' value={props?.state?.subSubAccount?.subAccount?.mainAccount?.Code} />
@@ -65,6 +67,9 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
             
          {/* </Quantom_LOV> */}
       </Quantom_Grid>
+      </GroupContainer>
+
+      <GroupContainer Label='GL Account Info'>
       <Quantom_Grid container spacing={.5}>
          <Quantom_Grid item xs={4} md={3} lg={2}>
             <Quantom_Input disabled label='Code' value={props?.state?.Code} />
@@ -73,6 +78,7 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
             <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
          </Quantom_Grid>
       </Quantom_Grid>
+      </GroupContainer>
     </>
   )
 }

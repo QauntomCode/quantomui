@@ -9,6 +9,7 @@ import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 import { SubAccountDelete, SubAccountGetOne, SubAccountInsert } from '../impl/subAccountImpl'
 import { SubAccountList } from './SubAccountList'
+import { GroupContainer } from '../../../processing/voucher/view/VoucherView'
 
 export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
 
@@ -32,6 +33,7 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
     
   return (
     <>
+     <GroupContainer Label='Sub Account Detail'>
       <Quantom_Grid container>
         <Quantom_LOV onChange={(selected)=>{
                 props?.setState?.({...props?.state,mainAccount:{Code:selected?.Code,Name:selected?.Name},MainCode:selected?.Code})
@@ -46,6 +48,7 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
             <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
          </Quantom_Grid>
       </Quantom_Grid>
+      </GroupContainer>
     </>
   )
 }

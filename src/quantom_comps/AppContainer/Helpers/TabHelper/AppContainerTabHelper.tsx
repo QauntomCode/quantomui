@@ -24,11 +24,11 @@ import { OpeningBalanceView } from '../../../../quantom_ui/account/processing/op
 import { GetLocationsByUserId } from '../../../../quantom_ui/Settings/Location/impl/LocationImpl';
 import { LocationModel } from '../../../../quantom_ui/Settings/Location/Model/LocationModel';
 import { PettyCashView } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
-import { Padding } from '@mui/icons-material';
-import { hover } from '@testing-library/user-event/dist/hover';
-import { isNullOrEmpty, safeParseToNumber } from '../../../../CommonMethods';
+import { isNullOrEmpty } from '../../../../CommonMethods';
 import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/view/VoucherView';
 import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/LedgerView'
+import * as Icons from '@mui/icons-material';
+import { hover } from '@testing-library/user-event/dist/hover';
 
 export const AppContainerTabHelper = () => {
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
@@ -184,10 +184,11 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
        <QuantomToolBarComp showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
       )
     }
-      
+      <div style={{paddingLeft:'10px',paddingRight:'10px'}}>
       {
         fullState?.FormState==='LIST'?listComp:selectedComponent
       }
+      </div>
       
     </div>
   )
@@ -242,28 +243,51 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
     )
 }
 
+
+export interface IconByNameProps{
+  iconName?:string;
+  color?:string;
+  fontSize?:string;
+}
+
+export const IconByName = (props?:IconByNameProps) => {
+  // const theme= useTheme();
+  const IconComponent = Icons[props?.iconName as keyof typeof Icons];
+  return IconComponent ? <IconComponent  sx={{color:props?.color,fontSize:props?.fontSize}} /> : <></>;
+};
+
 export interface ToolBarButtonProps{
   Label?:string;
   children?:ReactNode;
   onClick?:()=>void;
+  iconName?:string;
 }
 export const ToolBarButton=(props?:ToolBarButtonProps)=>{
   const theme= useTheme();
   const font= useQuantomFonts();
   return(
-    <Box onClick={props?.onClick} component={Paper} sx={{
-      width:'50px',backgroundColor:theme?.palette?.primary?.light,alignItems:'center',justifyContent:'center',paddingTop:'5px',paddingBottom:'5px',
-      marginRight:'5px',
-      ":hover":{
-      backgroundColor:theme?.palette?.primary?.main,
-      cursor:'pointer'
-    }}}>
-       <Quantom_Grid container sx={{justifyContent:'center',display:'flex'}}>
-          {props?.children}
-       </Quantom_Grid>
-       <Quantom_Grid container style={{color:QuantomColors?.SelectedElementTextColor,fontFamily:font?.HeaderFont,fontSize:font?.H4FontSize,justifyContent:'center',display:'flex'}}>
-         {props?.Label}
-       </Quantom_Grid>
+    <Box display='flex' justifyContent='center' 
+       onClick={props?.onClick} sx={{hover:{backgroundColor:theme.palette.secondary.main}}}
+      style={{
+              fontFamily:font.HeaderFont,fontWeight:600,
+              fontSize:'12px',marginRight:'2px',borderRadius:'4px',
+              lineHeight:'20px',
+              marginTop:'3px',
+              marginBottom:'3px',
+              width:'78px',border:`1px solid black`,
+              backgroundColor:theme.palette.secondary.light,
+              alignItems:'center',
+               display:'flex',
+              cursor:'pointer',
+              
+
+              }}>
+               <div style={{display:'flex',marginLeft:'5px'}}>
+                <IconByName iconName={props?.iconName??""} fontSize='16px' color={theme.palette.secondary.contrastText} />
+              </div>
+            <div style={{display:'flex',flex:1,justifyContent:'center',alignItems:'center'}}>
+              {props?.Label} 
+            </div>
     </Box>
   )
 }
@@ -402,6 +426,7 @@ interface QuantomToolBarCompProps<T>{
 
 export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const state = useSelector((state:any)=>full_component_state<T>(state,props?.baseProps?.UniqueId||""));
+  const theme= useTheme()
   const ResetState=()=>{
     let resetState:any= {};
     if(!state?.AfterReset){
@@ -412,67 +437,70 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
     }
   }
   return(
-  <Quantom_Grid container sx={{display:'flex'}}>
-          <ToolBarButton Label='New' onClick={()=>{
-            ResetState();
-          }}>
-             <NewButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
-          </ToolBarButton>
-          {/* <ToolBarButton Label='Edit'>
-             <NewButtonIcon fontSize='large' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
-          </ToolBarButton> */}
-          <ToolBarButton Label='Save' onClick={()=>{
-              console.warn('state is',state?.QuantomFormCoreState)
-            //  return;
-             state?.SaveMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
-               if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                 let res:any= x?.Response??{};
-                   props?.baseProps?.setState?.({...res})
-                   props?.showToast?.('Saved Successfully')
-                  
-               }
-               else{
-                 console.error('some thing invalid happen')
-               }
-             });
-             
-          }}>
-             <SaveButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
-          </ToolBarButton>
-          <ToolBarButton onClick={()=>{
-            // let resetState:any= {};
-            //  props?.baseProps?.setState?.(resetState);
-            //  setTimeout(() => {
-            //   state?.AfterReset?.(state?.Location)
-            //  }, 100);
-
-            ResetState();
-          }} Label='Cancel'>
-             <CancelButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}/>
-          </ToolBarButton>
-          <ToolBarButton onClick={()=>{
-             state?.DeleteMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
-              if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-               
-                props?.showToast?.('Deleted Successfully')
+  <Quantom_Grid component={Paper} container sx={{display:'flex',backgroundColor:theme.palette?.secondary?.light,paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
+          <Quantom_Grid container={Paper} sx={{marginRight:'4px'}}>
+             <input type='text' style={{borderRadius:'5px',border:`.5px solid ${theme.palette.secondary.main}`}}></input>
+          </Quantom_Grid>
+              <Quantom_Grid container={Paper} sx={{backgroundColor:theme.palette.secondary.main,paddingLeft:'4px',paddingRight:'2px',
+                color:theme?.palette?.secondary.contrastText
+              }}>
+              <ToolBarButton iconName='InsertDriveFileTwoTone' Label='New' onClick={()=>{
+                ResetState();
+              }}>
+                <NewButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
+              </ToolBarButton>
+              
+              <ToolBarButton iconName='SaveTwoTone' Label='Save' onClick={()=>{
+                  console.warn('state is',state?.QuantomFormCoreState)
+                //  return;
+                state?.SaveMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
+                  if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+                    let res:any= x?.Response??{};
+                      props?.baseProps?.setState?.({...res})
+                      props?.showToast?.('Saved Successfully')
+                      
+                  }
+                  else{
+                    console.error('some thing invalid happen')
+                  }
+                });
                 
-                //alert('deleted success fully')
-                //let res:any= x?.Response??{};
-                  //props?.setState?.({...res})
+              }}>
+              </ToolBarButton>
+
+              
+              <ToolBarButton onClick={()=>{
+                ResetState();
+              }} iconName='CancelPresentationTwoTone' Label='Cancel'>
+                <CancelButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}/>
+              </ToolBarButton>
+              <ToolBarButton onClick={()=>{
+                state?.DeleteMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
+                  if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
                   
-              }
-              else{
-                console.error('some thing invalid happen')
-              }
-            });
-          }} Label='Delete'>
-             <DeleteButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
-          </ToolBarButton>
-          <ToolBarButton onClick={()=>{
-              store?.dispatch(change_form_state({stateKey:props?.baseProps?.UniqueId??"",FormState:state?.FormState==='LIST'?'FORM':'LIST'}))
-          }} Label={state?.FormState==='LIST'?'Form':'LIST'}>
-             <SearchButtonIcon  fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
-          </ToolBarButton>
+                    props?.showToast?.('Deleted Successfully')
+                    
+                    //alert('deleted success fully')
+                    //let res:any= x?.Response??{};
+                      //props?.setState?.({...res})
+                      
+                  }
+                  else{
+                    console.error('some thing invalid happen')
+                  }
+                });
+              }} iconName='DeleteTwoTone' Label='Delete'>
+                <DeleteButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
+              </ToolBarButton>
+              <ToolBarButton onClick={()=>{
+                  store?.dispatch(change_form_state({stateKey:props?.baseProps?.UniqueId??"",FormState:state?.FormState==='LIST'?'FORM':'LIST'}))
+              }} 
+              Label={state?.FormState==='LIST'?'Form':'LIST'}
+              iconName={state?.FormState==='LIST'?'DesktopWindowsTwoTone':'DvrTwoTone'}
+              >
+                <SearchButtonIcon  fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
+              </ToolBarButton>
+          </Quantom_Grid>
        </Quantom_Grid>
   )
 }

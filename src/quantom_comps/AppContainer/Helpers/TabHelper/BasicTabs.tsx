@@ -15,7 +15,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
     setValue(newValue);
   };
 
-  const tabHeight="25px"
+  const tabHeight="20px"
   const th= useTheme();
 
   return (
@@ -62,7 +62,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                     borderTopLeftRadius: "10px",
                     transform: "none",
                     fontWeight: "bold",
-                    fontSize: "10px",
+                    fontSize: "8px",
                     // padding: "2px 4px",
                     paddingRight:'30px',
                     paddingLeft:'30px',
@@ -71,8 +71,8 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                     letterSpacing: 1.2,
                     paddingTop: 0,
                     paddingBottom: 0,
-                    backgroundColor:index===value?th.palette?.primary?.main:undefined,
-                    color:index===value?QuantomColors?.SelectedElementTextColor:undefined
+                    backgroundColor:index===value?th.palette?.primary?.main:th?.palette?.secondary?.light,
+                    color:index===value?th?.palette?.primary?.contrastText:th?.palette?.secondary?.contrastText,
                   }}
                 ></Tab>
                 {hoveredTab === index && (
@@ -115,9 +115,11 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
 
       {props?.tabs?.map((item, index) => {
         return (
+          <>
           <CustomTabPanel value={value} index={index}>
             {item?.Component}
           </CustomTabPanel>
+          </>
         );
       })}
     </Box>

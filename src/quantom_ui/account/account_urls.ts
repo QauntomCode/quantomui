@@ -39,3 +39,7 @@ export const ACCOUNT_VOUCHER_INSERT_URL = "Account/voucher/insert";
 export const ACCOUNT_VOUCHER_DELETE_URL = "Account/voucher/Delete";
 export const ACCOUNT_VOUCHER_GET_ALL_URL = "Account/voucher/GetAll";
 export const ACCOUNT_VOUCHER_GET_ONE_URL = "Account/voucher/GetOne";
+
+
+export const ACCOUNT_REPORT_LEDGER_DATA_URL = "Account/AccountReports/GetLedger";
+export const ACCOUNT_REPORT_LEDGER_DETAIL_DATA_URL = "Account/AccountReports/GetDetailLedger";

@@ -9,6 +9,7 @@ import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_c
 import { SubSubAccountDelete,SubSubAccountGetOne, SubSubAccountInsert } from '../impl/subSubAccountImpl'
 import { SubSubAccountList } from './SubSubAccountList'
 import { SubAccountGetAll, SubAccountGetOne } from '../../subAccount/impl/subAccountImpl'
+import { GroupContainer } from '../../../processing/voucher/view/VoucherView'
 
 export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>) => {
 
@@ -33,6 +34,7 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
   return (
     <>
       
+      <GroupContainer Label='Group Info'>
          <Quantom_Grid container  spacing={.5}>
                <Quantom_Grid item md={2}>
                   <Quantom_Input disabled label='Main Code' value={props?.state?.subAccount?.mainAccount?.Code} />
@@ -54,7 +56,8 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
                   }} selected={{Code:props?.state?.subAccount?.Code,Name:props?.state?.subAccount?.Name}} FillDtaMethod={handleSubAccounts} label='Sub Account'/>
                </Quantom_Grid>
          </Quantom_Grid>
-
+         </GroupContainer>
+         <GroupContainer Label='Sub Sbu Account Detail'>
          <Quantom_Grid container  spacing={.5}>
                <Quantom_Grid item md={2}>
                   <Quantom_Input disabled label='Code' value={props?.state?.Code} />
@@ -64,7 +67,7 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
                </Quantom_Grid>
          </Quantom_Grid>
           
-      
+         </GroupContainer>
     </>
   )
 }

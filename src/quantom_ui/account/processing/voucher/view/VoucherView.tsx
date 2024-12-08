@@ -30,7 +30,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
      props?.setDeleteMethod?.((payload)=>VoucherDelete(payload))
      props?.setListComponent?.((<VoucherList {...props}/>))
      props?.setGetOneMethod?.((payload)=>VoucherGetOne(payload))
-     props?.setCompSettings?.({willShowLocations:true})
+     props?.setCompSettings?.({willShowLocations:false})
     },[]);
      
     const [vDetail,setVDetail]=React.useState<VoucherDetailModel>()

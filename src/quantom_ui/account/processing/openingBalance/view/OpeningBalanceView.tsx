@@ -13,6 +13,7 @@ import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Dat
 import dayjs from 'dayjs'
 import { safeParseToNumber } from '../../../../../CommonMethods'
 import { GetLocationsByUserId } from '../../../../Settings/Location/impl/LocationImpl'
+import { GroupContainer } from '../../voucher/view/VoucherView'
 
 export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel>) => {
 
@@ -31,7 +32,7 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     
   return (
     <>
-
+      <GroupContainer Label='Opening Balance Detail'>
        <Quantom_Grid container spacing={0.5}>
           <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
             <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
@@ -72,6 +73,7 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
           }
           }/>
         </Quantom_Grid>
+        </GroupContainer>
       {/* </Quantom_Grid> */}
     </>
   )

@@ -1,5 +1,5 @@
 import { Height, Margin, Padding } from '@mui/icons-material';
-import { Button, ButtonProps, TextField, TextFieldProps } from '@mui/material';
+import { Button, ButtonProps, TextField, TextFieldProps, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
@@ -48,6 +48,7 @@ export const Quantom_Input=(props: {
 
   }
 
+  const theme= useTheme();
   const font= useQuantomFonts();
   return(
     <TextField
@@ -59,13 +60,15 @@ export const Quantom_Input=(props: {
             fontSize: font.H3FontSize,
             fontWeight:'700',
             fontFamily:font.HeaderFont,
-            letterSpacing:1.1
+            letterSpacing:1.1,
+            color:theme?.palette?.secondary?.contrastText
           }, 
           '& .MuiInputBase-input': {
             fontFamily:'Ubuntu',
             fontWeight:'700',       
             fontSize: '11px', // Change this value to adjust the input font size
             Height:'2px',
+            
           }
          
         }}
