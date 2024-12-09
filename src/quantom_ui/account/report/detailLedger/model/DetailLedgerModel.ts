@@ -9,4 +9,5 @@ export interface DetailLedgerModel extends LedgerModel {
     Price?: number;
     DisAmount?: number;
     Amount?: number;
+    willShowDetail?:boolean;
 }

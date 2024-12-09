@@ -1,6 +1,6 @@
 export interface LedgerModel {
     LocId?: string;
-    LocName?: string;
+    locName?: string;
     MenuCode?: string;
     FormName?: string;
     TransNo?: string;

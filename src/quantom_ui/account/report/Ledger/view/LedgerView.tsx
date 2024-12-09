@@ -13,10 +13,12 @@ import { Quantom_LOV } from "../../../../../quantom_comps/Quantom_Lov";
 import { get_current_user_locations, useQuantomFonts } from "../../../../../redux/store";
 import { useSelector } from "react-redux";
 import { Paper, useTheme } from  '@mui/material';
-import { Box, Button, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import { FilterEntities, QuantomFilterOldModel } from "../../../../../QuantomReportOld/model/QuantomFilterOldModel";
 import { GetLedgerData } from "../impl/LedgerImpl";
 import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView";
+import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
+import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 
 
 
@@ -30,71 +32,26 @@ export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
                 let fromDate=dayjs().subtract(1, 'month').toDate();
                 let toDate= new Date();
                 props?.setState?.({...props?.state, 
-                filters:{...props?.state?.filters,FromDate:fromDate,ToDate:toDate}})
+                filters:{...props?.state?.filters,FromDate:fromDate,ToDate:toDate},ledgerData:[]})
             },500)
        }
     },[])
     const height=`calc(100vh - 170px)`
     return(
         <>
-         <GroupContainer Label="Ledger Filters">
-            <Quantom_Grid container xs={12} spacing={.5}>
-                <Quantom_Grid xs={2}>
-                    <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
-                                  onChange={(date)=>{props?.setState?.({filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
-                </Quantom_Grid>
-                <Quantom_Grid item xs={2}>
-                    <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
-                                    onChange={(date)=>{props?.setState?.({filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
-                </Quantom_Grid>
-                <Quantom_Grid item xs={3}>
-                    <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
-                                    onChange={(selected)=>{
-                                        props?.setState?.({...props?.state,glAccount:(selected),filters:{
-                                            ...props?.state?.filters,
-                                            FilterDetail:[
-                                                {
-                                                    FitlerType: FilterEntities.GL_CODES,
-                                                    Keys:[{
-                                                        Code:selected?.Code,
-                                                        Name:selected?.Name,
-                                                    }]
-                                                }
-                                            ]
-                                        }});
-                                    }}/>
-                </Quantom_Grid>
-                <Quantom_Grid item xs={4}>
-                    <MultiLocationSelectionlOVComp  />
-                </Quantom_Grid>
-                <Quantom_Grid item xs={.5}>
-                        <ListCompButton onClick={async()=>{
-                            props?.setState?.({...props?.state,ledgerData:[]})
-                            let res= await GetLedgerData(props?.state?.filters)
-                            props?.setState?.({...props?.state,ledgerData:res?.Response})
-                        }} iconName="PageviewTwoTone" Label="Load"/>
-                </Quantom_Grid>
-                <Quantom_Grid item xs={.5}>
-                        <ListCompButton iconName="LocalPrintshopTwoTone" Label="Print"/>
-                </Quantom_Grid>
-            </Quantom_Grid>
-         </GroupContainer>
+         <LedgerFilterHeaderComp {...props}/>
          <Quantom_Grid sx={{marginTop:'5px'}}>
             <QUANTOM_Table  height={height}  columns={
                 [
-                  {field:"locName",width:150,header:'Location'},
-                  {field:"VDate",width:130,header:'VDate', dataType:'date'},
-                  {field:"FormName",width:130,header:'Form', },
-                  {field:"TransNo",width:150,header:'TransNo', },
-                  {field:"VCode",width:400,header:'VNo', },
-                  {field:"Remarks",width:300,header:'Narration', },
+                  {field:"locName",width:120,header:'Location'},
+                  {field:"VDate",width:100,header:'VDate', dataType:'date'},
+                  {field:"FormName",width:100,header:'Form', },
+                  {field:"TransNo",width:130,header:'TransNo', },
+                  {field:"VCode",width:150,header:'VNo', },
+                  {field:"Remarks",width:400,header:'Narration', },
                   {field:"Debit",width:100,header:'Debit', },
                   {field:"Credit",width:100,header:'Credit', },
                   {field:"Balance",width:150,header:'Balance', },
-
-        
-                  
-        
                 ]} data={props?.state?.ledgerData}/>
          </Quantom_Grid>
         </>
@@ -103,10 +60,74 @@ export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
 
 
 
-interface LedgerComponentState{
+
+
+export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentState>)=>{
+    const handleLedger=async()=> {
+
+        props?.setState?.({...props?.state,ledgerData:[],ledgerDetail:[]})
+        if(props?.state?.LedgerType==='DETAIL_LEDGER'){
+            let res= await getLedgerDetail(props?.state?.filters)
+            
+            props?.setState?.({...props?.state,ledgerDetail:res?.Response})
+        }
+        else{
+                
+            let res= await GetLedgerData(props?.state?.filters)
+                props?.setState?.({...props?.state,ledgerData:res?.Response})
+            
+        }
+    }
+
+    return(
+        <GroupContainer Label="Ledger Filters">
+                <Quantom_Grid container xs={12} spacing={.5}>
+                    <Quantom_Grid xs={2}>
+                        <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
+                                    onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid item xs={2}>
+                        <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
+                                        onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid item xs={3}>
+                        <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
+                                        onChange={(selected)=>{
+                                            props?.setState?.({...props?.state,glAccount:(selected),filters:{
+                                                ...props?.state?.filters,
+                                                FilterDetail:[
+                                                    {
+                                                        FitlerType: FilterEntities.GL_CODES,
+                                                        Keys:[{
+                                                            Code:selected?.Code,
+                                                            Name:selected?.Name,
+                                                        }]
+                                                    }
+                                                ]
+                                            }});
+                                        }}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid item xs={4}>
+                        <MultiLocationSelectionlOVComp  />
+                    </Quantom_Grid>
+                    <Quantom_Grid item xs={.5}>
+                            <ListCompButton onClick={handleLedger} iconName="PageviewTwoTone" Label="Load"/>
+                    </Quantom_Grid>
+                    <Quantom_Grid item xs={.5}>
+                            <ListCompButton iconName="LocalPrintshopTwoTone" Label="Print"/>
+                    </Quantom_Grid>
+                </Quantom_Grid>
+            </GroupContainer>
+        )
+}
+
+
+export interface LedgerComponentState{
     ledgerData?: LedgerModel[];
     filters?: QuantomFilterOldModel;
     glAccount?:CommonCodeName;
+    ledgerDetail?:DetailLedgerModel[],
+    LedgerType?:'DETAIL_LEDGER'|'MASTER_LEDGER'
 }
 
 // interface LedgerFilters{

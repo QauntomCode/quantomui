@@ -17,7 +17,6 @@ import { useQuantomFonts } from '../../../../../redux/store'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import { VoucherList } from './VoucherList'
 import { useTheme } from '@mui/material/styles'
-import { Padding } from '@mui/icons-material'
 
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
@@ -197,7 +196,8 @@ export const RenderVoucherDetail=(props?:VoucherDetailProps)=>{
 
 export interface GroupContainerProps{
   children?:ReactNode;
-  Label?:string
+  Label?:string;
+  height?:string;
 }
 
 export const GroupContainer=(props?:GroupContainerProps)=>{
@@ -212,7 +212,7 @@ export const GroupContainer=(props?:GroupContainerProps)=>{
                fontSize:'12px',fontWeight:'bold',letterSpacing:1.2,color:theme.palette.secondary.contrastText,borderTopLeftRadius:'5px',borderTopRightRadius:'5px'}}>
                 {props?.Label}
             </Box>
-            <Box sx={{paddingLeft:'8px',paddingRight:'8px'}}>
+            <Box sx={{paddingLeft:'8px',paddingRight:'8px',height:props?.height??undefined,overflowY: props?.height?'scroll':undefined}}>
               {
                 props?.children
               }

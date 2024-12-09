@@ -61,7 +61,6 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
     const handleColumns=()=>{
         let cols=
         props?.columns?.map((item,index)=>{
-            // { field: "name", cellStyle: { fontWeight: "bold" } },
            let obj:any= 
                     { 
                         field:item?.field,
@@ -122,14 +121,13 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                     rowData={props?.data}
                     columnDefs={colDefs}
                     rowHeight={24}
-                    // style={{font}}
-                    // onGridReady={(params:any) => {
-                    //     params?.columnApi?.autoSizeAllColumns();
-                    //   }}
                 />
         </div>
 
         </Quantom_Grid>
     )
 }
+
+
+
 
