@@ -38,7 +38,8 @@ export interface QuantomFormState<T>{
   AfterReset?:(location?:LocationModel)=>void;
   compSettings?:ComponentSettings;
   listData?:unknown[];
-  FormState?:'FORM'|'LIST'
+  FormState?:'FORM'|'LIST';
+  IsFirstCall?:boolean;
 }
 
 export interface ComponentSettings{
@@ -66,6 +67,10 @@ export interface ComponentFormStatePayloadType{
 }
 export interface ComponentListPropsPayloadType{
   ListData?:unknown[]
+  stateKey?:string;
+}
+export interface SetFirstCallPayload{
+  isFirstCall?:boolean
   stateKey?:string;
 }
 export interface StateMethodPayloadType<T>{
@@ -214,6 +219,20 @@ interface KeyValues{
       };
       },
 
+
+      change_first_call: (state,action:PayloadAction<SetFirstCallPayload>) => {
+
+        // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
+        const updatedFormsState = state.FormsState?.map(formState => 
+          formState.stateKey === action.payload.stateKey 
+              ? { ...formState, IsFirstCall:action?.payload?.isFirstCall } 
+              : formState
+      );
+      return {
+          ...state,
+          FormsState: updatedFormsState,
+      };
+      },
       set_component_selected_locations: (state,action:PayloadAction<ComponentSelectedLocationPayloadType>) => {
 
         // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
@@ -268,6 +287,7 @@ interface KeyValues{
           FormsState: updatedFormsState,
       };
       },
+      
       create_initial_state:(state,action:PayloadAction<QuantomFormState<any>>)=>{
         let s= {...state};
         let oldObj= s?.FormsState?.find(x=>x.stateKey===action.payload.stateKey);
@@ -321,6 +341,7 @@ interface KeyValues{
     set_component_selected_locations,
     set_location_init_method,
     set_after_reset_method,
+    change_first_call,
   } = formsSlice.actions
 
   // const counterReducer = counterSlice.reducer //This is stored in the main store

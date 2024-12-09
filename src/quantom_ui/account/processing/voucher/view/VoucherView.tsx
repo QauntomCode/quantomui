@@ -22,7 +22,8 @@ import { useTheme } from '@mui/material/styles'
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
 
   React.useEffect(()=>{
-    setFormBasicKeys<VMVoucherModel>({
+    if(props?.fullState?.IsFirstCall){
+      setFormBasicKeys<VMVoucherModel>({
       SaveMethod:(payload)=>VoucherInsert(payload),
       DeleteMethod:(payload)=>VoucherDelete(payload),
       GetOneMethod:(payload)=>VoucherGetOne(payload),
@@ -31,7 +32,8 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
       InitOnLocationChange:(loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})),
       AfterResetMethod:(loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]}))
     })
-  },[])
+    }
+  },[props?.fullState?.IsFirstCall])
 
     React.useEffect(()=>{
     //  props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))

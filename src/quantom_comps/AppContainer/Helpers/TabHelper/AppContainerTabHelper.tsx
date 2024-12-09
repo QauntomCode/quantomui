@@ -87,7 +87,6 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
 
   React.useEffect(()=>{
     if(fullState?.Location?.LocId){
-  
       fullState?.LocationInitMethod?.(fullState?.Location);
     }
   },[fullState?.Location?.LocId ,fullState?.LocationInitMethod])
@@ -191,18 +190,13 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
 
     React.useEffect(()=>{
          if(locs && locs.length>0  &&  fState?.LocationInitMethod && locs.length===1){
-            if(fState?.compSettings?.willShowLocations){
+            if(fState?.compSettings?.willShowLocations && !fState?.Location?.LocId){
+              // alert(fState?.Location?.LocId)
               store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
             }
          }
     },[locs, fState?.LocationInitMethod,fState?.compSettings?.willShowLocations])
 
-
-    // React.useEffect(()=>{
-    //   if(props?.open){
-    //     store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
-    //   }
-    // },[props?.open])
 
     return(
       <>
@@ -547,8 +541,9 @@ export interface FormMethodsProps<T>{
 
 
 export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
- setTimeout(() => {
-  if(methods?.SaveMethod)
+  setTimeout(() => {
+    
+    if(methods?.SaveMethod)
     {
       store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
     }
@@ -566,13 +561,16 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
     {
       store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:{...methods?.settings}}))
     }
-    if(methods?.InitOnLocationChange){
-      store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
-    }
     if(methods?.AfterResetMethod){
       store?.dispatch(set_after_reset_method({stateKey:methods.uniqueKey,method:methods.AfterResetMethod}))
     }
- }, (500));
+ 
+    if(methods?.InitOnLocationChange){
+      store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
+    }
+   
+  }, 500);
+//  }, (500));
   
 }
 
