@@ -152,7 +152,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   return(
     <div>
       <QUANTOM_Toast {...alertProps}/>
-      <UserLocationsModalComp open={willShowLocation()} basProps={{...nProps}}/>
+      <UserLocationsModalComp  basProps={{...nProps}}/>
     {
       fullState?.compSettings?.wWillHideToolbar?(<></>):(
        <QuantomToolBarComp showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
@@ -169,13 +169,14 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
 }
 
 interface UserLocationsModalProps<T>{
-  open?:boolean;
-  onSelection?:(loc?:LocationModel)=>void;
+  // open?:boolean;
+  // onSelection?:(loc?:LocationModel)=>void;
   basProps?:MenuContainerProps<T>
 }
 export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
     const locs= useSelector((state:any)=> get_current_user_locations(state));
     const font= useQuantomFonts();
+    const fState=useSelector((state:any)=>full_component_state(state,props?.basProps?.UniqueId??""));
     React.useEffect(()=>{
          async function method() {
           if(!locs || (locs?.length??0)<1){
@@ -189,14 +190,23 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
 
 
     React.useEffect(()=>{
-      if(props?.open){
-        store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
-      }
-    },[props?.open])
+         if(locs && locs.length>0  &&  fState?.LocationInitMethod && locs.length===1){
+            if(fState?.compSettings?.willShowLocations){
+              store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
+            }
+         }
+    },[locs, fState?.LocationInitMethod,fState?.compSettings?.willShowLocations])
+
+
+    // React.useEffect(()=>{
+    //   if(props?.open){
+    //     store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
+    //   }
+    // },[props?.open])
 
     return(
       <>
-        <Dialog fullWidth open={props?.open??false}>
+        <Dialog fullWidth open={(fState?.compSettings?.willShowLocations && !fState?.Location?.LocId)??false}>
           <DialogContent>
              {
               locs?.map((x,index)=>
@@ -537,31 +547,33 @@ export interface FormMethodsProps<T>{
 
 
 export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
-
+ setTimeout(() => {
   if(methods?.SaveMethod)
-  {
-    store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
-  }
-  if(methods?.DeleteMethod){
-    store.dispatch(set_delete_method({stateKey:methods?.uniqueKey,method:methods?.DeleteMethod}))
-  }
-  if(methods?.GetOneMethod){
-    store.dispatch(set_get_one_method({stateKey:methods?.uniqueKey,method:methods?.GetOneMethod}))
-  }
-  if(methods?.SetBasicKeys)
-  {
-    store.dispatch(set_basic_keys_method({stateKey:methods?.uniqueKey,method:methods?.SetBasicKeys}))
-  }
-  if(methods?.settings)
-  {
-    store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:methods?.settings}))
-  }
-  if(methods?.InitOnLocationChange){
-    store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
-  }
-  if(methods?.AfterResetMethod){
-    store?.dispatch(set_after_reset_method({stateKey:methods.uniqueKey,method:methods.AfterResetMethod}))
-  }
+    {
+      store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
+    }
+    if(methods?.DeleteMethod){
+      store.dispatch(set_delete_method({stateKey:methods?.uniqueKey,method:methods?.DeleteMethod}))
+    }
+    if(methods?.GetOneMethod){
+      store.dispatch(set_get_one_method({stateKey:methods?.uniqueKey,method:methods?.GetOneMethod}))
+    }
+    if(methods?.SetBasicKeys)
+    {
+      store.dispatch(set_basic_keys_method({stateKey:methods?.uniqueKey,method:methods?.SetBasicKeys}))
+    }
+    if(methods?.settings)
+    {
+      store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:{...methods?.settings}}))
+    }
+    if(methods?.InitOnLocationChange){
+      store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
+    }
+    if(methods?.AfterResetMethod){
+      store?.dispatch(set_after_reset_method({stateKey:methods.uniqueKey,method:methods.AfterResetMethod}))
+    }
+ }, (500));
+  
 }
 
 

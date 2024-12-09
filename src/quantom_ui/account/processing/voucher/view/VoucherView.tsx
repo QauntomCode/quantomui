@@ -74,7 +74,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
               <Quantom_Input label="RefNo" value={props?.state?.voucher?.VRefNo} 
                       onChange={(val)=>props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VRefNo:val.target?.value}})}/>
           </Quantom_Grid>
-          <Quantom_Grid item xs={12} sm={6} md={3} lg={4} xl={3}>
+          <Quantom_Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
             <Quantom_Input label="Remarks" 
                   value={props?.state?.voucher?.VRemarks} 
                   onChange={(e)=>{props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VRemarks:e.target.value}})}}/>
