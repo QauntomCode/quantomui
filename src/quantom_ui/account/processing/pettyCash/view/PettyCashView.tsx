@@ -18,15 +18,15 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
 
 
     React.useEffect(()=>{
-     props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,LocId:loc?.LocId,Date:new Date()})))
-     props?.setAfterResetMethod?.((loc)=>(props?.setState?.({LocId:loc?.LocId,Date:new Date()})));
      
-     setFormBasicKeys<PettyCashModel>({
+      setFormBasicKeys<PettyCashModel>({
       SaveMethod:(payload)=>PettyCashInsert(payload),
       DeleteMethod:(payload)=>PettyCashDelete(payload),
       GetOneMethod:(payload)=>PettyCashGetOne(payload),
       uniqueKey:props?.UniqueId??"",
-      settings:{willShowLocations:true}
+      settings:{willShowLocations:true},
+      InitOnLocationChange:(loc)=>(props?.setState?.({...props?.state,LocId:loc?.LocId,Date:new Date()})),
+      AfterResetMethod:(loc)=>(props?.setState?.({LocId:loc?.LocId,Date:new Date()}))
      })
 
     },[]);

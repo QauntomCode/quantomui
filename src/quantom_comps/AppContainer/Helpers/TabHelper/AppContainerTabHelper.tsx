@@ -59,8 +59,8 @@ export interface MenuContainerProps<T>{
     // setCompSettings?:(settings?:ComponentSettings)=>void;
     setListComponent?:(comp?:ReactNode)=>void;
     setPrimaryKeyNo?:(keyNo?:string)=>void;
-    setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
-    setAfterResetMethod?:(method?:(loc?:LocationModel)=>void)=>void;
+    // setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
+    // setAfterResetMethod?:(method?:(loc?:LocationModel)=>void)=>void;
     errorToast?:(message?:string)=>void;
 }
 
@@ -82,14 +82,15 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const [alertProps,setAlertProps]=React.useState<QUANTOM_ToastProps>();
   const state = useSelector((state:any)=>form_state_selector<T>(state,nProps?.UniqueId||""));
   const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
-  const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
-  const selLocation= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
+  //const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
+  // const selLocation= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
 
   React.useEffect(()=>{
-    if(!isNullOrEmpty(selLocation?.LocId)){
-      fullState?.LocationInitMethod?.(selLocation);
+    if(fullState?.Location?.LocId){
+  
+      fullState?.LocationInitMethod?.(fullState?.Location);
     }
-  },[selLocation])
+  },[fullState?.Location?.LocId ,fullState?.LocationInitMethod])
 
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
@@ -106,8 +107,6 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
               nProps?.setState?.(obj);
               store?.dispatch(set_component_record_key({stateKey:props?.UniqueId,keyNo:""}));
               store?.dispatch(change_form_state({stateKey:props?.UniqueId,FormState:'FORM'}));
-
-
            }
 
           
@@ -119,13 +118,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
        set_form_state(props?.UniqueId,{...obj})
   }
   
-   nProps.setInitOnLocationChange=(method)=>{
-    store?.dispatch(set_location_init_method({stateKey:props?.UniqueId,method:method}))
-   }
 
-   nProps.setAfterResetMethod=(method)=>{
-    store?.dispatch(set_after_reset_method({stateKey:props?.UniqueId,method:method}))
-   }
 
 
    nProps.setPrimaryKeyNo=(keyNo?:string)=>{
@@ -146,9 +139,9 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const selectedComponent=obj?.GetComponent?.({...nProps,state:state})
 
    const willShowLocation=():boolean=>{
-      if(settings?.willShowLocations)
+      if(fullState?.compSettings?.willShowLocations)
         { 
-           if(!selLocation?.LocId || selLocation?.LocId===undefined || selLocation?.LocId===null || selLocation?.LocId===''){
+           if(!fullState?.Location?.LocId){
                return true;
            }
           }
@@ -161,7 +154,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <QUANTOM_Toast {...alertProps}/>
       <UserLocationsModalComp open={willShowLocation()} basProps={{...nProps}}/>
     {
-      settings?.wWillHideToolbar?(<></>):(
+      fullState?.compSettings?.wWillHideToolbar?(<></>):(
        <QuantomToolBarComp showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
       )
     }
@@ -192,11 +185,14 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
            }
          }
          method();
-
-         if(locs?.length===1){
-            store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
-         }
     },[locs])
+
+
+    React.useEffect(()=>{
+      if(props?.open){
+        store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
+      }
+    },[props?.open])
 
     return(
       <>
@@ -532,6 +528,8 @@ export interface FormMethodsProps<T>{
     DeleteMethod?:(payLoad:T)=>Promise<HttpResponse<T>>;
     GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
     SetBasicKeys?:()=>BasicKeysProps;
+    InitOnLocationChange?:(loc?:LocationModel)=>void;
+    AfterResetMethod?:(loc?:LocationModel)=>void;
     settings?:ComponentSettings;
     uniqueKey:string
 }
@@ -558,7 +556,12 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
   {
     store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:methods?.settings}))
   }
-   
+  if(methods?.InitOnLocationChange){
+    store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
+  }
+  if(methods?.AfterResetMethod){
+    store?.dispatch(set_after_reset_method({stateKey:methods.uniqueKey,method:methods.AfterResetMethod}))
+  }
 }
 
 

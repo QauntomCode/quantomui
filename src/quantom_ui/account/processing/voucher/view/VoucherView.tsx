@@ -27,14 +27,15 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
       DeleteMethod:(payload)=>VoucherDelete(payload),
       GetOneMethod:(payload)=>VoucherGetOne(payload),
       settings:{willShowLocations:true},
-      uniqueKey:props?.UniqueId??""
-
+      uniqueKey:props?.UniqueId??"",
+      InitOnLocationChange:(loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})),
+      AfterResetMethod:(loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]}))
     })
   },[])
 
     React.useEffect(()=>{
-     props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
-     props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
+    //  props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
+    //  props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
      
      
      props?.setListComponent?.((<VoucherList {...props}/>))
