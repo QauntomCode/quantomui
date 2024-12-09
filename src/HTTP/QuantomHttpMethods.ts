@@ -14,11 +14,14 @@ export interface HttpResponse<T>{
     ResStatus?:HTTP_RESPONSE_TYPE
 }
 
+const baseUrl= window.globalConfig.apiUrl;
+
 export const QuantomGET=async<T>(url: string, isUseToke?: boolean): Promise<HttpResponse<T>>=> {
         try 
         {
           
-            const baseUrl= "https://localhost:44342/api/";
+            //const baseUrl= "https://localhost:44342/api/";
+
 
             //this._token= await this.getToken();
             // console.log(this._token);
@@ -85,7 +88,8 @@ export const QuantomGET=async<T>(url: string, isUseToke?: boolean): Promise<Http
    export const  QuantomPOST=async <T>(url: string, isUseToken?: boolean, data?: any,loadingStatus?:'NONE'|'LOADING'|'PROGRESS_BAR'): Promise<HttpResponse<T>> =>{
         try {
           
-            const baseUrl= "https://localhost:44342/api/";
+           // const baseUrl= "https://localhost:44342/api/";
+          
             //this._token= await this.getToken();
             // console.log(this._token);
             let fullUrl = baseUrl + url;

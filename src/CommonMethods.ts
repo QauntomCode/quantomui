@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+export const HeaderHeight='170px'
 
 export const safeParseToNumber=(value: any): number=> {
       if (/^-?\d*\.?\d*$/.test(value)) {

@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { RegisterAccountModel } from '../model/registerAccountModel'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
@@ -24,10 +24,19 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
     }
 
     React.useEffect(()=>{
-     props?.setSaveMethod?.((payload)=>RegisterAccountInsert(payload))
-     props?.setDeleteMethod?.((payload)=>RegisterAccountDelete(payload))
-     props?.setListComponent?.((<RegisterAccountList {...props}/>))
-     props?.setGetOneMethod?.((payload)=>RegisterAccountGetOne(payload))
+      setFormBasicKeys<RegisterAccountModel>({
+         SaveMethod:(payload)=>RegisterAccountInsert(payload),
+         DeleteMethod:(payload)=>RegisterAccountDelete(payload),
+         GetOneMethod:(payload)=>RegisterAccountGetOne(payload),
+         uniqueKey:props?.UniqueId??""
+      })
+    },[])
+
+    React.useEffect(()=>{
+
+      setTimeout(() => {
+         props?.setListComponent?.((<RegisterAccountList {...props}/>))
+      }, (500));
     },[])
 
     

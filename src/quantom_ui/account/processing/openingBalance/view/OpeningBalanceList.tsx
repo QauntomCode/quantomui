@@ -8,6 +8,8 @@ import store, { full_component_state } from '../../../../../redux/store'
 import { set_list_data } from '../../../../../redux/reduxSlice'
 import { OpeningBalanceGetAll } from '../impl/openingBalanceIml'
 import { QUANTOM_Table } from '../../../config/mainAccount/view/MainAccountView'
+import { Box } from '@mui/material'
+import { HeaderHeight } from '../../../../../CommonMethods'
 
 export const OpeningBalanceList = (props?:MenuComponentProps<OpeningBalanceModel>) => {
   const listData= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""))?.listData
@@ -22,9 +24,10 @@ export const OpeningBalanceList = (props?:MenuComponentProps<OpeningBalanceModel
      store.dispatch(set_list_data({stateKey:props?.UniqueId??"",ListData:data}))
   }
 
+  const height= `calc(100vh - ${HeaderHeight})`
   return (
-    <>
-      <QUANTOM_Table height='400px' columns={
+    <Box>
+      <QUANTOM_Table height={height} columns={
         [
           {field:"location.LocName",width:350,header:'Location'},
           {field:'OpCode',header:'OPCode'},
@@ -37,6 +40,6 @@ export const OpeningBalanceList = (props?:MenuComponentProps<OpeningBalanceModel
         onViewButtonClick={(data)=>{
             props?.setPrimaryKeyNo?.(data?.OpCode)
         }}/>
-    </>
+    </Box>
   )
 }

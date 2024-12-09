@@ -13,6 +13,7 @@ import dayjs from 'dayjs'
 import { VMVoucherModel } from '../model/VmVoucherModel'
 import { VoucherGetAll } from '../impl/vouchreImpl'
 import { QuantomListSearchButton } from '../../pettyCash/view/PettyCashList'
+import { HeaderHeight } from '../../../../../CommonMethods'
 
 
 export const VoucherList = (props?:MenuComponentProps<VMVoucherModel>) => {
@@ -32,6 +33,8 @@ export const VoucherList = (props?:MenuComponentProps<VMVoucherModel>) => {
      store.dispatch(set_list_data({stateKey:props?.UniqueId??"",ListData:data}))
   }
 
+  const height= `calc(100vh - ${HeaderHeight})`
+
   return (
     <>
       <Quantom_Grid container spacing={.5} sx={{marginBottom:'5px'}} display='flex' alignItems='center'>
@@ -50,7 +53,7 @@ export const VoucherList = (props?:MenuComponentProps<VMVoucherModel>) => {
             }}/>
           </Quantom_Grid>
       </Quantom_Grid>
-      <QUANTOM_Table height='400px' columns={
+      <QUANTOM_Table height={height} columns={
         [
           {field:"VCode",width:200,header:'VCode'},
           {field:"VDate",width:130,header:'VDate', dataType:'date'},
@@ -58,9 +61,7 @@ export const VoucherList = (props?:MenuComponentProps<VMVoucherModel>) => {
           {field:"EffectedHeads",width:400,header:'Account Heads', },
           {field:"VRemarks",width:300,header:'Remarks', },
           {field:"FormName",width:150,header:'FormName', },
-
           
-
         ]} data={listData}
         onViewButtonClick={(data)=>{
             props?.setPrimaryKeyNo?.(data?.VCode)

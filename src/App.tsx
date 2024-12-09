@@ -28,6 +28,9 @@ function App() {
  
   React.useEffect(()=>{
       set_initial_state(key)
+      if(window?.globalConfig?.appName){
+        document.title=window.globalConfig.appName
+      }
   },[])
   
 

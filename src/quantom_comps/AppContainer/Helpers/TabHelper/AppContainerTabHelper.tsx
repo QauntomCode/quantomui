@@ -52,11 +52,11 @@ export interface MenuContainerProps<T>{
     state?:T;
     fullState?:QuantomFormState<T>;
     setState?:(state?:T)=>void;
-    setSaveMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
-    setDeleteMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
-    setGetOneMethod?:(method?:(keyNo?:string)=>Promise<HttpResponse<T>>)=>void;
-    setBasicKeys?:(method?:()=>BasicKeysProps)=>void;
-    setCompSettings?:(settings?:ComponentSettings)=>void;
+    // setSaveMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
+    // setDeleteMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
+    // setGetOneMethod?:(method?:(keyNo?:string)=>Promise<HttpResponse<T>>)=>void;
+    // setBasicKeys?:(method?:()=>BasicKeysProps)=>void;
+    // setCompSettings?:(settings?:ComponentSettings)=>void;
     setListComponent?:(comp?:ReactNode)=>void;
     setPrimaryKeyNo?:(keyNo?:string)=>void;
     setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
@@ -119,26 +119,6 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
        set_form_state(props?.UniqueId,{...obj})
   }
   
-   nProps.setSaveMethod=(method)=>{
-       store.dispatch(set_save_method({stateKey:props?.UniqueId,method:method}))
-   }
-
-   nProps.setDeleteMethod=(method)=>{
-    store.dispatch(set_delete_method({stateKey:props?.UniqueId,method:method}))
-   }
-
-   nProps.setGetOneMethod=(method)=>{
-    store.dispatch(set_get_one_method({stateKey:props?.UniqueId,method:method}))
-   }
-
-   nProps.setBasicKeys=(method)=>{
-    store.dispatch(set_basic_keys_method({stateKey:props?.UniqueId,method:method}))
-   }
-   nProps.setCompSettings=(settings)=>{
-    //  alert(settings?.wWillHideToolbar)
-    store?.dispatch(set_component_settings({stateKey:props?.UniqueId,settings:settings}))
-   }
-
    nProps.setInitOnLocationChange=(method)=>{
     store?.dispatch(set_location_init_method({stateKey:props?.UniqueId,method:method}))
    }
@@ -380,11 +360,7 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
 
 
 export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
-  React.useEffect(()=>{
-     props?.setCompSettings?.({
-       wWillHideToolbar:true
-      })
-  },[])
+ 
   return(
     <>
        <Quantom_Grid container spacing={1.5} display={'flex'}>
@@ -548,6 +524,43 @@ const QUANTOM_Toast=(props?:QUANTOM_ToastProps)=>{
       </Snackbar>
   )
 }
+
+
+
+export interface FormMethodsProps<T>{
+    SaveMethod?:(payLoad:T)=>Promise<HttpResponse<T>>;
+    DeleteMethod?:(payLoad:T)=>Promise<HttpResponse<T>>;
+    GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
+    SetBasicKeys?:()=>BasicKeysProps;
+    settings?:ComponentSettings;
+    uniqueKey:string
+}
+
+
+
+export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
+
+  if(methods?.SaveMethod)
+  {
+    store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
+  }
+  if(methods?.DeleteMethod){
+    store.dispatch(set_delete_method({stateKey:methods?.uniqueKey,method:methods?.DeleteMethod}))
+  }
+  if(methods?.GetOneMethod){
+    store.dispatch(set_get_one_method({stateKey:methods?.uniqueKey,method:methods?.GetOneMethod}))
+  }
+  if(methods?.SetBasicKeys)
+  {
+    store.dispatch(set_basic_keys_method({stateKey:methods?.uniqueKey,method:methods?.SetBasicKeys}))
+  }
+  if(methods?.settings)
+  {
+    store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:methods?.settings}))
+  }
+   
+}
+
 
 
 

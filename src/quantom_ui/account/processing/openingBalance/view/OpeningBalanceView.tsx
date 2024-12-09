@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import {  OpeningBalanceModel } from '../model/OpeningBalanceModel'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV, Quantom_LOV_PROPS } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
@@ -22,10 +22,19 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
   },[props?.state])
 
     React.useEffect(()=>{
-     props?.setSaveMethod?.((payload)=>OpeningBalanceInsert(payload))
-     props?.setDeleteMethod?.((payload)=>OpeningBalanceDelete(payload))
-     props?.setListComponent?.((<OpeningBalanceList {...props}/>))
-     props?.setGetOneMethod?.((payload)=>OpeningBalanceGetOne(payload))
+      setFormBasicKeys<OpeningBalanceModel>({
+        SaveMethod:(payload)=>OpeningBalanceInsert(payload),
+        DeleteMethod:(payload)=>OpeningBalanceDelete(payload),
+        GetOneMethod:(payload)=>OpeningBalanceGetOne(payload),
+        uniqueKey:props?.UniqueId??"",
+      })
+    },[])
+
+
+    React.useEffect(()=>{
+       setTimeout(() => {
+        props?.setListComponent?.((<OpeningBalanceList {...props}/>))
+       }, (500));
     },[])
 
 

@@ -8,6 +8,8 @@ import store, { full_component_state } from '../../../../../redux/store'
 import { set_list_data } from '../../../../../redux/reduxSlice'
 import { QUANTOM_Table } from '../../mainAccount/view/MainAccountView'
 import { RegisterAccountGetAll } from '../impl/registerAccountIml'
+import { HeaderHeight } from '../../../../../CommonMethods'
+import { Box } from '@mui/material'
 
 export const RegisterAccountList = (props?:MenuComponentProps<RegisterAccountModel>) => {
   const listData= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""))?.listData
@@ -15,7 +17,8 @@ export const RegisterAccountList = (props?:MenuComponentProps<RegisterAccountMod
   React.useEffect(()=>{
      handleLoadSubAccountData();
   },[])
-  
+
+  const height=`calc(100vh - ${HeaderHeight})`
   const handleLoadSubAccountData=async()=>{
      let data= await RegisterAccountGetAll('',true);
      console.log('data of ')
@@ -23,8 +26,8 @@ export const RegisterAccountList = (props?:MenuComponentProps<RegisterAccountMod
   }
 
   return (
-    <>
-      <QUANTOM_Table height='400px' columns={
+    <Box sx={{marginTop:'10px'}}>
+      <QUANTOM_Table height={height} columns={
         [
           {field:"Code",width:350,header:'Code'},
           {field:'Name',header:'Name'},
@@ -36,6 +39,6 @@ export const RegisterAccountList = (props?:MenuComponentProps<RegisterAccountMod
         onViewButtonClick={(data)=>{
             props?.setPrimaryKeyNo?.(data?.Code)
         }}/>
-    </>
+    </Box>
   )
 }

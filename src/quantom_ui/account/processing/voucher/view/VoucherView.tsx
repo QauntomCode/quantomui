@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode } from 'react'
-import {  MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import {  MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
@@ -21,15 +21,23 @@ import { useTheme } from '@mui/material/styles'
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
 
+  React.useEffect(()=>{
+    setFormBasicKeys<VMVoucherModel>({
+      SaveMethod:(payload)=>VoucherInsert(payload),
+      DeleteMethod:(payload)=>VoucherDelete(payload),
+      GetOneMethod:(payload)=>VoucherGetOne(payload),
+      settings:{willShowLocations:true},
+      uniqueKey:props?.UniqueId??""
+
+    })
+  },[])
 
     React.useEffect(()=>{
      props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
      props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
-     props?.setSaveMethod?.((payload)=>VoucherInsert(payload))
-     props?.setDeleteMethod?.((payload)=>VoucherDelete(payload))
+     
+     
      props?.setListComponent?.((<VoucherList {...props}/>))
-     props?.setGetOneMethod?.((payload)=>VoucherGetOne(payload))
-     props?.setCompSettings?.({willShowLocations:false})
     },[]);
      
     const [vDetail,setVDetail]=React.useState<VoucherDetailModel>()

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from "react"
-import { IconByName, MenuComponentProps, ToolBarButton, ToolBarButtonProps } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
+import { IconByName, MenuComponentProps, setFormBasicKeys, ToolBarButton, ToolBarButtonProps } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { LedgerModel } from "../model/LedgerModel"
 import { GroupContainer } from "../../../processing/voucher/view/VoucherView"
 import { RegisterAccountModel } from "../../../config/registerAccount/model/registerAccountModel";
@@ -25,9 +25,16 @@ import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
 
     React.useEffect(()=>{
+        setFormBasicKeys({
+            uniqueKey:props?.UniqueId??"",
+            settings:{wWillHideToolbar:true}
+        })
+    },[])
+
+    React.useEffect(()=>{
         if(!props?.state?.filters?.FromDate || !props?.state?.filters?.ToDate)
         {
-            props?.setCompSettings?.({wWillHideToolbar:true});
+            // props?.setCompSettings?.({wWillHideToolbar:true});
             setTimeout(() => {
                 let fromDate=dayjs().subtract(1, 'month').toDate();
                 let toDate= new Date();

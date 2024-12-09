@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { SubSubAccountModel } from '../model/subSubAccountModel'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
@@ -24,10 +24,19 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
     }
 
     React.useEffect(()=>{
-     props?.setSaveMethod?.((payload)=>SubSubAccountInsert(payload))
-     props?.setDeleteMethod?.((payload)=>SubSubAccountDelete(payload))
-     props?.setListComponent?.((<SubSubAccountList {...props}/>))
-     props?.setGetOneMethod?.((payload)=>SubSubAccountGetOne(payload))
+      setFormBasicKeys<SubSubAccountModel>({
+         SaveMethod:(payload)=>SubSubAccountInsert(payload),
+         DeleteMethod:(payload)=>SubSubAccountDelete(payload),
+         GetOneMethod:(payload)=>SubSubAccountGetOne(payload),
+         uniqueKey:props?.UniqueId??""
+      })
+    },[])
+
+    React.useEffect(()=>{
+      setTimeout(() => {
+         props?.setListComponent?.((<SubSubAccountList {...props}/>))
+      }, (500));
+      
     },[])
 
     

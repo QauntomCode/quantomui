@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { SubAccountModel } from '../model/SubAccountModel'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { GetAllMainAccounts } from '../../mainAccount/impl/MainAccountImpl'
 import { CommonCodeName } from '../../../../../database/db'
@@ -24,10 +24,18 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
     }
 
     React.useEffect(()=>{
-     props?.setSaveMethod?.((payload)=>SubAccountInsert(payload))
-     props?.setDeleteMethod?.((payload)=>SubAccountDelete(payload))
-     props?.setListComponent?.((<SubAccountList {...props}/>))
-     props?.setGetOneMethod?.((payload)=>SubAccountGetOne(payload))
+      setFormBasicKeys<SubAccountModel>({
+         SaveMethod:(payload)=>SubAccountInsert(payload),
+         DeleteMethod:(payload)=>SubAccountDelete(payload),
+         GetOneMethod:(payload)=>SubAccountGetOne(payload),
+         uniqueKey:props?.UniqueId??"",
+      })
+    },[])
+
+    React.useEffect(()=>{
+      setTimeout(() => {
+        props?.setListComponent?.((<SubAccountList {...props}/>))
+      }, 500);
     },[])
 
     

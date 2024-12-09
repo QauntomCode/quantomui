@@ -14,6 +14,7 @@ import dayjs from 'dayjs'
 import { Box, Button, IconButton, Paper } from '@mui/material'
 import { useTheme } from "@mui/material/styles";
 import SearchButtonIcon from '@mui/icons-material/FindInPageOutlined';
+import { HeaderHeight } from '../../../../../CommonMethods'
 
 
 export const PettyCashList = (props?:MenuComponentProps<PettyCashModel>) => {
@@ -33,8 +34,9 @@ export const PettyCashList = (props?:MenuComponentProps<PettyCashModel>) => {
      store.dispatch(set_list_data({stateKey:props?.UniqueId??"",ListData:data}))
   }
 
+  const height= `calc(100vh - ${HeaderHeight})`
   return (
-    <>
+    <Box>
       <Quantom_Grid container spacing={.5} sx={{marginBottom:'5px'}} display='flex' alignItems='center'>
           <Quantom_Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             <QUANTOM_Date label='From Date' value={dayjs(fromDate)} onChange={(date)=>{setFromDate(date?.toDate()??new Date())}}/>
@@ -51,7 +53,7 @@ export const PettyCashList = (props?:MenuComponentProps<PettyCashModel>) => {
             }}/>
           </Quantom_Grid>
       </Quantom_Grid>
-      <QUANTOM_Table height='400px' columns={
+      <QUANTOM_Table height={height} columns={
         [
           {field:"Location.LocName",width:200,header:'Location'},
           {field:"Code",width:120,header:'Code'},
@@ -71,7 +73,7 @@ export const PettyCashList = (props?:MenuComponentProps<PettyCashModel>) => {
         onViewButtonClick={(data)=>{
             props?.setPrimaryKeyNo?.(data?.Code)
         }}/>
-    </>
+    </Box>
   )
 }
 

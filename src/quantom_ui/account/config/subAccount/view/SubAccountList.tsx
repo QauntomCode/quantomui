@@ -8,6 +8,8 @@ import store, { full_component_state } from '../../../../../redux/store'
 import { SubAccountGetAll } from '../impl/subAccountImpl'
 import { set_list_data } from '../../../../../redux/reduxSlice'
 import { QUANTOM_Table } from '../../mainAccount/view/MainAccountView'
+import { HeaderHeight } from '../../../../../CommonMethods'
+import { Box } from '@mui/material'
 
 export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
   const listData= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""))?.listData
@@ -16,6 +18,7 @@ export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
      handleLoadSubAccountData();
   },[])
   
+  const height= `calc(100vh - ${HeaderHeight})`
   const handleLoadSubAccountData=async()=>{
      let data= await SubAccountGetAll();
      console.log('data of ')
@@ -24,10 +27,12 @@ export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
 
   return (
     <>
-      <QUANTOM_Table height='400px' columns={[{field:"Code",width:350},{field:'Name'},{field:'mainAccount.Name'}]} data={listData}
+     <Box sx={{marginTop:'10px'}}>
+      <QUANTOM_Table height={height} columns={[{field:"Code",width:350},{field:'Name'},{field:'mainAccount.Name'}]} data={listData}
       onViewButtonClick={(data)=>{
           props?.setPrimaryKeyNo?.(data?.Code)
       }}/>
+      </Box>
     </>
   )
 }
