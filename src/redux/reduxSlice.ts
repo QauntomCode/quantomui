@@ -39,7 +39,7 @@ export interface QuantomFormState<T>{
   compSettings?:ComponentSettings;
   listData?:unknown[];
   FormState?:'FORM'|'LIST';
-  IsAfterFirstTimeNow?:boolean;
+  IsFirstUseEffectCall?:boolean;
 }
 
 export interface ComponentSettings{
@@ -225,7 +225,7 @@ interface KeyValues{
         // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
         const updatedFormsState = state.FormsState?.map(formState => 
           formState.stateKey === action.payload.stateKey 
-              ? { ...formState, IsAfterFirstTimeNow:action?.payload?.calledSuccessfully } 
+              ? { ...formState, IsFirstUseEffectCall:!action?.payload?.calledSuccessfully } 
               : formState
       );
       return {
@@ -291,8 +291,9 @@ interface KeyValues{
       create_initial_state:(state,action:PayloadAction<QuantomFormState<any>>)=>{
         let s= {...state};
         let oldObj= s?.FormsState?.find(x=>x.stateKey===action.payload.stateKey);
-        if(!oldObj){
-          s={...s,FormsState:[...s?.FormsState||[],{...action.payload}]}
+        
+        if(!oldObj && action?.payload?.stateKey){
+          s={...s,FormsState:[...s?.FormsState||[],{...action.payload,IsFirstUseEffectCall:true}]}
           state={...s};
           return state;
         }

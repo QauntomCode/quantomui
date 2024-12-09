@@ -28,9 +28,10 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
          SaveMethod:(payload)=>RegisterAccountInsert(payload),
          DeleteMethod:(payload)=>RegisterAccountDelete(payload),
          GetOneMethod:(payload)=>RegisterAccountGetOne(payload),
-         uniqueKey:props?.UniqueId??""
+         uniqueKey:props?.UniqueId??"",
+         baseProps:props??{}
       })
-    },[])
+    },[props])
 
     React.useEffect(()=>{
 

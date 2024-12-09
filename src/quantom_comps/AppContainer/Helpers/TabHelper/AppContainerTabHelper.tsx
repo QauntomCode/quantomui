@@ -74,8 +74,10 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   // const [newProps,setNewProps]=React.useState<any>();
 
   React.useEffect(()=>{
-    set_initial_state(props?.UniqueId)
-  },[]);
+    if(props?.UniqueId){
+      set_initial_state(props?.UniqueId)
+    }
+  },[props?.UniqueId]);
   
 
   const nProps={...props}
@@ -85,11 +87,12 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   //const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
   // const selLocation= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
 
-  React.useEffect(()=>{
-    if(fullState?.Location?.LocId){
-      fullState?.LocationInitMethod?.(fullState?.Location);
-    }
-  },[fullState?.Location?.LocId ,fullState?.LocationInitMethod])
+  // React.useEffect(()=>{
+  //   if(fullState?.Location?.LocId){
+  //     alert('testing')
+  //     fullState?.LocationInitMethod?.(fullState?.Location);
+  //   }
+  // },[fullState?.Location?.LocId ,fullState?.LocationInitMethod])
 
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
@@ -135,19 +138,8 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   
 
   const obj=AllCompMenus?.find(x=>x.MenuCode===props?.MenuCode);
-  const selectedComponent=obj?.GetComponent?.({...nProps,state:state})
+  const selectedComponent=obj?.GetComponent?.({...nProps,state:state,fullState:fullState})
 
-   const willShowLocation=():boolean=>{
-      if(fullState?.compSettings?.willShowLocations)
-        { 
-           if(!fullState?.Location?.LocId){
-               return true;
-           }
-          }
-           return false;
-        }
-
-  // alert(selLocaion?.LocId)
   return(
     <div>
       <QUANTOM_Toast {...alertProps}/>
@@ -192,7 +184,10 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
          if(locs && locs.length>0  &&  fState?.LocationInitMethod && locs.length===1){
             if(fState?.compSettings?.willShowLocations && !fState?.Location?.LocId){
               // alert(fState?.Location?.LocId)
-              store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:locs[0]}));
+              let cLoc=locs[0];
+              store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:cLoc}));
+              fState?.LocationInitMethod?.(cLoc);
+
             }
          }
     },[locs, fState?.LocationInitMethod,fState?.compSettings?.willShowLocations])
@@ -210,6 +205,7 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
                  }}}>
                   <Box onClick={()=>{
                      store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:x}));
+                     fState?.LocationInitMethod?.(x);
                   }} sx={{width:'100%',height:'100%',fontSize:font.H4FontSize,fontFamily:font.RegularFont,marginLeft:'10px',paddingTop:'5px',paddingBottom:'5px'}}>
                     {x?.LocName}
                   </Box>
@@ -535,45 +531,55 @@ export interface FormMethodsProps<T>{
     InitOnLocationChange?:(loc?:LocationModel)=>void;
     AfterResetMethod?:(loc?:LocationModel)=>void;
     settings?:ComponentSettings;
-    uniqueKey:string
+    uniqueKey:string,
+    baseProps:MenuComponentProps<T>
 }
 
 
 
 export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
+  
   setTimeout(() => {
-    
-    if(methods?.SaveMethod)
-    {
-      store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
+    // alert(methods?.baseProps?.fullState?.IsFirstUseEffectCall)
+    // alert(methods?.baseProps?.fullState?.stateKey)
+    if(methods?.baseProps?.fullState?.IsFirstUseEffectCall)
+      {  
+          // alert('called method')
+          
+          if(methods?.SaveMethod)
+          {
+            store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
+          }
+          if(methods?.DeleteMethod){
+            store.dispatch(set_delete_method({stateKey:methods?.uniqueKey,method:methods?.DeleteMethod}))
+          }
+          if(methods?.GetOneMethod){
+            store.dispatch(set_get_one_method({stateKey:methods?.uniqueKey,method:methods?.GetOneMethod}))
+          }
+          if(methods?.SetBasicKeys)
+          {
+            store.dispatch(set_basic_keys_method({stateKey:methods?.uniqueKey,method:methods?.SetBasicKeys}))
+          }
+          if(methods?.settings)
+          {
+            store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:{...methods?.settings}}))
+          }
+          if(methods?.AfterResetMethod){
+            store?.dispatch(set_after_reset_method({stateKey:methods.uniqueKey,method:methods.AfterResetMethod}))
+          }
+      
+          if(methods?.InitOnLocationChange){
+            store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
+          }
+          store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
     }
-    if(methods?.DeleteMethod){
-      store.dispatch(set_delete_method({stateKey:methods?.uniqueKey,method:methods?.DeleteMethod}))
-    }
-    if(methods?.GetOneMethod){
-      store.dispatch(set_get_one_method({stateKey:methods?.uniqueKey,method:methods?.GetOneMethod}))
-    }
-    if(methods?.SetBasicKeys)
-    {
-      store.dispatch(set_basic_keys_method({stateKey:methods?.uniqueKey,method:methods?.SetBasicKeys}))
-    }
-    if(methods?.settings)
-    {
-      store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:{...methods?.settings}}))
-    }
-    if(methods?.AfterResetMethod){
-      store?.dispatch(set_after_reset_method({stateKey:methods.uniqueKey,method:methods.AfterResetMethod}))
-    }
- 
-    if(methods?.InitOnLocationChange){
-      store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
-    }
-   
-    store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
   }, 500);
+  
+
+}
 //  }, (500));
   
-}
+
 
 
 

@@ -26,10 +26,11 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
       uniqueKey:props?.UniqueId??"",
       settings:{willShowLocations:true},
       InitOnLocationChange:(loc)=>(props?.setState?.({...props?.state,LocId:loc?.LocId,Date:new Date()})),
-      AfterResetMethod:(loc)=>(props?.setState?.({LocId:loc?.LocId,Date:new Date()}))
+      AfterResetMethod:(loc)=>(props?.setState?.({LocId:loc?.LocId,Date:new Date()})),
+      baseProps:props??{}
      })
 
-    },[]);
+    },[props]);
 
     React.useEffect(()=>{
        setTimeout(() => {

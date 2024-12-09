@@ -29,8 +29,9 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
          DeleteMethod:(payload)=>SubAccountDelete(payload),
          GetOneMethod:(payload)=>SubAccountGetOne(payload),
          uniqueKey:props?.UniqueId??"",
+         baseProps:props??{}
       })
-    },[])
+    },[props])
 
     React.useEffect(()=>{
       setTimeout(() => {

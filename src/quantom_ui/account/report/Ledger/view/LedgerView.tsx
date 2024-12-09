@@ -25,11 +25,12 @@ import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
 
     React.useEffect(()=>{
-        setFormBasicKeys({
+        setFormBasicKeys<LedgerComponentState>({
             uniqueKey:props?.UniqueId??"",
-            settings:{wWillHideToolbar:true}
+            settings:{wWillHideToolbar:true},
+            baseProps:props??{}
         })
-    },[])
+    },[props])
 
     React.useEffect(()=>{
         if(!props?.state?.filters?.FromDate || !props?.state?.filters?.ToDate)
