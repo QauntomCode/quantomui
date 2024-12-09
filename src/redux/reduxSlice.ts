@@ -39,7 +39,7 @@ export interface QuantomFormState<T>{
   compSettings?:ComponentSettings;
   listData?:unknown[];
   FormState?:'FORM'|'LIST';
-  IsFirstCall?:boolean;
+  IsAfterFirstTimeNow?:boolean;
 }
 
 export interface ComponentSettings{
@@ -70,7 +70,7 @@ export interface ComponentListPropsPayloadType{
   stateKey?:string;
 }
 export interface SetFirstCallPayload{
-  isFirstCall?:boolean
+  calledSuccessfully?:boolean
   stateKey?:string;
 }
 export interface StateMethodPayloadType<T>{
@@ -225,7 +225,7 @@ interface KeyValues{
         // alert('setting value s'+action?.payload?.settings?.wWillHideToolbar)
         const updatedFormsState = state.FormsState?.map(formState => 
           formState.stateKey === action.payload.stateKey 
-              ? { ...formState, IsFirstCall:action?.payload?.isFirstCall } 
+              ? { ...formState, IsAfterFirstTimeNow:action?.payload?.calledSuccessfully } 
               : formState
       );
       return {

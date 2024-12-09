@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
-import { change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
+import { change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
 import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -569,6 +569,7 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
       store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
     }
    
+    store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
   }, 500);
 //  }, (500));
   
