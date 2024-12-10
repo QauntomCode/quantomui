@@ -130,7 +130,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     <AppProvider
       navigation={NAVIGATION}
       router={router}
-     theme={QuantomTheme}
+      theme={QuantomTheme}
       window={demoWindow}
     >
       <DashboardLayout>
