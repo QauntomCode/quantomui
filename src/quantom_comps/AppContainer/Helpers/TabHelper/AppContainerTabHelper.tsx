@@ -30,6 +30,7 @@ import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/Led
 import * as Icons from '@mui/icons-material';
 import { hover } from '@testing-library/user-event/dist/hover';
 import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLedger/view/LedgerDetailView';
+import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
 
 export const AppContainerTabHelper = () => {
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
@@ -349,6 +350,11 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
     MenuCode:"TEST_REPORT",
     MenuCaption:"Report Component",
     GetComponent:(props?:MenuComponentProps<any>)=>(<QuantomReportView {...props}/>)
+  },
+  {
+    MenuCode:"001-0036",
+    MenuCaption:"Layout",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<DashboardLayoutBasic/>)
   },
   ...AccountMenus
 ]
