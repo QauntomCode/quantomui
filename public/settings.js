@@ -1,4 +1,4 @@
 window.globalConfig = {
-    apiUrl: "http://localhsot:port/api/",
+    apiUrl: "http://localhost:44351/api/",
     appName: "Business One Erp"
   };
