@@ -1,4 +1,4 @@
 window.globalConfig = {
-    apiUrl: "http://b-shaheerinternational.com/api/",
-    appName: "FAROOQ PLYWOOD"
+    apiUrl: "http://localhsot:port/api/",
+    appName: "Business One Erp"
   };
