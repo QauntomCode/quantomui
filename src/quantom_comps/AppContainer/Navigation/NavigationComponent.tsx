@@ -10,6 +10,10 @@ import LayersIcon from '@mui/icons-material/Layers';
 import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
+import { AppContainer } from '../AppContainer';
+import { AppContainerTabHelper } from '../Helpers/TabHelper/AppContainerTabHelper';
+import { List, ListItemButton, ListItemText } from '@mui/material';
+import QuantomTheme from '../../QuantomTheme';
 
 const NAVIGATION: Navigation = [
   {
@@ -22,10 +26,40 @@ const NAVIGATION: Navigation = [
     icon: <DashboardIcon />,
   },
   {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
+    segment: 'Account',
+    title: 'Finance',
+    icon: <BarChartIcon />,
+    children: [
+        {
+            segment: 'Config',
+            title: 'Config',
+            icon: <BarChartIcon />,
+            children: [
+              {
+                segment: 'sales',
+                title: 'Sales',
+                icon: <DescriptionIcon />,
+                // onClick: (event:any) => {
+                //     alert('testing')
+                //     event.preventDefault(); 
+                //     console.log("Sales segment clicked!");
+                    
+                //   },
+              },
+              {
+                segment: 'traffic',
+                title: 'Traffic',
+                icon: <DescriptionIcon />,
+              },
+            ],
+          },
+    ],
   },
+//   {
+//     segment: 'orders',
+//     title: 'Orders',
+//     icon: <ShoppingCartIcon />,
+//   },
   {
     kind: 'divider',
   },
@@ -57,37 +91,23 @@ const NAVIGATION: Navigation = [
   },
 ];
 
-const demoTheme = createTheme({
-  cssVariables: {
-    colorSchemeSelector: 'data-toolpad-color-scheme',
-  },
-  colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
+// const demoTheme = createTheme({
+//   cssVariables: {
+//     colorSchemeSelector: 'data-toolpad-color-scheme',
+//   },
+// //   colorSchemes: { light: true, dark: true },
+//   breakpoints: {
+//     values: {
+//       xs: 0,
+//       sm: 600,
+//       md: 600,
+//       lg: 1200,
+//       xl: 1536,
+//     },
+//   },
+// });
 
-function DemoPageContent({ pathname }: { pathname: string }) {
-  return (
-    <Box
-      sx={{
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Typography>Dashboard content for {pathname}</Typography>
-    </Box>
-  );
-}
+
 
 interface DemoProps {
   /**
@@ -110,13 +130,18 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     <AppProvider
       navigation={NAVIGATION}
       router={router}
-      theme={demoTheme}
+     theme={QuantomTheme}
       window={demoWindow}
     >
       <DashboardLayout>
-        <DemoPageContent pathname={router.pathname} />
+        
+        <AppContainerTabHelper/>
       </DashboardLayout>
     </AppProvider>
     // preview-end
   );
 }
+
+
+
+

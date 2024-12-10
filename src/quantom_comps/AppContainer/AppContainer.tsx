@@ -6,6 +6,7 @@ import { GetMenuModel } from './Impl/AppContainerImpl';
 import { Grid, Paper } from '@mui/material';
 import { Quantom_Grid } from '../base_comps';
 import { AppContainerTabHelper } from './Helpers/TabHelper/AppContainerTabHelper';
+import DashboardLayoutBasic from './Navigation/NavigationComponent';
 
 export const AppContainer = () => {
     // const [menus,setMenus]=React.useState<AppContainerModel>();
@@ -23,8 +24,8 @@ export const AppContainer = () => {
   return (
     <div>
    
-
-    <AppContainerTabHelper />
+    <DashboardLayoutBasic/>
+    {/* <AppContainerTabHelper /> */}
   </div>
   )
 }
