@@ -169,6 +169,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
     <>
      <Quantom_Input 
           value={props?.selected?.Name} 
+          fullWidth
           inputRef={inputRef}
           onChange={(e)=>{
               // const sText=e?.target?.value;
@@ -179,7 +180,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
               setSearch(result)
             //setSearch(e.target.value)
           }} 
-          label={props?.label} fullWidth
+          label={props?.label} 
         
       />
 

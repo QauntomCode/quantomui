@@ -45,27 +45,27 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
     <>
         <GroupContainer Label='Group Info'>
          <Quantom_Grid container spacing={.5}>
-            <Quantom_Grid item xs={4} md={3} lg={2}>
+            <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
                <Quantom_Input disabled label='Main Code' value={props?.state?.subSubAccount?.subAccount?.mainAccount?.Code} />
             </Quantom_Grid>
-            <Quantom_Grid item xs={8} md={9} lg={10}>
+            <Quantom_Grid item size={{xs:8,md:9,lg:10}} >
                <Quantom_Input disabled label='Main Name' value={props?.state?.subSubAccount?.subAccount?.mainAccount?.Name} />
             </Quantom_Grid>
          </Quantom_Grid>
          <Quantom_Grid container spacing={.5}>
-            <Quantom_Grid item xs={4} md={3} lg={2}>
+            <Quantom_Grid item size={{xs:4,md:3,lg:2}} >
                <Quantom_Input disabled label='Sub Code' value={props?.state?.subSubAccount?.subAccount?.Code} />
             </Quantom_Grid>
-            <Quantom_Grid item xs={8} md={9} lg={10}>
+            <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
                <Quantom_Input disabled label='Sub Name' value={props?.state?.subSubAccount?.subAccount?.Name} />
             </Quantom_Grid>
          </Quantom_Grid>
 
          <Quantom_Grid container spacing={.5}>
-            <Quantom_Grid item xs={4} md={3} lg={2}>
+            <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
                <Quantom_Input disabled label='Sub Sub Code' value={props?.state?.SubSubCode} />
             </Quantom_Grid>
-            <Quantom_Grid item xs={8} md={9} lg={10}>
+            <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
             <Quantom_LOV onChange={async(selected)=>{
                 let res= await SubSubAccountGetOne(selected?.Code);
                 props?.setState?.({...props?.state,subSubAccount:{...res?.Response},SubSubCode:selected?.Code})
@@ -81,10 +81,10 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
 
       <GroupContainer Label='GL Account Info'>
       <Quantom_Grid container spacing={.5}>
-         <Quantom_Grid item xs={4} md={3} lg={2}>
+         <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
             <Quantom_Input disabled label='Code' value={props?.state?.Code} />
          </Quantom_Grid>
-         <Quantom_Grid item xs={8} md={9} lg={10}>
+         <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
             <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
          </Quantom_Grid>
       </Quantom_Grid>

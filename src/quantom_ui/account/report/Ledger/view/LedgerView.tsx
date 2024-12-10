@@ -89,16 +89,16 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
 
     return(
         <GroupContainer Label="Ledger Filters">
-                <Quantom_Grid container xs={12} spacing={.5}>
-                    <Quantom_Grid xs={2}>
+                <Quantom_Grid container spacing={.5}>
+                    <Quantom_Grid size={{xs:2}}>
                         <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
                                     onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
                     </Quantom_Grid>
-                    <Quantom_Grid item xs={2}>
+                    <Quantom_Grid item size={{xs:2}}>
                         <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
                                         onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
                     </Quantom_Grid>
-                    <Quantom_Grid item xs={3}>
+                    <Quantom_Grid item size={{xs:3}}>
                         <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
                                         onChange={(selected)=>{
                                             props?.setState?.({...props?.state,glAccount:(selected),filters:{
@@ -115,13 +115,13 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
                                             }});
                                         }}/>
                     </Quantom_Grid>
-                    <Quantom_Grid item xs={4}>
+                    <Quantom_Grid item size={{xs:3}}>
                         <MultiLocationSelectionlOVComp  />
                     </Quantom_Grid>
-                    <Quantom_Grid item xs={.5}>
+                    <Quantom_Grid item size={{xs:.5}}>
                             <ListCompButton onClick={handleLedger} iconName="PageviewTwoTone" Label="Load"/>
                     </Quantom_Grid>
-                    <Quantom_Grid item xs={.5}>
+                    <Quantom_Grid item size={{xs:.5}}>
                             <ListCompButton iconName="LocalPrintshopTwoTone" Label="Print"/>
                     </Quantom_Grid>
                 </Quantom_Grid>

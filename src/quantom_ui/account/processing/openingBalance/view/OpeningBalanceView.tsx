@@ -44,44 +44,50 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     <>
       <GroupContainer Label='Opening Balance Detail'>
        <Quantom_Grid container spacing={0.5}>
-          <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
+          <Quantom_Grid  item size={{xs:12,md:4,lg:3,xl:1.5}} >
             <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
           </Quantom_Grid>
-          <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
+          <Quantom_Grid  item  size={{xs:12,md:4,lg:3,xl:1.5}}>
             <QUANTOM_Date disabled label='OP Code' value={dayjs(props?.state?.Date)}
                 onChange={(date)=>{
                   props?.setState?.({...props?.state,Date:date?.toDate()})
                 }} />
           </Quantom_Grid>
         </Quantom_Grid>
-        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
+        <Quantom_Grid  container   >
+          <Quantom_Grid item size={{xs:12, md:8, lg:6, xl:3}}>
           <LocationSelectorLOV onChange={(loc)=>{ 
                props?.setState?.({...props?.state,LocCode:loc?.Code,location:{LocId:loc?.Code,LocName:loc?.Name}})
           }} selected={{Code:props?.state?.LocCode,Name:props?.state?.location?.LocName}}/> 
+          </Quantom_Grid>
         </Quantom_Grid>
-        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
+        <Quantom_Grid  container>
+          <Quantom_Grid item size={{xs:12, md:8, lg:6, xl:3}}>
           <RegisterAccountLOV onChange={(sel)=>{
               props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
               } 
               selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/> 
+              </Quantom_Grid>
         </Quantom_Grid>
         <Quantom_Grid container spacing={0.5}>
-          <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
+          <Quantom_Grid  item  size={{xs:12,md:4,lg:3,xl:1.5}}>
             <Quantom_Input   label='Debit' value={props?.state?.Debit} 
                   onChange={(e)=>{props?.setState?.({...props?.state,Debit:safeParseToNumber(e?.target?.value),Credit:0})}}/>
           </Quantom_Grid>
-          <Quantom_Grid  item xs={12} md={4} lg={3} xl={1.5}>
+          <Quantom_Grid  item size={{xs:12,md:4,lg:3,xl:1.5}}>
              <Quantom_Input   label='Credit' value={props?.state?.Credit} 
                     onChange={(e)=>{props?.setState?.({...props?.state,Credit:safeParseToNumber(e?.target?.value),Debit:0})}} />
           </Quantom_Grid>
         </Quantom_Grid>
       
         
-        <Quantom_Grid  container xs={12} md={8} lg={6} xl={3}>
+        <Quantom_Grid  container>
+        <Quantom_Grid item size={{xs:12, md:8, lg:6, xl:3}}>
           <Quantom_Input label='Remarks' value={props?.state?.Remarks} onChange={(e)=>{
              props?.setState?.({...props?.state,Remarks:e?.target?.value}) 
           }
           }/>
+          </Quantom_Grid>
         </Quantom_Grid>
         </GroupContainer>
       {/* </Quantom_Grid> */}

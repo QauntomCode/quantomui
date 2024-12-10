@@ -8,7 +8,7 @@ import { QUANTOM_MasterDetailGrid1, QUANTOM_MasterDetailTable } from "../../../c
 import { LedgerComponentState, LedgerFilterHeaderComp } from "../../Ledger/view/LedgerView";
 import { GroupContainer } from "../../../processing/voucher/view/VoucherView";
 import { useQuantomFonts } from "../../../../../redux/store";
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+// import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { Box, Paper, useTheme } from "@mui/material";
 
 

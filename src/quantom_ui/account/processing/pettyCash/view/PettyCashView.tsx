@@ -79,23 +79,30 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
   return (
     <>
     <GroupContainer Label='Petty Cash Info'>
-      <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+      <Quantom_Grid container>
+        <Quantom_Grid size={{sx:12,md:4,lg:3,xl:3}}>
          <Quantom_Input label="Code" value={props?.state?.Code} disabled/>
+         </Quantom_Grid>
       </Quantom_Grid>
-      <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+      <Quantom_Grid container >
+      <Quantom_Grid size={{sx:12,md:4,lg:3,xl:3}}>
          <QUANTOM_Date 
               value={dayjs( props?.state?.Date)} 
               onChange={(val)=>props?.setState?.({...props?.state,Date:val?.toDate()})} 
               label='Date' />
+            </Quantom_Grid>
       </Quantom_Grid>
 
-      <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+      <Quantom_Grid container >
+      <Quantom_Grid size={{sx:12,md:4,lg:3,xl:3}}>
          <Quantom_LOV label='Type' FillDtaMethod={handlePayReceive} 
                       selected={getSelected()} 
                       onChange={(sel)=>{setPayType(sel?.Code)}} />
+        </Quantom_Grid>
       </Quantom_Grid>
 
-      <Quantom_Grid container xs={12} md={8} lg={6} xl={4}>
+      <Quantom_Grid container >
+      <Quantom_Grid size={{sx:12,md:4,lg:3,xl:3}}>
          <RegisterAccountLOV 
                 
                 selected={{Code:props?.state?.GlAccount,Name:props?.state?.glAccountRegisterAccount?.Name}}  
@@ -104,16 +111,21 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
                 }}
           />
         </Quantom_Grid>
-        <Quantom_Grid container xs={12} md={4} lg={3} xl={1.5}>
+        </Quantom_Grid>
+        <Quantom_Grid container >
+        <Quantom_Grid size={{sx:12,md:4,lg:3,xl:3}}>
             <Quantom_Input label="Amount" value={props?.state?.TotalAmount} 
                     onChange={(val)=>props?.setState?.({...props?.state,TotalAmount:safeParseToNumber(val.target?.value)})}/>
         </Quantom_Grid>
+        </Quantom_Grid>
 
-        <Quantom_Grid container xs={12} md={8} lg={6} xl={4}>
+        <Quantom_Grid container >
+        <Quantom_Grid size={{sx:12,md:4,lg:3,xl:3}}>
             <Quantom_Input label="Remarks" 
                   value={props?.state?.Remarks} 
                   onChange={(e)=>{props?.setState?.({...props?.state,Remarks:e.target.value})}}/>
          
+        </Quantom_Grid>
         </Quantom_Grid>
         </GroupContainer>
 

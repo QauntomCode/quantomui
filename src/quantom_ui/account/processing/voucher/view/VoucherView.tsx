@@ -17,6 +17,7 @@ import { useQuantomFonts } from '../../../../../redux/store'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import { VoucherList } from './VoucherList'
 import { useTheme } from '@mui/material/styles'
+import { ListCompButton } from '../../../report/Ledger/view/LedgerView'
 
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
@@ -53,16 +54,16 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
     <>
      <GroupContainer Label='Voucher Master Info'>
       <Quantom_Grid container  spacing={.5}>
-        <Quantom_Grid item xs={12} sm={6} md={3} lg={2} xl={1.5}>
+        <Quantom_Grid item size={{xs:12,sm:6,md:3,lg:2,xl:1.5}}>
           <Quantom_Input label="VCode" value={props?.state?.voucher?.VCode} disabled/>
         </Quantom_Grid>
-        <Quantom_Grid item xs={12} sm={6} md={3} lg={2} xl={1.5}>
+        <Quantom_Grid item size={{xs:12,sm:6,md:3,lg:2,xl:1.5}}>
           <QUANTOM_Date 
               value={dayjs( props?.state?.voucher?.VDate)} 
               onChange={(val)=>props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VDate:val?.toDate()}})} 
               label='VDate' />
           </Quantom_Grid>
-          <Quantom_Grid item xs={12} sm={6} md={3} lg={2} xl={1.5}>
+          <Quantom_Grid size={{xs:12,sm:12,md:3,lg:2,xl:1.5}}>
           <Quantom_Input 
               value={ props?.state?.voucher?.VType} 
                onChange={(e)=>props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VType:e.target.value}})}
@@ -71,11 +72,11 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
       </Quantom_Grid>
       
         <Quantom_Grid container  spacing={.5}>
-          <Quantom_Grid item xs={12} sm={6} md={3} lg={2} xl={1.5}>
+          <Quantom_Grid item size={{xs:12,sm:12,md:3,lg:2,xl:1.5}}>
               <Quantom_Input label="RefNo" value={props?.state?.voucher?.VRefNo} 
                       onChange={(val)=>props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VRefNo:val.target?.value}})}/>
           </Quantom_Grid>
-          <Quantom_Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+          <Quantom_Grid item size={{xs:12,sm:12,md:6,lg:4,xl:3}}>
             <Quantom_Input label="Remarks" 
                   value={props?.state?.voucher?.VRemarks} 
                   onChange={(e)=>{props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VRemarks:e.target.value}})}}/>
@@ -85,23 +86,23 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
         </GroupContainer>
         <GroupContainer Label='Voucher Detail Line'>
           
-          <Quantom_Grid container  display='flex' justifyContent='center' alignItems='center'   spacing={.5}>
-            <Quantom_Grid item xs={lineSize.GL_ACCOUNT_SIZE}>
+          <Quantom_Grid container fullWidth  xs={12}  spacing={.5}>
+            <Quantom_Grid item size={{md:lineSize.GL_ACCOUNT_SIZE}} >
                 <RegisterAccountLOV  ref={vDetailRef} selected={{ Code:vDetail?.registerAccount?.Code,Name:vDetail?.registerAccount?.Name}}
                             onChange={(selected)=>{setVDetail({...vDetail,Code:selected?.Code,registerAccount:selected})}}/>
             </Quantom_Grid>
-            <Quantom_Grid item xs={lineSize.NARRATION_SIZE}>
+            <Quantom_Grid item size={{md:lineSize.NARRATION_SIZE}} >
                 <Quantom_Input label='Narration' value={vDetail?.Remarks} onChange={(e)=>{setVDetail({...vDetail,Remarks:e.target.value})}}/>
             </Quantom_Grid>
-            <Quantom_Grid item xs={lineSize.DEBIT_SIZE} >
+            <Quantom_Grid item size={{md:lineSize.DEBIT_SIZE}} >
             <Quantom_Input label='Debit' value={vDetail?.Debit} onChange={(e)=>{setVDetail({...vDetail,Debit:safeParseToNumber( e.target.value),Credit:0})}}/>
             </Quantom_Grid>
-            <Quantom_Grid item xs={lineSize.CREDIT_SIZE}>
+            <Quantom_Grid item size={{md:lineSize.CREDIT_SIZE}}>
             <Quantom_Input label='Credit' value={vDetail?.Credit} onChange={(e)=>{setVDetail({...vDetail,Debit:0,Credit:safeParseToNumber( e.target.value)})}}/>
             </Quantom_Grid>
            
-            <Quantom_Grid item xs={lineSize.BUTTON_SIZE} >
-              <Button onClick={()=>{
+            <Quantom_Grid item size={{md:lineSize.BUTTON_SIZE}} >
+              <ListCompButton onClick={()=>{
                   if(!vDetail?.registerAccount?.Code){
                     props?.errorToast?.('Select GlAccount first')
                     return;
@@ -116,9 +117,9 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
                     alert('have current ref')
                   }
                   vDetailRef?.current?.focus();
-              }} sx={{marginTop:'10px'}} fullWidth size='small' variant='contained'>
-                  <AddCircleIcon fontSize='medium'/>
-              </Button>
+              }} Label='Add' iconName='AddCircleTwoTone'>
+                  {/* <AddCircleIcon fontSize='medium'/> */}
+              </ListCompButton>
             </Quantom_Grid>
           </Quantom_Grid>
 
@@ -161,7 +162,7 @@ export const RenderVoucherDetail=(props?:VoucherDetailProps)=>{
   }
   return(
     <>
-      <Quantom_Grid container xs={12} sx={{marginTop:'4px'}} component={Paper} display='flex' alignItems='center' spacing={.5}>
+      <Quantom_Grid container xs={12} sx={{marginTop:'4px'}} component={Paper}  alignItems='center' spacing={.5}>
         <Quantom_Grid item xs={lineSize.GL_ACCOUNT_SIZE} sx={style} justifyContent='center' alignItems='center' display='flex'>
             <Box onClick={()=>{
                let d= [...props?.basePorps?.state?.details??[]];
@@ -196,10 +197,10 @@ export const RenderVoucherDetail=(props?:VoucherDetailProps)=>{
 
  const lineSize={
   GL_ACCOUNT_SIZE:4,
-  NARRATION_SIZE:4,
+  NARRATION_SIZE:4.5,
   DEBIT_SIZE:1.5,
   CREDIT_SIZE:1.5,
-  BUTTON_SIZE:1,
+  BUTTON_SIZE:.5,
 
 }
  

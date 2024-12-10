@@ -1,8 +1,8 @@
 import { Height, Margin, Padding } from '@mui/icons-material';
-import { Button, ButtonProps, TextField, TextFieldProps, useTheme } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Button, ButtonProps, Grid2, TextField, TextFieldProps, useTheme } from '@mui/material';
+// import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+// import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 // import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 // import Grid2 from '@mui/material/Unstable_Grid2';
 import { Variant } from '@testing-library/react';
@@ -19,11 +19,11 @@ interface Quantom_Container_Props{
 }
 export const Quantom_Container= (props?:Quantom_Container_Props)=>{
     return(
-       <Grid>
+       <Quantom_Grid>
           {
             props?.children
           }
-       </Grid>
+       </Quantom_Grid>
     )
 }
 
@@ -61,7 +61,7 @@ export const Quantom_Input=(props: {
             fontWeight:'700',
             fontFamily:font.HeaderFont,
             letterSpacing:1.1,
-            color:theme?.palette?.secondary?.contrastText
+            color:theme?.palette?.secondary?.contrastText,
           }, 
           '& .MuiInputBase-input': {
             fontFamily:'Ubuntu',
