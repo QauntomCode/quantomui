@@ -51,6 +51,7 @@ export const set_form_state=<T>(stKey?:string,state?:T)=>{
     let object:QuantomFormState<any>={stateKey:stKey,QuantomFormCoreState:state}
     store.dispatch(set_state(object));
 }
+
 export const set_initial_state=<T>(stKey?:string)=>{
     let object:QuantomFormState<any>={stateKey:stKey,QuantomFormCoreState:{}}
     store.dispatch(create_initial_state(object));

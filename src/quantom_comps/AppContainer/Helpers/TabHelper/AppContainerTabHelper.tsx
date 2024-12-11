@@ -2,10 +2,10 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode } from 'react'
 import { useSelector } from 'react-redux';
-import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations } from '../../../../redux/store';
+import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
-import { change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_user_locations } from '../../../../redux/reduxSlice';
+import { change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
 import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -31,8 +31,10 @@ import * as Icons from '@mui/icons-material';
 import { hover } from '@testing-library/user-event/dist/hover';
 import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLedger/view/LedgerDetailView';
 import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
+import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
 
 export const AppContainerTabHelper = () => {
+  const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
        const openMenus:BasicTabProps[]= useSelector((state:any)=>get_open_menus(state))?.Menus?.map((item,index)=>{
         console.warn(item?.UniqueKeyNo)
         return{
@@ -42,7 +44,11 @@ export const AppContainerTabHelper = () => {
     })??[];   
   return (
     <>
-    <BasicTabs tabs={[...openMenus]}></BasicTabs>
+    <BasicTabs selectedTabIndex={selectedTab} onTabClick={(index)=>{
+      store.dispatch( set_selected_menu_index(index))
+    }} tabs={[...openMenus]} willShowRemoveButton OnRemoveClick={(index)=>{
+      remove_menu(index)
+    }}></BasicTabs>
     </>
   )
 }
@@ -63,6 +69,7 @@ export interface MenuContainerProps<T>{
     // setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
     // setAfterResetMethod?:(method?:(loc?:LocationModel)=>void)=>void;
     errorToast?:(message?:string)=>void;
+    AddComponentTabs?:(tabs?:ComponentTabProps[])=>void;
 }
 
 export interface BasicKeysProps{
@@ -81,19 +88,14 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   },[props?.UniqueId]);
   
 
+
+
   const nProps={...props}
   const [alertProps,setAlertProps]=React.useState<QUANTOM_ToastProps>();
   const state = useSelector((state:any)=>form_state_selector<T>(state,nProps?.UniqueId||""));
   const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
-  //const settings = useSelector((state:any)=>get_component_settings<T>(state,nProps?.UniqueId||""));
-  // const selLocation= useSelector((state?:any)=>get_component_selected_locations(state,nProps?.UniqueId||""));
-
-  // React.useEffect(()=>{
-  //   if(fullState?.Location?.LocId){
-  //     alert('testing')
-  //     fullState?.LocationInitMethod?.(fullState?.Location);
-  //   }
-  // },[fullState?.Location?.LocId ,fullState?.LocationInitMethod])
+  const [tabs,setTabs]=React.useState<ComponentTabProps[]>([])
+  const [selectedTab,setSelectedTab]=React.useState<number>(0)
 
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
@@ -117,6 +119,19 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
     }
     //alert(settings?.wWillHideToolbar)
   },[fullState?.recordKeyNo])
+  
+  const getDefaultTabs=(uniqueKyeNo?:string):ComponentTabProps[]=>{
+        return[
+          {
+            TabComponent:(<UserLogView />),
+            TabCaption:"User Log",
+            SortNumber:100
+           }
+        ]
+  }
+  
+
+
   nProps.setState=(obj?:T)=>{
        set_form_state(props?.UniqueId,{...obj})
   }
@@ -136,7 +151,22 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
     setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'error'})
    }
 
-  
+   nProps.AddComponentTabs=(compTabs?:ComponentTabProps[])=>{
+       setTabs([...compTabs??[]]);
+   }
+
+
+   
+
+
+
+  const basicTabData=[...tabs?.sort((a,b)=>(a?.SortNumber??0)-(b?.SortNumber??0)),...getDefaultTabs()??[]].map((item,index)=>{
+    let obj:BasicTabProps={
+      Caption:item?.TabCaption,
+      Component:item?.TabComponent
+    }
+    return obj  ;
+  })
 
   const obj=AllCompMenus?.find(x=>x.MenuCode===props?.MenuCode);
   const selectedComponent=obj?.GetComponent?.({...nProps,state:state,fullState:fullState})
@@ -154,8 +184,16 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       {
         fullState?.FormState==='LIST'?listComp:selectedComponent
       }
+      <div style={{marginTop:'8px'}}>
+      {
+        fullState?.FormState==='LIST'?(<></>): 
+        (<BasicTabs tabs={[...basicTabData]} selectedTabIndex={selectedTab??0} onTabClick={(index)=>{
+          setSelectedTab(index??0)
+        }}  willShowRemoveButton={false}/>)
+      } 
       </div>
-      
+      </div>
+        
     </div>
   )
 }
@@ -579,7 +617,7 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
           }
           store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
     }
-  }, 500);
+  }, 400);
   
 
 }
@@ -592,3 +630,10 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
 
 
 
+
+
+export interface ComponentTabProps{
+  TabCaption?:string;
+  TabComponent?:ReactNode;
+  SortNumber?:number;
+}

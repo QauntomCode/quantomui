@@ -11,12 +11,12 @@ import { set_selected_menu_index } from "../../../../redux/reduxSlice";
 
 
 export default function BasicTabs(props?: BasicTabPropsInfo) {
-  const value=useSelector((state:any)=>get_selected_menu_index(state));
+  
   // const [value, setValue] = React.useState(0);
   const [hoveredTab, setHoveredTab] = React.useState(-1);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     // setValue(newValue);
-    alert(newValue)
+    // alert(newValue)
     // set_selected_menu_index(newValue)
   };
 
@@ -27,14 +27,15 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
-          value={value}
+          value={props?.selectedTabIndex}
           onChange={handleChange}
           aria-label="basic tabs example"
           sx={{ minHeight: tabHeight }}
         >
           {props?.tabs?.map((item, index) => {
             function handleTabClose(index: number): void {
-             remove_menu(index)
+              props?.OnRemoveClick?.(index)
+             // remove_menu(index)
             }
 
             return (
@@ -46,10 +47,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                   position: "relative",
                   minHeight: tabHeight,
                 }}
-                onClick={()=>{
-                  
-                   store.dispatch( set_selected_menu_index(index))
-                }}
+                onClick={()=>{props?.onTabClick?.(index)}}
                 
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(-1)}
@@ -79,12 +77,12 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                     letterSpacing: 1.2,
                     paddingTop: 0,
                     paddingBottom: 0,
-                    backgroundColor:index===(value??0)?th.palette?.primary?.main:th?.palette?.secondary?.light,
-                    color:index===(value??0)?th?.palette?.primary?.contrastText:th?.palette?.secondary?.contrastText,
+                    backgroundColor:index===(props?.selectedTabIndex)?th.palette?.primary?.main:th?.palette?.secondary?.light,
+                    color:index===(props?.selectedTabIndex)?th?.palette?.primary?.contrastText:th?.palette?.secondary?.contrastText,
                   }}
                 ></Tab>
                 {hoveredTab === index && (
-                  <IconButton
+                  props?.willShowRemoveButton? (<IconButton
                     size="small"
                      onClick={(e) => {
                       e.preventDefault();
@@ -102,6 +100,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                   >
                     <CloseIcon fontSize="small"   />
                   </IconButton>
+                  ):(<></>)
                 )}
               </Box>
             );
@@ -124,7 +123,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
       {props?.tabs?.map((item, index) => {
         return (
           <>
-          <CustomTabPanel value={value??0} index={index}>
+          <CustomTabPanel value={props?.selectedTabIndex} index={index}>
             {item?.Component}
           </CustomTabPanel>
           </>
@@ -136,6 +135,10 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
 
 export interface BasicTabPropsInfo {
   tabs: BasicTabProps[];
+  onTabClick?:(index?:number)=>void;
+  selectedTabIndex:number;
+  willShowRemoveButton?:boolean
+  OnRemoveClick?:(index?:number)=>void
 }
 
 export interface BasicTabProps {

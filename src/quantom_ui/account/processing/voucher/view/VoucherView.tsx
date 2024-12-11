@@ -13,14 +13,17 @@ import { VoucherDelete, VoucherGetOne, VoucherInsert } from '../impl/vouchreImpl
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Box, Button, Paper } from '@mui/material'
 import { VoucherDetailModel } from '../model/VoucherDetailModel'
-import { useQuantomFonts } from '../../../../../redux/store'
+import { form_state_selector, set_form_state,  useQuantomFonts } from '../../../../../redux/store'
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import { VoucherList } from './VoucherList'
 import { useTheme } from '@mui/material/styles'
 import { ListCompButton } from '../../../report/Ledger/view/LedgerView'
+import { useSelector } from 'react-redux'
 
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
+
+
 
   React.useEffect(()=>{
       setFormBasicKeys<VMVoucherModel>({
@@ -36,20 +39,25 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
   },[props?.fullState?.IsFirstUseEffectCall])
 
     React.useEffect(()=>{
-    //  props?.setInitOnLocationChange?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
-    //  props?.setAfterResetMethod?.((loc)=>(props?.setState?.({...props?.state,voucher:{LocId:loc?.LocId,VDate:new Date()},details:[]})))
-     
-     
      props?.setListComponent?.((<VoucherList {...props}/>))
     },[]);
+
+
+
+    React.useEffect(()=>{
+      
+      if(props?.UniqueId){
+        props?.AddComponentTabs?.([
+          {
+            TabCaption:"Voucher Detail",
+            TabComponent:(<VoucherDetailTabComp  {...props} />),
+            SortNumber:0
+          }
+        ])
+      }
+       
+    },[props?.UniqueId])
      
-    const [vDetail,setVDetail]=React.useState<VoucherDetailModel>()
-
-    const totalDebit= parseFloat( props?.state?.details?.reduce((sum,cur)=>sum+parseFloat(cur?.Debit?.toString()??"0"),0).toString()??"0");
-    const totalCredit= parseFloat(props?.state?.details?.reduce((sum,cur)=>sum+safeParseToNumber(cur?.Credit?.toString()??"0"),0).toString()??"0");
-    const vDetailRef= React.useRef<any>(null);
-
-    const theme= useTheme();
   return (
     <>
      <GroupContainer Label='Voucher Master Info'>
@@ -84,71 +92,94 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
           </Quantom_Grid>
         </Quantom_Grid>
         </GroupContainer>
-        <GroupContainer Label='Voucher Detail Line'>
-          
-          <Quantom_Grid container fullWidth  xs={12}  spacing={.5}>
-            <Quantom_Grid item size={{md:lineSize.GL_ACCOUNT_SIZE}} >
-                <RegisterAccountLOV  ref={vDetailRef} selected={{ Code:vDetail?.registerAccount?.Code,Name:vDetail?.registerAccount?.Name}}
-                            onChange={(selected)=>{setVDetail({...vDetail,Code:selected?.Code,registerAccount:selected})}}/>
-            </Quantom_Grid>
-            <Quantom_Grid item size={{md:lineSize.NARRATION_SIZE}} >
-                <Quantom_Input label='Narration' value={vDetail?.Remarks} onChange={(e)=>{setVDetail({...vDetail,Remarks:e.target.value})}}/>
-            </Quantom_Grid>
-            <Quantom_Grid item size={{md:lineSize.DEBIT_SIZE}} >
-            <Quantom_Input label='Debit' value={vDetail?.Debit} onChange={(e)=>{setVDetail({...vDetail,Debit:safeParseToNumber( e.target.value),Credit:0})}}/>
-            </Quantom_Grid>
-            <Quantom_Grid item size={{md:lineSize.CREDIT_SIZE}}>
-            <Quantom_Input label='Credit' value={vDetail?.Credit} onChange={(e)=>{setVDetail({...vDetail,Debit:0,Credit:safeParseToNumber( e.target.value)})}}/>
-            </Quantom_Grid>
-           
-            <Quantom_Grid item size={{md:lineSize.BUTTON_SIZE}} >
-              <ListCompButton onClick={()=>{
-                  if(!vDetail?.registerAccount?.Code){
-                    props?.errorToast?.('Select GlAccount first')
-                    return;
-                  }
-                  if(!vDetail?.Debit && !vDetail?.Credit){
-                    props?.errorToast?.('Enter Debit or Credit')
-                    return;
-                  }
-                  props?.setState?.({...props?.state, details:[...props?.state?.details??[],{...vDetail,registerAccount:{...vDetail?.registerAccount}}]})
-                  setVDetail({});
-                  if(vDetailRef?.current){
-                    alert('have current ref')
-                  }
-                  vDetailRef?.current?.focus();
-              }} Label='Add' iconName='AddCircleTwoTone'>
-                  {/* <AddCircleIcon fontSize='medium'/> */}
-              </ListCompButton>
-            </Quantom_Grid>
-          </Quantom_Grid>
-
-          {
-            props?.state?.details?.map((item,index)=>{
-              return(<RenderVoucherDetail key={index} detail={item} basePorps={props}/>)
-            })
-          }
-        </GroupContainer>
-        
-          
-             <Quantom_Grid container display='flex' justifyContent='flex-end'>
-              <GroupContainer Label='Voucher Summary'>
-                <Quantom_Grid container  xs={12} spacing={.5}>
-                <Quantom_Grid item xs={6} >
-                    <Quantom_Input value={totalDebit} label='Total Debit' disabled/>
-                </Quantom_Grid>
-                
-                <Quantom_Grid item xs={6}>
-                    <Quantom_Input value={totalCredit} label='Total Credit' disabled/>
-                </Quantom_Grid>
-                </Quantom_Grid>
-              </GroupContainer>
-            </Quantom_Grid>
-      
-
+       
     </>
   )
 }
+
+
+
+
+export const VoucherDetailTabComp=(props:MenuComponentProps<VMVoucherModel>)=>{
+  
+
+  const setState=(obj:VMVoucherModel)=>{
+    set_form_state(props?.UniqueId,{...obj})
+  }
+  const state= useSelector((state:any)=>form_state_selector<VMVoucherModel>(state,props?.UniqueId||""));
+
+  const [vDetail,setVDetail]=React.useState<VoucherDetailModel>()
+  const totalDebit= parseFloat( state?.details?.reduce((sum,cur)=>sum+parseFloat(cur?.Debit?.toString()??"0"),0).toString()??"0");
+  const totalCredit= parseFloat(state?.details?.reduce((sum,cur)=>sum+safeParseToNumber(cur?.Credit?.toString()??"0"),0).toString()??"0");
+  const vDetailRef= React.useRef<any>(null);
+
+  return(
+    <>
+    <GroupContainer Label='Voucher Detail Line'>
+          
+    <Quantom_Grid container fullWidth  xs={12}  spacing={.5}>
+      <Quantom_Grid item size={{md:lineSize.GL_ACCOUNT_SIZE}} >
+          <RegisterAccountLOV   selected={{ Code:vDetail?.registerAccount?.Code,Name:vDetail?.registerAccount?.Name}}
+                      onChange={(selected)=>{setVDetail({...vDetail,Code:selected?.Code,registerAccount:selected})}}/>
+      </Quantom_Grid>
+      <Quantom_Grid item size={{md:lineSize.NARRATION_SIZE}} >
+          <Quantom_Input label='Narration' value={vDetail?.Remarks} onChange={(e)=>{setVDetail({...vDetail,Remarks:e.target.value})}}/>
+      </Quantom_Grid>
+      <Quantom_Grid item size={{md:lineSize.DEBIT_SIZE}} >
+      <Quantom_Input label='Debit' value={vDetail?.Debit} onChange={(e)=>{setVDetail({...vDetail,Debit:safeParseToNumber( e.target.value),Credit:0})}}/>
+      </Quantom_Grid>
+      <Quantom_Grid item size={{md:lineSize.CREDIT_SIZE}}>
+      <Quantom_Input label='Credit' value={vDetail?.Credit} onChange={(e)=>{setVDetail({...vDetail,Debit:0,Credit:safeParseToNumber( e.target.value)})}}/>
+      </Quantom_Grid>
+     
+      <Quantom_Grid item size={{md:lineSize.BUTTON_SIZE}} >
+        <ListCompButton onClick={()=>{
+            if(!vDetail?.registerAccount?.Code){
+              props?.errorToast?.('Select GlAccount first')
+              return;
+            }
+            if(!vDetail?.Debit && !vDetail?.Credit){
+              props?.errorToast?.('Enter Debit or Credit')
+              return;
+            }
+            setState?.({...props?.state, details:[...state?.details??[],{...vDetail,registerAccount:{...vDetail?.registerAccount}}]})
+            setVDetail({});
+            if(vDetailRef?.current){
+              alert('have current ref')
+            }
+            vDetailRef?.current?.focus();
+        }} Label='Add' iconName='AddCircleTwoTone'>
+            {/* <AddCircleIcon fontSize='medium'/> */}
+        </ListCompButton>
+      </Quantom_Grid>
+    </Quantom_Grid>
+
+    {
+      state?.details?.map((item,index)=>{
+        return(<RenderVoucherDetail key={index} detail={item} basePorps={props}/>)
+      })
+    }
+  </GroupContainer>
+  
+    
+       <Quantom_Grid container display='flex' justifyContent='flex-end'>
+        <GroupContainer Label='Voucher Summary'>
+          <Quantom_Grid container  xs={12} spacing={.5}>
+          <Quantom_Grid item xs={6} >
+              <Quantom_Input value={totalDebit} label='Total Debit' disabled/>
+          </Quantom_Grid>
+          
+          <Quantom_Grid item xs={6}>
+              <Quantom_Input value={totalCredit} label='Total Credit' disabled/>
+          </Quantom_Grid>
+          </Quantom_Grid>
+        </GroupContainer>
+      </Quantom_Grid>
+
+      </>
+  )
+}
+
 
 interface VoucherDetailProps{
   basePorps?:MenuComponentProps<VMVoucherModel>;
