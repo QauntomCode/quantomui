@@ -366,7 +366,7 @@ export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
   return(
     <>
        <Quantom_Grid container spacing={1.5} display={'flex'}>
-           {AllCompMenus?.map((item,index)=>{
+           {/* {AllCompMenus?.map((item,index)=>{
                return(
                   <Quantom_Grid item xs={4} sx={{fontWeight:'bold',fontSize:'12px'}} >
                     <Paper onClick={async()=>{
@@ -382,7 +382,7 @@ export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
                     </Paper>
                   </Quantom_Grid>
                )
-           })}
+           })} */}
        </Quantom_Grid>
     </>
   )

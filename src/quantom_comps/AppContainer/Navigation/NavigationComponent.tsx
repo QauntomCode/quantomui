@@ -4,82 +4,82 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
-import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { useDemoRouter } from '@toolpad/core/internal';
+// import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
+// import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+// import { useDemoRouter } from '@toolpad/core/internal';
 import { AppContainerTabHelper, generateGUID, IconByName } from '../Helpers/TabHelper/AppContainerTabHelper';
 import QuantomTheme from '../../QuantomTheme';
 import { Quantom_Grid } from '../../base_comps';
 import React from 'react';
 import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, useTheme } from '@mui/material';
-import { ExpandLess, ExpandMore, Height, StarBorder } from '@mui/icons-material';
+import { BorderBottom, ExpandLess, ExpandMore, Height, StarBorder } from '@mui/icons-material';
 import store, { useQuantomFonts } from '../../../redux/store';
 import { open_new_menu } from '../../../redux/reduxSlice';
 
-const NAVIGATION: Navigation = [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
-    segment: 'dashboard',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'Account',
-    title: 'Finance',
-    icon: <BarChartIcon />,
-    children: [
-        {
-            segment: 'Config',
-            title: 'Config',
-            icon: <BarChartIcon />,
-            children: [
-              {
-                segment: 'sales',
-                title: 'Sales',
-                icon: <DescriptionIcon />,
-              },
-              {
-                segment: 'traffic',
-                title: 'Traffic',
-                icon: <DescriptionIcon />,
-              },
-            ],
-          },
-    ],
-  },
-  {
-    kind: 'divider',
-  },
-  {
-    kind: 'header',
-    title: 'Analytics',
-  },
-  {
-    segment: 'reports',
-    title: 'Reports',
-    icon: <BarChartIcon />,
-    children: [
-      {
-        segment: 'sales',
-        title: 'Sales',
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: 'traffic',
-        title: 'Traffic',
-        icon: <DescriptionIcon />,
-      },
-    ],
-  },
-  {
-    segment: 'integrations',
-    title: 'Integrations',
-    icon: <LayersIcon />,
-  },
-];
+// const NAVIGATION: Navigation = [
+//   {
+//     kind: 'header',
+//     title: 'Main items',
+//   },
+//   {
+//     segment: 'dashboard',
+//     title: 'Dashboard',
+//     icon: <DashboardIcon />,
+//   },
+//   {
+//     segment: 'Account',
+//     title: 'Finance',
+//     icon: <BarChartIcon />,
+//     children: [
+//         {
+//             segment: 'Config',
+//             title: 'Config',
+//             icon: <BarChartIcon />,
+//             children: [
+//               {
+//                 segment: 'sales',
+//                 title: 'Sales',
+//                 icon: <DescriptionIcon />,
+//               },
+//               {
+//                 segment: 'traffic',
+//                 title: 'Traffic',
+//                 icon: <DescriptionIcon />,
+//               },
+//             ],
+//           },
+//     ],
+//   },
+//   {
+//     kind: 'divider',
+//   },
+//   {
+//     kind: 'header',
+//     title: 'Analytics',
+//   },
+//   {
+//     segment: 'reports',
+//     title: 'Reports',
+//     icon: <BarChartIcon />,
+//     children: [
+//       {
+//         segment: 'sales',
+//         title: 'Sales',
+//         icon: <DescriptionIcon />,
+//       },
+//       {
+//         segment: 'traffic',
+//         title: 'Traffic',
+//         icon: <DescriptionIcon />,
+//       },
+//     ],
+//   },
+//   {
+//     segment: 'integrations',
+//     title: 'Integrations',
+//     icon: <LayersIcon />,
+//   },
+// ];
 
 
 
@@ -94,12 +94,19 @@ interface DemoProps {
 
 export default function DashboardLayoutBasic(props: DemoProps) {
   const theme= useTheme();
+  const fonts= useQuantomFonts();
   return (
 
         <>
           <div style={{display:'flex'}}>
              <div style={{width:'200px',height:'calc(100vh)',borderRight:`1px solid ${theme.palette.secondary.main}`}}>
               <Box style={{width:'100%',height:'100%'}}>
+                  <Box component={Paper} display='flex' justifyContent='center' alignItems='center' sx={{fontFamily:fonts?.HeaderFont,
+                     fontSize:fonts.H4FontSize,
+                     color:theme.palette.secondary.contrastText,
+                    fontWeight:800,letterSpacing:1.5,lineHeight:'3rem',borderBottom:'1px solid black'}}>
+                     QUANTOM CODE
+                  </Box>
                   <NestedList />
               </Box>
              </div>
@@ -225,7 +232,8 @@ export const NestedList=()=> {
                   return(
                     <Box component={Paper} sx={{
                       pl:2,
-                      fontSize:'10px',letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
+                      fontSize:fonts.RegularFontSize,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
+                       color:theme?.palette?.secondary?.contrastText,
                       borderBottom:'1px solid black',borderTop:subIndex===0?'1px solid black':undefined}}>
                       <List component="div" disablePadding>
                          <ListItemButton  onClick={()=>{handleClick('subModule',subIndex)}}>
@@ -248,7 +256,8 @@ export const NestedList=()=> {
                             return(
                               <Box component={Paper} sx={{
                                 pl:2,
-                                fontSize:'9px',letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
+                                fontSize:fonts.RegularFont,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
+                                color:theme?.palette?.secondary?.contrastText,
                                 borderBottom:'1px solid black',borderTop:menIndex===0?'1px solid black':undefined }}>
                                 <List component="div" disablePadding>
                                    <ListItemButton onClick={async()=>{

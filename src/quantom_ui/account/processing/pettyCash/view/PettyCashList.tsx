@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { IconByName, MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { PettyCashModel } from '../model/PettyCashModel'
 import { useSelector } from 'react-redux'
 import store, { full_component_state, get_component_selected_locations, useQuantomFonts } from '../../../../../redux/store'
@@ -15,6 +15,7 @@ import { Box, Button, IconButton, Paper } from '@mui/material'
 import { useTheme } from "@mui/material/styles";
 import SearchButtonIcon from '@mui/icons-material/FindInPageOutlined';
 import { HeaderHeight } from '../../../../../CommonMethods'
+import { ListCompButton } from '../../../report/Ledger/view/LedgerView'
 
 
 export const PettyCashList = (props?:MenuComponentProps<PettyCashModel>) => {
@@ -83,20 +84,12 @@ interface QuantomListSearchButtonProps{
 
 export const QuantomListSearchButton=(props?:QuantomListSearchButtonProps)=>{
  const theme= useTheme();
- const fonts= useQuantomFonts();
+//  const fonts= useQuantomFonts();
 
   return(
-    <Box  onClick={props?.onClick} component={Paper}  sx={{
-      width:'100%',height:'100%',backgroundColor:theme.palette.primary.light,display:'flex',justifyContent:'center',alignItems:'center',borderRadius:'3px',marginTop:'8px',
-      padding:'5px 0px',
-    
-    }} display='flex' alignItems='center' justifyContent='center'> 
-       <div style={{marginLeft:'10px'}}>
-          <SearchButtonIcon fontSize='small' sx={{color:theme.palette.primary.contrastText}}/>
-       </div>
-       <div style={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H3FontSize,color:theme.palette.primary.contrastText,flex:1,display:'flex', alignItems:'center',justifyContent:'center'}}>
-          Search
-        </div>
-    </Box>
+    // <Box fullWidth  onClick={props?.onClick} component={Paper} >
+      
+      <ListCompButton onClick={props?.onClick} Label='Search' iconName='PageviewTwoTone'  />
+    // </Box>
   )
 }
