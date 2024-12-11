@@ -163,7 +163,7 @@ export const RenderVoucherDetail=(props?:VoucherDetailProps)=>{
   return(
     <>
       <Quantom_Grid container xs={12} sx={{marginTop:'4px'}} component={Paper}  alignItems='center' spacing={.5}>
-        <Quantom_Grid item xs={lineSize.GL_ACCOUNT_SIZE} sx={style} justifyContent='center' alignItems='center' display='flex'>
+        <Quantom_Grid item size={{xs:lineSize.GL_ACCOUNT_SIZE}} xs={lineSize.GL_ACCOUNT_SIZE} sx={style} justifyContent='center' alignItems='center' display='flex'>
             <Box onClick={()=>{
                let d= [...props?.basePorps?.state?.details??[]];
                d.splice(props?.index??-1,1);
@@ -175,13 +175,13 @@ export const RenderVoucherDetail=(props?:VoucherDetailProps)=>{
           {props?.detail?.registerAccount?.Name}
             </Box>
         </Quantom_Grid>
-        <Quantom_Grid item xs={lineSize.NARRATION_SIZE} sx={style}>
+        <Quantom_Grid item size={{xs:lineSize.NARRATION_SIZE}} xs={lineSize.NARRATION_SIZE} sx={style}>
             {props?.detail?.Remarks}
         </Quantom_Grid>
-        <Quantom_Grid item xs={lineSize.DEBIT_SIZE} display='flex' justifyContent='right' sx={style}>
+        <Quantom_Grid item size={{xs:lineSize.DEBIT_SIZE}} xs={lineSize.DEBIT_SIZE} display='flex' justifyContent='right' sx={style}>
             {props?.detail?.Debit}
         </Quantom_Grid>
-        <Quantom_Grid item xs={lineSize.CREDIT_SIZE} display='flex' justifyContent='right' sx={style}>
+        <Quantom_Grid item size={{xs:lineSize.CREDIT_SIZE}} xs={lineSize.CREDIT_SIZE} display='flex' justifyContent='right' sx={style}>
             {props?.detail?.Credit}
         </Quantom_Grid>
       </Quantom_Grid>

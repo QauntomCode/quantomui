@@ -10,6 +10,7 @@ interface FormsState {
     OpenMenus?:AppContainerModel,
     Font?:FontSettings,
     UserLocations?:LocationModel[];
+    SelectedMenu?:number;
 }
 
 export interface FontSettings{
@@ -301,7 +302,7 @@ interface KeyValues{
       open_new_menu:(state,action:PayloadAction<AppContainerMenus|undefined>)=>{
         let s= {...state};
         s.OpenMenus={Menus:[...s.OpenMenus?.Menus??[],{...action?.payload}]}
-        state={...s};
+        state={...s,SelectedMenu:((s.OpenMenus?.Menus?.length??0)-1)};
         return state;
       },
       remove_menu_by_index:(state,action:PayloadAction<number|undefined>)=>{
@@ -314,11 +315,18 @@ interface KeyValues{
         }
         console.log('menus are ',menus)
 
+        //  alert('length is',menus?.length-1)
         state={...state,OpenMenus:{...state.OpenMenus,Menus:[...menus]}}
         return state;
       },
 
+      set_selected_menu_index:(state,action:PayloadAction<number|undefined>)=>{
+        state={...state,SelectedMenu:action.payload??0}
+        return state;
+      },
+
       set_user_locations:(state,action:PayloadAction<LocationModel[]>)=>{
+      
         state= {...state,UserLocations:[...action?.payload]};
         return state;
       },
@@ -343,6 +351,7 @@ interface KeyValues{
     set_location_init_method,
     set_after_reset_method,
     change_first_call,
+    set_selected_menu_index
   } = formsSlice.actions
 
   // const counterReducer = counterSlice.reducer //This is stored in the main store

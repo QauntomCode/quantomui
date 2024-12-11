@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import  { ComponentSettings, create_initial_state, FontSettings, formsSlice, open_new_menu, QuantomFormState, remove_menu_by_index, set_save_method, set_state } from './reduxSlice'
+import  { ComponentSettings, create_initial_state, FontSettings, formsSlice, open_new_menu, QuantomFormState, remove_menu_by_index, set_save_method, set_selected_menu_index, set_state } from './reduxSlice'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { AppContainerModel } from '../quantom_comps/AppContainer/Model/AppContainerModel'
 import { AppContainerMenus } from '../quantom_comps/AppContainer/Model/AppContainerModelMenus'
@@ -61,10 +61,22 @@ export const append_open_menu=(menu?:AppContainerMenus)=>{
 }
 export const remove_menu=(index?:number)=>{
     store.dispatch(remove_menu_by_index(index))
+    if(index===0)
+    {
+        store.dispatch(set_selected_menu_index(1))
+    }
+    else{
+        store.dispatch(set_selected_menu_index(index??0-1))
+    }
 }
 
 export const get_component_selected_locations=(state:RootState,uniqueId?:string)=>{
     return state?.formsState?.FormsState?.find(x=>x.stateKey===uniqueId)?.Location
+}
+
+
+export const get_selected_menu_index=(state:RootState)=>{
+    return state?.formsState?.SelectedMenu
 }
 
 

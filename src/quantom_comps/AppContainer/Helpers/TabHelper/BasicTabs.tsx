@@ -2,17 +2,22 @@ import { Box, colors, IconButton, Tab, Tabs } from "@mui/material";
 import * as React from "react";
 import { a11yProps, CustomTabPanel } from "./TabPanelprops";
 import CloseIcon from "@mui/icons-material/Close";
-import { remove_menu } from "../../../../redux/store";
+import store, { get_selected_menu_index, remove_menu } from "../../../../redux/store";
 
 import { useTheme } from "@mui/material/styles";
 import { QuantomColors } from "../../../QuantomTheme";
+import { useSelector } from "react-redux";
+import { set_selected_menu_index } from "../../../../redux/reduxSlice";
 
 
 export default function BasicTabs(props?: BasicTabPropsInfo) {
-  const [value, setValue] = React.useState(0);
+  const value=useSelector((state:any)=>get_selected_menu_index(state));
+  // const [value, setValue] = React.useState(0);
   const [hoveredTab, setHoveredTab] = React.useState(-1);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    // setValue(newValue);
+    alert(newValue)
+    // set_selected_menu_index(newValue)
   };
 
   const tabHeight="20px"
@@ -41,7 +46,10 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                   position: "relative",
                   minHeight: tabHeight,
                 }}
-                onClick={()=>{setValue(index)}}
+                onClick={()=>{
+                  
+                   store.dispatch( set_selected_menu_index(index))
+                }}
                 
                 onMouseEnter={() => setHoveredTab(index)}
                 onMouseLeave={() => setHoveredTab(-1)}
@@ -71,8 +79,8 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                     letterSpacing: 1.2,
                     paddingTop: 0,
                     paddingBottom: 0,
-                    backgroundColor:index===value?th.palette?.primary?.main:th?.palette?.secondary?.light,
-                    color:index===value?th?.palette?.primary?.contrastText:th?.palette?.secondary?.contrastText,
+                    backgroundColor:index===(value??0)?th.palette?.primary?.main:th?.palette?.secondary?.light,
+                    color:index===(value??0)?th?.palette?.primary?.contrastText:th?.palette?.secondary?.contrastText,
                   }}
                 ></Tab>
                 {hoveredTab === index && (
@@ -116,7 +124,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
       {props?.tabs?.map((item, index) => {
         return (
           <>
-          <CustomTabPanel value={value} index={index}>
+          <CustomTabPanel value={value??0} index={index}>
             {item?.Component}
           </CustomTabPanel>
           </>

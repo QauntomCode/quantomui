@@ -16,71 +16,6 @@ import { BorderBottom, ExpandLess, ExpandMore, Height, StarBorder } from '@mui/i
 import store, { useQuantomFonts } from '../../../redux/store';
 import { open_new_menu } from '../../../redux/reduxSlice';
 
-// const NAVIGATION: Navigation = [
-//   {
-//     kind: 'header',
-//     title: 'Main items',
-//   },
-//   {
-//     segment: 'dashboard',
-//     title: 'Dashboard',
-//     icon: <DashboardIcon />,
-//   },
-//   {
-//     segment: 'Account',
-//     title: 'Finance',
-//     icon: <BarChartIcon />,
-//     children: [
-//         {
-//             segment: 'Config',
-//             title: 'Config',
-//             icon: <BarChartIcon />,
-//             children: [
-//               {
-//                 segment: 'sales',
-//                 title: 'Sales',
-//                 icon: <DescriptionIcon />,
-//               },
-//               {
-//                 segment: 'traffic',
-//                 title: 'Traffic',
-//                 icon: <DescriptionIcon />,
-//               },
-//             ],
-//           },
-//     ],
-//   },
-//   {
-//     kind: 'divider',
-//   },
-//   {
-//     kind: 'header',
-//     title: 'Analytics',
-//   },
-//   {
-//     segment: 'reports',
-//     title: 'Reports',
-//     icon: <BarChartIcon />,
-//     children: [
-//       {
-//         segment: 'sales',
-//         title: 'Sales',
-//         icon: <DescriptionIcon />,
-//       },
-//       {
-//         segment: 'traffic',
-//         title: 'Traffic',
-//         icon: <DescriptionIcon />,
-//       },
-//     ],
-//   },
-//   {
-//     segment: 'integrations',
-//     title: 'Integrations',
-//     icon: <LayersIcon />,
-//   },
-// ];
-
 
 
 
@@ -103,7 +38,9 @@ export default function DashboardLayoutBasic(props: DemoProps) {
               <Box style={{width:'100%',height:'100%'}}>
                   <Box component={Paper} display='flex' justifyContent='center' alignItems='center' sx={{fontFamily:fonts?.HeaderFont,
                      fontSize:fonts.H4FontSize,
-                     color:theme.palette.secondary.contrastText,
+                     backgroundColor:theme.palette.secondary.dark,
+
+                     color:theme.palette.primary.contrastText,
                     fontWeight:800,letterSpacing:1.5,lineHeight:'3rem',borderBottom:'1px solid black'}}>
                      QUANTOM CODE
                   </Box>
@@ -124,57 +61,6 @@ export default function DashboardLayoutBasic(props: DemoProps) {
 
 
 
-
-export const NestedList1=()=> {
-  const [open, setOpen] = React.useState(true);
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
-  return (
-    <List
-      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      // subheader={
-      //   <ListSubheader component="div" id="nested-list-subheader">
-      //     Nested List Items
-      //   </ListSubheader>
-      // }
-    >
-      <ListItemButton>
-        <ListItemIcon>
-          {/* <SendIcon /> */}
-        </ListItemIcon>
-        <ListItemText primary="Sent mail" />
-      </ListItemButton>
-      <ListItemButton>
-        <ListItemIcon>
-          {/* <DraftsIcon /> */}
-        </ListItemIcon>
-        <ListItemText primary="Drafts" />
-      </ListItemButton>
-      <ListItemButton onClick={handleClick}>
-        <ListItemIcon>
-          {/* <InboxIcon /> */}
-        </ListItemIcon>
-        <ListItemText primary="Inbox" />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Starred" />
-          </ListItemButton>
-        </List>
-      </Collapse>
-    </List>
-  );
-}
 
 
 
