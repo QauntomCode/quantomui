@@ -48,6 +48,27 @@ export const Quantom_Input=(props: {
 
   }
 
+  const handleKeyDown = (event:any) => {
+    
+      if (event.keyCode === 13) {
+       const focusableElements:any = Array.from(document.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])'));
+        const currentIndex = focusableElements.indexOf(event.target);
+
+        if (currentIndex !== -1 && currentIndex < focusableElements.length - 1) {
+          // Focus on the next element in the tab order
+          focusableElements[currentIndex + 1]?.focus();
+        }
+      }
+      
+    
+
+    else{
+      // alert(event.key)
+      props?.onKeyDown?.(event);
+    }
+  };
+
+
   const theme= useTheme();
   const font= useQuantomFonts();
   return(
@@ -86,7 +107,7 @@ export const Quantom_Input=(props: {
           value={getValue()}
           onChange={props?.onChange}
           inputRef={props?.inputRef}
-          onKeyDown={props?.onKeyDown}
+          onKeyDown={handleKeyDown}
         />
   )
 }

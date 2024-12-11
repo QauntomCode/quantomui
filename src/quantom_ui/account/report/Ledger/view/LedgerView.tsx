@@ -176,7 +176,10 @@ export const ListCompButton=(props?:ToolBarButtonProps)=>{
     const theme= useTheme();
     const font= useQuantomFonts();
     return(
-      <Box component={Paper}  fullWidth 
+      <Box 
+      role="button"
+       tabIndex={0}
+       component={Paper}  fullWidth 
          sx={{
             display:'flex',
             flexDirection:'column',
