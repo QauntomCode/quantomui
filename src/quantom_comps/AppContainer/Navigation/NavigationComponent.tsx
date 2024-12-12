@@ -71,7 +71,7 @@ export const NestedList=()=> {
   const [sModuleState,setSMouleState]=React.useState<SubModule[]>([...subModulesList])
   const [menuState,setMenuState]=React.useState<QuantomMenu[]>([...mainMenusList])
 
-  const handleClick = (type:'module'|'subModule',index:number) => {
+  const handleClick = (type:'module'|'subModule',index:number,moduelCode:string) => {
       if(type==='module'){
          let allmds=[...modules];
          let obj= allmds[index]
@@ -80,9 +80,12 @@ export const NestedList=()=> {
       }
       if(type==='subModule'){
         let allmds=[...subModulesList];
-        let obj= allmds[index]
+        let selectedModulecodes= allmds.filter(x=>x.ModuleCode===moduelCode)
+        let obj= selectedModulecodes?.[index]
+        if(obj){
         obj.IsOpen=!obj?.IsOpen;
         setSMouleState([...allmds])
+        }
      }
   };
 
@@ -101,7 +104,7 @@ export const NestedList=()=> {
           <Box component={Paper} sx={{
             fontSize:fonts.RegularFontSize,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
             borderBottom:`1px solid ${theme.palette.secondary.main}`}}>
-            <ListItemButton  onClick={()=>(handleClick('module',mdIndex))}>
+            <ListItemButton  onClick={()=>(handleClick('module',mdIndex,md?.ModuleCode??""))}>
                 <div style={{display:'flex',flex:1,alignItems:'center'}}>
                   <div style={{flex:1}}>
                       <Box>{md?.ModuleName}</Box>
@@ -122,7 +125,7 @@ export const NestedList=()=> {
                        color:theme?.palette?.secondary?.contrastText,
                       borderBottom:`1px solid ${theme.palette.secondary.main}`,borderTop:subIndex===0?`1px solid ${theme.palette.secondary.main}`:undefined}}>
                       <List component="div" disablePadding>
-                         <ListItemButton  onClick={()=>{handleClick('subModule',subIndex)}}>
+                         <ListItemButton  onClick={()=>{handleClick('subModule',subIndex,md?.ModuleCode??"")}}>
                             <div style={{display:'flex',flex:1,alignItems:'center'}}>
                               <div style={{flex:1}}>
                                   <Box>{subModule.SubModuleName}</Box>
@@ -202,7 +205,7 @@ export const MainModulesList:Modules[]=[
     IsOpen:false
   },
   {
-    ModuleCode:'002',
+    ModuleCode:'003',
     ModuleName:'Inventory',
     SortNumber:1,
     IsOpen:false
@@ -226,6 +229,24 @@ export const subModulesList:SubModule[]=[
     SubModuleCode:'03',
     SubModuleName:'Reports',
     ModuleCode:'001',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'01',
+    SubModuleName:'Config',
+    ModuleCode:'003',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'02',
+    SubModuleName:'Processing',
+    ModuleCode:'003',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'03',
+    SubModuleName:'Reports',
+    ModuleCode:'003',
     SortNumber:1
   },
 ]
@@ -285,13 +306,33 @@ export const mainMenusList:QuantomMenu[]=[
     ModuleCode:'001',
     SubModuleCode:'03',
     SortNumber:1
-  }
-  ,
+  },
   {
     Menucode:'001-010',
     MenuName:'Detail Ledger',
     ModuleCode:'001',
     SubModuleCode:'03',
+    SortNumber:1
+  },
+  {
+    Menucode:'003-001',
+    MenuName:'Unit',
+    ModuleCode:'003',
+    SubModuleCode:'01',
+    SortNumber:1
+  },
+  {
+    Menucode:'003-002',
+    MenuName:'Category',
+    ModuleCode:'003',
+    SubModuleCode:'01',
+    SortNumber:1
+  },
+  {
+    Menucode:'003-003',
+    MenuName:'Brand',
+    ModuleCode:'003',
+    SubModuleCode:'01',
     SortNumber:1
   }
 ]

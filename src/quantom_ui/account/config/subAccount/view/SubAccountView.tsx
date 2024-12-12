@@ -28,13 +28,7 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
          SaveMethod:(payload)=>SubAccountInsert(payload),
          DeleteMethod:(payload)=>SubAccountDelete(payload),
          GetOneMethod:(payload)=>SubAccountGetOne(payload),
-         SetBasicKeys:()=>{
-            let obj:BasicKeysProps={
-              keyNoPropName:"Code",
-              keyDatePropsName:""
-            }
-            return obj;
-         },
+         SetBasicKeys:()=>({keyNoPropName:"Code",keyDatePropsName:""}),
          uniqueKey:props?.UniqueId??"",
          baseProps:props??{}
       })

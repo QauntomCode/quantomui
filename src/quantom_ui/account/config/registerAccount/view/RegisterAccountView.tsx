@@ -29,7 +29,8 @@ export const RegisterAccountView = (props?:MenuComponentProps<RegisterAccountMod
          DeleteMethod:(payload)=>RegisterAccountDelete(payload),
          GetOneMethod:(payload)=>RegisterAccountGetOne(payload),
          uniqueKey:props?.UniqueId??"",
-         baseProps:props??{}
+         baseProps:props??{},
+         SetBasicKeys:()=>({keyNoPropName:"Code",keyDatePropsName:""}),
       })
     },[props])
 

@@ -83,6 +83,13 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                 return rawValue ? dayjs(rawValue).format('DD-MMM-YYYY') : '';
                }
            }
+           if(item?.dataType==='time'){
+             obj.valueFormatter= (params:any) => {
+             const rawValue = params.value;
+             return rawValue ? dayjs(rawValue).format('hh:mm:ss A') : '';
+            }
+          }
+           
            return obj;
         });
 

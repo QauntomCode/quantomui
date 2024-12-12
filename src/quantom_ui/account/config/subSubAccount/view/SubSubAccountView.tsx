@@ -29,7 +29,8 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
          DeleteMethod:(payload)=>SubSubAccountDelete(payload),
          GetOneMethod:(payload)=>SubSubAccountGetOne(payload),
          uniqueKey:props?.UniqueId??"",
-         baseProps:props??{}
+         baseProps:props??{},
+         SetBasicKeys:()=>({keyNoPropName:"Code",keyDatePropsName:""}),
       })
     },[props])
 

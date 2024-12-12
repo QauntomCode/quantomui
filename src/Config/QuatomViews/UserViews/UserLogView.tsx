@@ -31,6 +31,7 @@ export const UserLogView = (props?:UserLogViewProps) => {
     let keys= method?.();
     let value= getValueByPropertyName(fullState?.QuantomFormCoreState,keys?.keyNoPropName??"");
     if(keyNo!== value){
+       
       setKeyNo(value??"");
     }
     if(menuInfo!==selectedMenuCode){
@@ -39,14 +40,13 @@ export const UserLogView = (props?:UserLogViewProps) => {
   },[fullState])
   
   React.useEffect(()=>{
-
-      console.warn('called')
       handleData(keyNo)
-
+      
   },[keyNo])
 
 
   const handleData=async(keyNo?:string)=>{
+    // alert(keyNo)
     let res= await GetUserLog(selectedMenuCode,keyNo);
     console.warn(res)
     setData(res?.Response??[])

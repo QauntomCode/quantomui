@@ -27,7 +27,8 @@ export const PettyCashView = (props?:MenuComponentProps<PettyCashModel>) => {
       settings:{willShowLocations:true},
       InitOnLocationChange:(loc)=>(props?.setState?.({...props?.state,LocId:loc?.LocId,Date:new Date()})),
       AfterResetMethod:(loc)=>(props?.setState?.({LocId:loc?.LocId,Date:new Date()})),
-      baseProps:props??{}
+      baseProps:props??{},
+      SetBasicKeys:()=>({keyNoPropName:"Code",keyDatePropsName:""}),
      })
 
     },[props]);

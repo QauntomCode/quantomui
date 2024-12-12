@@ -1,5 +1,6 @@
-import { InventoryUnitModel } from "../config/inventoryUnit/model/InventoryUnitModel";
+
 import { LocationStoresModel } from "../config/LocationStores/model/LocationStoresModel";
+import { SetupFormModel as InventoryUnitModel } from "../config/unit/model/setupFormModel";
 
 
 export enum ItemType {

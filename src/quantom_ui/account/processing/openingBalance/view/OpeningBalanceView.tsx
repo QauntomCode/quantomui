@@ -27,7 +27,8 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
         DeleteMethod:(payload)=>OpeningBalanceDelete(payload),
         GetOneMethod:(payload)=>OpeningBalanceGetOne(payload),
         uniqueKey:props?.UniqueId??"",
-        baseProps:props??{}
+        baseProps:props??{},
+        SetBasicKeys:()=>({keyNoPropName:"OpCode",keyDatePropsName:""}),
       })
     },[props])
 

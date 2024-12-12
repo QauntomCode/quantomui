@@ -32,6 +32,7 @@ import { hover } from '@testing-library/user-event/dist/hover';
 import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLedger/view/LedgerDetailView';
 import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
 import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
+import { InventoryUnitView } from '../../../../quantom_ui/inventory/config/unit/view/InventoryUnitView';
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -320,6 +321,24 @@ export interface MenuComponentProps<T> extends MenuContainerProps<T>{
 }
 
 
+export const InvnetoryMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"003-001",
+    MenuCaption:"Inventory Unit",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-002",
+    MenuCaption:"Inventory Category",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-003",
+    MenuCaption:"Inventory Company",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+]
+
 export const AccountMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"001-001",
@@ -394,7 +413,8 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
     MenuCaption:"Layout",
     GetComponent:(props?:MenuComponentProps<any>)=>(<DashboardLayoutBasic/>)
   },
-  ...AccountMenus
+  ...AccountMenus,
+  ...InvnetoryMenus
 ]
 
 
