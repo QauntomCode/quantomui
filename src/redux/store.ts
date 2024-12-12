@@ -76,6 +76,11 @@ export const get_component_selected_locations=(state:RootState,uniqueId?:string)
 }
 
 
+export const get_selected_menu_Code=(state:RootState,uniqueId?:string)=>{
+    return state?.formsState?.OpenMenus?.Menus?.find(x=>x.UniqueKeyNo===uniqueId)?.MenuCode;
+}
+
+
 export const get_selected_menu_index=(state:RootState)=>{
     return state?.formsState?.SelectedMenu
 }

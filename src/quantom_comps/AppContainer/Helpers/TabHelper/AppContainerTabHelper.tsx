@@ -123,7 +123,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const getDefaultTabs=(uniqueKyeNo?:string):ComponentTabProps[]=>{
         return[
           {
-            TabComponent:(<UserLogView />),
+            TabComponent:(<UserLogView UniqueId={props?.UniqueId}/>),
             TabCaption:"User Log",
             SortNumber:100
            }

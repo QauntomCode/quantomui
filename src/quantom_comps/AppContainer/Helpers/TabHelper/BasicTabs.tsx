@@ -1,4 +1,4 @@
-import { Box, colors, IconButton, Tab, Tabs } from "@mui/material";
+import { Box, colors, IconButton, Paper, Tab, Tabs } from "@mui/material";
 import * as React from "react";
 import { a11yProps, CustomTabPanel } from "./TabPanelprops";
 import CloseIcon from "@mui/icons-material/Close";
@@ -122,11 +122,11 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
 
       {props?.tabs?.map((item, index) => {
         return (
-          <>
+          <Box Component={{Paper}}>
           <CustomTabPanel value={props?.selectedTabIndex} index={index}>
             {item?.Component}
           </CustomTabPanel>
-          </>
+          </Box>
         );
       })}
     </Box>

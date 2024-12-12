@@ -41,7 +41,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
                      backgroundColor:theme.palette.secondary.dark,
 
                      color:theme.palette.primary.contrastText,
-                    fontWeight:800,letterSpacing:1.5,lineHeight:'3rem',borderBottom:'1px solid black'}}>
+                    fontWeight:800,letterSpacing:1.5,lineHeight:'3rem',borderBottom:`1px solid black`}}>
                      QUANTOM CODE
                   </Box>
                   <NestedList />
@@ -100,7 +100,7 @@ export const NestedList=()=> {
         return(
           <Box component={Paper} sx={{
             fontSize:fonts.RegularFontSize,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
-            borderBottom:'1px solid black'}}>
+            borderBottom:`1px solid ${theme.palette.secondary.main}`}}>
             <ListItemButton  onClick={()=>(handleClick('module',mdIndex))}>
                 <div style={{display:'flex',flex:1,alignItems:'center'}}>
                   <div style={{flex:1}}>
@@ -118,9 +118,9 @@ export const NestedList=()=> {
                   return(
                     <Box component={Paper} sx={{
                       pl:2,
-                      fontSize:fonts.RegularFontSize,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
+                      fontSize:fonts.RegularFontSize,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:600,
                        color:theme?.palette?.secondary?.contrastText,
-                      borderBottom:'1px solid black',borderTop:subIndex===0?'1px solid black':undefined}}>
+                      borderBottom:`1px solid ${theme.palette.secondary.main}`,borderTop:subIndex===0?`1px solid ${theme.palette.secondary.main}`:undefined}}>
                       <List component="div" disablePadding>
                          <ListItemButton  onClick={()=>{handleClick('subModule',subIndex)}}>
                             <div style={{display:'flex',flex:1,alignItems:'center'}}>
@@ -142,9 +142,9 @@ export const NestedList=()=> {
                             return(
                               <Box component={Paper} sx={{
                                 pl:2,
-                                fontSize:fonts.RegularFont,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:700,
+                                fontSize:fonts.RegularFont,letterSpacing:1.5,fontFamily:fonts?.HeaderFont,fontWeight:500,
                                 color:theme?.palette?.secondary?.contrastText,
-                                borderBottom:'1px solid black',borderTop:menIndex===0?'1px solid black':undefined }}>
+                                borderBottom:`1px solid ${theme.palette.secondary.main}`,borderTop:menIndex===0?`1px solid ${theme.palette.secondary.main}`:undefined }}>
                                 <List component="div" disablePadding>
                                    <ListItemButton onClick={async()=>{
                                     let res= await generateGUID();

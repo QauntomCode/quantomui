@@ -21,3 +21,11 @@ export function safeParseToRequestDate(value: Date):string {
   // alert(cleanedDateString)
   return val;
 }
+
+export function getValueByPropertyName(obj: any, propertyPath: string): any {
+  if (!obj || !propertyPath) return undefined;
+
+  return propertyPath
+      .split('.') // Split the path by dots for nested access
+      .reduce((acc, key) => acc?.[key], obj); // Traverse the object
+}

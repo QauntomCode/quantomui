@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { SubAccountModel } from '../model/SubAccountModel'
-import { MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { BasicKeysProps, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
 import { GetAllMainAccounts } from '../../mainAccount/impl/MainAccountImpl'
 import { CommonCodeName } from '../../../../../database/db'
@@ -28,6 +28,13 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
          SaveMethod:(payload)=>SubAccountInsert(payload),
          DeleteMethod:(payload)=>SubAccountDelete(payload),
          GetOneMethod:(payload)=>SubAccountGetOne(payload),
+         SetBasicKeys:()=>{
+            let obj:BasicKeysProps={
+              keyNoPropName:"Code",
+              keyDatePropsName:""
+            }
+            return obj;
+         },
          uniqueKey:props?.UniqueId??"",
          baseProps:props??{}
       })

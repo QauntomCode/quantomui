@@ -49,7 +49,8 @@ export interface QuantomGridColumns{
     caption?:string;
     width?:number;
     header?:string;
-    dataType?:'string'|'date'|'number'
+    dataType?:'string'|'date'|'number'|'time'
+
     valueFormatter?: (params:any)=>any;
 }
 
@@ -167,6 +168,12 @@ export const  QUANTOM_MasterDetailTable=<T,>(props?:QuantomGridProps<T>)=>
                     return rawValue ? dayjs(rawValue).format('DD-MMM-YYYY') : '';
                    }
                }
+               if(item?.dataType==='time'){
+                obj.valueFormatter= (params:any) => {
+                 const rawValue = params.value;
+                 return rawValue ? dayjs(rawValue).format('hh:mm:ss A') : '';
+                }
+            }
                return obj;
             });
     
