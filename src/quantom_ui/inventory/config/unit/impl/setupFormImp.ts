@@ -62,6 +62,14 @@ export const SetupFromGetAll=async(menuCode?:string,searchText?:string):Promise<
             }
          }
 
+         else if(menuCode==='003-030')
+         {
+            obj= {
+               Type:'Category',
+               Capation:"Price Group"
+            }
+         }
+
       
          return Promise.resolve(obj);
  }

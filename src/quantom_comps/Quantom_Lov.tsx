@@ -204,7 +204,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
              label='Search' 
              inputRef={searchRef} 
              value={search} 
-
+             willHandleTabOnEnter={true}
              onChange={(event)=>{
                
                setSearch(event?.target?.value)

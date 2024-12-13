@@ -34,6 +34,7 @@ export const Quantom_Input=(props: {
    * @default 'outlined'
    */
   variant?: Variant;
+  willHandleTabOnEnter?:boolean;
 } & Omit<TextFieldProps, 'variant'>)=>{
 
   
@@ -50,7 +51,7 @@ export const Quantom_Input=(props: {
 
   const handleKeyDown = (event:any) => {
     
-      if (event.keyCode === 13) {
+      if (event.keyCode === 13 && !props?.willHandleTabOnEnter) {
        const focusableElements:any = Array.from(document.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])'));
         const currentIndex = focusableElements.indexOf(event.target);
 

@@ -40,7 +40,7 @@ export const UserLogView = (props?:UserLogViewProps) => {
   },[fullState])
   
   React.useEffect(()=>{
-      handleData(keyNo)
+      //handleData(keyNo)
       
   },[keyNo])
 

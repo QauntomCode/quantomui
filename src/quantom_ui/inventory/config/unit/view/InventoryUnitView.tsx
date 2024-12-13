@@ -30,12 +30,19 @@ export const InventoryUnitView = (props?:MenuComponentProps<SetupFormModel>) => 
       setTimeout(() => {
         props?.setListComponent?.((<InventoryUnitList {...props}/>))
       }, 500);
+      
+      setFormType();
     },[])
 
-    // let type:any={};
-    GetSetupFormTypByMenuCode(props?.MenuCode)?.then((res)=>{
-       setFormCaption(res?.Capation??"")
-    })
+    const setFormType=async()=>{
+      let info= await GetSetupFormTypByMenuCode(props?.MenuCode);
+       setFormCaption(info?.Capation??"");
+    }
+  
+    // // // let type:any={};
+    // // GetSetupFormTypByMenuCode(props?.MenuCode)?.then((res)=>{
+    // //    setFormCaption(res?.Capation??"")
+    // // })
     
   return (
     <>

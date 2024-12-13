@@ -34,14 +34,14 @@ export default function DashboardLayoutBasic(props: DemoProps) {
 
         <>
           <div style={{display:'flex'}}>
-             <div style={{width:'200px',height:'calc(100vh)',borderRight:`1px solid ${theme.palette.secondary.main}`}}>
+             <div style={{width:'200px',height:'calc(100vh)',borderRight:`1px solid ${theme.palette.secondary.main}`,borderLeft:`.5px solid ${theme.palette.secondary.main}`}}>
               <Box style={{width:'100%',height:'100%'}}>
                   <Box component={Paper} display='flex' justifyContent='center' alignItems='center' sx={{fontFamily:fonts?.HeaderFont,
                      fontSize:fonts.H4FontSize,
                      backgroundColor:theme.palette.secondary.dark,
 
                      color:theme.palette.primary.contrastText,
-                    fontWeight:800,letterSpacing:1.5,lineHeight:'3rem',borderBottom:`1px solid black`}}>
+                     fontWeight:800,letterSpacing:1.5,lineHeight:'3rem',borderBottom:`1px solid ${theme?.palette?.secondary?.main}`}}>
                      QUANTOM CODE
                   </Box>
                   <NestedList />
