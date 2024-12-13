@@ -321,7 +321,7 @@ export interface MenuComponentProps<T> extends MenuContainerProps<T>{
 }
 
 
-export const InvnetoryMenus:MenuInfoModel<any>[]=[
+export const InventoryMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"003-001",
     MenuCaption:"Inventory Unit",
@@ -335,6 +335,11 @@ export const InvnetoryMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"003-003",
     MenuCaption:"Inventory Company",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-030",
+    MenuCaption:"Price Group",
     GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
   },
 ]
@@ -414,7 +419,7 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
     GetComponent:(props?:MenuComponentProps<any>)=>(<DashboardLayoutBasic/>)
   },
   ...AccountMenus,
-  ...InvnetoryMenus
+  ...InventoryMenus
 ]
 
 

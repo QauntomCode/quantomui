@@ -152,7 +152,7 @@ export const NestedList=()=> {
                                    <ListItemButton onClick={async()=>{
                                     let res= await generateGUID();
                                     store.dispatch(open_new_menu({
-                                      MenuCode:menu?.Menucode,
+                                      MenuCode:menu?.MenuCode,
                                       MenuCaption:menu?.MenuName,
                                       UniqueKeyNo:res
                                     }))
@@ -252,85 +252,92 @@ export const subModulesList:SubModule[]=[
 ]
 export const mainMenusList:QuantomMenu[]=[
   {
-    Menucode:'001-001',
+    MenuCode:'001-001',
     MenuName:'Main Account',
     ModuleCode:'001',
     SubModuleCode:'01',
     SortNumber:1
   },
   {
-    Menucode:'001-002',
+    MenuCode:'001-002',
     MenuName:'Sub Account',
     ModuleCode:'001',
     SubModuleCode:'01',
     SortNumber:1
   },
   {
-    Menucode:'001-003',
+    MenuCode:'001-003',
     MenuName:'Sub Sub Account',
     ModuleCode:'001',
     SubModuleCode:'01',
     SortNumber:1
   },
   {
-    Menucode:'001-004',
+    MenuCode:'001-004',
     MenuName:'Register Account',
     ModuleCode:'001',
     SubModuleCode:'01',
     SortNumber:1
   },
   {
-    Menucode:'001-006',
+    MenuCode:'001-006',
     MenuName:'Opening Balance',
     ModuleCode:'001',
     SubModuleCode:'02',
     SortNumber:1
   },
   {
-    Menucode:'001-009',
+    MenuCode:'001-009',
     MenuName:'Petty Cash',
     ModuleCode:'001',
     SubModuleCode:'02',
     SortNumber:1
   },
   {
-    Menucode:'001-008',
+    MenuCode:'001-008',
     MenuName:'Voucher',
     ModuleCode:'001',
     SubModuleCode:'02',
     SortNumber:1
   },
   {
-    Menucode:'002-001',
+    MenuCode:'002-001',
     MenuName:'General Ledger',
     ModuleCode:'001',
     SubModuleCode:'03',
     SortNumber:1
   },
   {
-    Menucode:'001-010',
+    MenuCode:'001-010',
     MenuName:'Detail Ledger',
     ModuleCode:'001',
     SubModuleCode:'03',
     SortNumber:1
   },
   {
-    Menucode:'003-001',
+    MenuCode:'003-001',
     MenuName:'Unit',
     ModuleCode:'003',
     SubModuleCode:'01',
     SortNumber:1
   },
   {
-    Menucode:'003-002',
+    MenuCode:'003-002',
     MenuName:'Category',
     ModuleCode:'003',
     SubModuleCode:'01',
     SortNumber:1
   },
   {
-    Menucode:'003-003',
+    MenuCode:'003-003',
     MenuName:'Brand',
+    ModuleCode:'003',
+    SubModuleCode:'01',
+    SortNumber:1
+  },
+  {
+    MenuCode:'003-030',
+    MenuName:'Price Group',
     ModuleCode:'003',
     SubModuleCode:'01',
     SortNumber:1
@@ -340,7 +347,7 @@ export const mainMenusList:QuantomMenu[]=[
 
 
 export interface QuantomMenu{
-   Menucode?:string;
+   MenuCode?:string;
    MenuName?:string;
    ModuleCode?:string;
    SubModuleCode?:string;
