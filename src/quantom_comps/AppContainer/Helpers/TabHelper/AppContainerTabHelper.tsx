@@ -33,6 +33,7 @@ import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLe
 import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
 import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
 import { InventoryUnitView } from '../../../../quantom_ui/inventory/config/unit/view/InventoryUnitView';
+import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/Inventory_ItemsView';
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -341,6 +342,11 @@ export const InventoryMenus:MenuInfoModel<any>[]=[
     MenuCode:"003-030",
     MenuCaption:"Price Group",
     GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-004",
+    MenuCaption:"Inventory Items",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryItemsView {...props}/>)
   },
 ]
 
