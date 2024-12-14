@@ -173,11 +173,23 @@ export const MultiLocationSelectionlOVComp=()=>{
 
 
 export const ListCompButton=(props?:ToolBarButtonProps)=>{
+
+    
+        const handleKeyDown = (e?:any) => {
+          if (e?.key === "Enter" || e?.key === " ") {
+            // alert('enter pressed')
+            e.preventDefault(); // Prevent scrolling on Space key press
+            props?.onClick?.();
+          }
+        };
+
+
     const theme= useTheme();
     const font= useQuantomFonts();
     return(
       <Box 
-      role={props?.ignoreFocus?undefined: "button"}
+        role={props?.ignoreFocus?undefined: "button"}
+        onKeyDown={handleKeyDown}
         tabIndex={props?.ignoreFocus?undefined: 0}
     //    justifyContent='center'
     //    alignItems='center'
@@ -185,7 +197,7 @@ export const ListCompButton=(props?:ToolBarButtonProps)=>{
          sx={{
             display:'flex',
             flexDirection:'column',
-            
+            lineHeight:'20px',
             transition: 'all 0.3s ease',
                 '&:hover': {
                 backgroundColor: theme?.palette?.secondary.main, // Change color on hover
@@ -198,7 +210,7 @@ export const ListCompButton=(props?:ToolBarButtonProps)=>{
                 fontSize:'12px',borderRadius:'4px',
                 marginTop:props?.marginTop?props.marginTop:'9px',
                 color:theme?.palette?.secondary?.contrastText,
-                //  lineHeight:'10px',
+                // lineHeight:'20px',
                 
                 border:`1px solid black`,
                 backgroundColor:theme.palette.secondary.light,

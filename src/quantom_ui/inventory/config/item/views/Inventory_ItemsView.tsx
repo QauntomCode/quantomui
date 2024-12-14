@@ -8,15 +8,18 @@ import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_c
 import { GroupContainer } from '../../../../account/processing/voucher/view/VoucherView'
 
 import { VMInventoryItemsModel } from '../model/VMInventory_itemsModel'
-import { InventoryItemsDelete, InventoryItemsGetOne, InventoryItemsInsert } from '../impl/InventoryitemsImpl'
+import { InventoryItemsDelete, InventoryItemsGetAll, InventoryItemsGetOne, InventoryItemsInsert } from '../impl/InventoryitemsImpl'
 import { InventoryItemsModel } from '../model/InventoryItemsModel'
 import { SetupFormGetAllBulk } from '../../unit/impl/setupFormImp'
 import { SetupFormBulkResponseModel } from '../../unit/model/SetupFormBulkResponse'
 import { CommonCodeName } from '../../../../../database/db'
 import { safeParseToNumber } from '../../../../../CommonMethods'
+import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
+import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
-
+   const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
+   const [searchText,setSearchText]=React.useState('');
    const [setupFormData,setSetupFormData]=React.useState<SetupFormBulkResponseModel[]>([]);
    const[refreshSetupMethod,setRefreshSetupMethod]=React.useState(0);
 
@@ -40,6 +43,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
     React.useEffect(()=>{
          handleGetSetupItems();
+         handleGetSearchItems();
     },[])
 
     
@@ -62,6 +66,11 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
        console.warn('setup items are',res)
     }
 
+    const handleGetSearchItems=async()=>{
+       let items= await InventoryItemsGetAll(searchText);
+       setSearchedItems(items)
+    }
+
     const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
       let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()===type?.toLocaleLowerCase())?.Data?.map((item,index)=>{
         let obj:CommonCodeName={
@@ -81,7 +90,19 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
       <Quantom_Grid size={{xs:12}} container spacing={.5}>
         <Quantom_Grid item size={{xs:12,sm:12,md:5,lg:4,xl:3}}>
-            <GroupContainer height='465px' Label='Item List'>
+            <GroupContainer height='410px' Label='Item List'>
+               <div style={{display:'flex',width:'100%'}}>
+                  <Quantom_Input label='Search' value={searchText} onChange={(e)=>{setSearchText(e?.target?.value)}}/>
+                  <div style={{width:'60px',marginLeft:'5px'}}>
+                    <ListCompButton onClick={()=>{
+                      handleGetSearchItems()
+                    }} marginTop='4px' Label='Search'  iconName='PlagiarismTwoTone'/>
+                  </div>
+               </div>
+               <QUANTOM_Table headerHeight={0} data={[...searchedItem]} height='390px' columns={[
+                  {field:"Code",caption:"ItemCode",width:105 },
+                  {field:"Name",caption:"ItemName",width:250 },
+                ]} />
             </GroupContainer>  
         
         </Quantom_Grid> 

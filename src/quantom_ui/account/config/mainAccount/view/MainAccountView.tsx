@@ -42,6 +42,7 @@ export interface QuantomGridProps<T>{
    onViewButtonClick?:(lineData?:any)=>void;
    getDetailRowData?:(params?:any)=>any;
    isRowMaster?:(data:any)=>boolean;
+   headerHeight?:number;
 }
 
 export interface QuantomGridColumns{
@@ -50,12 +51,12 @@ export interface QuantomGridColumns{
     width?:number;
     header?:string;
     dataType?:'string'|'date'|'number'|'time'
-
     valueFormatter?: (params:any)=>any;
 }
 
 export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
 {
+  // alert(props?.headerHeight)
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
     const [colDefs,setColDefs]=React.useState<ColDef<T>[]>([])
     React.useEffect(()=>{
@@ -132,6 +133,7 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                     rowData={props?.data}
                     columnDefs={colDefs}
                     rowHeight={24}
+                    headerHeight={(props?.headerHeight!==undefined)?(props?.headerHeight): 20}
                 />
         </div>
 
