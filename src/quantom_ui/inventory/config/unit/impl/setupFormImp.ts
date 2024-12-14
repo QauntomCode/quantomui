@@ -1,5 +1,6 @@
 import { HttpResponse, QuantomGET, QuantomPOST } from "../../../../../HTTP/QuantomHttpMethods";
-import { INVENTORY_SETUP_FORM_DELETE, INVENTORY_SETUP_FORM_GET_ALL, INVENTORY_SETUP_FORM_GET_ONE, INVENTORY_SETUP_FORM_INSERT } from "../../../InventoryRoutes";
+import { INVENTORY_SETUP_FORM_DELETE, INVENTORY_SETUP_FORM_GET_ALL, INVENTORY_SETUP_FORM_GET_ALL_BULK, INVENTORY_SETUP_FORM_GET_ONE, INVENTORY_SETUP_FORM_INSERT } from "../../../InventoryRoutes";
+import { SetupFormBulkResponseModel } from "../model/SetupFormBulkResponse";
 import { SetupFormModel as SetupForm, VMSetupForm } from "../model/setupFormModel";
 
 
@@ -34,6 +35,13 @@ export const SetupFromGetAll=async(menuCode?:string,searchText?:string):Promise<
    // alert(type)
    let res= await QuantomGET<SetupForm[]>(INVENTORY_SETUP_FORM_GET_ALL+`?Type=${type?.Type}&SearchText=${searchText}`,true);
    return res?.Response??[] ;
+}
+
+
+export const SetupFormGetAllBulk=async(types?:string[]):Promise<SetupFormBulkResponseModel[]>=>{
+   let res= await QuantomPOST <SetupFormBulkResponseModel[]>(INVENTORY_SETUP_FORM_GET_ALL_BULK,true,types)
+   return res?.Response??[];
+
 }
 
  const get_type_by_menu_code=(menuCode?:string):Promise<{Type?:string,Capation?:string}>=>{

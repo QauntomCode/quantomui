@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { useImperativeHandle, useRef } from 'react'
-import { Quantom_Grid, Quantom_Input } from './base_comps'
-import {  Dialog, DialogContent,Grid, Paper } from '@mui/material'
+import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from './base_comps'
+import {  Box, Dialog, DialogContent,Grid, Paper } from '@mui/material'
+import { IconByName } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
+import { ListCompButton } from '../quantom_ui/account/report/Ledger/view/LedgerView';
 
 
 
@@ -20,6 +22,7 @@ export interface Quantom_LOV_PROPS{
   FillDtaMethod?:()=>Promise<CommonCodeName[]>
   selectedIndex?:number;
   ref?: React.Ref<any>;
+  RefreshFillDtaMethod?:number;
 }
 
 export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
@@ -41,23 +44,26 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
     useImperativeHandle(props?.ref, () => inputRef.current);
 
     React.useEffect(()=>{
-      // handleValues();
-      async function loadAllValues(){
-        // if(!allValues || allValues?.length<1){
-          // alert('not found data')
-          let vals= await props?.FillDtaMethod?.();
-          //let nVals= vals?.splice(0,limit)
-          console.log('all values are',vals)
-          setAllValues([...vals??[]]);
-          if(!props?.selected && props?.selectedIndex!==undefined){
-            let nVal= vals?.[props?.selectedIndex??0];
-            props?.onChange?.(nVal);
-          }
-        // }
-      }
       loadAllValues();
     },[])
 
+    React.useEffect(()=>{
+        if(props?.RefreshFillDtaMethod && (props?.RefreshFillDtaMethod??0)>0){
+           loadAllValues();
+        }
+    },[props?.RefreshFillDtaMethod])
+
+
+    async function loadAllValues(){
+      let vals= await props?.FillDtaMethod?.();
+      console.log('all values are',vals)
+      setAllValues([...vals??[]]);
+      if(!props?.selected && props?.selectedIndex!==undefined){
+        let nVal= vals?.[props?.selectedIndex??0];
+        props?.onChange?.(nVal);
+      }
+    // }
+  }
 
 
     React.useEffect(()=>{
@@ -167,7 +173,8 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
 
   return (
     <>
-     <Quantom_Input 
+    <Box display='flex'>
+     <Quantom_Input1 
           value={props?.selected?.Name} 
           fullWidth
           inputRef={inputRef}
@@ -181,8 +188,19 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
             //setSearch(e.target.value)
           }} 
           label={props?.label} 
+          rightIcons={[
+            {IconName:'NoteAddTwoTone',OnClick:()=>{alert('add button pressed')}},
+            {IconName:'RestorePageTwoTone',OnClick:()=>{alert('refresh button pressed')}},
+            {IconName:'DriveFileMoveTwoTone',OnClick:()=>{alert('drive button pressed')}}
+          ]}
         
       />
+         {/* <ListCompButton iconName='NoteAddTwoTone'/>
+         <ListCompButton iconName='RestorePageTwoTone'/>
+         <ListCompButton iconName='DriveFileMoveTwoTone'/> */}
+
+     
+     </Box>
 
 
 

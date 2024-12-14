@@ -177,12 +177,15 @@ export const ListCompButton=(props?:ToolBarButtonProps)=>{
     const font= useQuantomFonts();
     return(
       <Box 
-      role="button"
-       tabIndex={0}
+      role={props?.ignoreFocus?undefined: "button"}
+        tabIndex={props?.ignoreFocus?undefined: 0}
+    //    justifyContent='center'
+    //    alignItems='center'
        component={Paper}  fullWidth 
          sx={{
             display:'flex',
             flexDirection:'column',
+            
             transition: 'all 0.3s ease',
                 '&:hover': {
                 backgroundColor: theme?.palette?.secondary.main, // Change color on hover
@@ -193,21 +196,28 @@ export const ListCompButton=(props?:ToolBarButtonProps)=>{
         style={{
                 fontFamily:font.HeaderFont,fontWeight:600,
                 fontSize:'12px',borderRadius:'4px',
-                marginTop:'9px',
+                marginTop:props?.marginTop?props.marginTop:'9px',
                 color:theme?.palette?.secondary?.contrastText,
-                // lineHeight:'20px',
+                //  lineHeight:'10px',
                 
                 border:`1px solid black`,
                 backgroundColor:theme.palette.secondary.light,
                 alignItems:'center',
+                justifyContent:"center",
                 cursor:'pointer',
                 }}>
-                 <div style={{flex:1}}>
+                 <div style={{flex:1,justifyContent:'center',alignItems:'center',display:'flex'}}>
                   <IconByName iconName={props?.iconName??""} fontSize='20px' color={theme.palette.secondary.contrastText} />
                 </div>
-              <div style={{alignItems:'center',marginTop:'-9px'}}>
-                {props?.Label} 
-              </div>
+              
+                 {
+                props?.Label?(
+                    <div style={{alignItems:'center',marginTop:'-9px'}}>
+                        {props?.Label} 
+                  </div>
+                ):(<></>)
+              } 
+             
       </Box>)
 
 //     <Box

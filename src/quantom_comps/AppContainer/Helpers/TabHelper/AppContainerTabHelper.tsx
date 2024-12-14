@@ -275,10 +275,12 @@ export const IconByName = (props?:IconByNameProps) => {
 };
 
 export interface ToolBarButtonProps{
+  ignoreFocus?:boolean;
   Label?:string;
   children?:ReactNode;
   onClick?:()=>void;
   iconName?:string;
+  marginTop?:string;
 }
 export const ToolBarButton=(props?:ToolBarButtonProps)=>{
   const theme= useTheme();

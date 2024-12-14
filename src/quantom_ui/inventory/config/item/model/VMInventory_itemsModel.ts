@@ -1,4 +1,5 @@
 import { InventoryAttributeValuesModel } from "../../InventoryItemAtributeValues/Model/InventoryItemAtributeValuesModel";
+import { SetupFormBulkResponseModel } from "../../unit/model/SetupFormBulkResponse";
 import { InventoryItemsReportUnitsModel } from "./AssocicateModels/Inventory_ItemsReportUnitsModel";
 import { InventoryItemTaxesModel } from "./AssocicateModels/Inventory_ItemTaxesModel";
 import { InventoryItemUnitsModel } from "./AssocicateModels/Inventory_ItemUnitsModel";
@@ -22,4 +23,5 @@ export class VMInventoryItemsModel {
     InventoryItemTaxes?: InventoryItemTaxesModel[];
     LocId?: string;
     OpeningQty?: number;
+    SetupFormsData?:SetupFormBulkResponseModel[]
 }
