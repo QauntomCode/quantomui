@@ -17,13 +17,21 @@ import { safeParseToNumber } from '../../../../../CommonMethods'
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
 import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
-import { form_state_selector } from '../../../../../redux/store'
+import store, { form_state_selector, get_helperData_by_key } from '../../../../../redux/store'
+import { add_helper_data } from '../../../../../redux/reduxSlice'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
    const [searchText,setSearchText]=React.useState('');
-   const [setupFormData,setSetupFormData]=React.useState<SetupFormBulkResponseModel[]>([]);
    const[refreshSetupMethod,setRefreshSetupMethod]=React.useState(0);
+
+   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
+
+  //  React.useEffect(()=>{
+  //   console.log('setup form data is',setupFormData);
+  //   console.warn('setup form data is',setupFormData)
+
+  //  },[setupFormData])
 
     React.useEffect(()=>{
       setFormBasicKeys<VMInventoryItemsModel>({
@@ -36,12 +44,12 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
       })
     },[props])
 
-    React.useEffect(()=>{
-      if(setupFormData){
-        //  alert('refreshed')
-        setRefreshSetupMethod((refreshSetupMethod??0)+1)
-      }
-    },[setupFormData])
+    // React.useEffect(()=>{
+    //   // if(setupFormData){
+    //     //  alert('refreshed')
+    //     // setRefreshSetupMethod((refreshSetupMethod??0)+1)
+    //   // }
+    // },[])
 
     React.useEffect(()=>{
          handleGetSetupItems();
@@ -52,7 +60,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     React.useEffect(()=>{
       
       if(props?.UniqueId){
-        props?.AddComponentTabs?.(GetItemHelperTabs(props))
+        props?.AddComponentTabs?.(GetItemHelperTabs({baseProps:props,refreshMethod:refreshSetupMethod}))
       }
        
     },[props?.UniqueId])
@@ -64,8 +72,14 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     
     const handleGetSetupItems=async()=>{
        let res= await SetupFormGetAllBulk(['Unit','Category','Company','PriceGroup','ItemType']);
-       setSetupFormData([...res??[]]);
-       console.warn('setup items are',res)
+       store.dispatch(add_helper_data({UniqueId:props?.UniqueId,data:[{
+          keyNo:'setup_data',
+          Data:res
+       }]}));
+       
+       setTimeout(() => {
+          setRefreshSetupMethod((refreshSetupMethod??0)+1)
+       }, 100);
     }
 
     const handleGetSearchItems=async()=>{
@@ -75,14 +89,13 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
     const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
       let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()===type?.toLocaleLowerCase())?.Data?.map((item,index)=>{
-        let obj:CommonCodeName={
-          Code:item?.Code,
-          Name:item?.Name
-        }
-        return obj;
+          let obj:CommonCodeName={
+            Code:item?.Code,
+            Name:item?.Name
+          }
+          return obj;
        });
        return  Promise.resolve(data??[]);
-
     }
 
 
@@ -197,7 +210,13 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 }
 
 
-const GetItemHelperTabs=(props?:MenuComponentProps<VMInventoryItemsModel>):ComponentTabProps[]=>{
+interface ItemHelperTabs{
+  baseProps?:MenuComponentProps<VMInventoryItemsModel>,
+  setupFroms?:SetupFormBulkResponseModel[],
+  refreshMethod?:number;
+}
+
+const GetItemHelperTabs=(props?:ItemHelperTabs):ComponentTabProps[]=>{
 
   let tabs:ComponentTabProps[]= [
     {
@@ -236,9 +255,29 @@ const GetItemHelperTabs=(props?:MenuComponentProps<VMInventoryItemsModel>):Compo
 }
 
 
-export const InventoryItemHelperUnitOfConversion=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
-  const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.UniqueId??""))
+export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
+  const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
   const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
+  const [refreshUnt,setRefreshUnit]=React.useState(0);
+  const [selectedUnit,setSelectedUnit]=React.useState<CommonCodeName>();
+
+  const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
+  
+  const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
+    let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==="unit")?.Data?.map((item,index)=>{
+        let obj:CommonCodeName={
+          Code:item?.Code,
+          Name:item?.Name
+        }
+        return obj;
+     });
+     return  Promise.resolve(data??[]);
+  }
+
+  React.useEffect(()=>{
+      setRefreshUnit((refreshUnt??0)+1);
+  },[setupFormData])
+
 
   const calculationType=():Promise<CommonCodeName[]>=>{
     let obj:CommonCodeName[]=[
@@ -252,11 +291,6 @@ export const InventoryItemHelperUnitOfConversion=(props?:MenuComponentProps<VMIn
       }
     ] 
     return Promise.resolve(obj);
-  }
-
-
-  const untis= ()=>{
-      state?.SetupFormsData?.map(x=>x)
   }
 
   return(
@@ -274,7 +308,7 @@ export const InventoryItemHelperUnitOfConversion=(props?:MenuComponentProps<VMIn
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' selected={calcType} onChange={(e)=>{setCalcType({...e})}}/>
+              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt} selected={selectedUnit} FillDtaMethod={getSetupDataWithSetupType} onChange={(e)=>{setSelectedUnit({...e})}}/>
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:1,lg:1}}>
@@ -287,7 +321,7 @@ export const InventoryItemHelperUnitOfConversion=(props?:MenuComponentProps<VMIn
   )
 }
 
-export const InventoryItemHelperUnitPriorties=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
+export const InventoryItemHelperUnitPriorties=(props?:ItemHelperTabs)=>{
   return(
     <GroupContainer height='300px' Label='Unit Priorties' >
 
@@ -295,7 +329,7 @@ export const InventoryItemHelperUnitPriorties=(props?:MenuComponentProps<VMInven
   )
 }
 
-export const InventoryItemHelperUnitForReport=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
+export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
   return(
     <GroupContainer height='300px' Label='Unit For Report' >
 
@@ -304,7 +338,7 @@ export const InventoryItemHelperUnitForReport=(props?:MenuComponentProps<VMInven
 }
 
 
-export const InventoryItemHelperStockReplenishment=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
+export const InventoryItemHelperStockReplenishment=(props?:ItemHelperTabs)=>{
   return(
     <GroupContainer height='300px' Label='Stock Replenishment' >
 
@@ -313,7 +347,7 @@ export const InventoryItemHelperStockReplenishment=(props?:MenuComponentProps<VM
 }
 
 
-export const InventoryItemHelperItemAtributes=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
+export const InventoryItemHelperItemAtributes=(props?:ItemHelperTabs)=>{
   return(
     <GroupContainer height='300px' Label='Item Atributes' >
 
@@ -323,7 +357,7 @@ export const InventoryItemHelperItemAtributes=(props?:MenuComponentProps<VMInven
 
 
 
-export const InventoryItemHelperItemLocations=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
+export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
   return(
     <GroupContainer height='300px' Label='Item Locations' >
 

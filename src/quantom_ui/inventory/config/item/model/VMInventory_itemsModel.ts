@@ -11,17 +11,17 @@ import { InventoryItemStockReplenishmentModel } from "./AssocicateModels/Invento
 import { InventoryItemsModel } from "./InventoryItemsModel";
 
 export class VMInventoryItemsModel {
-    Item?: InventoryItemsModel;
-    ItemLocation?: InventoryItemLocationsModel[];
-    ItemUnits?: InventoryItemUnitsModel[];
-    ReportUnits?: InventoryItemsReportUnitsModel[];
-    Barcodes?: InventoryItemsBarcodesModel[];
-    GroupValueItem?: InventoryGroupValueItemsModel[];
-    InventoryItemUnitsPriority?: InventoryItemUnitsPriorityModel[];
-    InventoryItemStockReplenishments?: InventoryItemStockReplenishmentModel[];
-    InventoryItemAttributes?: InventoryAttributeValuesModel[];
-    InventoryItemTaxes?: InventoryItemTaxesModel[];
-    LocId?: string;
-    OpeningQty?: number;
-    SetupFormsData?:SetupFormBulkResponseModel[]
+  Item?: InventoryItemsModel;
+  ItemLocation?: InventoryItemLocationsModel[];
+  ItemUnits?: InventoryItemUnitsModel[];
+  ReportUnits?: InventoryItemsReportUnitsModel[];
+  Barcodes?: InventoryItemsBarcodesModel[];
+  GroupValueItem?: InventoryGroupValueItemsModel[];
+  InventoryItemUnitsPriority?: InventoryItemUnitsPriorityModel[];
+  InventoryItemStockReplenishments?: InventoryItemStockReplenishmentModel[];
+  InventoryItemAttributes?: InventoryAttributeValuesModel[];
+  InventoryItemTaxes?: InventoryItemTaxesModel[];
+  LocId?: string;
+  OpeningQty?: number;
+  // SetupFormsData?:SetupFormBulkResponseModel[]
 }
