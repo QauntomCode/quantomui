@@ -16,6 +16,8 @@ import { CommonCodeName } from '../../../../../database/db'
 import { safeParseToNumber } from '../../../../../CommonMethods'
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
 import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
+import { useSelector } from 'react-redux'
+import { form_state_selector } from '../../../../../redux/store'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -235,9 +237,52 @@ const GetItemHelperTabs=(props?:MenuComponentProps<VMInventoryItemsModel>):Compo
 
 
 export const InventoryItemHelperUnitOfConversion=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
-  return(
-    <GroupContainer height='300px' Label='Unit Of Convesion' >
+  const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.UniqueId??""))
+  const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
 
+  const calculationType=():Promise<CommonCodeName[]>=>{
+    let obj:CommonCodeName[]=[
+      {
+        Code:"Multiply_By",
+        Name:"Multiply_By"
+      },
+      {
+        Code:"Divided_By",
+        Name:'Divided_By'
+      }
+    ] 
+    return Promise.resolve(obj);
+  }
+
+
+  const untis= ()=>{
+      state?.SetupFormsData?.map(x=>x)
+  }
+
+  return(
+    <GroupContainer height='300px' Label='Unit Of Conversion' >
+       <Quantom_Grid container spacing={.5} >
+          <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
+              <Quantom_Input label='From Unit' value={state?.Item?.UnitName}/>
+          </Quantom_Grid>
+          <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2.5,xl:1.5}}>
+              <Quantom_LOV label='Calc_Type' FillDtaMethod={calculationType} selected={calcType} onChange={(e)=>{setCalcType({...e})}}/>
+          </Quantom_Grid>
+
+          <Quantom_Grid item size={{xs:6,sm:6,md:1}}>
+              <Quantom_Input label='Qty' value={state?.Item?.UnitName}/>
+          </Quantom_Grid>
+
+          <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
+              <Quantom_LOV label='To Unit' selected={calcType} onChange={(e)=>{setCalcType({...e})}}/>
+          </Quantom_Grid>
+
+          <Quantom_Grid item size={{xs:6,sm:6,md:1,lg:1}}>
+              <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px'/>
+          </Quantom_Grid>
+
+       </Quantom_Grid>
+       
     </GroupContainer>
   )
 }
