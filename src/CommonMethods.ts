@@ -29,3 +29,8 @@ export function getValueByPropertyName(obj: any, propertyPath: string): any {
       .split('.') // Split the path by dots for nested access
       .reduce((acc, key) => acc?.[key], obj); // Traverse the object
 }
+
+export const AsyncFindByIndex=async<T>(arr?:T[],method?:(t?:T)=>boolean)=>{
+     let obj=  arr?.findIndex?.((t)=>method?.(t))
+     return Promise.resolve(obj);
+}

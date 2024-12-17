@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { MainAccountModel } from '../model/MainAccountModel'
-import { MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { IconByName, MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { GetAllMainAccounts } from '../impl/MainAccountImpl';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, ModuleRegistry,ClientSideRowModelModule } from 'ag-grid-community'
 import { Quantom_Grid } from '../../../../../quantom_comps/base_comps';
 import { Paper } from '@mui/material';
-import ViewButtonIcon from '@mui/icons-material/VisibilityTwoTone';
+// import ViewButtonIcon from '@mui/icons-material/VisibilityTwoTone';
 import dayjs from 'dayjs';
 
 export const MainAccountView = (props?:MenuComponentProps<MainAccountModel>) => {
@@ -40,9 +40,12 @@ export interface QuantomGridProps<T>{
    valueFormatter?: (params:any)=>void;
    height?:string;
    onViewButtonClick?:(lineData?:any)=>void;
+   viewButtonOverrideIcon?:string;
    getDetailRowData?:(params?:any)=>any;
    isRowMaster?:(data:any)=>boolean;
    headerHeight?:number;
+   hideFloatingFilter?:boolean;
+   viewButtonStatus?:'HIDE';
 }
 
 export interface QuantomGridColumns{
@@ -52,6 +55,8 @@ export interface QuantomGridColumns{
     header?:string;
     dataType?:'string'|'date'|'number'|'time'
     valueFormatter?: (params:any)=>any;
+    editable?:boolean;
+
 }
 
 export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
@@ -72,7 +77,7 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                         maxWidth:item?.width,
                         cellStyle:{fontSize:'11px',fontFamily:'roboto'},
                         headerName:item?.header,
-                        
+                        editable:item?.editable
                     };
 
             if(item?.valueFormatter){
@@ -94,19 +99,23 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
            return obj;
         });
 
+        
+        if(props?.viewButtonStatus!=='HIDE'){
         cols?.unshift({
             field: "actions",
             headerName: "",
             width:'25px',
             cellRenderer: ViewButton1,
           },)
+        }
+        
         setColDefs([...cols??[]]);
     }
 
     const defaultColDef: ColDef = {
         // flex: 1,
         filter:true,
-        floatingFilter:true,
+        floatingFilter:props?.hideFloatingFilter?false:true,
     };
 
     const ViewButton1=(nProps?:any)=>{
@@ -115,8 +124,9 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                 // alert('called')
                 props?.onViewButtonClick?.(nProps?.data)
                 // console.log(props.data)
-            }} style={{display:'flex',justifyContent:'center'}}>
-                <ViewButtonIcon fontSize='small'/>
+            }} style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                {/* <ViewButtonIcon fontSize='small'/> */}
+                <IconByName iconName= {props?.viewButtonOverrideIcon?props?.viewButtonOverrideIcon:'VisibilityTwoTone'} fontSize='20px'/>
             </div>
         )
     }
@@ -241,7 +251,8 @@ export const  QUANTOM_MasterDetailTable=<T,>(props?:QuantomGridProps<T>)=>
                     props?.onViewButtonClick?.(nProps?.data)
                     // console.log(props.data)
                 }} style={{display:'flex',justifyContent:'center'}}>
-                    <ViewButtonIcon fontSize='small'/>
+                    {/* <ViewButtonIcon fontSize='small'/> */}
+                    <IconByName iconName={props?.viewButtonOverrideIcon?props?.viewButtonOverrideIcon :'VisibilityTwoTone'} fontSize='10px'/>
                 </div>
             )
         }

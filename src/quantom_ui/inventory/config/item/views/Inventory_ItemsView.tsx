@@ -13,12 +13,14 @@ import { InventoryItemsModel } from '../model/InventoryItemsModel'
 import { SetupFormGetAllBulk } from '../../unit/impl/setupFormImp'
 import { SetupFormBulkResponseModel } from '../../unit/model/SetupFormBulkResponse'
 import { CommonCodeName } from '../../../../../database/db'
-import { safeParseToNumber } from '../../../../../CommonMethods'
+import { AsyncFindByIndex, safeParseToNumber } from '../../../../../CommonMethods'
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
 import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
-import store, { form_state_selector, get_helperData_by_key } from '../../../../../redux/store'
-import { add_helper_data } from '../../../../../redux/reduxSlice'
+import store, { form_state_selector, get_form_state_without_selector, get_helperData_by_key, set_form_state } from '../../../../../redux/store'
+import { add_helper_data, set_state } from '../../../../../redux/reduxSlice'
+import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from '../model/AssocicateModels/Inventory_ItemUnitsModel'
+import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inventory_ItemUnitsPriorityModel'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -225,8 +227,8 @@ const GetItemHelperTabs=(props?:ItemHelperTabs):ComponentTabProps[]=>{
       SortNumber:0
     },
     {
-      TabCaption:"Units Priorties",
-      TabComponent:(<InventoryItemHelperUnitPriorties  {...props} />),
+      TabCaption:"Units Priorities",
+      TabComponent:(<InventoryItemHelperUnitPriorities  {...props} />),
       SortNumber:0
     },
     {
@@ -241,7 +243,7 @@ const GetItemHelperTabs=(props?:ItemHelperTabs):ComponentTabProps[]=>{
     },
     {
       TabCaption:"Item Attributes",
-      TabComponent:(<InventoryItemHelperItemAtributes  {...props} />),
+      TabComponent:(<InventoryItemHelperItemAttributes  {...props} />),
       SortNumber:0
     },
     {
@@ -259,10 +261,11 @@ export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
   const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
   const [refreshUnt,setRefreshUnit]=React.useState(0);
-  const [selectedUnit,setSelectedUnit]=React.useState<CommonCodeName>();
+  const [itemUnit,setItemUnit]=React.useState<InventoryItemUnitsModel>({})
 
   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
   
+
   const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
     let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==="unit")?.Data?.map((item,index)=>{
         let obj:CommonCodeName={
@@ -277,6 +280,18 @@ export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   React.useEffect(()=>{
       setRefreshUnit((refreshUnt??0)+1);
   },[setupFormData])
+
+React.useEffect(()=>{
+ 
+  if(calcType.Code?.toUpperCase()==='Multiply_By'.toUpperCase() || !calcType?.Code){
+     setItemUnit({...itemUnit,CalculationType:UNIT_CALULATION_TYPE.MULTIPLY_BY,CalculationTypeDesc:'MULTIPLY_BY'})
+  }
+  else{
+    setItemUnit({...itemUnit,CalculationType:UNIT_CALULATION_TYPE.DIVIED_BY,CalculationTypeDesc:'DIVIDED_BY'})
+  }
+
+},[calcType])
+
 
 
   const calculationType=():Promise<CommonCodeName[]>=>{
@@ -293,38 +308,157 @@ export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
     return Promise.resolve(obj);
   }
 
+  const onDeleteViewClick=async(lineData?: any)=> {
+     
+    let internalState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId)
+      
+
+      let  obj= lineData as InventoryItemUnitsModel;
+      // alert(obj?.UnitCode);
+      // alert(obj?.PrimaryUnits);
+           
+     console.warn('units are',internalState);
+     let units=[...internalState?.ItemUnits??[]]
+     console.warn('units before',units)
+     let selectedIndex= await AsyncFindByIndex(internalState?.ItemUnits,(x)=>x?.UnitCode===obj?.UnitCode && x?.PrimaryUnits===obj?.PrimaryUnits)
+      
+      if(units){
+
+           units.splice(selectedIndex??0,1)
+           set_form_state(props?.baseProps?.UniqueId,{...internalState,ItemUnits:units})
+           console.warn('unit after',units)
+         //  set_form_state(props?.baseProps?.UniqueId,{...state,ItemUnits:[...units]})
+      }
+
+     //  alert('index is'+selectedIndex)
+  }
+  
+
   return(
     <GroupContainer height='300px' Label='Unit Of Conversion' >
        <Quantom_Grid container spacing={.5} >
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_Input label='From Unit' value={state?.Item?.UnitName}/>
+              <Quantom_Input disabled label='From Unit' value={state?.Item?.UnitName}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2.5,xl:1.5}}>
               <Quantom_LOV label='Calc_Type' FillDtaMethod={calculationType} selected={calcType} onChange={(e)=>{setCalcType({...e})}}/>
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:1}}>
-              <Quantom_Input label='Qty' value={state?.Item?.UnitName}/>
+              <Quantom_Input label='Qty' value={itemUnit?.PrimaryUnits??0} onChange={(e)=>{
+                  setItemUnit({...itemUnit,PrimaryUnits:safeParseToNumber(e.target.value)})
+              }}/>
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt} selected={selectedUnit} FillDtaMethod={getSetupDataWithSetupType} onChange={(e)=>{setSelectedUnit({...e})}}/>
+              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt} selected={itemUnit?.Unit} FillDtaMethod={getSetupDataWithSetupType} onChange={(e)=>{
+                 setItemUnit({...itemUnit,UnitCode:e?.Code,Unit:{Code:e?.Code,Name:e?.Name}})
+                }}/>
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:1,lg:1}}>
-              <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px'/>
+              <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' onClick={()=>{
+                  if(!itemUnit || !itemUnit?.Unit ||  !itemUnit?.UnitCode){
+                    props?.baseProps?.errorToast?.('Select To Unit')
+                    return;
+                  }
+                  if(itemUnit?.UnitCode===state?.Item?.UnitCode){
+                    props?.baseProps?.errorToast?.(`From Unit And To Unit Can't Be Same`)
+                    return;
+                  }
+                  if(!itemUnit?.PrimaryUnits){
+                    props?.baseProps?.errorToast?.(`Qty Must Be Greater Than Zero`)
+                    return;
+                  }
+              
+                  set_form_state<VMInventoryItemsModel>(props?.baseProps?.UniqueId,{...state,ItemUnits:[...state?.ItemUnits??[],
+                    {...itemUnit,PUnitName:state?.Item?.UnitName}]});
+                  
+                  setItemUnit({...itemUnit,UnitCode:'',UnitName:'',Unit:{},PrimaryUnits:0,})
+
+
+              }}/>
           </Quantom_Grid>
 
        </Quantom_Grid>
        
+
+       <QUANTOM_Table onViewButtonClick={onDeleteViewClick} viewButtonOverrideIcon='DeleteTwoTone' hideFloatingFilter headerHeight={20} data={state?.ItemUnits??[]} columns={[
+          {field:"PUnitName",caption:'From Unit',width:120,},  
+          {field:"CalculationTypeDesc",caption:'Calc_Type',width:160},
+          {field:"PrimaryUnits",caption:'Qty',width:120},
+          {field:"Unit.Name",caption:'To Unit',width:120},
+
+       ]} height='250px'/>
+
+       {/* </QUANTOM_Table> */}
     </GroupContainer>
   )
 }
 
-export const InventoryItemHelperUnitPriorties=(props?:ItemHelperTabs)=>{
-  return(
-    <GroupContainer height='300px' Label='Unit Priorties' >
+export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
+  const forms=["SALE","PURCHASE"];
+  const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
+  const [data,setData]=React.useState<InventoryItemUnitsPriorityModel[]>([])
 
+  React.useEffect(()=>{
+    setUnitFormats()
+  },[state?.Item?.UnitCode,state?.InventoryItemUnitsPriority])
+
+  const setUnitFormats= async()=>{
+      let prData= await getPriorityData();
+      console.warn('unit priority data is',prData)
+      setData([...prData]);
+  }
+  const getPriorityData=async():Promise<InventoryItemUnitsPriorityModel[]>=>{
+    let funData:InventoryItemUnitsPriorityModel[]=[];
+      
+    for(let i=0; i<(forms?.length??0);i++){
+      let formName= forms[i];
+      let mainUnit= await get_selected_obj(state?.Item?.UnitCode,formName);
+        let mUnitObj= {FormName:formName,ItemCode:state?.Item?.ItemCode,UnitCode:state?.Item?.UnitCode,Unit:{Code:state?.Item?.UnitCode,Name:state?.Item?.UnitName},Priority:mainUnit?.Priority??0}
+        funData.push(mUnitObj);
+
+        for(let i=0;i<(state?.ItemUnits?.length??0);i++){
+            
+            let item= state?.ItemUnits?.[i]
+            // alert('item unit is'+item?.Unit?.Code)
+            let obj:InventoryItemUnitsPriorityModel={
+              UnitCode:item?.UnitCode,
+              Unit:{Code:item?.UnitCode,Name:item?.Unit?.Name},
+              Priority:0,
+              FormName:formName
+            }
+            let selected=  await get_selected_obj(item?.UnitCode,formName)
+
+            if(selected){
+                  obj.Priority=selected?.Priority??0
+            }
+            funData.push(obj);
+        }
+      }
+
+        
+
+      return Promise.resolve(funData)
+  }
+
+   const get_selected_obj=async(unitCode?:string,formName?:string):Promise<InventoryItemUnitsPriorityModel|undefined>=>{
+     let selected= state?.InventoryItemUnitsPriority?.find(x=>x.UnitCode===unitCode && x?.FormName?.toUpperCase()===formName?.toUpperCase());
+     return Promise.resolve(selected);
+  }
+
+  return(
+    <GroupContainer height='300px' Label='Unit Priorities' >
+        <QUANTOM_Table height='240px' data={data} headerHeight={20} hideFloatingFilter viewButtonStatus='HIDE'
+         columns={[
+            {caption:"Form Name",field:'FormName',width:100},
+            {caption:"Unit Code",field:'Unit.Code',width:100},
+            {caption:"Unit Name",field:'Unit.Name',width:100},
+            {caption:"Priority",field:'Priority',width:100,editable:true},
+
+
+          ]}/>
     </GroupContainer>
   )
 }
@@ -347,9 +481,9 @@ export const InventoryItemHelperStockReplenishment=(props?:ItemHelperTabs)=>{
 }
 
 
-export const InventoryItemHelperItemAtributes=(props?:ItemHelperTabs)=>{
+export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
   return(
-    <GroupContainer height='300px' Label='Item Atributes' >
+    <GroupContainer height='300px' Label='Item Attributes' >
 
     </GroupContainer>
   )

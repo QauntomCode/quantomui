@@ -20,4 +20,5 @@ export interface InventoryItemUnitsModel {
     CalculationTypeDesc?: string;
     Item?: InventoryItemsModel;
     Unit?: SetupFormModel;
+    PUnitName?:string;
 }

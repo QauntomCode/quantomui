@@ -152,4 +152,9 @@ export const useHoverStyle = (theme?: Theme) => {
   return hoverStyle;
 };
 
+
+export const get_form_state_without_selector=<T>(uniqueId?:string):Promise<T>=>{
+   let obj= store.getState().formsState?.FormsState?.find?.(x=>x.stateKey===uniqueId)?.QuantomFormCoreState;
+   return Promise.resolve(obj);
+}
 export default store;
