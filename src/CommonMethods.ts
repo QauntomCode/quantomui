@@ -30,7 +30,24 @@ export function getValueByPropertyName(obj: any, propertyPath: string): any {
       .reduce((acc, key) => acc?.[key], obj); // Traverse the object
 }
 
-export const AsyncFindByIndex=async<T>(arr?:T[],method?:(t?:T)=>boolean)=>{
+export const AsyncFindByIndex=async<T>(arr?:T[],method?:(t?:T)=>boolean):Promise<number>=>{
      let obj=  arr?.findIndex?.((t)=>method?.(t))
-     return Promise.resolve(obj);
+     
+     return Promise.resolve((obj!==0 && !obj)?-1:obj);
+}
+
+export const AsyncDeepCopy=async(data?:any):Promise<any>=>{
+  const deepCopy = JSON.parse(JSON.stringify(data));
+  return Promise.resolve(deepCopy);
+}
+
+
+export const AsyncFindObject=async<T>(arr?:T[],method?:(t?:T)=>boolean):Promise<T>=>{
+  let obj:any=  arr?.find?.((t)=>method?.(t))
+  if(!obj){
+    obj={}
+  }
+  return Promise.resolve(obj);
+  
+
 }

@@ -3,7 +3,7 @@
 import React from 'react'
 import { ComponentTabProps, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
-import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
+import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
 import { GroupContainer } from '../../../../account/processing/voucher/view/VoucherView'
 
@@ -13,14 +13,16 @@ import { InventoryItemsModel } from '../model/InventoryItemsModel'
 import { SetupFormGetAllBulk } from '../../unit/impl/setupFormImp'
 import { SetupFormBulkResponseModel } from '../../unit/model/SetupFormBulkResponse'
 import { CommonCodeName } from '../../../../../database/db'
-import { AsyncFindByIndex, safeParseToNumber } from '../../../../../CommonMethods'
+import { AsyncDeepCopy, AsyncFindByIndex, AsyncFindObject, safeParseToNumber } from '../../../../../CommonMethods'
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
 import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
-import store, { form_state_selector, get_form_state_without_selector, get_helperData_by_key, set_form_state } from '../../../../../redux/store'
+import store, { form_state_selector, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, set_form_state } from '../../../../../redux/store'
 import { add_helper_data, set_state } from '../../../../../redux/reduxSlice'
 import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from '../model/AssocicateModels/Inventory_ItemUnitsModel'
 import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inventory_ItemUnitsPriorityModel'
+import { QuantomGET } from '../../../../../HTTP/QuantomHttpMethods'
+import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -257,6 +259,18 @@ const GetItemHelperTabs=(props?:ItemHelperTabs):ComponentTabProps[]=>{
 }
 
 
+export const getSetupDataWithSetupType=async(setupFormData:SetupFormBulkResponseModel[],type?:string):Promise<CommonCodeName[]>=>{
+  let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==="unit")?.Data?.map((item,index)=>{
+      let obj:CommonCodeName={
+        Code:item?.Code,
+        Name:item?.Name
+      }
+      return obj;
+   });
+   return  Promise.resolve(data??[]);
+}
+
+
 export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
   const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
@@ -266,16 +280,6 @@ export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
   
 
-  const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
-    let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==="unit")?.Data?.map((item,index)=>{
-        let obj:CommonCodeName={
-          Code:item?.Code,
-          Name:item?.Name
-        }
-        return obj;
-     });
-     return  Promise.resolve(data??[]);
-  }
 
   React.useEffect(()=>{
       setRefreshUnit((refreshUnt??0)+1);
@@ -351,7 +355,7 @@ React.useEffect(()=>{
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt} selected={itemUnit?.Unit} FillDtaMethod={getSetupDataWithSetupType} onChange={(e)=>{
+              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt} selected={itemUnit?.Unit} FillDtaMethod={()=>getSetupDataWithSetupType(setupFormData,'Unit')} onChange={(e)=>{
                  setItemUnit({...itemUnit,UnitCode:e?.Code,Unit:{Code:e?.Code,Name:e?.Name}})
                 }}/>
           </Quantom_Grid>
@@ -395,6 +399,171 @@ React.useEffect(()=>{
     </GroupContainer>
   )
 }
+
+
+
+export const InventoryItemHelperStockReplenishment=(props?:ItemHelperTabs)=>{
+
+  const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""));
+
+  
+  const locations= useSelector((state:any)=>get_current_user_locations(state));
+
+ 
+    let replenishData=
+     locations?.map((item,index)=>{
+        let replenish:InventoryItemStockReplenishmentModel|undefined= 
+              state?.InventoryItemStockReplenishments?.find(x=>x.LocCode===item?.LocId)||{GraceDays:0,GraceQty:0,MinQty:0,MaxQty:0,LocCode:item.LocId,Location:item};;
+        return replenish;
+
+     })
+
+   
+
+  
+
+
+  return(
+    <GroupContainer height='300px' Label='Stock Replenishment' >
+       <QUANTOM_Table onCellValueChanged={async(e)=>{
+          const nState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId??"");
+          let oldData=[...nState?.InventoryItemStockReplenishments??[]];
+           let index= await AsyncFindByIndex(oldData,(obj)=>obj?.LocCode===e?.data?.LocCode);
+           
+           if(oldData && index>-1 && oldData?.[index] ){
+             oldData[index]={...oldData[index],GraceDays:e.data?.GraceDays,GraceQty:e?.Data?.GraceQty,MinQty:e?.Data?.MinQty,MaxQty:e?.data?.MaxQty}
+             //oldData?.splice(index,1,{...e?.data});
+           }
+           else{
+            oldData.push({...e?.data})
+           }
+
+           let deepCopy= await AsyncDeepCopy(oldData);
+          set_form_state(props?.baseProps?.UniqueId,{...nState,InventoryItemStockReplenishments:[...deepCopy??[]]})
+         console.warn('cell value changed',e?.data)
+        console.warn(e);
+       }} headerHeight={30} hideFloatingFilter height='250px' viewButtonStatus='HIDE'   data={replenishData}
+          columns={[
+            {field:"Location.LocName",caption:"LocName",width:200},
+            {field:"GraceDays",caption:"GraceDays",width:100,editable:true},
+            {field:"GraceQty",caption:"GraceQty",width:100,editable:true},
+            {field:"MinQty",caption:"MinQty",width:100,editable:true},
+            {field:"MaxQty",caption:"MaxQty",width:100,editable:true},
+          ]}
+          />
+    </GroupContainer>
+  )
+}
+
+export interface InventoryItemHelperUnitModel{
+  UnitName?:string;
+  ReportName?:string;
+} 
+export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
+  
+  const [selectedUnit,setSelectedUnit]=React.useState<CommonCodeName>();
+  const [selectedReport,setSelectedReport]=React.useState<CommonCodeName>();
+  const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
+  const state= useSelector((state?:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""));
+  const reportData= state?.ReportUnits?.map((item,index)=>{
+     let obj:InventoryItemHelperUnitModel={
+      UnitName: item?.Unit?.Name,
+      ReportName:item?.ReportName
+     }
+     return obj ;
+  })??[]
+
+  
+
+  const fillReportsMethod=():Promise<CommonCodeName[]>=>{
+       let reportNames:string[]=['STOCK_REPORT'];
+       let reports=
+       reportNames.map((item,index)=>{
+         let obj:CommonCodeName={
+          Code:item,
+          Name:item
+         }
+         return obj ;
+       })
+       return Promise.resolve(reports)
+  }
+
+  
+
+  return(
+    <GroupContainer height='300px' Label='Unit For Report' >
+         <Quantom_Grid container spacing={.5}>
+              <Quantom_Grid item size={{xs:4}}>
+                  <Quantom_LOV label='Reports' FillDtaMethod={fillReportsMethod} selected={selectedReport} onChange={(e)=>{setSelectedReport(e)}}/>
+              </Quantom_Grid>
+              <Quantom_Grid item size={{xs:4}}>
+                  <Quantom_LOV label='Unit' FillDtaMethod={()=>getSetupDataWithSetupType(setupFormData,'Unit')} selected={selectedUnit} onChange={(e)=>setSelectedUnit(e)}/>
+              </Quantom_Grid>
+              <Quantom_Grid  size={{xs:1}}>
+                  <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' onClick={()=>{
+                    if(!selectedReport?.Name){
+                        props?.baseProps?.errorToast?.('Select Report First');
+                        return;
+                    }
+                    if(!selectedUnit?.Code || !selectedUnit.Name){
+                      props?.baseProps?.errorToast?.('Select Unit First');
+                      return;
+                    }
+                    let reportUnits=[...state?.ReportUnits??[]];
+                    if(state?.ReportUnits && state?.ReportUnits?.length>0){
+                      
+                      let index= reportUnits?.findIndex?.(x=>x?.ReportName===selectedReport?.Name);
+                      if(index!==-1){
+                        reportUnits.splice(index,1);
+                      }
+                    }
+                    reportUnits.push({
+                      Unit:{...selectedUnit},
+                      UnitCode:selectedUnit?.Code,
+                      ReportName:selectedReport?.Name
+                    })
+                    
+                   set_form_state(props?.baseProps?.UniqueId??"",{...state,ReportUnits:reportUnits})
+                  
+                  }}/>
+              </Quantom_Grid>
+         </Quantom_Grid>
+         <Quantom_Grid container>
+          <Quantom_Grid item size={{xs:9}}>
+              <QUANTOM_Table viewButtonStatus='HIDE' viewButtonOverrideIcon='DeleteTwoTone' data={reportData} headerHeight={20} height='250px'  hideFloatingFilter 
+               columns={[
+                {field:"ReportName",caption:'ReportName',width:120,},  
+                {field:"UnitName",caption:'UnitName',width:160},
+             ]}/>
+          </Quantom_Grid>
+         </Quantom_Grid>
+         
+    </GroupContainer>
+  )
+}
+
+
+
+
+export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
+  return(
+    <GroupContainer height='300px' Label='Item Attributes' >
+
+    </GroupContainer>
+  )
+}
+
+
+
+export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
+  return(
+    <GroupContainer height='300px' Label='Item Locations' >
+
+    </GroupContainer>
+  )
+}
+
+
 
 export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
   const forms=["SALE","PURCHASE"];
@@ -459,42 +628,6 @@ export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
 
 
           ]}/>
-    </GroupContainer>
-  )
-}
-
-export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
-  return(
-    <GroupContainer height='300px' Label='Unit For Report' >
-
-    </GroupContainer>
-  )
-}
-
-
-export const InventoryItemHelperStockReplenishment=(props?:ItemHelperTabs)=>{
-  return(
-    <GroupContainer height='300px' Label='Stock Replenishment' >
-
-    </GroupContainer>
-  )
-}
-
-
-export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
-  return(
-    <GroupContainer height='300px' Label='Item Attributes' >
-
-    </GroupContainer>
-  )
-}
-
-
-
-export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
-  return(
-    <GroupContainer height='300px' Label='Item Locations' >
-
     </GroupContainer>
   )
 }

@@ -1,3 +1,4 @@
+import { LocationModel } from "../../../../../Settings/Location/Model/LocationModel";
 import { InventoryItemsModel } from "../InventoryItemsModel";
 
 export interface InventoryItemStockReplenishmentModel {
@@ -8,5 +9,5 @@ export interface InventoryItemStockReplenishmentModel {
     GraceQty?: number;
     GraceDays?: number;
     Item?: InventoryItemsModel;
-    Location?: Location;
+    Location?: LocationModel;
 }

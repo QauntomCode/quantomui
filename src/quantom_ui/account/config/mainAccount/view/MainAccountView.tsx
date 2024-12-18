@@ -46,6 +46,7 @@ export interface QuantomGridProps<T>{
    headerHeight?:number;
    hideFloatingFilter?:boolean;
    viewButtonStatus?:'HIDE';
+   onCellValueChanged?:(data?:any)=>void
 }
 
 export interface QuantomGridColumns{
@@ -139,6 +140,7 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
     } // the Data Grid will fill the size of the parent container
     >
                 <AgGridReact
+                    onCellValueChanged={props?.onCellValueChanged}
                     defaultColDef={defaultColDef}
                     rowData={props?.data}
                     columnDefs={colDefs}
