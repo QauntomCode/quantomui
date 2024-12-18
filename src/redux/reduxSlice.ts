@@ -4,6 +4,7 @@ import { AppContainerMenus } from "../quantom_comps/AppContainer/Model/AppContai
 import { BasicKeysProps } from "../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { HttpResponse } from "../HTTP/QuantomHttpMethods";
 import { LocationModel } from "../quantom_ui/Settings/Location/Model/LocationModel";
+import produce from "immer";
 
 interface FormsState {
   FormsState?: QuantomFormState<any>[];
@@ -144,6 +145,21 @@ export const formsSlice = createSlice({
         ...state,
         FormsState: updatedFormsState,
       };
+    },
+    set_state_with_immmer: (
+      state,
+      action: PayloadAction<QuantomFormState<any>>
+    ) => {
+      const formIndex = state?.FormsState?.findIndex(
+        (formState) => formState.stateKey === action.payload.stateKey
+      );
+
+      if (state && state?.FormsState && formIndex !== -1) {
+        state.FormsState[formIndex ?? 0] = {
+          ...state.FormsState[formIndex ?? 0],
+          ...action.payload,
+        };
+      }
     },
     set_save_method: (
       state,
@@ -439,6 +455,7 @@ export const {
   change_first_call,
   set_selected_menu_index,
   add_helper_data,
+  // set_state_with_immmer,
 } = formsSlice.actions;
 
 // const counterReducer = counterSlice.reducer //This is stored in the main store

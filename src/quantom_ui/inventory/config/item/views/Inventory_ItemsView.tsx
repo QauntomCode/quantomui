@@ -8,7 +8,7 @@ import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../q
 import { GroupContainer } from '../../../../account/processing/voucher/view/VoucherView'
 
 import { VMInventoryItemsModel } from '../model/VMInventory_itemsModel'
-import { InventoryItemsDelete, InventoryItemsGetAll, InventoryItemsGetOne, InventoryItemsInsert } from '../impl/InventoryitemsImpl'
+import { getAttributevalueByAttributeCode, InventoryItemsDelete, InventoryItemsGetAll, InventoryItemsGetOne, InventoryItemsInsert } from '../impl/InventoryitemsImpl'
 import { InventoryItemsModel } from '../model/InventoryItemsModel'
 import { SetupFormGetAllBulk } from '../../unit/impl/setupFormImp'
 import { SetupFormBulkResponseModel } from '../../unit/model/SetupFormBulkResponse'
@@ -23,6 +23,7 @@ import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from '../model/Associca
 import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inventory_ItemUnitsPriorityModel'
 import { QuantomGET } from '../../../../../HTTP/QuantomHttpMethods'
 import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
+import { InventoryAttributeValuesModel } from '../../InventoryItemAtributeValues/Model/InventoryItemAtributeValuesModel'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -75,7 +76,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     }
     
     const handleGetSetupItems=async()=>{
-       let res= await SetupFormGetAllBulk(['Unit','Category','Company','PriceGroup','ItemType']);
+       let res= await SetupFormGetAllBulk(['Unit','Category','Company','PriceGroup','ItemType','attributes']);
        store.dispatch(add_helper_data({UniqueId:props?.UniqueId,data:[{
           keyNo:'setup_data',
           Data:res
@@ -260,7 +261,7 @@ const GetItemHelperTabs=(props?:ItemHelperTabs):ComponentTabProps[]=>{
 
 
 export const getSetupDataWithSetupType=async(setupFormData:SetupFormBulkResponseModel[],type?:string):Promise<CommonCodeName[]>=>{
-  let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==="unit")?.Data?.map((item,index)=>{
+  let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()===type)?.Data?.map((item,index)=>{
       let obj:CommonCodeName={
         Code:item?.Code,
         Name:item?.Name
@@ -414,7 +415,7 @@ export const InventoryItemHelperStockReplenishment=(props?:ItemHelperTabs)=>{
      locations?.map((item,index)=>{
         let replenish:InventoryItemStockReplenishmentModel|undefined= 
               state?.InventoryItemStockReplenishments?.find(x=>x.LocCode===item?.LocId)||{GraceDays:0,GraceQty:0,MinQty:0,MaxQty:0,LocCode:item.LocId,Location:item};;
-        return replenish;
+        return {...replenish};
 
      })
 
@@ -431,15 +432,21 @@ export const InventoryItemHelperStockReplenishment=(props?:ItemHelperTabs)=>{
            let index= await AsyncFindByIndex(oldData,(obj)=>obj?.LocCode===e?.data?.LocCode);
            
            if(oldData && index>-1 && oldData?.[index] ){
-             oldData[index]={...oldData[index],GraceDays:e.data?.GraceDays,GraceQty:e?.Data?.GraceQty,MinQty:e?.Data?.MinQty,MaxQty:e?.data?.MaxQty}
-             //oldData?.splice(index,1,{...e?.data});
+             oldData[index]={
+              ...oldData[index],
+              GraceDays:e.data?.GraceDays,GraceQty:e?.Data?.GraceQty,MinQty:e?.Data?.MinQty,MaxQty:e?.data?.MaxQty,
+              Location:{...e?.data?.Location}
+            }
+             oldData?.splice(index,1,{...e?.data});
            }
            else{
             oldData.push({...e?.data})
            }
 
-           let deepCopy= await AsyncDeepCopy(oldData);
-          set_form_state(props?.baseProps?.UniqueId,{...nState,InventoryItemStockReplenishments:[...deepCopy??[]]})
+           let newState={...nState,InventoryItemStockReplenishments:[...oldData??[]]}
+           
+          //  store.dispatch(set_state_with_immmer({stateKey:props?.baseProps?.UniqueId,QuantomFormCoreState:{...newState}}))
+          set_form_state(props?.baseProps?.UniqueId,newState)
          console.warn('cell value changed',e?.data)
         console.warn(e);
        }} headerHeight={30} hideFloatingFilter height='250px' viewButtonStatus='HIDE'   data={replenishData}
@@ -546,9 +553,63 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
 
 
 export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
+  const setupData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"","setup_data"));
+  const [refresValue,setRefreshValue]=React.useState(0);
+  // const [attributeValues,setAttributevalues]=React.useState<CommonCodeName[]>([])
+
+   const [attribute,setAttribute]=React.useState<CommonCodeName>();
+   const[selectedValue,setSelectedValue]=React.useState<CommonCodeName>()
+
+   React.useEffect(()=>{
+    // alert('hello')
+    setRefreshValue(refresValue+1)
+    setSelectedValue({});
+    //  handleAttributeValues()
+   },[attribute])
+
+   const handleAttributeValues=async(attrCode?:string)=>{
+      // alert(attribute?.Code)
+      if(attribute?.Code)
+      {
+        let res= await getAttributevalueByAttributeCode(attribute?.Code)
+        let data=
+        res?.map((item,index)=>{
+         let obj:CommonCodeName={
+            Code:item?.AttrValueCode,
+            Name:item?.AttrValueName
+         };
+         return obj;
+        })??[]
+
+        return Promise.resolve(data);
+        //return data;
+        // setAttributevalues(data);
+      }
+      else{
+        return Promise.resolve([])
+         //setAttributevalues([])
+      }
+   }
+
+  //  React.useEffect(()=>{
+  //   console.warn('data inside useeffect is',attributeValues)
+  //   setRefreshValue(refresValue??0+1)
+  //  },[attributeValues])
   return(
     <GroupContainer height='300px' Label='Item Attributes' >
-
+         <Quantom_Grid container spacing={.5}>
+            <Quantom_Grid item size={{xs:4}}>
+               <Quantom_LOV label='Attribute'  FillDtaMethod={()=>getSetupDataWithSetupType(setupData,'attributes')} 
+                  selected={attribute} onChange={(att)=>{setAttribute(att)}}/>
+            </Quantom_Grid>
+            <Quantom_Grid item size={{xs:4}}>
+               <Quantom_LOV label='Attribute' RefreshFillDtaMethod={refresValue}  FillDtaMethod={()=>handleAttributeValues(attribute?.Code)} 
+                  selected={selectedValue} onChange={(att)=>{setSelectedValue(att)}}/>
+            </Quantom_Grid>
+            <Quantom_Grid  size={{xs:1}}>
+                  <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' />
+              </Quantom_Grid>
+         </Quantom_Grid>
     </GroupContainer>
   )
 }

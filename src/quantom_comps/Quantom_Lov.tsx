@@ -48,6 +48,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
     },[])
 
     React.useEffect(()=>{
+      //  alert('fill refresh method value is'+ props?.RefreshFillDtaMethod)
         if(props?.RefreshFillDtaMethod && (props?.RefreshFillDtaMethod??0)>0){
            loadAllValues();
         }
