@@ -6,4 +6,5 @@ export interface LocationModel {
     Header3?: string;
     Active?: boolean;
     LocType?: string;
+    Checked?:boolean;
 }

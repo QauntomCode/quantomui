@@ -54,9 +54,10 @@ export interface QuantomGridColumns{
     caption?:string;
     width?:number;
     header?:string;
-    dataType?:'string'|'date'|'number'|'time'
+    dataType?:'string'|'date'|'number'|'time'|'boolean'
     valueFormatter?: (params:any)=>any;
     editable?:boolean;
+    headerCheckboxSelection?:boolean;
 
 }
 
@@ -78,7 +79,8 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                         maxWidth:item?.width,
                         cellStyle:{fontSize:'11px',fontFamily:'roboto'},
                         headerName:item?.header,
-                        editable:item?.editable
+                        editable:item?.editable,
+                        headerCheckboxSelection:item?.headerCheckboxSelection
                     };
 
             if(item?.valueFormatter){
@@ -249,11 +251,8 @@ export const  QUANTOM_MasterDetailTable=<T,>(props?:QuantomGridProps<T>)=>
         const ViewButton1=(nProps?:any)=>{
             return(
                 <div onClick={()=>{
-                    // alert('called')
                     props?.onViewButtonClick?.(nProps?.data)
-                    // console.log(props.data)
                 }} style={{display:'flex',justifyContent:'center'}}>
-                    {/* <ViewButtonIcon fontSize='small'/> */}
                     <IconByName iconName={props?.viewButtonOverrideIcon?props?.viewButtonOverrideIcon :'VisibilityTwoTone'} fontSize='10px'/>
                 </div>
             )

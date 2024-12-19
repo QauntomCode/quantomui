@@ -57,6 +57,7 @@ interface StateHelperDataData {
 export interface ComponentSettings {
   wWillHideToolbar?: boolean;
   willShowLocations?: boolean;
+  firstControlId?:string;
 }
 
 export interface ComponentSettingsPayloadType {

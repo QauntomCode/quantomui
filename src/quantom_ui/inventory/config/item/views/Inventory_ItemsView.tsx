@@ -45,7 +45,8 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
          GetOneMethod:(payload)=>InventoryItemsGetOne(payload),
          SetBasicKeys:()=>({keyNoPropName:"Item.ItemCode",keyDatePropsName:""}),
          uniqueKey:props?.UniqueId??"",
-         baseProps:props??{}
+         baseProps:props??{},
+         settings:{firstControlId:"inventory_items_item_name"}
       })
     },[props])
 
@@ -134,7 +135,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
               <Quantom_Input disabled label='Item Code' value={props?.state?.Item?.ItemCode} />
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
-              <Quantom_Input label='Item Name' value={props?.state?.Item?.ItemName} 
+              <Quantom_Input id='inventory_items_item_name' label='Item Name' value={props?.state?.Item?.ItemName} 
                   onChange={(e)=>{setItem({...props?.state?.Item,ItemName:e?.target?.value})}}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
@@ -617,9 +618,57 @@ export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
 
 
 export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
+  const locations= useSelector((state:any)=>get_current_user_locations(state));
+  const state= useSelector((state?:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""));
+  const[selectedLocations,setSelectedLocations]=React.useState<CommonCodeName[]>();
+  React.useEffect(()=>{
+    let locs=
+     locations.map((item,index)=>{
+          let obj:CommonCodeName={
+            Code:item?.LocId,
+            Name:item?.LocName,
+            Checked:false
+          }
+         let loc= state?.ItemLocation?.find(x=>x.LocCode===item?.LocId)
+         if(loc && loc?.LocCode){
+           obj.Checked=true;
+         }
+
+         return obj ;
+     })
+
+     setSelectedLocations([...locs]);
+
+  },[locations,state])
   return(
     <GroupContainer height='300px' Label='Item Locations' >
+      <Quantom_Grid size={{xs:9}}>
+        <QUANTOM_Table onCellValueChanged={async(e)=>{
+          let nState=await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId);
+          let isChecked=e?.data?.Checked;
+          // alert(isChecked)
+          let itemsLocations=[...nState?.ItemLocation??[]];
+          let selIndex= itemsLocations?.findIndex(x=>x.LocCode===e?.data?.Code);
+          
+          if(isChecked && selIndex<0){
+            // alert(selIndex)
+             itemsLocations.push({LocCode:e?.data?.Code,Location:{LocId:e?.data?.Code,LocName:e?.data?.Name}})
+          }
+          if(!isChecked && selIndex>-1){
+              itemsLocations?.splice(selIndex,1)
+          }
+          let newState={...nState,ItemLocation:[...itemsLocations]}
+          set_form_state(props?.baseProps?.UniqueId,newState)
+          // alert('values are changed')
+        }} height='200px' headerHeight={30} viewButtonStatus='HIDE' hideFloatingFilter data={selectedLocations} columns={[
+          {field:"Checked",caption:"Selected",width:120,dataType:'boolean',editable:true,headerCheckboxSelection: true,},
+          {field:"Code",caption:"LocId",width:100},
+          {field:"Name",caption:"LocName",width:250},
+          
 
+
+        ]}/>
+      </Quantom_Grid>
     </GroupContainer>
   )
 }

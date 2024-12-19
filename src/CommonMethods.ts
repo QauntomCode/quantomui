@@ -51,3 +51,12 @@ export const AsyncFindObject=async<T>(arr?:T[],method?:(t?:T)=>boolean):Promise<
   
 
 }
+
+export const FocusOnControlByControlId=(id?:string)=>{
+  if(id){
+        let element= document.getElementById(id);
+        if(element){
+          element?.focus();
+        }
+  }
+}

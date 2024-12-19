@@ -24,7 +24,7 @@ import { OpeningBalanceView } from '../../../../quantom_ui/account/processing/op
 import { GetLocationsByUserId } from '../../../../quantom_ui/Settings/Location/impl/LocationImpl';
 import { LocationModel } from '../../../../quantom_ui/Settings/Location/Model/LocationModel';
 import { PettyCashView } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
-import { isNullOrEmpty } from '../../../../CommonMethods';
+import { FocusOnControlByControlId, isNullOrEmpty } from '../../../../CommonMethods';
 import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/view/VoucherView';
 import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/LedgerView'
 import * as Icons from '@mui/icons-material';
@@ -98,6 +98,8 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
   const [tabs,setTabs]=React.useState<ComponentTabProps[]>([])
   const [selectedTab,setSelectedTab]=React.useState<number>(0)
+  const [saveMethodCallNumber,setSaveMethodCallNumber]=React.useState(0)
+  const saveMethodCallNumberRef = React.useRef(saveMethodCallNumber);
 
   const [listComp,setListComp]= React.useState<ReactNode>()
   React.useEffect(()=>{
@@ -132,6 +134,12 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
         ]
   }
   
+
+  React.useEffect(()=>{
+      if(fullState?.compSettings?.firstControlId  ){
+        FocusOnControlByControlId(fullState?.compSettings?.firstControlId);
+      }
+  },[fullState?.compSettings?.firstControlId])
 
 
   nProps.setState=(obj?:T)=>{
@@ -173,13 +181,41 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const obj=AllCompMenus?.find(x=>x.MenuCode===props?.MenuCode);
   const selectedComponent=obj?.GetComponent?.({...nProps,state:state,fullState:fullState})
 
+  // const handleShortKeys=(e:any)=>{
+  //   if (e?.ctrlKey && e?.key === 's') {
+  //     e.preventDefault(); // Prevent default browser behavior
+  //     alert('save method performed')
+  //     //setMessage('Ctrl + S was pressed!');
+  //   }
+  // }
+
+  const refreshValue= React.useRef(0)
+
+  const handleKeyDown=(e:any)=>{
+      if (e?.ctrlKey && e?.key === 's') {
+        e.preventDefault(); 
+        refreshValue.current= refreshValue.current+1;
+        setSaveMethodCallNumber(refreshValue.current);
+        //  alert('called'+refreshValue.current)
+      }
+  }
+
+  React.useEffect(() => {
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, []);
+
   return(
-    <div>
+    <div  >
       <QUANTOM_Toast {...alertProps}/>
+      <QuantomErrorDialog/>
       <UserLocationsModalComp  basProps={{...nProps}}/>
     {
       fullState?.compSettings?.wWillHideToolbar?(<></>):(
-       <QuantomToolBarComp showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
+       <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
       )
     }
       <div style={{paddingLeft:'10px',paddingRight:'10px'}}>
@@ -477,10 +513,18 @@ export interface toolBarProps{
 interface QuantomToolBarCompProps<T>{
   baseProps?:MenuContainerProps<T>
   showToast?:(message?:string)=>void;
+  CallSaveMethod?:number;
 }
 
 export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const state = useSelector((state:any)=>full_component_state<T>(state,props?.baseProps?.UniqueId||""));
+  const fullState= useSelector((state?:any)=>full_component_state<T>(state,props?.baseProps?.UniqueId||""))
+  React.useEffect(()=>{
+      // alert('call save method'+props?.CallSaveMethod)
+      if(props?.CallSaveMethod){
+        handleSaveMethod()
+      }
+  },[props?.CallSaveMethod])
   const theme= useTheme()
   const ResetState=()=>{
     let resetState:any= {};
@@ -490,6 +534,28 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
     else{
       state?.AfterReset?.(state?.Location);
     }
+
+    if(fullState?.compSettings?.firstControlId){
+      FocusOnControlByControlId(fullState?.compSettings?.firstControlId)
+    }
+  }
+
+  const handleSaveMethod=()=>{
+    console.warn('state is',state?.QuantomFormCoreState)
+    //  return;
+    state?.SaveMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
+      if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+        let res:any= x?.Response??{};
+          props?.baseProps?.setState?.({...res})
+          props?.showToast?.('Saved Successfully')
+          
+      }
+      else{
+         props?.baseProps?.errorToast?.(x?.ErrorMessage)
+        console.error('some thing invalid happen')
+      }
+    });
+    
   }
   return(
   <Quantom_Grid component={Paper} container sx={{display:'flex',backgroundColor:theme.palette?.secondary?.light,paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
@@ -505,22 +571,7 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
                 <NewButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
               </ToolBarButton>
               
-              <ToolBarButton iconName='SaveTwoTone' Label='Save' onClick={()=>{
-                  console.warn('state is',state?.QuantomFormCoreState)
-                //  return;
-                state?.SaveMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
-                  if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                    let res:any= x?.Response??{};
-                      props?.baseProps?.setState?.({...res})
-                      props?.showToast?.('Saved Successfully')
-                      
-                  }
-                  else{
-                    console.error('some thing invalid happen')
-                  }
-                });
-                
-              }}>
+              <ToolBarButton iconName='SaveTwoTone' Label='Save' onClick={handleSaveMethod}>
               </ToolBarButton>
 
               
@@ -651,6 +702,8 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
           store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
     }
   }, 400);
+
+
   
 
 }
@@ -659,6 +712,30 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
 
 
 
+
+export const QuantomErrorDialog=()=>{
+  const theme=useTheme();
+  const fonts= useQuantomFonts();
+  return(
+    <Dialog fullWidth open={true}>
+      <Quantom_Grid container>
+        <div style={{width:'100%',backgroundColor:theme.palette.secondary.main,display:'flex',
+          fontFamily:fonts?.HeaderFont, letterSpacing:1.5,fontSize:fonts.RegularFontSize,fontWeight:'bold',flexDirection:"row",
+          paddingLeft:'10px',justifyContent:'center',alignItems:'center'
+        }}>
+          <div style={{flex:1,height:'22px'}}>Header Message</div>
+          <div style={{marginRight:'10px'}}>
+            <IconByName iconName='HighlightOffTwoTone' fontSize='22px'/>
+          </div>
+        </div>
+        <div style={{paddingTop:'5px',paddingBottom:'5px',paddingLeft:'5px',fontFamily:fonts.RegularFont,letterSpacing:1.5,fontSize:fonts.RegularFontSize}}>
+           Error Message will be here!
+        </div>
+       
+      </Quantom_Grid>
+    </Dialog>
+  )
+}
 
 
 

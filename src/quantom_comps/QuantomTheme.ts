@@ -31,7 +31,7 @@ const QuantomTheme = createTheme({
         main:  "#16423C",
         dark: '#004ba0',
         contrastText: QuantomColors.SelectedElementTextColor,
-        light:'rgba(22, 66, 60, .6)'
+        light:'#031282'
       },
       secondary: {
         main:  "#8c9c94",

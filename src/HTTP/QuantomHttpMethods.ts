@@ -11,7 +11,8 @@ interface HTTP_Error_Response{
 export enum  HTTP_RESPONSE_TYPE{SUCCESS,ERROR}
 export interface HttpResponse<T>{
     Response?:T;
-    ResStatus?:HTTP_RESPONSE_TYPE
+    ResStatus?:HTTP_RESPONSE_TYPE;
+    ErrorMessage?:string;
 }
 
 const baseUrl= window.globalConfig.apiUrl;
@@ -129,7 +130,7 @@ export const QuantomGET=async<T>(url: string, isUseToke?: boolean): Promise<Http
                 let retObj:HttpResponse<T>={};
                 retObj.ResStatus=HTTP_RESPONSE_TYPE.ERROR;
                 retObj.Response= errorRes;
-                 
+                retObj.ErrorMessage=errorRes;
                 return retObj;
             }
 

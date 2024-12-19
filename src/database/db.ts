@@ -137,6 +137,7 @@ export const initDB = (): Promise<boolean> => {
   export interface CommonCodeName{
     Code?:string;
     Name?:string;
+    Checked?:boolean;
   }
 
 

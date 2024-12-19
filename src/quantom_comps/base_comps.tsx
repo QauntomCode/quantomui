@@ -192,6 +192,7 @@ export const Quantom_Input1=(props: {
 
   const theme= useTheme();
   const font= useQuantomFonts();
+
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
     <FormControl   fullWidth variant="outlined">
@@ -209,7 +210,11 @@ export const Quantom_Input1=(props: {
                 fontFamily:'Ubuntu',
                 fontWeight:'700',       
                 fontSize: '11px', // Change this value to adjust the input font size
-
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  // borderColor: 'red', // Change border color on focus
+                  borderColor:theme?.palette?.primary?.light,
+                  // color:'black'
+                },
           // marginTop:'10px','& .MuiInputLabel-root': {
           //   fontSize: font.H3FontSize,
           //   fontWeight:'700',
