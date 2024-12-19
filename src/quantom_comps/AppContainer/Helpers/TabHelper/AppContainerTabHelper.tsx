@@ -731,6 +731,7 @@ export const QuantomErrorDialog=()=>{
         <div style={{paddingTop:'5px',paddingBottom:'5px',paddingLeft:'5px',fontFamily:fonts.RegularFont,letterSpacing:1.5,fontSize:fonts.RegularFontSize}}>
            Error Message will be here!
         </div>
+        
        
       </Quantom_Grid>
     </Dialog>
