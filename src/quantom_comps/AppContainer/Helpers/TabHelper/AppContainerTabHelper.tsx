@@ -208,10 +208,22 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
     }
   }, []);
 
+  const [isShowAlert,setIsShowAlert]=React.useState(false);
+  React.useEffect(()=>{
+   if((alertProps?.number??0)>0){
+      if(alertProps?.severity=='error'){
+        setIsShowAlert(true)
+      }
+   }
+  },[alertProps])
+
+
   return(
     <div  >
       <QUANTOM_Toast {...alertProps}/>
-      <QuantomErrorDialog/>
+      <QuantomErrorDialog Type='ERROR' Open={isShowAlert} MessageHeader='Error' MessageBody={alertProps?.message} onClosePress={()=>{
+        setIsShowAlert(false);
+      }}/>
       <UserLocationsModalComp  basProps={{...nProps}}/>
     {
       fullState?.compSettings?.wWillHideToolbar?(<></>):(
@@ -711,26 +723,72 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
   
 
 
+export interface QuantomErrorDialogProps{
+  MessageHeader?:string;
+  MessageBody?:string;
+  Open?:boolean;
+  onClosePress?:()=>void;
+  Type?:'ERROR'|'INFO'
+}
 
-
-export const QuantomErrorDialog=()=>{
+export const QuantomErrorDialog=(props?:QuantomErrorDialogProps)=>{
   const theme=useTheme();
   const fonts= useQuantomFonts();
+  const [isFocused,setIsFocused]=React.useState(false)
+  const [isIconFocused,setIsIconFocused]=React.useState(false)
+
+   
+  React.useEffect(()=>{
+    if(props?.Open){
+      setTimeout(() => {
+        FocusOnControlByControlId('quantom_alert_button_id')  
+      }, (400));
+    }
+  },[props?.Open])
   return(
-    <Dialog fullWidth open={true}>
+    <Dialog fullWidth open={props?.Open??true}>
       <Quantom_Grid container>
         <div style={{width:'100%',backgroundColor:theme.palette.secondary.main,display:'flex',
           fontFamily:fonts?.HeaderFont, letterSpacing:1.5,fontSize:fonts.RegularFontSize,fontWeight:'bold',flexDirection:"row",
           paddingLeft:'10px',justifyContent:'center',alignItems:'center'
         }}>
-          <div style={{flex:1,height:'22px'}}>Header Message</div>
-          <div style={{marginRight:'10px'}}>
-            <IconByName iconName='HighlightOffTwoTone' fontSize='22px'/>
+          <div style={{flex:1,height:'22px'}} >
+            <div style={{marginRight:'10px', display:"flex" , alignItems:'center'}} >
+              {props?.Type==='INFO'?
+                (<IconByName iconName='LightbulbCircleTwoTone' color={theme?.palette?.success?.dark} fontSize='20px'/>):
+                (<IconByName iconName='ErrorTwoTone' color={theme.palette.error.main} fontSize='20px'/>)
+              }
+               {props?.MessageHeader}
+            </div>
+           
+            
+            </div>
+          <div onMouseEnter={()=>{setIsIconFocused(true)}} onMouseLeave={()=>{setIsIconFocused(false)}} style={{marginRight:'10px'}}   onClick={props?.onClosePress}>
+            <IconByName iconName='HighlightOffTwoTone' color={isIconFocused?(theme?.palette?.secondary?.dark):(theme?.palette?.secondary?.light)} fontSize='22px'/>
           </div>
         </div>
         <div style={{paddingTop:'5px',paddingBottom:'5px',paddingLeft:'5px',fontFamily:fonts.RegularFont,letterSpacing:1.5,fontSize:fonts.RegularFontSize}}>
-           Error Message will be here!
+           {props?.MessageBody}
         </div>
+
+        <div style={{display:'flex',marginBottom:'5px',width:'100%',justifyContent:'center',alignItems:'center',}}>
+            <button type='button' id='quantom_alert_button_id' 
+              onFocus={()=>(setIsFocused(true))} 
+              onBlur={()=>{setIsFocused(false)}} 
+              // tabIndex={0} 
+              onClick={props?.onClosePress} 
+              onMouseEnter={()=>{setIsFocused(true)}}
+              onMouseLeave={()=>{setIsFocused(false)}}
+              style={{borderRadius:'5px',backgroundColor:isFocused?(theme?.palette?.secondary?.dark):(theme?.palette?.secondary?.light)}} >
+              <div style={{display:'flex',justifyContent:'center'}}>
+               <IconByName fontSize='22px' iconName='HighlightOffTwoTone' />
+               <div style={{marginLeft:'20px', marginRight:'15px',fontWeight:'bold',fontFamily:fonts.HeaderFont,fontSize:fonts?.RegularFont}}>
+                  Ok
+               </div>
+               </div>
+            </button>
+        </div>
+        
         
        
       </Quantom_Grid>
