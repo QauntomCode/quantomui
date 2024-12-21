@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
@@ -24,6 +25,7 @@ import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inven
 import { QuantomGET } from '../../../../../HTTP/QuantomHttpMethods'
 import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
 import { InventoryAttributeValuesModel } from '../../InventoryItemAtributeValues/Model/InventoryItemAtributeValuesModel'
+import { SetupFormModel } from '../../unit/model/setupFormModel'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -276,16 +278,24 @@ export const getSetupDataWithSetupType=async(setupFormData:SetupFormBulkResponse
 export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
   const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
-  const [refreshUnt,setRefreshUnit]=React.useState(0);
+  const refreshUnt=React.useRef(0);
   const [itemUnit,setItemUnit]=React.useState<InventoryItemUnitsModel>({})
-
+  const [units,setUnits]=React.useState<CommonCodeName[]>([])
   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
   
 
-
   React.useEffect(()=>{
-      setRefreshUnit((refreshUnt??0)+1);
+     handleGetUnits();
+      //refreshUnt.current= refreshUnt.current+1;
   },[setupFormData])
+  React.useEffect(()=>{
+    refreshUnt.current= refreshUnt.current+1;
+  },[units])
+
+  const handleGetUnits= async()=>{{
+    let res= await  getSetupDataWithSetupType(setupFormData,'Unit')
+    setUnits(res);
+  }}
 
 React.useEffect(()=>{
  
@@ -357,7 +367,7 @@ React.useEffect(()=>{
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt} selected={itemUnit?.Unit} FillDtaMethod={()=>getSetupDataWithSetupType(setupFormData,'Unit')} onChange={(e)=>{
+              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt.current} selected={itemUnit?.Unit} FillDtaMethod={()=>Promise.resolve(units)} onChange={(e)=>{
                  setItemUnit({...itemUnit,UnitCode:e?.Code,Unit:{Code:e?.Code,Name:e?.Name}})
                 }}/>
           </Quantom_Grid>
