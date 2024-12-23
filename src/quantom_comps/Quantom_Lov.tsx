@@ -57,7 +57,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
 
     async function loadAllValues(){
       let vals= await props?.FillDtaMethod?.();
-      console.log('all values are',vals)
+      console.warn('all values are',vals)
       setAllValues([...vals??[]]);
       if(!props?.selected && props?.selectedIndex!==undefined){
         let nVal= vals?.[props?.selectedIndex??0];

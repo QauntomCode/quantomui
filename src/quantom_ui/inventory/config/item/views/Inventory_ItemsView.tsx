@@ -278,24 +278,27 @@ export const getSetupDataWithSetupType=async(setupFormData:SetupFormBulkResponse
 export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
   const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
-  const refreshUnt=React.useRef(0);
+  const [refreshUnits,setRefreshUnits]=React.useState(0);
   const [itemUnit,setItemUnit]=React.useState<InventoryItemUnitsModel>({})
-  const [units,setUnits]=React.useState<CommonCodeName[]>([])
+  
   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
   
-
+  const getSetupUnits=async():Promise<CommonCodeName[]>=>{
+    let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==='unit'?.toLocaleLowerCase())?.Data?.map((item,index)=>{
+        let obj:CommonCodeName={
+          Code:item?.Code,
+          Name:item?.Name
+        }
+        return obj;
+     });
+     return  Promise.resolve(data??[]);
+  }
+  
   React.useEffect(()=>{
-     handleGetUnits();
-      //refreshUnt.current= refreshUnt.current+1;
+    setRefreshUnits(refreshUnits+1)
   },[setupFormData])
-  React.useEffect(()=>{
-    refreshUnt.current= refreshUnt.current+1;
-  },[units])
 
-  const handleGetUnits= async()=>{{
-    let res= await  getSetupDataWithSetupType(setupFormData,'Unit')
-    setUnits(res);
-  }}
+  
 
 React.useEffect(()=>{
  
@@ -367,7 +370,7 @@ React.useEffect(()=>{
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnt.current} selected={itemUnit?.Unit} FillDtaMethod={()=>Promise.resolve(units)} onChange={(e)=>{
+              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnits} selected={itemUnit?.Unit} FillDtaMethod={()=>getSetupUnits()} onChange={(e)=>{
                  setItemUnit({...itemUnit,UnitCode:e?.Code,Unit:{Code:e?.Code,Name:e?.Name}})
                 }}/>
           </Quantom_Grid>
@@ -506,6 +509,20 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
        return Promise.resolve(reports)
   }
 
+  const getSetupUnits=async():Promise<CommonCodeName[]>=>{
+    let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==='unit'?.toLocaleLowerCase())?.Data?.map((item,index)=>{
+        let obj:CommonCodeName={
+          Code:item?.Code,
+          Name:item?.Name
+        }
+        return obj;
+     });
+     return  Promise.resolve(data??[]);
+  }
+  const [refreshUnits,setRefreshUnits]=React.useState(0);
+  React.useEffect(()=>{
+    setRefreshUnits(refreshUnits+1)
+  },[setupFormData])
   
 
   return(
@@ -515,7 +532,7 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
                   <Quantom_LOV label='Reports' FillDtaMethod={fillReportsMethod} selected={selectedReport} onChange={(e)=>{setSelectedReport(e)}}/>
               </Quantom_Grid>
               <Quantom_Grid item size={{xs:4}}>
-                  <Quantom_LOV label='Unit' FillDtaMethod={()=>getSetupDataWithSetupType(setupFormData,'Unit')} selected={selectedUnit} onChange={(e)=>setSelectedUnit(e)}/>
+                  <Quantom_LOV label='Unit' FillDtaMethod={getSetupUnits} selected={selectedUnit} onChange={(e)=>setSelectedUnit(e)}/>
               </Quantom_Grid>
               <Quantom_Grid  size={{xs:1}}>
                   <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' onClick={()=>{
