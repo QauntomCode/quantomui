@@ -14,31 +14,24 @@ import { InventoryItemsModel } from '../model/InventoryItemsModel'
 import { SetupFormGetAllBulk } from '../../unit/impl/setupFormImp'
 import { SetupFormBulkResponseModel } from '../../unit/model/SetupFormBulkResponse'
 import { CommonCodeName } from '../../../../../database/db'
-import { AsyncDeepCopy, AsyncFindByIndex, AsyncFindObject, safeParseToNumber } from '../../../../../CommonMethods'
+import {  AsyncFindByIndex, safeParseToNumber } from '../../../../../CommonMethods'
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
 import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
 import store, { form_state_selector, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, set_form_state } from '../../../../../redux/store'
-import { add_helper_data, set_state } from '../../../../../redux/reduxSlice'
+import { add_helper_data } from '../../../../../redux/reduxSlice'
 import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from '../model/AssocicateModels/Inventory_ItemUnitsModel'
 import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inventory_ItemUnitsPriorityModel'
-import { QuantomGET } from '../../../../../HTTP/QuantomHttpMethods'
+import { HTTP_RESPONSE_TYPE } from '../../../../../HTTP/QuantomHttpMethods'
 import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
-import { InventoryAttributeValuesModel } from '../../InventoryItemAtributeValues/Model/InventoryItemAtributeValuesModel'
-import { SetupFormModel } from '../../unit/model/setupFormModel'
+import { InventoryItemAtributeValuesModel } from '../model/AssocicateModels/InventoryItemAtributeValuesModel'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
    const [searchText,setSearchText]=React.useState('');
    const[refreshSetupMethod,setRefreshSetupMethod]=React.useState(0);
-
    const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
 
-  //  React.useEffect(()=>{
-  //   console.log('setup form data is',setupFormData);
-  //   console.warn('setup form data is',setupFormData)
-
-  //  },[setupFormData])
 
     React.useEffect(()=>{
       setFormBasicKeys<VMInventoryItemsModel>({
@@ -52,12 +45,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
       })
     },[props])
 
-    // React.useEffect(()=>{
-    //   // if(setupFormData){
-    //     //  alert('refreshed')
-    //     // setRefreshSetupMethod((refreshSetupMethod??0)+1)
-    //   // }
-    // },[])
+  
 
     React.useEffect(()=>{
          handleGetSetupItems();
@@ -75,7 +63,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
 
     const setItem=(item?:InventoryItemsModel)=>{
-        props?.setState?.({...props?.state,Item:{...props?.state?.Item,...item}})
+        props?.setState?.({...props?.state,item:{...props?.state?.item,...item}})
     }
     
     const handleGetSetupItems=async()=>{
@@ -122,7 +110,16 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                     }} marginTop='4px' Label='Search'  iconName='PlagiarismTwoTone'/>
                   </div>
                </div>
-               <QUANTOM_Table headerHeight={0} data={[...searchedItem]} height='390px' columns={[
+               <QUANTOM_Table onViewButtonClick={async(data)=>{
+                // alert(data?.Code)
+                  let res= await InventoryItemsGetOne(data?.Code)
+                
+                  if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+                    console.warn(res?.Response);
+                   set_form_state(props?.UniqueId,{...res?.Response});
+                    // props?.setState?.(res?.Response)
+                  }
+               }} headerHeight={0} data={[...searchedItem]} height='390px' columns={[
                   {field:"Code",caption:"ItemCode",width:105 },
                   {field:"Name",caption:"ItemName",width:250 },
                 ]} />
@@ -134,29 +131,29 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
       <GroupContainer Label={`$Item Master Information `}>
         <Quantom_Grid container spacing={.5}>
           <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
-              <Quantom_Input disabled label='Item Code' value={props?.state?.Item?.ItemCode} />
+              <Quantom_Input disabled label='Item Code' value={props?.state?.item?.ItemCode} />
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
-              <Quantom_Input id='inventory_items_item_name' label='Item Name' value={props?.state?.Item?.ItemName} 
-                  onChange={(e)=>{setItem({...props?.state?.Item,ItemName:e?.target?.value})}}/>
+              <Quantom_Input id='inventory_items_item_name' label='Item Name' value={props?.state?.item?.ItemName} 
+                  onChange={(e)=>{setItem({...props?.state?.item,ItemName:e?.target?.value})}}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-              <Quantom_Input label='Product' value={props?.state?.Item?.ProductName} 
-                  onChange={(e)=>{setItem({...props?.state?.Item,ProductName:e?.target?.value})}}/>
+              <Quantom_Input label='Product' value={props?.state?.item?.ProductName} 
+                  onChange={(e)=>{setItem({...props?.state?.item,ProductName:e?.target?.value})}}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-              <Quantom_Input label='Urdu Name' value={props?.state?.Item?.UrduName} 
-                  onChange={(e)=>{setItem({...props?.state?.Item,UrduName:e?.target?.value})}}/>
+              <Quantom_Input label='Urdu Name' value={props?.state?.item?.UrduName} 
+                  onChange={(e)=>{setItem({...props?.state?.item,UrduName:e?.target?.value})}}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-              <Quantom_Input label='Search Key' value={props?.state?.Item?.SearchKey} 
-                  onChange={(e)=>{setItem({...props?.state?.Item,SearchKey:e?.target?.value})}}/>
+              <Quantom_Input label='Search Key' value={props?.state?.item?.SearchKey} 
+                  onChange={(e)=>{setItem({...props?.state?.item,SearchKey:e?.target?.value})}}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
             <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')} 
                               label='Item Type' 
                               RefreshFillDtaMethod={refreshSetupMethod}
-                              selected={{Code:props?.state?.Item?.ItemType?.toString(),Name:props?.state?.Item?.InventoryItemType?.Name}}           
+                              selected={{Code:props?.state?.item?.ItemType?.toString(),Name:props?.state?.item?.InventoryItemType?.Name}}           
                               onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
                   />
           </Quantom_Grid>
@@ -165,13 +162,13 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                 <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('unit')} 
                              label='Each Unit' 
                              RefreshFillDtaMethod={refreshSetupMethod}
-                             selected={{Code:props?.state?.Item?.UnitCode,Name:props?.state?.Item?.UnitName}}           
+                             selected={{Code:props?.state?.item?.UnitCode,Name:props?.state?.item?.UnitName}}           
                              onChange={(obj)=>{setItem({UnitCode:obj?.Code,UnitName:obj?.Name})}}
                  />
             </Quantom_Grid>
             <Quantom_Grid item size={{xs:2}}>
-              <Quantom_Input  label='Unit Name' value={props?.state?.Item?.EachUnitName} 
-                    onChange={(e)=>{setItem({...props?.state?.Item,EachUnitName:e?.target?.value})}}/>
+              <Quantom_Input  label='Unit Name' value={props?.state?.item?.EachUnitName} 
+                    onChange={(e)=>{setItem({...props?.state?.item,EachUnitName:e?.target?.value})}}/>
             </Quantom_Grid>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
@@ -179,8 +176,8 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                             FillDtaMethod={()=>getSetupDataWithSetupType('Category')} 
                             label='Category' 
                             RefreshFillDtaMethod={refreshSetupMethod}
-                            selected={{Code:props?.state?.Item?.CatCode,Name:props?.state?.Item?.Category?.Name}}           
-                            onChange={(obj)=>{setItem({CatCode:obj?.Code,Category:{Code:obj?.Code,Name:obj?.Name}})}}
+                            selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}}           
+                            onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
                  />
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
@@ -188,8 +185,8 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                             FillDtaMethod={()=>getSetupDataWithSetupType('Company')} 
                             label='Company' 
                             RefreshFillDtaMethod={refreshSetupMethod}
-                            selected={{Code:props?.state?.Item?.CompCode,Name:props?.state?.Item?.Company?.Name}}           
-                            onChange={(obj)=>{setItem({CompCode:obj?.Code,Company:{Code:obj?.Code,Name:obj?.Name}})}}
+                            selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
+                            onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}}
                  />
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
@@ -197,7 +194,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                                   FillDtaMethod={()=>getSetupDataWithSetupType('PriceGroup')} 
                                   label='Price Group' 
                                   RefreshFillDtaMethod={refreshSetupMethod}
-                                  selected={{Code:props?.state?.Item?.PricGroupCode,Name:props?.state?.Item?.PriceGroup?.Name}}           
+                                  selected={{Code:props?.state?.item?.PricGroupCode,Name:props?.state?.item?.PriceGroup?.Name}}           
                                   onChange={(obj)=>{setItem({PricGroupCode:obj?.Code,PriceGroup:{Code:obj?.Code,Name:obj?.Name}})}}
                       />
           </Quantom_Grid>
@@ -337,9 +334,9 @@ React.useEffect(()=>{
       // alert(obj?.PrimaryUnits);
            
      console.warn('units are',internalState);
-     let units=[...internalState?.ItemUnits??[]]
+     let units=[...internalState?.itemUnits??[]]
      console.warn('units before',units)
-     let selectedIndex= await AsyncFindByIndex(internalState?.ItemUnits,(x)=>x?.UnitCode===obj?.UnitCode && x?.PrimaryUnits===obj?.PrimaryUnits)
+     let selectedIndex= await AsyncFindByIndex(internalState?.itemUnits,(x)=>x?.UnitCode===obj?.UnitCode && x?.PrimaryUnits===obj?.PrimaryUnits)
       
       if(units){
 
@@ -357,15 +354,15 @@ React.useEffect(()=>{
     <GroupContainer height='300px' Label='Unit Of Conversion' >
        <Quantom_Grid container spacing={.5} >
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_Input disabled label='From Unit' value={state?.Item?.UnitName}/>
+              <Quantom_Input disabled label='From Unit' value={state?.item?.UnitName}/>
           </Quantom_Grid>
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2.5,xl:1.5}}>
               <Quantom_LOV label='Calc_Type' FillDtaMethod={calculationType} selected={calcType} onChange={(e)=>{setCalcType({...e})}}/>
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:1}}>
-              <Quantom_Input label='Qty' value={itemUnit?.PrimaryUnits??0} onChange={(e)=>{
-                  setItemUnit({...itemUnit,PrimaryUnits:safeParseToNumber(e.target.value)})
+              <Quantom_Input label='Qty' value={itemUnit?.CalucltionNumber??0} onChange={(e)=>{
+                  setItemUnit({...itemUnit,CalucltionNumber:safeParseToNumber(e.target.value)})
               }}/>
           </Quantom_Grid>
 
@@ -381,17 +378,17 @@ React.useEffect(()=>{
                     props?.baseProps?.errorToast?.('Select To Unit')
                     return;
                   }
-                  if(itemUnit?.UnitCode===state?.Item?.UnitCode){
+                  if(itemUnit?.UnitCode===state?.item?.UnitCode){
                     props?.baseProps?.errorToast?.(`From Unit And To Unit Can't Be Same`)
                     return;
                   }
-                  if(!itemUnit?.PrimaryUnits){
+                  if(!itemUnit?.CalucltionNumber || safeParseToNumber(itemUnit?.CalucltionNumber)===0){
                     props?.baseProps?.errorToast?.(`Qty Must Be Greater Than Zero`)
                     return;
                   }
               
-                  set_form_state<VMInventoryItemsModel>(props?.baseProps?.UniqueId,{...state,ItemUnits:[...state?.ItemUnits??[],
-                    {...itemUnit,PUnitName:state?.Item?.UnitName}]});
+                  set_form_state<VMInventoryItemsModel>(props?.baseProps?.UniqueId,{...state,itemUnits:[...state?.itemUnits??[],
+                    {...itemUnit,PUnitName:state?.item?.UnitName}]});
                   
                   setItemUnit({...itemUnit,UnitCode:'',UnitName:'',Unit:{},PrimaryUnits:0,})
 
@@ -402,10 +399,10 @@ React.useEffect(()=>{
        </Quantom_Grid>
        
 
-       <QUANTOM_Table onViewButtonClick={onDeleteViewClick} viewButtonOverrideIcon='DeleteTwoTone' hideFloatingFilter headerHeight={20} data={state?.ItemUnits??[]} columns={[
+       <QUANTOM_Table onViewButtonClick={onDeleteViewClick} viewButtonOverrideIcon='DeleteTwoTone' hideFloatingFilter headerHeight={20} data={state?.itemUnits??[]} columns={[
           {field:"PUnitName",caption:'From Unit',width:120,},  
           {field:"CalculationTypeDesc",caption:'Calc_Type',width:160},
-          {field:"PrimaryUnits",caption:'Qty',width:120},
+          {field:"CalculationNumber",caption:'Qty',width:120},
           {field:"Unit.Name",caption:'To Unit',width:120},
 
        ]} height='250px'/>
@@ -486,7 +483,7 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
   const [selectedReport,setSelectedReport]=React.useState<CommonCodeName>();
   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
   const state= useSelector((state?:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""));
-  const reportData= state?.ReportUnits?.map((item,index)=>{
+  const reportData= state?.reportUnits?.map((item,index)=>{
      let obj:InventoryItemHelperUnitModel={
       UnitName: item?.Unit?.Name,
       ReportName:item?.ReportName
@@ -544,8 +541,8 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
                       props?.baseProps?.errorToast?.('Select Unit First');
                       return;
                     }
-                    let reportUnits=[...state?.ReportUnits??[]];
-                    if(state?.ReportUnits && state?.ReportUnits?.length>0){
+                    let reportUnits=[...state?.reportUnits??[]];
+                    if(state?.reportUnits && state?.reportUnits?.length>0){
                       
                       let index= reportUnits?.findIndex?.(x=>x?.ReportName===selectedReport?.Name);
                       if(index!==-1){
@@ -565,7 +562,7 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
          </Quantom_Grid>
          <Quantom_Grid container>
           <Quantom_Grid item size={{xs:9}}>
-              <QUANTOM_Table viewButtonStatus='HIDE' viewButtonOverrideIcon='DeleteTwoTone' data={reportData} headerHeight={20} height='250px'  hideFloatingFilter 
+              <QUANTOM_Table  viewButtonStatus='HIDE' viewButtonOverrideIcon='DeleteTwoTone' data={reportData} headerHeight={20} height='250px'  hideFloatingFilter 
                columns={[
                 {field:"ReportName",caption:'ReportName',width:120,},  
                 {field:"UnitName",caption:'UnitName',width:160},
@@ -582,21 +579,19 @@ export const InventoryItemHelperUnitForReport=(props?:ItemHelperTabs)=>{
 
 export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
   const setupData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"","setup_data"));
-  const [refresValue,setRefreshValue]=React.useState(0);
-  // const [attributeValues,setAttributevalues]=React.useState<CommonCodeName[]>([])
+  const [refreshValue,setRefreshValue]=React.useState(0);
+  const [attribute,setAttribute]=React.useState<CommonCodeName>();
+  const[attributeValue,setAttributeValue]=React.useState<CommonCodeName>();
 
-   const [attribute,setAttribute]=React.useState<CommonCodeName>();
-   const[selectedValue,setSelectedValue]=React.useState<CommonCodeName>()
-
+  const state=useSelector((state?:any)=>(form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??"")))
+  // const attributes = state?.InventoryItemAttributes;
+  
    React.useEffect(()=>{
-    // alert('hello')
-    setRefreshValue(refresValue+1)
-    setSelectedValue({});
-    //  handleAttributeValues()
+    setRefreshValue(refreshValue+1)
+    setAttributeValue({});
    },[attribute])
 
    const handleAttributeValues=async(attrCode?:string)=>{
-      // alert(attribute?.Code)
       if(attribute?.Code)
       {
         let res= await getAttributevalueByAttributeCode(attribute?.Code)
@@ -610,19 +605,60 @@ export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
         })??[]
 
         return Promise.resolve(data);
-        //return data;
-        // setAttributevalues(data);
       }
       else{
         return Promise.resolve([])
-         //setAttributevalues([])
       }
    }
 
-  //  React.useEffect(()=>{
-  //   console.warn('data inside useeffect is',attributeValues)
-  //   setRefreshValue(refresValue??0+1)
-  //  },[attributeValues])
+  
+  const handleChangeInAttributes=async(obj?:InventoryItemAtributeValuesModel,type?:'DELETE'|'ADD'): Promise<boolean> =>{
+   
+    const allAttributes=[...state?.InventoryItemAttributes??[]]
+    console.warn("all attributes are",allAttributes);
+    console.warn('new attribute is ',obj)
+    var oldObj= allAttributes.find(x=>x.AttrCode===obj?.AttrCode);
+    if(oldObj){
+        let index= allAttributes.findIndex(x=>x.AttrCode===obj?.AttrCode)
+        allAttributes?.splice(index,1);
+    }
+    //let oldObj= await  AsyncFindObject(allAttributes,(t=>(t?.AttrCode===obj?.AttrCode )));
+    
+    // if(oldObj){
+    //   alert('found old object')
+    //      let index= await AsyncFindByIndex(allAttributes,(t=>t?.AttrCode===obj?.AttrCode));
+    //      allAttributes.splice(index,1)
+      
+    // }
+    if(type==='ADD' && obj){
+    
+      allAttributes.push(obj);
+      console.warn("new state is",allAttributes)
+    }
+    const nState={...state,InventoryItemAttributes:[...allAttributes??[]]}
+    set_form_state(props?.baseProps?.UniqueId??"",nState);
+
+    return Promise.resolve(true);
+    //throw new Error('Function not implemented.')
+  }
+
+  const getNewObject=():Promise<InventoryItemAtributeValuesModel>=>{
+    let newObj:InventoryItemAtributeValuesModel={
+      AttrCode:attribute?.Code,
+      Attributes:{
+        AttrCode:attribute?.Code,
+        AttrName:attribute?.Name,
+      },
+      ValueCode:attributeValue?.Code,
+      AttributeValues:{
+        AttrValueCode:attributeValue?.Code,
+        AttrValueName:attributeValue?.Name
+      }
+    }
+
+    return Promise.resolve(newObj);
+  }
+
   return(
     <GroupContainer height='300px' Label='Item Attributes' >
          <Quantom_Grid container spacing={.5}>
@@ -631,13 +667,31 @@ export const InventoryItemHelperItemAttributes=(props?:ItemHelperTabs)=>{
                   selected={attribute} onChange={(att)=>{setAttribute(att)}}/>
             </Quantom_Grid>
             <Quantom_Grid item size={{xs:4}}>
-               <Quantom_LOV label='Attribute' RefreshFillDtaMethod={refresValue}  FillDtaMethod={()=>handleAttributeValues(attribute?.Code)} 
-                  selected={selectedValue} onChange={(att)=>{setSelectedValue(att)}}/>
+               <Quantom_LOV label='Attribute Value' RefreshFillDtaMethod={refreshValue}  FillDtaMethod={()=>handleAttributeValues(attribute?.Code)} 
+                  selected={attributeValue} onChange={(att)=>{setAttributeValue(att)}}/>
             </Quantom_Grid>
             <Quantom_Grid  size={{xs:1}}>
-                  <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' />
+                  <ListCompButton onClick={async()=>{
+                    let object= await getNewObject()
+                    handleChangeInAttributes(object,'ADD')
+                  }} Label='Add' iconName='AddBoxTwoTone' marginTop='4px' />
               </Quantom_Grid>
          </Quantom_Grid>
+
+       {/* <Quantom_Grid container size={{xs:12,ms:12,md:12,lg:9,xl:9}} sx={{marginTop:'8px'}} > */}
+       <div style={{marginTop:'8px'}}>
+         <QUANTOM_Table onViewButtonClick={(data)=>handleChangeInAttributes(data,'DELETE')} viewButtonOverrideIcon='DeleteTwoTone' height='200px' hideFloatingFilter headerHeight={30} 
+         data={[...state?.InventoryItemAttributes??[]]}
+         columns={
+          [
+            {field:'Attributes.AttrName',caption:'Attribute',width:200},
+            {field:'AttributeValues.AttrValueName',caption:'AttributeValue',width:200},
+
+          ]
+         }  ></QUANTOM_Table>
+         </div>
+       {/* </Quantom_Grid> */}
+        
     </GroupContainer>
   )
 }
@@ -709,7 +763,7 @@ export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
 
   React.useEffect(()=>{
     setUnitFormats()
-  },[state?.Item?.UnitCode,state?.InventoryItemUnitsPriority])
+  },[state?.item?.UnitCode,state?.InventoryItemUnitsPriority])
 
   const setUnitFormats= async()=>{
       let prData= await getPriorityData();
@@ -721,13 +775,13 @@ export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
       
     for(let i=0; i<(forms?.length??0);i++){
       let formName= forms[i];
-      let mainUnit= await get_selected_obj(state?.Item?.UnitCode,formName);
-        let mUnitObj= {FormName:formName,ItemCode:state?.Item?.ItemCode,UnitCode:state?.Item?.UnitCode,Unit:{Code:state?.Item?.UnitCode,Name:state?.Item?.UnitName},Priority:mainUnit?.Priority??0}
+      let mainUnit= await get_selected_obj(state?.item?.UnitCode,formName);
+        let mUnitObj= {FormName:formName,ItemCode:state?.item?.ItemCode,UnitCode:state?.item?.UnitCode,Unit:{Code:state?.item?.UnitCode,Name:state?.item?.UnitName},Priority:mainUnit?.Priority??0}
         funData.push(mUnitObj);
 
-        for(let i=0;i<(state?.ItemUnits?.length??0);i++){
+        for(let i=0;i<(state?.itemUnits?.length??0);i++){
             
-            let item= state?.ItemUnits?.[i]
+            let item= state?.itemUnits?.[i]
             // alert('item unit is'+item?.Unit?.Code)
             let obj:InventoryItemUnitsPriorityModel={
               UnitCode:item?.UnitCode,
@@ -754,9 +808,25 @@ export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
      return Promise.resolve(selected);
   }
 
+  const handleCellValueChange=async(data?: any):Promise<void>=> {
+     var state= await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId);
+     let uniPrior= [...state?.InventoryItemUnitsPriority??[]];
+    //  alert(data?.data?.FormName)
+     let index=  uniPrior.findIndex(x=>x.FormName===data?.data?.FormName && x.UnitCode===data?.data?.UnitCode);
+     if(index>-1){
+      //  alert('found data')
+       uniPrior.splice(index,1,data?.data);
+     }
+     else{
+      uniPrior.push(data?.data)
+     }
+
+     set_form_state(props?.baseProps?.UniqueId??"",{...state,InventoryItemUnitsPriority:[...uniPrior??[]]})
+  }
+
   return(
     <GroupContainer height='300px' Label='Unit Priorities' >
-        <QUANTOM_Table height='240px' data={data} headerHeight={20} hideFloatingFilter viewButtonStatus='HIDE'
+        <QUANTOM_Table onCellValueChanged={handleCellValueChange} height='240px' data={data} headerHeight={20} hideFloatingFilter viewButtonStatus='HIDE'
          columns={[
             {caption:"Form Name",field:'FormName',width:100},
             {caption:"Unit Code",field:'Unit.Code',width:100},

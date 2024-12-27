@@ -1,5 +1,6 @@
 import { CommonCodeName } from "../../../../../database/db";
 import {
+  HTTP_RESPONSE_TYPE,
   HttpResponse,
   QuantomGET,
   QuantomPOST,
@@ -22,6 +23,14 @@ export const InventoryItemsInsert = async (
     true,
     model
   );
+
+  if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+     let data= res?.Response;
+     if(model?.item){
+      model.item.ItemCode=data?.item?.ItemCode;
+     }
+     res.Response= model;
+  }
   return res;
 };
 

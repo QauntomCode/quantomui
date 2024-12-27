@@ -16,7 +16,7 @@ export interface InventoryItemUnitsModel {
     CanPurchase?: boolean;
     PrimaryUnits?: number;
     CalculationType?: UNIT_CALULATION_TYPE; // Divided By, Multiply By
-    CalculationNumber?: number;
+    CalucltionNumber?: number;
     CalculationTypeDesc?: string;
     Item?: InventoryItemsModel;
     Unit?: SetupFormModel;

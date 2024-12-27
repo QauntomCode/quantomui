@@ -78,7 +78,7 @@ export const  QUANTOM_Table=<T,>(props?:QuantomGridProps<T>)=>
                         field:item?.field,
                         maxWidth:item?.width,
                         cellStyle:{fontSize:'11px',fontFamily:'roboto'},
-                        headerName:item?.header,
+                        headerName:item?.caption,
                         editable:item?.editable,
                         headerCheckboxSelection:item?.headerCheckboxSelection
                     };

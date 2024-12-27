@@ -31,8 +31,8 @@ export interface InventoryItemsModel {
     // PurchaseDisGlAccount?: RegisterAccount;
     SaleDisGlCode?: string;
     // SaleDisGlAccount?: RegisterAccount;
-    Category?: SetupFormModel;
-    Company?: SetupFormModel;
+    category?: SetupFormModel;
+    company?: SetupFormModel;
     Family?: SetupFormModel;
     PriceGroup?: SetupFormModel;
 }
