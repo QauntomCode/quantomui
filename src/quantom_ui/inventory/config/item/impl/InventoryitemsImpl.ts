@@ -52,6 +52,11 @@ export const InventoryItemsGetOne = async (
     INVENTORY_ITEMS_FORM_GET_ONE + `?Code=${code}`,
     true
   );
+  if(res?.Response && res?.Response?.itemUnits){
+      for(let i=0;i<(res?.Response?.itemUnits?.length ?? 0);i++){
+        res.Response.itemUnits[i].PUnitName= res?.Response?.item?.UnitName;
+      }
+  }
   return res;
 };
 

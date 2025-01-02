@@ -367,14 +367,14 @@ React.useEffect(()=>{
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnits} selected={itemUnit?.Unit} FillDtaMethod={()=>getSetupUnits()} onChange={(e)=>{
-                 setItemUnit({...itemUnit,UnitCode:e?.Code,Unit:{Code:e?.Code,Name:e?.Name}})
+              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnits} selected={itemUnit?.unit} FillDtaMethod={()=>getSetupUnits()} onChange={(e)=>{
+                 setItemUnit({...itemUnit,UnitCode:e?.Code,unit:{Code:e?.Code,Name:e?.Name}})
                 }}/>
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:6,sm:6,md:1,lg:1}}>
               <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' onClick={()=>{
-                  if(!itemUnit || !itemUnit?.Unit ||  !itemUnit?.UnitCode){
+                  if(!itemUnit || !itemUnit?.unit ||  !itemUnit?.UnitCode){
                     props?.baseProps?.errorToast?.('Select To Unit')
                     return;
                   }
@@ -390,7 +390,7 @@ React.useEffect(()=>{
                   set_form_state<VMInventoryItemsModel>(props?.baseProps?.UniqueId,{...state,itemUnits:[...state?.itemUnits??[],
                     {...itemUnit,PUnitName:state?.item?.UnitName}]});
                   
-                  setItemUnit({...itemUnit,UnitCode:'',UnitName:'',Unit:{},PrimaryUnits:0,})
+                  setItemUnit({...itemUnit,UnitCode:'',UnitName:'',unit:{},PrimaryUnits:0,})
 
 
               }}/>
@@ -402,8 +402,8 @@ React.useEffect(()=>{
        <QUANTOM_Table onViewButtonClick={onDeleteViewClick} viewButtonOverrideIcon='DeleteTwoTone' hideFloatingFilter headerHeight={20} data={state?.itemUnits??[]} columns={[
           {field:"PUnitName",caption:'From Unit',width:120,},  
           {field:"CalculationTypeDesc",caption:'Calc_Type',width:160},
-          {field:"CalculationNumber",caption:'Qty',width:120},
-          {field:"Unit.Name",caption:'To Unit',width:120},
+          {field:"CalucltionNumber",caption:'Qty',width:120},
+          {field:"unit.Name",caption:'To Unit',width:120},
 
        ]} height='250px'/>
 
@@ -785,7 +785,7 @@ export const InventoryItemHelperUnitPriorities=(props?:ItemHelperTabs)=>{
             // alert('item unit is'+item?.Unit?.Code)
             let obj:InventoryItemUnitsPriorityModel={
               UnitCode:item?.UnitCode,
-              Unit:{Code:item?.UnitCode,Name:item?.Unit?.Name},
+              Unit:{Code:item?.UnitCode,Name:item?.unit?.Name},
               Priority:0,
               FormName:formName
             }
