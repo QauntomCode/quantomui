@@ -34,6 +34,7 @@ export interface QuantomFormState<T> {
   KeyValues?: (t?: T) => KeyValues;
   Location?: LocationModel;
   SaveMethod?: (payload?: T) => Promise<HttpResponse<T>>;
+  init?: () => void;
   DeleteMethod?: (payload?: T) => Promise<HttpResponse<T>>;
   GetOneMethod?: (keyNo?: string) => Promise<HttpResponse<T>>;
   LocationInitMethod?: (location?: LocationModel) => void;
@@ -57,7 +58,7 @@ interface StateHelperDataData {
 export interface ComponentSettings {
   wWillHideToolbar?: boolean;
   willShowLocations?: boolean;
-  firstControlId?:string;
+  firstControlId?: string;
 }
 
 export interface ComponentSettingsPayloadType {
@@ -162,6 +163,7 @@ export const formsSlice = createSlice({
         };
       }
     },
+
     set_save_method: (
       state,
       action: PayloadAction<StateMethodPayloadType<any>>
@@ -176,6 +178,22 @@ export const formsSlice = createSlice({
         FormsState: updatedFormsState,
       };
     },
+
+    set_int_method: (
+      state,
+      action: PayloadAction<StateMethodPayloadType<any>>
+    ) => {
+      const updatedFormsState = state.FormsState?.map((formState) =>
+        formState.stateKey === action.payload.stateKey
+          ? { ...formState, SaveMethod: action?.payload?.method }
+          : formState
+      );
+      return {
+        ...state,
+        FormsState: updatedFormsState,
+      };
+    },
+
     set_delete_method: (
       state,
       action: PayloadAction<StateMethodPayloadType<any>>

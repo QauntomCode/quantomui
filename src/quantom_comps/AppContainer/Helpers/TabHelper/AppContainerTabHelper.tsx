@@ -88,6 +88,9 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       set_initial_state(props?.UniqueId)
     }
   },[props?.UniqueId]);
+
+  const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
+
   
 
 
@@ -95,7 +98,6 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const nProps={...props}
   const [alertProps,setAlertProps]=React.useState<QUANTOM_ToastProps>();
   const state = useSelector((state:any)=>form_state_selector<T>(state,nProps?.UniqueId||""));
-  const fullState= useSelector((state:any)=>full_component_state(state,props?.UniqueId??""));
   const [tabs,setTabs]=React.useState<ComponentTabProps[]>([])
   const [selectedTab,setSelectedTab]=React.useState<number>(0)
   const [saveMethodCallNumber,setSaveMethodCallNumber]=React.useState(0)
@@ -139,6 +141,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       if(fullState?.compSettings?.firstControlId  ){
         FocusOnControlByControlId(fullState?.compSettings?.firstControlId);
       }
+      
   },[fullState?.compSettings?.firstControlId])
 
 
@@ -555,6 +558,8 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const handleSaveMethod=()=>{
     console.warn('state is',state?.QuantomFormCoreState)
     //  return;
+    // alert('this is SAVE  method')
+
     state?.SaveMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
       if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
         let res:any= x?.Response??{};
@@ -680,8 +685,6 @@ export interface FormMethodsProps<T>{
 export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
   
   setTimeout(() => {
-    // alert(methods?.baseProps?.fullState?.IsFirstUseEffectCall)
-    // alert(methods?.baseProps?.fullState?.stateKey)
     if(methods?.baseProps?.fullState?.IsFirstUseEffectCall)
       {  
           // alert('called method')

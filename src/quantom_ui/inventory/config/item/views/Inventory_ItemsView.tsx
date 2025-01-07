@@ -25,6 +25,7 @@ import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inven
 import { HTTP_RESPONSE_TYPE } from '../../../../../HTTP/QuantomHttpMethods'
 import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
 import { InventoryItemAtributeValuesModel } from '../model/AssocicateModels/InventoryItemAtributeValuesModel'
+import { InventoryItemLocationsModel } from '../model/AssocicateModels/InventoryItemLocationsModel'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -41,9 +42,34 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
          SetBasicKeys:()=>({keyNoPropName:"Item.ItemCode",keyDatePropsName:""}),
          uniqueKey:props?.UniqueId??"",
          baseProps:props??{},
-         settings:{firstControlId:"inventory_items_item_name"}
+         settings:{firstControlId:"inventory_items_item_name"},
+         AfterResetMethod:async(loc)=>{
+          setAllLcoations();
+         },
+        //  InitOnLocationChange:(loc)=>{ alert('chanegd')}
+        
+        
       })
     },[props])
+
+
+    React.useEffect(()=>{
+      if(props?.fullState?.IsFirstUseEffectCall){
+        // alert('this is first call')
+        setAllLcoations();
+      }
+    },[props?.fullState?.IsFirstUseEffectCall])
+
+    const setAllLcoations=async()=>{
+      // const state= await get_form_state_without_selector<VMInventoryItemsModel>(props?.UniqueId);
+      const locs= store.getState().formsState.UserLocations?.map((x,index)=>{
+       let loc:InventoryItemLocationsModel={
+         LocCode:x.LocId,
+       }
+       return loc;
+      });
+     set_form_state<VMInventoryItemsModel>(props?.UniqueId,{ItemLocation:[...locs??[]]})
+    }
 
   
 
@@ -91,6 +117,8 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
           }
           return obj;
        });
+
+       console.warn('item type data is',data);
        return  Promise.resolve(data??[]);
     }
 
@@ -203,6 +231,16 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                   <Quantom_Input label='Pack Qty'></Quantom_Input>
               </Quantom_Grid>
           </Quantom_Grid>
+
+          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
+            <Quantom_LOV 
+                  FillDtaMethod={()=>getSetupDataWithSetupType('unit')} 
+                  label='Price Unit' 
+                  RefreshFillDtaMethod={refreshSetupMethod}
+                  selected={{Code:props?.state?.item?.DefUnitCodeForPrice,Name:props?.state?.item?.defUnitNameForPrice}}           
+                  onChange={(obj)=>{setItem({DefUnitCodeForPrice:obj?.Code,defUnitNameForPrice:obj?.Name})}}
+                      />
+            </Quantom_Grid>
         </Quantom_Grid>
         </GroupContainer>
       </Quantom_Grid>
