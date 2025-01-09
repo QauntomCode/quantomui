@@ -6,7 +6,7 @@ import {  AppDispatch, useAppDispatch, set_form_state, useTypedSelector, set_ini
 // import { increment } from './redux/reduxSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { QuantomFormState, set_state,create_initial_state } from './redux/reduxSlice';
-import { SaleComponent } from './quantom_ui/sale/views/processing/SaleComponent';
+// import { SaleComponent } from './quantom_ui/sale/views/processing/SaleComponent';
 import { AppContainer } from './quantom_comps/AppContainer/AppContainer';
 // import { ThemeProvider } from 'styled-components';
 // import theme from './quantom_comps/theme';

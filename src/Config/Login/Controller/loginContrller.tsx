@@ -1,7 +1,7 @@
 import { HTTP_RESPONSE_TYPE, HttpResponse, QuantomGET, QuantomPOST } from "../../../HTTP/QuantomHttpMethods";
 import { TOKEN_KEY_LOCAL_STORAGE } from "../../config_keys";
 import { CompanyModel } from "../../User/model/CompanyModel";
-import { user } from "../../User/model/user";
+import { UserModel } from "../../User/model/user";
 import { LoginResponse } from "../model/loginResponseModel";
 
 const LOGIN_URL='Config/Login/Login';
@@ -9,7 +9,7 @@ const GET_ALL_COMPANIES_URL="Config/Company/GetUserCompanies";
  const SET_LOGIN_COMPANY_URL = "Config/Company/setLoginCompany";
 
 
-export const UserLoginMethod=async(user?:user):Promise<HttpResponse<LoginResponse>>=>{
+export const UserLoginMethod=async(user?:UserModel):Promise<HttpResponse<LoginResponse>>=>{
 
      let res= await QuantomPOST<LoginResponse>(LOGIN_URL,true,user,'LOADING');
      if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){

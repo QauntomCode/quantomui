@@ -6,7 +6,7 @@ import store, { get_open_menus, set_initial_state, set_form_state, form_state_se
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
 import { change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
-import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
+// import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
 import { SubAccountView } from '../../../../quantom_ui/account/config/subAccount/view/SubAccountView';
@@ -34,6 +34,7 @@ import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
 import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
 import { InventoryUnitView } from '../../../../quantom_ui/inventory/config/unit/view/InventoryUnitView';
 import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/Inventory_ItemsView';
+import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -451,17 +452,24 @@ export const AccountMenus:MenuInfoModel<any>[]=[
   },
 ]
 
+export const SaleMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"005-007",
+    MenuCaption:"Sale",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<SaleView {...props}/>)
+  },
+]
 export const  AllCompMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"001",
     MenuCaption:"Menus",
     GetComponent:(props?:MenuComponentProps<unknown>)=>(<AllMenuRenderer {...props}/>)
   },
-  {
-    MenuCode:"002",
-    MenuCaption:"Sale Component",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<SaleComponent {...props}/>)
-  },
+  // {
+  //   MenuCode:"002",
+  //   MenuCaption:"Sale Component",
+  //   GetComponent:(props?:MenuComponentProps<any>)=>(<SaleComponent {...props}/>)
+  // },
   {
     MenuCode:"TEST_REPORT",
     MenuCaption:"All Reports",
@@ -478,7 +486,8 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
     GetComponent:(props?:MenuComponentProps<any>)=>(<DashboardLayoutBasic/>)
   },
   ...AccountMenus,
-  ...InventoryMenus
+  ...InventoryMenus,
+  ...SaleMenus
 ]
 
 

@@ -1,5 +1,5 @@
 
-import { CommonInvDetailModel } from '../../../../inventory/commonModel/CommonInvDetailModel';
+import { CommonInvDetailModel } from '../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel';
 import {LedgerModel} from '../../Ledger/model/LedgerModel'
 export interface DetailLedgerModel extends LedgerModel {
     InvoiceDetail?: CommonInvDetailModel[];

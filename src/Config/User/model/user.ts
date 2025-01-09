@@ -1,4 +1,4 @@
-export interface user{
+export interface UserModel{
   Code?: string;
   Name?: string;
   Active?: boolean;

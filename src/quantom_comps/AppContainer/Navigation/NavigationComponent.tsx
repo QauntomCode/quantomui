@@ -209,6 +209,12 @@ export const MainModulesList:Modules[]=[
     ModuleName:'Inventory',
     SortNumber:1,
     IsOpen:false
+  },
+  {
+    ModuleCode:'005',
+    ModuleName:'Sale',
+    SortNumber:1,
+    IsOpen:false
   }
 ]
 
@@ -247,6 +253,18 @@ export const subModulesList:SubModule[]=[
     SubModuleCode:'03',
     SubModuleName:'Reports',
     ModuleCode:'003',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'01',
+    SubModuleName:'Config',
+    ModuleCode:'005',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'02',
+    SubModuleName:'Processing',
+    ModuleCode:'005',
     SortNumber:1
   },
 ]
@@ -347,6 +365,13 @@ export const mainMenusList:QuantomMenu[]=[
     MenuName:'Inventory Items',
     ModuleCode:'003',
     SubModuleCode:'01',
+    SortNumber:0
+  },
+  {
+    MenuCode:'005-007',
+    MenuName:'Sale',
+    ModuleCode:'005',
+    SubModuleCode:'02',
     SortNumber:0
   }
 ]

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { Quantom_Button, Quantom_Input } from '../../../quantom_comps/base_comps'
-import { user } from '../../User/model/user'
+import { UserModel as user } from '../../User/model/user'
 import { GetAllCompaniesByUser, setLogedInUserCompany, UserLoginMethod } from '../Controller/loginContrller'
 import { HTTP_RESPONSE_TYPE } from '../../../HTTP/QuantomHttpMethods'
 import { useNavigate } from 'react-router-dom'
