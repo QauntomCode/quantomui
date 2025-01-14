@@ -54,7 +54,7 @@ export const RenderTables=()=>{
                          {item?.OrderValue??0}
                        </div>
                        </div>
-                       <div style={{paddingTop:'20px',paddingBottom:'20px',border:_BORDER_PROPS,backgroundColor:_GRAY_COLOR,justifyContent:'center',alignItems:'center',display:'grid'}}>
+                       <div style={{paddingTop:'20px',paddingBottom:'20px',border: _BORDER_PROPS,backgroundColor: item?.TableStatus==='BOOKED'?_MOSS_GREEN: _GRAY_COLOR,justifyContent:'center',alignItems:'center',display:'grid'}}>
                          <TableRestaurantTwoToneIcon sx={{ fontSize:"50px"}}/>
                        </div>
                     </Box>
