@@ -35,6 +35,7 @@ import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogVie
 import { InventoryUnitView } from '../../../../quantom_ui/inventory/config/unit/view/InventoryUnitView';
 import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/Inventory_ItemsView';
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
+import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -127,14 +128,19 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
     //alert(settings?.wWillHideToolbar)
   },[fullState?.recordKeyNo])
   
-  const getDefaultTabs=(uniqueKyeNo?:string):ComponentTabProps[]=>{
-        return[
-          {
-            TabComponent:(<UserLogView UniqueId={props?.UniqueId}/>),
-            TabCaption:"User Log",
-            SortNumber:100
-           }
-        ]
+  const getDefaultTabs=(uniqueKyeNo?:string,willHideUserLog?:boolean):BasicTabProps[]=>{
+      let tabs:BasicTabProps[]=[]
+      // alert(props?.fullState?.compSettings?.WillHideUserLog)
+      if(!willHideUserLog){
+
+        tabs.push( {
+          Component:(<UserLogView UniqueId={props?.UniqueId}/>),
+          Caption:"User Log",
+          
+         })
+      }
+     
+      return tabs;
   }
   
 
@@ -174,7 +180,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
 
 
 
-  const basicTabData=[...tabs?.sort((a,b)=>(a?.SortNumber??0)-(b?.SortNumber??0)),...getDefaultTabs()??[]].map((item,index)=>{
+  const basicTabData=[...tabs?.sort((a,b)=>(a?.SortNumber??0)-(b?.SortNumber??0))]?.map((item,index)=>{
     let obj:BasicTabProps={
       Caption:item?.TabCaption,
       Component:item?.TabComponent
@@ -215,12 +221,17 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const [isShowAlert,setIsShowAlert]=React.useState(false);
   React.useEffect(()=>{
    if((alertProps?.number??0)>0){
-      if(alertProps?.severity=='error'){
+      if(alertProps?.severity==='error'){
         setIsShowAlert(true)
       }
    }
   },[alertProps])
 
+  const [defaultTabs,setDefaultTabs]=React.useState<BasicTabProps[]>([]);
+  React.useEffect(()=>{
+    setDefaultTabs([...getDefaultTabs(props?.UniqueId,fullState?.compSettings?.WillHideUserLog)])
+  },[fullState?.compSettings?.WillHideUserLog])
+  //const defaultTabs=[...getDefaultTabs(props?.UniqueId,props?.fullState?.compSettings?.WillHideUserLog)??[]]
 
   return(
     <div  >
@@ -241,7 +252,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <div style={{marginTop:'8px'}}>
       {
         fullState?.FormState==='LIST'?(<></>): 
-        (<BasicTabs tabs={[...basicTabData]} selectedTabIndex={selectedTab??0} onTabClick={(index)=>{
+        (<BasicTabs tabs={[...basicTabData,...defaultTabs] } selectedTabIndex={selectedTab??0} onTabClick={(index)=>{
           setSelectedTab(index??0)
         }}  willShowRemoveButton={false}/>)
       } 
@@ -457,6 +468,11 @@ export const SaleMenus:MenuInfoModel<any>[]=[
     MenuCode:"005-007",
     MenuCaption:"Sale",
     GetComponent:(props?:MenuComponentProps<any>)=>(<SaleView {...props}/>)
+  },
+  {
+    MenuCode:"005-007_01",
+    MenuCaption:"Restaurant Sale",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<RestaurantSaleView {...props}/>)
   },
 ]
 export const  AllCompMenus:MenuInfoModel<any>[]=[
@@ -714,6 +730,7 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
           }
           if(methods?.settings)
           {
+            // alert(methods?.settings?.WillHideUserLog)
             store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:{...methods?.settings}}))
           }
           if(methods?.AfterResetMethod){

@@ -57,6 +57,7 @@ interface StateHelperDataData {
 
 export interface ComponentSettings {
   wWillHideToolbar?: boolean;
+  WillHideUserLog?:boolean;
   willShowLocations?: boolean;
   firstControlId?: string;
 }
@@ -126,7 +127,7 @@ const initialState: FormsState = {
     H2FontSize: "18px",
     H3FontSize: "13px",
     H4FontSize: "10px",
-    RegularFont: "ubuntu",
+    RegularFont: "monospace",
     HeaderFont: "Oswald",
     RegularFontSize: "14px",
   },

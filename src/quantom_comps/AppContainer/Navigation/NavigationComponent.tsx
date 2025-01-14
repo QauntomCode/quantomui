@@ -373,6 +373,13 @@ export const mainMenusList:QuantomMenu[]=[
     ModuleCode:'005',
     SubModuleCode:'02',
     SortNumber:0
+  },
+  {
+    MenuCode:'005-007_01',
+    MenuName:'Restaurant Sale',
+    ModuleCode:'005',
+    SubModuleCode:'02',
+    SortNumber:0
   }
 ]
 
