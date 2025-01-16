@@ -12,6 +12,7 @@ import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import ListAltTwoToneIcon from '@mui/icons-material/ListAltTwoTone';
 import { Sale_RestaurantTablesModel } from "../../../../config/Sale_ResturantTables/model/Sale_ResturantTablesModel"
 import TableRestaurantTwoToneIcon from '@mui/icons-material/TableRestaurantTwoTone';
+import { CommonInvDetailModel } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel"
 export const RestaurantSaleView=(props?:MenuComponentProps<VmSale>)=>{
     
     // const [tables,setTables]=React.useState<Sale_RestaurantTablesModel[]>(tables)
@@ -31,7 +32,15 @@ export const RestaurantSaleView=(props?:MenuComponentProps<VmSale>)=>{
     return(
         <Quantom_Container >
             <HeaderContainer/>
-            <RenderTables />
+            <Quantom_Grid container>
+                <Quantom_Grid size={{xs:8}}>
+                    <RenderTables />
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:4}}>
+                    <RenderSoldItemsComp />
+                </Quantom_Grid>
+            </Quantom_Grid>
+            
         </Quantom_Container>
     )
 }
@@ -65,6 +74,37 @@ export const RenderTables=()=>{
     )
 }
 
+export const RenderSoldItemsComp=()=>{
+    const fonts= useQuantomFonts()
+    return(
+      <Quantom_Grid spacing={.5} container>
+        {SoldItems?.map((item,index)=>{
+            return(
+             <Quantom_Grid size={{xs:6,sm:6,md:4}}>
+                
+                <div style={{border:_BORDER_PROPS,height:'80px',backgroundColor:_YELLOW_COLOR,
+                    fontFamily:fonts.RegularFont,fontSize:fonts.H4FontSize,display:'flex',
+                    alignItems:'center',
+                    justifyContent:'center'}}>
+                    {item?.ItemName}
+                </div>
+                <div style={{display:'flex',border:_BORDER_PROPS,backgroundColor:_GREEN_COLOR}}>
+                  <div style={{flex:1,borderRight:_BORDER_PROPS,fontFamily:'monospace',fontSize:fonts.H4FontSize}}>
+                     {item.Price}
+                  </div>
+                  <div style={{flex:1,fontFamily:'monospace',fontSize:fonts.H4FontSize}}>
+                     {item?.Qty}
+                  </div>
+                </div>
+                <div style={{display:'flex',border:_BORDER_PROPS,backgroundColor:_BLUE_COLOR,fontFamily:'monospace',fontSize:fonts.H4FontSize}}>
+                    {item?.Amount}
+                </div>
+             </Quantom_Grid>
+            )
+        })}
+      </Quantom_Grid>
+    )
+}
 
 export const HeaderContainer=()=>{
     const [nowTime,setNowTime]=React.useState<Date>(new Date());
@@ -260,4 +300,84 @@ export const tables:Sale_RestaurantTablesModel[]=[
         Name:"R1-C1",
         OrderValue:500
     }
+]
+
+export const SoldItems:CommonInvDetailModel[]=[
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
+    {
+        ItemCode:"0023",
+        ItemName:"First Item",
+        Qty:1,
+        Price:500,
+        Amount:500,
+    },
 ]
