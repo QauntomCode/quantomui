@@ -55,6 +55,11 @@ interface StateHelperDataData {
   keyNo?: string;
 }
 
+interface StateHelperDataMetaSingleKeyPayload {
+  UniqueId?: string;
+  data?: StateHelperDataData;
+}
+
 export interface ComponentSettings {
   wWillHideToolbar?: boolean;
   WillHideUserLog?:boolean;
@@ -401,13 +406,44 @@ export const formsSlice = createSlice({
       }
 
       if (oldObj) {
-        //oldObj.data?.find(x=>x.keyNo===action.payload.data.)
         oldObj = { ...action.payload };
         state = { ...s };
         return state;
       }
     },
+    add_helper_data_single_key:(state,action:PayloadAction<StateHelperDataMetaSingleKeyPayload>)=>{
 
+      let s={...state};
+      let selectedCompData=s?.HelperData?.find(x=>x.UniqueId===action?.payload?.UniqueId);
+      if (!selectedCompData && action?.payload?.UniqueId) {
+        s = {
+          ...s,
+          HelperData: [...s?.HelperData??[],{UniqueId:action?.payload?.UniqueId,data:[{...action?.payload?.data}]}],
+        };
+        state = { ...s};
+        return state;
+      }
+
+       let selectedKeyData= selectedCompData?.data?.find(x=>x.keyNo===action?.payload?.data?.keyNo);
+       if(selectedCompData && !selectedKeyData){
+           let helperData=  
+           s?.HelperData?.map((item)=>item.UniqueId===(action.payload.UniqueId)?{...item,data:[...item.data??[],{keyNo:action.payload.data?.keyNo,Data:action?.payload?.data?.Data}]}:item);
+           return {...state,HelperData:helperData}
+       }
+       if(selectedCompData && selectedKeyData){
+          let updatedHelperData:any=
+            s?.HelperData?.map((item)=>item?.UniqueId===action.payload.UniqueId?(
+               { UniqueId:action.payload.UniqueId,data:(
+                item?.data?.map((keyData)=>keyData.keyNo===(action.payload.data?.keyNo)?action.payload.data:keyData)
+               )}
+            ):item);
+
+            return {...state,HelperData:[...updatedHelperData??[]]}
+       }
+
+      
+    },
+    
     open_new_menu: (
       state,
       action: PayloadAction<AppContainerMenus | undefined>
@@ -475,6 +511,7 @@ export const {
   change_first_call,
   set_selected_menu_index,
   add_helper_data,
+  add_helper_data_single_key
   // set_state_with_immmer,
 } = formsSlice.actions;
 

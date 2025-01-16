@@ -36,4 +36,6 @@ export interface InventoryItemsModel {
   company?: SetupFormModel;
   Family?: SetupFormModel;
   PriceGroup?: SetupFormModel;
+  SalePrice?:number;
+  PurchasePrice?:number;
 }
