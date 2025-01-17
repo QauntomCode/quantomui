@@ -57,3 +57,6 @@ export const INVENTORY_ITEMS_FORM_GET_PRICE_GROUP_CODE_BY_ITEM_CODE =
 
 export const INVENTORY_ATTRIBUTES_VALUES_BY_ATTRIBUTE_CODE_URL =
   "Inventory/AttributeValues/GetByAttrCode";
+
+export const INVENTORY_ITEMS_GET_ITEMS_BY_CATCODE_URL =
+  "InventoryReport/ItemReports/GetInventoryItemsbyCatCode";

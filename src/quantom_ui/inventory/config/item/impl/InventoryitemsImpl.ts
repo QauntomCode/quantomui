@@ -11,8 +11,10 @@ import {
   INVENTORY_ITEMS_FORM_GET_ALL,
   INVENTORY_ITEMS_FORM_GET_ONE,
   INVENTORY_ITEMS_FORM_INSERT,
+  INVENTORY_ITEMS_GET_ITEMS_BY_CATCODE_URL,
 } from "../../../InventoryRoutes";
 import { InventoryAttributeValuesModel } from "../../InventoryItemAtributeValues/Model/InventoryItemAtributeValuesModel";
+import { InventoryItemsModel } from "../model/InventoryItemsModel";
 import { VMInventoryItemsModel } from "../model/VMInventory_itemsModel";
 
 export const InventoryItemsInsert = async (
@@ -76,6 +78,18 @@ export const getAttributevalueByAttributeCode = async (
   let res = await QuantomGET<InventoryAttributeValuesModel[]>(
     INVENTORY_ATTRIBUTES_VALUES_BY_ATTRIBUTE_CODE_URL +
       `?attrCode=${attributeCode}`,
+    true
+  );
+
+  console.warn("response of vlues are", res?.Response);
+  return res?.Response ?? [];
+};
+
+export const GetItemsByCategory = async (
+  catCode?: string
+): Promise<InventoryItemsModel[]> => {
+  let res = await QuantomGET<InventoryItemsModel[]>(
+    INVENTORY_ITEMS_GET_ITEMS_BY_CATCODE_URL + `?catcode=${catCode}`,
     true
   );
 
