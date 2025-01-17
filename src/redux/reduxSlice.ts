@@ -412,10 +412,11 @@ export const formsSlice = createSlice({
       }
     },
     add_helper_data_single_key:(state,action:PayloadAction<StateHelperDataMetaSingleKeyPayload>)=>{
-
+      // alert('inside helper data')
       let s={...state};
       let selectedCompData=s?.HelperData?.find(x=>x.UniqueId===action?.payload?.UniqueId);
       if (!selectedCompData && action?.payload?.UniqueId) {
+        // alert('inside helper data condition 1')
         s = {
           ...s,
           HelperData: [...s?.HelperData??[],{UniqueId:action?.payload?.UniqueId,data:[{...action?.payload?.data}]}],
@@ -423,14 +424,22 @@ export const formsSlice = createSlice({
         state = { ...s};
         return state;
       }
+      console.warn('unique id is',action?.payload.UniqueId)
+      console.warn('keyNo  is',action?.payload.data?.keyNo)
+
+      console.warn('selected key data',selectedCompData)
 
        let selectedKeyData= selectedCompData?.data?.find(x=>x.keyNo===action?.payload?.data?.keyNo);
+       console.warn('selected key data',selectedKeyData)
        if(selectedCompData && !selectedKeyData){
+       
+        // alert('inside helper data condition 2')
            let helperData=  
            s?.HelperData?.map((item)=>item.UniqueId===(action.payload.UniqueId)?{...item,data:[...item.data??[],{keyNo:action.payload.data?.keyNo,Data:action?.payload?.data?.Data}]}:item);
            return {...state,HelperData:helperData}
        }
        if(selectedCompData && selectedKeyData){
+        // alert('inside helper data condition 3')
           let updatedHelperData:any=
             s?.HelperData?.map((item)=>item?.UniqueId===action.payload.UniqueId?(
                { UniqueId:action.payload.UniqueId,data:(
@@ -438,6 +447,7 @@ export const formsSlice = createSlice({
                )}
             ):item);
 
+            console.warn('helper data is',updatedHelperData)
             return {...state,HelperData:[...updatedHelperData??[]]}
        }
 

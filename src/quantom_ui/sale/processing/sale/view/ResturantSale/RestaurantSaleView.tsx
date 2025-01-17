@@ -5,7 +5,7 @@ import { MenuComponentProps, setFormBasicKeys } from "../../../../../../quantom_
 import { Quantom_Container, Quantom_Grid } from "../../../../../../quantom_comps/base_comps"
 import { VmSale } from "../../model/VmSaleModel"
 import dayjs from "dayjs"
-import store, { get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store"
+import store, { form_state_selector, get_form_state_without_selector, get_helperData_by_key, set_form_state, useQuantomFonts } from "../../../../../../redux/store"
 import { Box, Dialog, Modal } from "@mui/material"
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
@@ -23,13 +23,14 @@ import ItemsIcon from '@mui/icons-material/VerticalSplitOutlined';
 import DisabledByDefaultTwoToneIcon from '@mui/icons-material/DisabledByDefaultTwoTone';
 import { add_helper_data, add_helper_data_single_key } from "../../../../../../redux/reduxSlice"
 import { useSelector } from "react-redux"
+import { VmSaleOrderModel } from "../../../saleOrder/model/VmSaleOrderModel"
 
-export const RestaurantSaleView=(props?:MenuComponentProps<VmSale>)=>{
+export const RestaurantSaleView=(props?:MenuComponentProps<VmSaleOrderModel>)=>{
     
    
     
     React.useEffect(()=>{
-        setFormBasicKeys<VmSale>({
+        setFormBasicKeys<VmSaleOrderModel>({
                 //  SaveMethod:(payload)=>InventoryItemsInsert(payload),
                 //  DeleteMethod:(payload)=>InventoryItemsDelete(payload),
                 //  GetOneMethod:(payload)=>InventoryItemsGetOne(payload),
@@ -51,7 +52,7 @@ export const RestaurantSaleView=(props?:MenuComponentProps<VmSale>)=>{
                     <RenderTables UniqueId={props?.UniqueId} />
                 </Quantom_Grid>
                 <Quantom_Grid  size={{xs:6}}>
-                    <RenderSoldItemsComp/>
+                    <RenderSoldItemsComp  UniqueId={props?.UniqueId}/>
                 </Quantom_Grid>
             </Quantom_Grid>
             
@@ -62,7 +63,17 @@ export const RestaurantSaleView=(props?:MenuComponentProps<VmSale>)=>{
 
 
 export const ItemsPopupComp=(props?:SaleCompHelperProps)=>{
+
+    const state= useSelector((state?:any)=>form_state_selector<VmSaleOrderModel>(state,props?.UniqueId??""));
+
+    const selectedTable= state?.ResturantTable?.[0];
     const willShowModel= useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY)) as boolean;
+
+    React.useEffect(()=>{
+        if(selectedTable && selectedTable?.TableNo){
+             store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY,Data:true}}))
+        }
+    },[selectedTable?.TableNo])
 
     return(
 
@@ -76,13 +87,13 @@ export const ItemsPopupComp=(props?:SaleCompHelperProps)=>{
     <Box>
         <div style={{display:'flex'}}>
             <div style={{width:'170px'}}>
-                <RenderAllCategories/>
+                <RenderAllCategories UniqueId={props?.UniqueId}/>
             </div>
             <div style={{flex:1}}>
-                <RenderAllItems />
+                <RenderAllItems UniqueId={props?.UniqueId} />
             </div>
             <div style={{flex:1}}>
-                <RenderSoldItemsComp willShowHeader/>
+                <RenderSoldItemsComp willShowHeader UniqueId={props?.UniqueId}/>
             </div>
         </div>
         </Box>
@@ -98,43 +109,12 @@ export interface TableCompProps extends SaleCompHelperProps{
 }
 export const RenderTables=(props?:TableCompProps)=>{
 
-    const [preSelectedTable,setPreSelectedTable]=React.useState<string>('')
-    const _SELECTED_TABLE_KEY="_SELECTED_SALE_TABLE"
     const fonts= useQuantomFonts();
+    const state=useSelector((state?:any)=>form_state_selector<VmSaleOrderModel>(state,props?.UniqueId??""));
+    const selectedTable= state?.ResturantTable?.[0]
     const handleOnTableClick=(item?:Sale_RestaurantTablesModel)=>{
-        // alert('clicked item code is'+item?.Code)
-        store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{
-            keyNo:_SELECTED_TABLE_KEY,
-            Data:item?.Code
-         }}));
+        set_form_state<VmSaleOrderModel>(props?.UniqueId,{...state,ResturantTable:[{TableNo:item?.Code}]})
     }
-
-  const selectedTable= useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",_SELECTED_TABLE_KEY)) as string;
-  
-  React.useEffect(()=>{
-    if(selectedTable  && preSelectedTable!== selectedTable){
-        setPreSelectedTable(selectedTable);
-        handleTableClicked(selectedTable);
-        // alert(selectedTable)
-    }
-  },[selectedTable])
-
-  const handleTableClicked=(selectedTable?:string)=>{
-
-    store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{
-        keyNo:_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY,
-        Data:true
-     }}));
-   // restaurant_sale_open_items_model(props?.UniqueId,true)
- 
-    // store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{
-    //     keyNo:_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY,
-    //     Data:"true"
-    //  }}));
-
-  }
-
-
     return(
         <Quantom_Grid container style={{fontFamily:fonts.RegularFont,fontSize:'10px',border:_BORDER_PROPS,paddingBottom:'5px'}}>
             
@@ -160,7 +140,7 @@ export const RenderTables=(props?:TableCompProps)=>{
                          {item?.OrderValue??0}
                        </div>
                        </div>
-                       <div style={{paddingTop:'20px',paddingBottom:'20px',border: _BORDER_PROPS,backgroundColor: item?.TableStatus==='BOOKED'?_MOSS_GREEN: _GRAY_COLOR,justifyContent:'center',alignItems:'center',display:'grid'}}>
+                       <div style={{paddingTop:'20px',paddingBottom:'20px',border: _BORDER_PROPS,backgroundColor:(selectedTable?.TableNo===item?.Code)?_MOSS_GREEN:_GRAY_COLOR,justifyContent:'center',alignItems:'center',display:'grid'}}>
                          <TableRestaurantTwoToneIcon sx={{ fontSize:"50px"}}/>
                        </div>
                     </div>
@@ -177,6 +157,11 @@ interface RenderSoldItemsProps extends SaleCompHelperProps{
 export const RenderSoldItemsComp=(props?:RenderSoldItemsProps)=>{
     const totalAmount= 9000
     const fonts= useQuantomFonts()
+    const handleCloseButtonClicked=()=>{
+        // alert('clicked on close button')
+        store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY,Data:false}}))
+    }
+
     return(
      <div style={{border:_BORDER_PROPS}}>
          
@@ -186,7 +171,7 @@ export const RenderSoldItemsComp=(props?:RenderSoldItemsProps)=>{
                                 </div>
                                 {props?.willShowHeader? 
                                  (
-                                <div style={{paddingLeft:'5px',paddingRight:'5px',display:'flex',justifyContent:'center',alignItems:"center",borderLeft:_BORDER_PROPS,backgroundColor:_BLUE_COLOR}}>
+                                <div onClick={handleCloseButtonClicked} style={{paddingLeft:'5px',paddingRight:'5px',display:'flex',justifyContent:'center',alignItems:"center",borderLeft:_BORDER_PROPS,backgroundColor:_BLUE_COLOR}}>
                                     <DisabledByDefaultTwoToneIcon fontSize='medium' />
                                     close
                                 </div>
@@ -375,6 +360,7 @@ export const RenderAllCategories=(props?:SaleCompHelperProps)=>{
 
 export const RenderAllItems=(props?:SaleCompHelperProps)=>{
     const fonts= useQuantomFonts();
+
     return(
         <div>
          <div style={{display:'flex',lineHeight:'30px',border:_BORDER_PROPS,width:'100%',fontFamily:fonts.HeaderFont,justifyContent:'center',alignItems:'center',
@@ -427,7 +413,8 @@ export const _GREEN_COLOR="#A2FF69"
 export const _BLUE_COLOR="#E3DFFF";
 export const _ORANGE_COLOR="#FFCC67";
 export const _BORDER_PROPS="2px solid rgb(116, 115, 114)"
-export const _RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY="RESTAURANT_SALE_OPEN_ITEM_MODEL_KEY"
+export const _RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY="RESTAURANT_SALE_OPEN_ITEM_MODEL_KEY";
+
 
 
 export const tables:Sale_RestaurantTablesModel[]=[
