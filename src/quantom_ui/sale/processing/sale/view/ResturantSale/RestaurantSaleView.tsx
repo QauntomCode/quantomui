@@ -158,8 +158,12 @@ export const RenderSoldItemsComp=(props?:RenderSoldItemsProps)=>{
     const totalAmount= 9000
     const fonts= useQuantomFonts()
     const handleCloseButtonClicked=()=>{
-        // alert('clicked on close button')
         store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY,Data:false}}))
+    }
+
+
+    const handleSelectedItemClick=(item?:CommonInvDetailModel)=>{
+         store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:_RESTAURANT_SALE_OPEN_ITEM_INFO_KEY,Data:item}}))
     }
 
     return(
@@ -186,7 +190,7 @@ export const RenderSoldItemsComp=(props?:RenderSoldItemsProps)=>{
             return(
              <Quantom_Grid size={{xs:6,sm:6,md:4,lg:3}} >
                 
-                <div style={{border:_BORDER_PROPS,height:isAddNewItem?'118px':'80px',backgroundColor:_YELLOW_COLOR,
+                <div  onClick={()=>{handleSelectedItemClick(item)}} style={{border:_BORDER_PROPS,height:isAddNewItem?'118px':'80px',backgroundColor:_YELLOW_COLOR,
                     fontFamily:fonts.RegularFont,fontSize:fonts.H4FontSize,display:'flex',
                     alignItems:'center',
                     justifyContent:'center'}}>
@@ -401,6 +405,26 @@ export const RenderAllItems=(props?:SaleCompHelperProps)=>{
     )
 }
 
+export const SelectedItemPopup=(props?:SaleCompHelperProps)=>{
+      const selectedItem= useSelector((state:any)=>(get_helperData_by_key(state,_RESTAURANT_SALE_OPEN_ITEM_INFO_KEY,props?.UniqueId??""))) as CommonInvDetailModel
+      const [isShowModel,setShowModel]=React.useState(false);
+      React.useEffect(()=>{
+          if(selectedItem?.ItemCode){
+            setShowModel(true);
+          }
+      },[selectedItem?.ItemCode])
+
+    
+    return(
+        <>
+          <Dialog fullWidth maxWidth={'large'} open={isShowModel}>
+              {selectedItem?.ItemCode}
+              {selectedItem?.ItemName}
+          </Dialog>
+        </>
+    )
+}
+
 
 
 export const _MOSS_GREEN="#CDFFCC"
@@ -414,6 +438,8 @@ export const _BLUE_COLOR="#E3DFFF";
 export const _ORANGE_COLOR="#FFCC67";
 export const _BORDER_PROPS="2px solid rgb(116, 115, 114)"
 export const _RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY="RESTAURANT_SALE_OPEN_ITEM_MODEL_KEY";
+export const _RESTAURANT_SALE_OPEN_ITEM_INFO_KEY="RESTAURANT_SALE_OPEN_ITEM_INFO_KEY";
+
 
 
 
