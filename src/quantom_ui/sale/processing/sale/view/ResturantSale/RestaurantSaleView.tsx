@@ -3,30 +3,21 @@
 import React, { useEffect } from "react"
 import { MenuComponentProps, setFormBasicKeys } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { Quantom_Container, Quantom_Grid } from "../../../../../../quantom_comps/base_comps"
-import { VmSale } from "../../model/VmSaleModel"
 import dayjs from "dayjs"
-import store, { form_state_selector, get_form_state_without_selector, get_helperData_by_key, set_form_state, useQuantomFonts } from "../../../../../../redux/store"
-import { Box, Dialog, Modal } from "@mui/material"
+import store, { form_state_selector,  get_helperData_by_key,  useQuantomFonts } from "../../../../../../redux/store"
+import { Box, Dialog } from "@mui/material"
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import ListAltTwoToneIcon from '@mui/icons-material/ListAltTwoTone';
-import { Sale_RestaurantTablesModel } from "../../../../config/Sale_ResturantTables/model/Sale_ResturantTablesModel"
-import TableRestaurantTwoToneIcon from '@mui/icons-material/TableRestaurantTwoTone';
 import { CommonInvDetailModel } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel"
-import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
-import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
-import { CommonCodeName } from "../../../../../../database/db"
-import { InventoryItemsModel } from "../../../../../inventory/config/item/model/InventoryItemsModel"
-import CategoryIcon from '@mui/icons-material/ArticleTwoTone';
-import ItemsIcon from '@mui/icons-material/VerticalSplitOutlined';
-import DisabledByDefaultTwoToneIcon from '@mui/icons-material/DisabledByDefaultTwoTone';
-import { add_helper_data, add_helper_data_single_key } from "../../../../../../redux/reduxSlice"
+import {  add_helper_data_single_key } from "../../../../../../redux/reduxSlice"
 import { useSelector } from "react-redux"
 import { VmSaleOrderModel } from "../../../saleOrder/model/VmSaleOrderModel"
-import { getSetupDataWithSetupType } from "../../../../../inventory/config/item/views/Inventory_ItemsView"
 import { SetupFormGetAllBulk } from "../../../../../inventory/config/unit/impl/setupFormImp"
-import { GetItemsByCategory } from "../../../../../inventory/config/item/impl/InventoryitemsImpl"
+import { RenderAllItemsRestaurantHelper } from "./Helpers/RenderAllItemsRestaurantHelper"
+import { RenderAllCategoriesRestaurantHelper } from "./Helpers/RenderAllCategoriesRestaurantHelper"
+import { RenderSoldItemsCompRestaurantHelper } from "./Helpers/RenderSoldItemsCompRestaurantHelper"
 
 export const RestaurantSaleView=(props?:MenuComponentProps<VmSaleOrderModel>)=>{
     
@@ -34,9 +25,6 @@ export const RestaurantSaleView=(props?:MenuComponentProps<VmSaleOrderModel>)=>{
     
     React.useEffect(()=>{
         setFormBasicKeys<VmSaleOrderModel>({
-                //  SaveMethod:(payload)=>InventoryItemsInsert(payload),
-                //  DeleteMethod:(payload)=>InventoryItemsDelete(payload),
-                //  GetOneMethod:(payload)=>InventoryItemsGetOne(payload),
                  SetBasicKeys:()=>({keyNoPropName:"Sale.BillNo",keyDatePropsName:""}),
                  uniqueKey:props?.UniqueId??"",
                  baseProps:props??{},
@@ -58,20 +46,25 @@ export const RestaurantSaleView=(props?:MenuComponentProps<VmSaleOrderModel>)=>{
     return(
         <>
          <ItemsPopupComp UniqueId={props?.UniqueId??""}/>
-        <Quantom_Grid container spacing={.5}>
+         <Quantom_Grid container spacing={.5}>
             {/* <div style={{marginBottom:'5px'}}> */}
             <HeaderContainer/>
-            {/* </div> */}
-            <Quantom_Grid container>
-                <Quantom_Grid size={{xs:6}}>
-                    <RenderTables UniqueId={props?.UniqueId} />
-                </Quantom_Grid>
-                <Quantom_Grid  size={{xs:6}}>
-                    <RenderSoldItemsComp  UniqueId={props?.UniqueId}/>
-                </Quantom_Grid>
             </Quantom_Grid>
+            <div style={{marginTop:'5px'}}>
+                <Quantom_Grid container spacing={.5}>
+                    <Quantom_Grid size={{xs:2}}>
+                        <RenderAllCategoriesRestaurantHelper UniqueId={props?.UniqueId}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid size={{xs:4}}>
+                        <RenderAllItemsRestaurantHelper UniqueId={props?.UniqueId}/>
+
+                    </Quantom_Grid>
+                    <Quantom_Grid  size={{xs:6}}>
+                        <RenderSoldItemsCompRestaurantHelper  UniqueId={props?.UniqueId}/>
+                    </Quantom_Grid>
+                </Quantom_Grid>
+            </div>
             
-        </Quantom_Grid>
         </>
     )
 }
@@ -102,13 +95,13 @@ export const ItemsPopupComp=(props?:SaleCompHelperProps)=>{
     <Box>
         <div style={{display:'flex'}}>
             <div style={{width:'170px'}}>
-                <RenderAllCategories UniqueId={props?.UniqueId}/>
+                <RenderAllCategoriesRestaurantHelper UniqueId={props?.UniqueId}/>
             </div>
             <div style={{flex:1}}>
-                <RenderAllItems UniqueId={props?.UniqueId} />
+                <RenderAllItemsRestaurantHelper UniqueId={props?.UniqueId} />
             </div>
             <div style={{flex:1}}>
-                <RenderSoldItemsComp willShowHeader UniqueId={props?.UniqueId}/>
+                <RenderSoldItemsCompRestaurantHelper willShowHeader UniqueId={props?.UniqueId}/>
             </div>
         </div>
         </Box>
@@ -119,138 +112,12 @@ export const ItemsPopupComp=(props?:SaleCompHelperProps)=>{
 export interface SaleCompHelperProps{
     UniqueId?:string;
 }
-export interface TableCompProps extends SaleCompHelperProps{
 
-}
-export const RenderTables=(props?:TableCompProps)=>{
-
-    const fonts= useQuantomFonts();
-    const state=useSelector((state?:any)=>form_state_selector<VmSaleOrderModel>(state,props?.UniqueId??""));
-    const selectedTable= state?.ResturantTable?.[0]
-    const handleOnTableClick=(item?:Sale_RestaurantTablesModel)=>{
-        set_form_state<VmSaleOrderModel>(props?.UniqueId,{...state,ResturantTable:[{TableNo:item?.Code}]})
-    }
-    return(
-        <Quantom_Grid container style={{fontFamily:fonts.RegularFont,fontSize:'10px',border:_BORDER_PROPS,paddingBottom:'5px'}}>
-            
-            <div style={{width:'100%',lineHeight:'30px',display:'flex',justifyContent:'center',borderBottom:_BORDER_PROPS,fontFamily:fonts.HeaderFont,fontWeight:fonts.RegularFontSize}}>
-                                <div style={{display:'flex',justifyContent:'center',flex:1,backgroundColor:_ORANGE_COLOR}}>
-                                    Tables
-                                </div>
-                                
-                </div>
-
-             {
-                tables.map((item,index)=>{
-                    return(
-                    <div   style={{display:'flex',marginLeft:'8px',marginTop:'6px',flexDirection:'column'}} onClick={()=>{
-                        // alert('clicked')
-                        handleOnTableClick(item)
-                    }}>
-                    <div style={{display:'flex',lineHeight:'17px',border:_BORDER_PROPS}}>
-                       <div style={{width:'50px',backgroundColor:_ORANGE_COLOR}}>
-                          {item?.Name}
-                       </div>
-                       <div style={{borderLeft:_BORDER_PROPS,width:'50px',backgroundColor:_BLUE_COLOR}}>
-                         {item?.OrderValue??0}
-                       </div>
-                       </div>
-                       <div style={{paddingTop:'20px',paddingBottom:'20px',border: _BORDER_PROPS,backgroundColor:(selectedTable?.TableNo===item?.Code)?_MOSS_GREEN:_GRAY_COLOR,justifyContent:'center',alignItems:'center',display:'grid'}}>
-                         <TableRestaurantTwoToneIcon sx={{ fontSize:"50px"}}/>
-                       </div>
-                    </div>
-                    )
-                })
-             }
-        </Quantom_Grid>
-    )
-}
-
-interface RenderSoldItemsProps extends SaleCompHelperProps{
-  willShowHeader?:boolean;
-}
-export const RenderSoldItemsComp=(props?:RenderSoldItemsProps)=>{
-    const totalAmount= 9000
-    const fonts= useQuantomFonts()
-    const handleCloseButtonClicked=()=>{
-        store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:_RESTAURANT_SALE_OPEN_ITEMS_MODEL_KEY,Data:false}}))
-    }
-
-
-    const handleSelectedItemClick=(item?:CommonInvDetailModel)=>{
-         store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:_RESTAURANT_SALE_OPEN_ITEM_INFO_KEY,Data:item}}))
-    }
-
-    return(
-     <div style={{border:_BORDER_PROPS}}>
-         
-                <div style={{width:'100%',lineHeight:'30px',display:'flex',justifyContent:'center',borderBottom:_BORDER_PROPS,fontFamily:fonts.HeaderFont,fontWeight:fonts.RegularFontSize}}>
-                                <div style={{display:'flex',justifyContent:'center',flex:1,backgroundColor:_ORANGE_COLOR}}>
-                                    Ordered Items
-                                </div>
-                                {props?.willShowHeader? 
-                                 (
-                                <div onClick={handleCloseButtonClicked} style={{paddingLeft:'5px',paddingRight:'5px',display:'flex',justifyContent:'center',alignItems:"center",borderLeft:_BORDER_PROPS,backgroundColor:_BLUE_COLOR}}>
-                                    <DisabledByDefaultTwoToneIcon fontSize='medium' />
-                                    close
-                                </div>
-                                ):(<></>)
-                            }
-                                
-                </div>
-         
-      <Quantom_Grid spacing={.5} container sx={{flex:1,marginLeft:'5px',marginRight:'5px',marginTop:'5px'}}>
-        {[{ItemCode:'add_new_item',ItemName:""},...SoldItems]?.map((item,index)=>{
-             const isAddNewItem=item.ItemCode==='add_new_item'
-            return(
-             <Quantom_Grid size={{xs:6,sm:6,md:4,lg:3}} >
-                
-                <div  onClick={()=>{handleSelectedItemClick(item)}} style={{border:_BORDER_PROPS,height:isAddNewItem?'118px':'80px',backgroundColor:_YELLOW_COLOR,
-                    fontFamily:fonts.RegularFont,fontSize:fonts.H4FontSize,display:'flex',
-                    alignItems:'center',
-                    justifyContent:'center'}}>
-                    {isAddNewItem?(
-                        <>
-                          <AddCircleTwoToneIcon fontSize="large"/>
-                        </>
-                    ): (item?.ItemName)
-                }
-                </div>
-                {(!isAddNewItem)?
-                 (<>
-                    <div  style={{display:'flex',border:_BORDER_PROPS,backgroundColor:_GREEN_COLOR,lineHeight:'15px'}}>
-                    <div style={{flex:1,borderRight:_BORDER_PROPS,fontFamily:'monospace',fontSize:fonts.H4FontSize}}>
-                        {item.Price}
-                    </div>
-                    <div style={{flex:1,fontFamily:'monospace',fontSize:fonts.H4FontSize}}>
-                        {item?.Qty}
-                    </div>
-                    </div>
-                    <div style={{display:'flex',border:_BORDER_PROPS,backgroundColor:_BLUE_COLOR,fontFamily:'monospace',fontSize:fonts.H4FontSize,lineHeight:'15px'}}>
-                        {item?.Amount}
-                    </div>
-                </>
-                ):(<></>)
-            }
-             </Quantom_Grid>
-            )
-        })}
-      </Quantom_Grid>
-      <div style={{display:'flex',flexDirection:'row',lineHeight:'50px',borderTop:_BORDER_PROPS,marginTop:'5px'}}>
-          <div style={{flex:1,fontFamily:fonts.HeaderFont,fontSize:'16px',fontWeight:'bold',backgroundColor:_LIGHT_PINK_COLOR}}>Total : {totalAmount} </div>
-          <div style={{display:'flex',justifyContent:'center',alignItems:'center',fontFamily:fonts.HeaderFont,fontSize:fonts.RegularFont,borderLeft:_BORDER_PROPS,backgroundColor:_BLUE_COLOR,}}>
-               <CheckCircleTwoToneIcon fontSize="medium"/>
-               Order Now
-          </div>
-
-      </div>
-      </div>
-    )
-}
 
  interface SaleHeaderContainerCompProps extends SaleCompHelperProps{
 
 }
+
 export const HeaderContainer=(props?:SaleHeaderContainerCompProps)=>{
     const [nowTime,setNowTime]=React.useState<Date>(new Date());
     const fonts= useQuantomFonts();
@@ -262,6 +129,7 @@ export const HeaderContainer=(props?:SaleHeaderContainerCompProps)=>{
         return () => clearInterval(intervalId); // Cleanup the interval on component unmount
       }, [])
     return(
+        <div>
     <Quantom_Grid container display='flex' >
     <div style={{display:'flex'}}>
     <Box sx={{border:_BORDER_PROPS}}>
@@ -350,107 +218,12 @@ export const HeaderContainer=(props?:SaleHeaderContainerCompProps)=>{
     </div>
   </div>
  </Quantom_Grid>
+ </div>
     )
 }
 
-export const RenderAllCategories=(props?:SaleCompHelperProps)=>{
-    const fonts= useQuantomFonts();
-    const cats= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",_RESTAURANT_SALE_ALL_CATEGORIES_KEY))) as CommonCodeName[];
-    console.warn('item information',cats)
-    return(
-        <Quantom_Grid container>
-             <div style={{
 
-                border:_BORDER_PROPS,
-                display:'flex',width:'100%',lineHeight:'30px',backgroundColor:_ORANGE_COLOR,fontFamily:fonts.RegularFont,justifyContent:'center',
-                alignItems:'center',fontSize:fonts.H4FontSize,fontWeight:'bold'}}>
-                 <CategoryIcon fontSize="small"></CategoryIcon>
-                 <div>Categories</div>
-             </div>
-             {
-                cats?.map((item,index)=>{
-                    return(
-                        <div
-                           onClick={()=>{
-                             store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:_RESTAURANT_SALE_SELECTED_CATEGORY_KEY,Data:item?.Code}}))
-                           }} 
-                            style={{display:'flex',width:'100%',lineHeight:'30px',
-                            borderLeft:_BORDER_PROPS,
-                            borderRight:_BORDER_PROPS,
-                            borderBottom:_BORDER_PROPS,
-                            justifyContent:"center",
-                            fontFamily:fonts.HeaderFont,
-                            fontSize:fonts.H4FontSize,
-                            }}>
-                            {item?.Name}
-                        </div>
-                    )
-                })
-             }
-        </Quantom_Grid>
-    )
-}
 
-export const RenderAllItems=(props?:SaleCompHelperProps)=>{
-    const[items,setItems]=React.useState<InventoryItemsModel[]>([])
-    const fonts= useQuantomFonts();
-    const selectedCategory= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",_RESTAURANT_SALE_SELECTED_CATEGORY_KEY))) as string;
-
-    React.useEffect(()=>{
-        handleLoadItems(selectedCategory);
-         //alert('selected category is'+selectedCategory)
-    },[selectedCategory])
-
-    const handleLoadItems=async(catCode?:string)=>{
-            let res= await GetItemsByCategory(catCode);
-            setItems(res??[])
-
-    }
-     
-    return(
-        <div>
-         <div style={{display:'flex',lineHeight:'30px',border:_BORDER_PROPS,width:'100%',fontFamily:fonts.HeaderFont,justifyContent:'center',alignItems:'center',
-            fontSize:fonts.H4FontSize,
-            backgroundColor:_LIGHT_PINK_COLOR
-         }}>
-            <ItemsIcon></ItemsIcon>
-            All Items
-            </div>
-        <div style={{display:'flex',flexDirection:'column',width:'100%',borderBottom:_BORDER_PROPS,height:'100%'}}>
-        <div style={{flex:1,marginTop:'5px',marginLeft:'5px',marginRight:'5px'}}>
-            
-         <Quantom_Grid container spacing={.5} >
-            
-         {
-            items?.map((item,index)=>{
-                return(
-                    <Quantom_Grid  size={{md:4,sm:6,xs:12,lg:3}} sx={{border:_BORDER_PROPS,fontFamily:fonts.HeaderFont}} >
-                        <div style={{backgroundColor:_YELLOW_COLOR,height:'60px',display:'flex',
-                            justifyContent:'center',alignItems:'center',fontSize:'11px'}}>
-                            {item?.ItemName}
-                        </div>
-                        <div style={{borderTop:_BORDER_PROPS,display:'flex',backgroundColor:_GREEN_COLOR,justifyContent:'center',fontWeight:'bold',fontSize:'14px'}}>
-                            {item?.SalePrice}
-                        </div> 
-                    </Quantom_Grid>
-                )
-            })
-         }
-         
-         </Quantom_Grid>
-        </div>
-         <div style={{display:'flex',lineHeight:'30px',marginTop:'5px',border:_BORDER_PROPS,fontFamily:fonts.HeaderFont,fontSize:'13px',
-            marginLeft:'5px',
-            marginRight:'5px',
-            marginBottom:'5px'
-         }}>
-            <div style={{flex:1,borderRight:_BORDER_PROPS,justifyContent:'center',alignItems:'center',display:'flex'}}> Take Away</div>
-            <div style={{flex:1,justifyContent:'center',alignItems:'center',display:'flex'}}>Dine In</div>
-         </div>
-        </div>
-        </div>
-    )
-}
 
 export const SelectedItemPopup=(props?:SaleCompHelperProps)=>{
       const selectedItem= useSelector((state:any)=>(get_helperData_by_key(state,_RESTAURANT_SALE_OPEN_ITEM_INFO_KEY,props?.UniqueId??""))) as CommonInvDetailModel
@@ -492,183 +265,6 @@ export const _RESTAURANT_SALE_SELECTED_CATEGORY_KEY="_RESTAURANT_SALE_SELECTED_C
 
 
 
-export const tables:Sale_RestaurantTablesModel[]=[
-    {
-        Code:'001',
-        Name:"R1-C1",
-        OrderValue:500,
-        TableStatus:'BOOKED',
-    },
-    {
-        Code:'002',
-        Name:"R2-C2",
-        OrderValue:500
-    },
-    {
-        Code:'003',
-        Name:"R3-C3",
-        OrderValue:500
-    },
-    {
-        Code:'004',
-        Name:"R4-C1",
-        OrderValue:500
-    },
-    {
-        Code:'005',
-        Name:"R4-C2",
-        OrderValue:500
-    },
-    {
-        Code:'006',
-        Name:"R4-C3",
-        OrderValue:500
-    },
-    {   Code:'006',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'007',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'008',
-        Name:"R1-C1",
-        OrderValue:500,
-        TableStatus:'BOOKED',
-    },
-    {
-        Code:'009',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'010',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'011',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'012',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'013',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'014',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'015',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'016',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'017',
-        Name:"R1-C1",
-        OrderValue:500
-    },
-    {
-        Code:'018',
-        Name:"R1-C1",
-        OrderValue:500
-    }
-]
 
-export const SoldItems:CommonInvDetailModel[]=[
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-    {
-        ItemCode:"0023",
-        ItemName:"First Item",
-        Qty:1,
-        Price:500,
-        Amount:500,
-    },
-]
 
 
