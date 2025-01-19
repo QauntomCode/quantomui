@@ -15,7 +15,7 @@ export interface CommonInvDetailActionQueryModel {
 }
 
 export interface CommonInvDetailActionQueryResponse {
-  InventoryDTO?: InventoryIODTOModel[];
+  InventoryDTO?: InventoryIODTOModel;
   Message?: string;
 }
 

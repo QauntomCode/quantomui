@@ -49,7 +49,7 @@ interface RenderSoldItemsProps extends SaleCompHelperProps{
                   </div>
            
         <Quantom_Grid spacing={.5} container sx={{flex:1,marginLeft:'5px',marginRight:'5px',marginTop:'5px'}}>
-          {[{ItemCode:'add_new_item',ItemName:""},...soldItems]?.map((item,index)=>{
+          {[/*{ItemCode:'add_new_item',ItemName:""},*/...soldItems]?.map((item,index)=>{
                const isAddNewItem=item.ItemCode==='add_new_item'
               return(
                <Quantom_Grid size={{xs:6,sm:6,md:4,lg:3}} >

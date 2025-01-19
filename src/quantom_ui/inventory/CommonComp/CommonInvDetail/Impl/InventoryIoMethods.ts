@@ -2,6 +2,8 @@ import {
   HTTP_RESPONSE_TYPE,
   QuantomPOST,
 } from "../../../../../HTTP/QuantomHttpMethods";
+import { InventoryIOTaxDTOModel } from "../../../../tax/CommonModels/InventoryIOTaxDTOModel";
+import { InvoiceMasterValuesModel } from "../../../../tax/CommonModels/InvoiceMasterValuesModel";
 import {
   CommonInvDetailActionQueryBillInfo,
   CommonInvDetailActionQueryModel,
@@ -12,6 +14,7 @@ import {
   CommonInvDetailModel,
   InventoryAction,
 } from "../Model/CommonInvDetailModel";
+import { InventoryIODTOModel } from "../Model/InventoryIODTOModel";
 
 const ADD_OR_REMOVE_ITEM_URL =
   "Inventory/Items/AddOrRemoveDetailWithTaxHandlingv1";
@@ -33,10 +36,16 @@ export const AddOrRemoveExtendedMethod = async (
   workingItem?: CommonInvDetailModel,
   form?: InventoryAction,
   action?: INVENTORY_PERFORMED_ACTION,
-  billInfo?: CommonInvDetailActionQueryBillInfo
+  billInfo?: CommonInvDetailActionQueryBillInfo,
+  taxDetail?: InventoryIOTaxDTOModel[],
+  masterValues?: InvoiceMasterValuesModel
 ): Promise<CommonInvDetailActionQueryResponse | undefined> => {
   let q: CommonInvDetailActionQueryModel = {
-    OldItems: { InventoryList: oldItems },
+    OldItems: {
+      InventoryList: oldItems,
+      InventoryIOTaxList: taxDetail,
+      InvoiceMasterValues: masterValues,
+    },
     WorkingItem: workingItem,
     PERFORMED_ACTION: action,
     InventoryForm: form,
