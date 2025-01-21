@@ -28,7 +28,7 @@ export const QuantomColors={SelectedElementTextColor:"#F1F3F3"}
 const QuantomTheme = createTheme({
     palette: {
       primary: {
-        main:  "#16423C",
+        main:  "#252547", // changed
         dark: '#004ba0',
         contrastText: QuantomColors.SelectedElementTextColor,
         light:'#031282'
@@ -39,8 +39,8 @@ const QuantomTheme = createTheme({
         light:'#baccc3'
       },
       background: {
-        default: "#E9EFEC",
-        paper: "#E3EBE7", // Optional: white for cards, dialogs, etc.
+        default: "#1A1B38",   //changed
+        paper: "#252547", // changed
       },
       text: {
         primary:  "#16423C",
