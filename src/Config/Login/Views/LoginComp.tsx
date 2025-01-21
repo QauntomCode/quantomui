@@ -21,8 +21,7 @@ export const LoginComp = () => {
   
     <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',height:'100vh',border:'1px solid red'}}>
         
-        <div style={{
-                marginLeft:'16px',marginTop:'80px',width:'516px',backgroundColor:'yellow',border:'1px solid black',
+        <div style={{marginTop:'80px',width:'500px',backgroundColor:'yellow',border:'1px solid black',
                  fontFamily:fonts.HeaderFont,alignItems:'center',display:'flex',justifyContent:'center',
                  paddingTop:'15px',paddingBottom:'15px',fontWeight:'bold',borderRadius:'10px',marginBottom:'10px'
                 }}> Login Form</div>
@@ -42,7 +41,7 @@ export const LoginComp = () => {
         </div>
 
         <div style={{fontFamily:fonts.HeaderFont,fontWeight:600,color:'red',fontSize:'12px'}}>{error}</div>
-        <div style={{width:'516px',flex:1,marginTop:'8px'}}>
+        <div style={{flex:1,marginTop:'8px'}}>
         <button onClick={async()=>{
             let res= await UserLoginMethod(user);
             if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS && res.Response?.IsValid){
@@ -54,7 +53,8 @@ export const LoginComp = () => {
                     navigate('/POS')
 
                     let uqId= await generateGUID();
-                    store.dispatch(open_new_menu({MenuCode:'POS_MAIN_SCREEN',UniqueKeyNo:uqId}))
+                    store.dispatch(open_new_menu({MenuCode:'POS_MAIN_SCREEN',MenuCaption:'MAIN MENUS',UniqueKeyNo:uqId}))
+                   // store.dispatch(open_new_menu({MenuCode:'POS_MAIN_SCREEN',MenuCaption:'MAIN MENUS',UniqueKeyNo:uqId}))
                     //useSelector((satte?:any)=>open_new_menu(state,{}))
                     // useSelector((state?:any)=> open_new_menu({
                     //     MenuCode:'POS_MAIN_SCREEN',
@@ -65,7 +65,7 @@ export const LoginComp = () => {
                 setError(res?.Response?.Message)
             }
 
-        }} style={{width:'520px',marginLeft:'8px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:'16px',border:'1px solid black',borderRadius:'5px',padding:'5px'}}> Login</button>
+        }} style={{width:'500px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:'16px',border:'1px solid black',borderRadius:'5px',padding:'5px'}}> Login</button>
         </div>
 
 

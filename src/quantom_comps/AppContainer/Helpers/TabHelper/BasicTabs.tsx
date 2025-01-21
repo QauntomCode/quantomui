@@ -8,6 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import { QuantomColors } from "../../../QuantomTheme";
 import { useSelector } from "react-redux";
 import { set_selected_menu_index } from "../../../../redux/reduxSlice";
+import { Opacity } from "@mui/icons-material";
 
 
 export default function BasicTabs(props?: BasicTabPropsInfo) {
@@ -68,17 +69,18 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                     borderTopLeftRadius: "10px",
                     transform: "none",
                     fontWeight: "bold",
-                    fontSize: "8px",
+                    fontSize: "12px",
+                    // paddingTop:'2px',
                     // padding: "2px 4px",
                     paddingRight:'30px',
                     paddingLeft:'30px',
-
+                    Opacity:1,
                     fontFamily: "Oswald",
                     letterSpacing: 1.2,
-                    paddingTop: 0,
-                    paddingBottom: 0,
-                    backgroundColor:index===(props?.selectedTabIndex)?th.palette?.primary?.main:th?.palette?.secondary?.light,
-                    color:index===(props?.selectedTabIndex)?th?.palette?.primary?.contrastText:th?.palette?.secondary?.contrastText,
+                    paddingTop: '2px',
+                    paddingBottom: '2px',
+                    backgroundColor:index===(props?.selectedTabIndex)?th.palette?.secondary?.main:th?.palette?.primary.main,
+                    color:'white',
                   }}
                 ></Tab>
                 {hoveredTab === index && (

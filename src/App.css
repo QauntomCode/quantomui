@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.css-19ifyp0-MuiButtonBase-root-MuiTab-root, .css-1ax0ozr-MuiButtonBase-root-MuiTab-root{
+  opacity: 1 !important;
+}

@@ -24,27 +24,28 @@ import { createTheme } from '@mui/material/styles';
 //     },
 //   },
 // });
-export const QuantomColors={SelectedElementTextColor:"#F1F3F3"}
+export const QuantomColors={SelectedElementTextColor:"#FF70B2"}
 const QuantomTheme = createTheme({
     palette: {
       primary: {
-        main:  "#252547", // changed
-        dark: '#004ba0',
-        contrastText: QuantomColors.SelectedElementTextColor,
-        light:'#031282'
+        main:  "#A16EFF", // changed
+        dark: '#323259',
+        contrastText: '#FFFFFF',// CHANGED QuantomColors.SelectedElementTextColor,
+        light:'#FF70B2',
+      
       },
       secondary: {
-        main:  "#8c9c94",
+        main:  "#05D890",
         contrastText:'#4d524f',
-        light:'#baccc3'
+        light:'#05D890'
       },
       background: {
-        default: "#1A1B38",   //changed
-        paper: "#252547", // changed
+        default: "#1B1B37",   //changed
+        paper: "#323259", // changed
       },
       text: {
-        primary:  "#16423C",
-        secondary:'#2c2e2c'
+        primary:  "#FFFFFF",
+        secondary:'#FFFFFF'
       },
     },
 
