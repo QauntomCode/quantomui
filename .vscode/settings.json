@@ -1,11 +1,14 @@
 {
-    "cSpell.words": [
-        "Atribute",
-        "Barcodes",
-        "CNIC",
-        "Cust",
-        "Quantom",
-        "Replenishments",
-        "Resturant"
-    ]
+  "cSpell.words": [
+    "Atribute",
+    "Barcodes",
+    "CNIC",
+    "Cust",
+    "Quantom",
+    "Replenishments",
+    "Resturant"
+  ],
+  "files.associations": {
+    "*jsx": "javascriptreact"
+  }
 }
