@@ -8,6 +8,7 @@ import { Box,Paper } from '@mui/material';
 import { useTheme } from "@mui/material/styles";
 import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/ListAltOutlined';
+import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
 
 export interface model{
     testing?:string;
@@ -36,24 +37,22 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
     const flexStyle={flex:5,display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}
   return (
      <>
-        <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle}} >
-            <Quantom_Grid  item size={{sm:0,xs:0,md:4,lg:4,xl:4}}></Quantom_Grid>
-             <Quantom_Grid spacing={.5} container 
-                size={{md:4,sm:12,xs:12,lg:4,xl:4}}   
-               sx={{height:'100px',
-                 display:'flex',justifyContent:'center',alignItems:'center'}}>
-                <Box component={Paper} style={{...flexStyle,borderBottom:border}}>
+        <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle}} spacing={.5} >
+            <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+             <Quantom_Grid item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
+                {/* <Box  style={{}> */}
                 <>
                   <ItemsIcon color='primary' sx={{fontSize:'60px'}}></ItemsIcon>
                 </>
                 Item Setup
-                </Box>
-                
-                <div  style={{fontSize:'16px',display:'flex',height:'100%'}}> 
-                   
+                {/* </Box> */}
+             </Quantom_Grid>
 
-                </div>
-                
+             <Quantom_Grid container component={Paper} size={{md:2,sm:12,xs:12,lg:2,xl:2}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
+                <>
+                <CategoryICon color='primary' sx={{fontSize:'60px'}}></CategoryICon>
+                </>
+                   Category
              </Quantom_Grid>
         </Quantom_Grid>
         {/* <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText}}>
