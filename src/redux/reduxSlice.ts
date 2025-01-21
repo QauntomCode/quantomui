@@ -62,7 +62,7 @@ interface StateHelperDataMetaSingleKeyPayload {
 
 export interface ComponentSettings {
   wWillHideToolbar?: boolean;
-  WillHideUserLog?:boolean;
+  WillHideUserLog?: boolean;
   willShowLocations?: boolean;
   firstControlId?: string;
 }
@@ -120,11 +120,11 @@ const initialState: FormsState = {
   FormsState: [],
   OpenMenus: {
     Menus: [
-      {
-        MenuCode: "001",
-        MenuCaption: "All Menus",
-        UniqueKeyNo: "INITIAL_STATE",
-      },
+      // {
+      //   MenuCode: "001",
+      //   MenuCaption: "All Menus",
+      //   UniqueKeyNo: "INITIAL_STATE",
+      // },
     ],
   },
   Font: {
@@ -411,49 +411,77 @@ export const formsSlice = createSlice({
         return state;
       }
     },
-    add_helper_data_single_key:(state,action:PayloadAction<StateHelperDataMetaSingleKeyPayload>)=>{
+    add_helper_data_single_key: (
+      state,
+      action: PayloadAction<StateHelperDataMetaSingleKeyPayload>
+    ) => {
       // alert('inside helper data')
-      let s={...state};
-      let selectedCompData=s?.HelperData?.find(x=>x.UniqueId===action?.payload?.UniqueId);
+      let s = { ...state };
+      let selectedCompData = s?.HelperData?.find(
+        (x) => x.UniqueId === action?.payload?.UniqueId
+      );
       if (!selectedCompData && action?.payload?.UniqueId) {
         // alert('inside helper data condition 1')
         s = {
           ...s,
-          HelperData: [...s?.HelperData??[],{UniqueId:action?.payload?.UniqueId,data:[{...action?.payload?.data}]}],
+          HelperData: [
+            ...(s?.HelperData ?? []),
+            {
+              UniqueId: action?.payload?.UniqueId,
+              data: [{ ...action?.payload?.data }],
+            },
+          ],
         };
-        state = { ...s};
+        state = { ...s };
         return state;
       }
-      console.warn('unique id is',action?.payload.UniqueId)
-      console.warn('keyNo  is',action?.payload.data?.keyNo)
+      console.warn("unique id is", action?.payload.UniqueId);
+      console.warn("keyNo  is", action?.payload.data?.keyNo);
 
-      console.warn('selected key data',selectedCompData)
+      console.warn("selected key data", selectedCompData);
 
-       let selectedKeyData= selectedCompData?.data?.find(x=>x.keyNo===action?.payload?.data?.keyNo);
-       console.warn('selected key data',selectedKeyData)
-       if(selectedCompData && !selectedKeyData){
-       
+      let selectedKeyData = selectedCompData?.data?.find(
+        (x) => x.keyNo === action?.payload?.data?.keyNo
+      );
+      console.warn("selected key data", selectedKeyData);
+      if (selectedCompData && !selectedKeyData) {
         // alert('inside helper data condition 2')
-           let helperData=  
-           s?.HelperData?.map((item)=>item.UniqueId===(action.payload.UniqueId)?{...item,data:[...item.data??[],{keyNo:action.payload.data?.keyNo,Data:action?.payload?.data?.Data}]}:item);
-           return {...state,HelperData:helperData}
-       }
-       if(selectedCompData && selectedKeyData){
+        let helperData = s?.HelperData?.map((item) =>
+          item.UniqueId === action.payload.UniqueId
+            ? {
+                ...item,
+                data: [
+                  ...(item.data ?? []),
+                  {
+                    keyNo: action.payload.data?.keyNo,
+                    Data: action?.payload?.data?.Data,
+                  },
+                ],
+              }
+            : item
+        );
+        return { ...state, HelperData: helperData };
+      }
+      if (selectedCompData && selectedKeyData) {
         // alert('inside helper data condition 3')
-          let updatedHelperData:any=
-            s?.HelperData?.map((item)=>item?.UniqueId===action.payload.UniqueId?(
-               { UniqueId:action.payload.UniqueId,data:(
-                item?.data?.map((keyData)=>keyData.keyNo===(action.payload.data?.keyNo)?action.payload.data:keyData)
-               )}
-            ):item);
+        let updatedHelperData: any = s?.HelperData?.map((item) =>
+          item?.UniqueId === action.payload.UniqueId
+            ? {
+                UniqueId: action.payload.UniqueId,
+                data: item?.data?.map((keyData) =>
+                  keyData.keyNo === action.payload.data?.keyNo
+                    ? action.payload.data
+                    : keyData
+                ),
+              }
+            : item
+        );
 
-            console.warn('helper data is',updatedHelperData)
-            return {...state,HelperData:[...updatedHelperData??[]]}
-       }
-
-      
+        console.warn("helper data is", updatedHelperData);
+        return { ...state, HelperData: [...(updatedHelperData ?? [])] };
+      }
     },
-    
+
     open_new_menu: (
       state,
       action: PayloadAction<AppContainerMenus | undefined>
@@ -521,7 +549,7 @@ export const {
   change_first_call,
   set_selected_menu_index,
   add_helper_data,
-  add_helper_data_single_key
+  add_helper_data_single_key,
   // set_state_with_immmer,
 } = formsSlice.actions;
 

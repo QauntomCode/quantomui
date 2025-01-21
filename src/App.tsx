@@ -17,6 +17,7 @@ import { LoginComp } from './Config/Login/Views/LoginComp';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import "./style/ag_grid_style.css"
+import { AppContainerTabHelper } from './quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 // import { AppContainer } from './quantom_comps/AppContainer';
 
 function App() {
@@ -78,6 +79,11 @@ const router= createBrowserRouter([
   {
     path:"/Home",
     element:(<AppContainer/>)
+  },
+  {
+    path:'/POS',
+    element:(<AppContainerTabHelper/>)
+
   }
 ])
 interface sale{
