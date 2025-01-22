@@ -36,7 +36,7 @@ export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsMo
            <div className="col-md-2">
               
            </div>
-           <div className="col-md-2">
+           <div className="col-sm-3 col-md-2 col-3">
                 <POSActionButton label="Save" buttonType="SAVE" responseClick={async()=>{
                       const newState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.UniqueId);
                       let res= await  InventoryItemsInsert(newState);
@@ -44,13 +44,13 @@ export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsMo
                       
                     }} iconName="SaveOutlined"/>
            </div>
-           <div className="col-md-2">
+           <div className="col-sm-3 col-md-2 col-3">
                 <POSActionButton label="Reset" onClick={()=>{alert('save button pressed')}} iconName="CancelPresentationOutlined"/>
            </div>
-           <div className="col-md-2">
+           <div className="col-sm-3 col-md-2 col-3">
                 <POSActionButton label="Delete" onClick={()=>{alert('save button pressed')}} iconName="DeleteOutlined"/>
            </div>
-           <div className="col-md-2">
+           <div className="col-sm-3 col-md-2 col-3">
                 <POSActionButton label="List" onClick={()=>{alert('save button pressed')}} iconName="FeaturedPlayListOutlined"/>
            </div>
         </div>
@@ -97,19 +97,19 @@ export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsMo
 
          <div className="row" >
             <div className="col-md-2" />
-              <div className="col-md-8" style={{marginTop:'16px'}}>
-                  <div className="row">
-                     <div className="col-md-4">
+              <div className="col-md-8 col-12" style={{marginTop:'16px'}}>
+                  <div className="row g-1">
+                     <div className="col-4">
                         <Quantom_Input label="Sale Price" onChange={(e)=>{
                         props?.setState?.({...props?.state,item:{...props?.state?.item,SalePrice:safeParseToNumber( e.target.value)}})
                         }} value={props?.state?.item?.SalePrice} size='small'/>
                      </div>
-                     <div className="col-md-4">
+                     <div className="col-4">
                         <Quantom_Input label='Purchase price'  value={props?.state?.item?.PurchasePrice} onChange={(e)=>{
                              props?.setState?.({...props?.state,item:{...props?.state?.item,PurchasePrice:safeParseToNumber(e.target.value)}})
                         }}/>
                      </div>
-                     <div className="col-md-4">
+                     <div className="col-4">
                         <Quantom_Input label='Opening Stock'  value={props?.state?.OpeningQty} onChange={(e)=>{
                             props?.setState?.({...props?.state,OpeningQty:safeParseToNumber(e.target.value)})
                         }}/>
