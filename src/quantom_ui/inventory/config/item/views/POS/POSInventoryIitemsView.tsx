@@ -12,6 +12,7 @@ import { CommonCodeName } from "../../../../../../database/db";
 import { GetSetupFormTypByMenuCode, SetupFromGetAll } from "../../../unit/impl/setupFormImp";
 import { safeParseToNumber } from "../../../../../../CommonMethods";
 import { InventoryItemsInsert } from "../../impl/InventoryitemsImpl";
+import { HTTP_RESPONSE_TYPE, HttpResponse } from "../../../../../../HTTP/QuantomHttpMethods";
 
 export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
     // const theme= useTheme();
@@ -36,9 +37,10 @@ export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsMo
               
            </div>
            <div className="col-md-2">
-                <POSActionButton label="Save" buttonType="SAVE" onClick={async()=>{
+                <POSActionButton label="Save" buttonType="SAVE" responseClick={async()=>{
                       const newState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.UniqueId);
                       let res= await  InventoryItemsInsert(newState);
+                      return Promise.resolve(res);
                       
                     }} iconName="SaveOutlined"/>
            </div>
@@ -129,12 +131,27 @@ interface POSActionButtonProps{
   iconName?:string;
   onClick?:()=>void;
   buttonType?:'SAVE'|'RESET'|'DELETE'|'LIST'
+  responseClick?:()=>Promise<HttpResponse<any>>
 }
 export const POSActionButton=(props?:POSActionButtonProps)=>{
     const fonts= useQuantomFonts();
     const theme= useTheme();
     return(
-        <button onClick={props?.onClick} style={{display:'flex',justifyContent:'center',alignItems:'center',lineHeight:'35px',backgroundColor:theme?.palette?.background.paper,zIndex:999,width:'100%',border:`1px solid ${theme.palette.primary.main}`,
+        <button onClick={async()=>{
+            if(props?.responseClick){
+               let res= await props?.responseClick?.()
+               if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+                  // success message
+               }
+               else if(res.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
+                // error message
+               }
+            }
+            else{
+                props?.onClick?.()
+            }
+        }}    
+         style={{display:'flex',justifyContent:'center',alignItems:'center',lineHeight:'35px',backgroundColor:theme?.palette?.background.paper,zIndex:999,width:'100%',border:`1px solid ${theme.palette.primary.main}`,
                      borderRadius:'5px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:'16px',color:theme.palette.text.primary,opacity:.8}}>
                     <div style={{display:'flex',justifyContent:'center',marginRight:'10px'}}>
                         <IconByName iconName={props?.iconName}/>
