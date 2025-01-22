@@ -37,6 +37,7 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
+import { POS_INVENTORY_ITEM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -482,7 +483,13 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCode:'POS_MAIN_SCREEN',
     MenuCaption:'MAIN_MENUS',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSMainScreen{...props}/>)
-  }
+  },
+  {
+    MenuCode:POS_INVENTORY_ITEM_MENU_CODE,
+    MenuCaption:'Item setup',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSInventoryItemsView{...props}/>)
+  },
+
 ]
 export const  AllCompMenus:MenuInfoModel<any>[]=[
   {

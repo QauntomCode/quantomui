@@ -1,4 +1,4 @@
-import { Height, Margin, Padding } from '@mui/icons-material';
+import { BorderBottom, Height, Margin, Padding } from '@mui/icons-material';
 import { Box, Button, ButtonProps, FilledInput, FormControl, Grid2, InputAdornment, InputLabel, OutlinedInput, TextField, TextFieldProps, useTheme } from '@mui/material';
 // import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
@@ -196,10 +196,13 @@ export const Quantom_Input1=(props: {
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
     <FormControl   fullWidth variant="outlined">
-    <InputLabel shrink sx={{ fontSize: font.RegularFont,
-              fontWeight:'700',
+    <InputLabel shrink sx={{ 
+      // fontSize: '20px',
+              fontWeight:'bold',
+              letterSpacing:1.2,
               fontFamily:font.HeaderFont,
-              color:theme?.palette?.secondary?.contrastText,
+              color:theme?.palette?.text.primary,
+              opacity:0.6
               }}>{props?.label}</InputLabel>
     <OutlinedInput
           
@@ -207,9 +210,11 @@ export const Quantom_Input1=(props: {
           fullWidth
           disabled={props?.disabled}
           sx={{
-                fontFamily:'Ubuntu',
-                fontWeight:'700',       
-                fontSize: '11px', // Change this value to adjust the input font size
+                borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
+                fontFamily:font.HeaderFont,
+                fontSize:'14px',
+                // fontWeight:'700',       
+                // fontSize: '11px', // Change this value to adjust the input font size
                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   // borderColor: 'red', // Change border color on focus
                   borderColor:theme?.palette?.primary?.light,
@@ -240,9 +245,7 @@ export const Quantom_Input1=(props: {
           label={props.label}
           // id="outlined-size-small"
           autoComplete='off'
-          
-          // defaultValue="Small"
-          size="small"
+          size= {props?.size?? "small"}
           value={getValue()}
           onChange={props?.onChange}
           inputRef={props?.inputRef}

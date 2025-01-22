@@ -1,14 +1,16 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react'
-import { MenuComponentProps, setFormBasicKeys } from './Helpers/TabHelper/AppContainerTabHelper'
+import { generateGUID, MenuComponentProps, setFormBasicKeys } from './Helpers/TabHelper/AppContainerTabHelper'
 import { useSelector } from 'react-redux'
-import { full_component_state, useQuantomFonts } from '../../redux/store'
+import store, { full_component_state, useQuantomFonts } from '../../redux/store'
 import { Box,Paper } from '@mui/material';
 import { useTheme } from "@mui/material/styles";
 import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/ListAltOutlined';
 import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
+import { open_new_menu } from '../../redux/reduxSlice';
+import { POS_INVENTORY_ITEM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 
 export interface model{
     testing?:string;
@@ -37,9 +39,12 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
     const flexStyle={flex:5,display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}
   return (
      <>
-        <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle}} spacing={.5} >
+        <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'10px'}} spacing={.5} >
             <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
-             <Quantom_Grid item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
+             <Quantom_Grid onClick={async()=>{
+               let guid=await generateGUID();
+               store.dispatch(open_new_menu({MenuCode:POS_INVENTORY_ITEM_MENU_CODE,MenuCaption:'Items Setup',UniqueKeyNo:guid}))
+             }} item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
                 {/* <Box  style={{}> */}
                 <>
                   <ItemsIcon color='primary' sx={{fontSize:'60px'}}></ItemsIcon>

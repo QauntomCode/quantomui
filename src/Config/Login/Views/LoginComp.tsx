@@ -19,7 +19,7 @@ export const LoginComp = () => {
     const fonts= useQuantomFonts();
   return (
   
-    <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',height:'100vh',border:'1px solid red'}}>
+    <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',height:'100vh'}}>
         
         <div style={{marginTop:'80px',width:'500px',backgroundColor:'yellow',border:'1px solid black',
                  fontFamily:fonts.HeaderFont,alignItems:'center',display:'flex',justifyContent:'center',

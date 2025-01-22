@@ -2,9 +2,11 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { useImperativeHandle, useRef } from 'react'
 import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from './base_comps'
-import {  Box, Dialog, DialogContent,Grid, Paper } from '@mui/material'
+import {  Box, Dialog, DialogContent,Grid, Paper, useTheme } from '@mui/material'
 import { IconByName } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 import { ListCompButton } from '../quantom_ui/account/report/Ledger/view/LedgerView';
+import { useQuantomFonts } from '../redux/store';
+import { BorderBottom } from '@mui/icons-material';
 
 
 
@@ -166,6 +168,8 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
          setOpen(false);
    }
 
+   const theme= useTheme();
+   const fonts= useQuantomFonts();
 
    React.useEffect(()=>{
       const rect= inputRef?.current?.getBoundingClientRect();
@@ -252,15 +256,16 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
                         handleKeyEvent(e,item)
                       }}
                        
-                      style={{outline:focusedIndex===index?'2px solid blue':'none'}} 
+                      style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none'}} 
                       key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
                       onClick={()=>{setFocusedIndex(index) ; }}
                       onDoubleClick={()=>{handleSelection(item) }
                 } tabIndex={-1} >
-                    <Quantom_Grid  container component={Paper} spacing={1} sx={{fontFamily:'roboto',fontSize:'13px',marginBottom:.5,paddingTop:'2px',paddingBottom:'2px'
+                    <Quantom_Grid  container component={Paper} spacing={1} 
+                      sx={{fontFamily:fonts.HeaderFont,fontSize:'14px',marginBottom:'2px',paddingTop:'4px',paddingBottom:'4px',borderBottom:`1px solid ${theme.palette.primary.main}`
                     }}>
-                        <Quantom_Grid item lg={4}>{item.Code}</Quantom_Grid>
-                        <Quantom_Grid item  lg={8}>{item.Name}</Quantom_Grid>
+                        <Quantom_Grid item sx={{fontWeight:'bold',width:'70px'}}  siz={{md:3}}>{item.Code}</Quantom_Grid>
+                        <Quantom_Grid item  siz={{md:9}}>{item.Name}</Quantom_Grid>
                     </Quantom_Grid>
                 </div>
               )
