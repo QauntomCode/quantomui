@@ -37,7 +37,7 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_INVENTORY_ITEM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_INVENTORY_ITEM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -777,6 +777,9 @@ export interface QuantomErrorDialogProps{
   Type?:'ERROR'|'INFO'
 }
 
+
+
+
 export const QuantomErrorDialog=(props?:QuantomErrorDialogProps)=>{
   const theme=useTheme();
   const fonts= useQuantomFonts();
@@ -794,24 +797,24 @@ export const QuantomErrorDialog=(props?:QuantomErrorDialogProps)=>{
   return(
     <Dialog fullWidth open={props?.Open??true}>
       <Quantom_Grid container>
-        <div style={{width:'100%',backgroundColor:theme.palette.secondary.main,display:'flex',
-          fontFamily:fonts?.HeaderFont, letterSpacing:1.5,fontSize:fonts.RegularFontSize,fontWeight:'bold',flexDirection:"row",
+        <div style={{width:'100%',backgroundColor:theme.palette.error.main,display:'flex',
+          fontFamily:fonts?.HeaderFont, letterSpacing:1.5,fontWeight:600,fontSize:fonts.H3FontSize,flexDirection:"row",
           paddingLeft:'10px',justifyContent:'center',alignItems:'center'
         }}>
-          <div style={{flex:1,height:'22px'}} >
+          <div style={{flex:1,height:'42px'}} >
             <div style={{marginRight:'10px', display:"flex" , alignItems:'center'}} >
               {props?.Type==='INFO'?
-                (<IconByName iconName='LightbulbCircleTwoTone' color={theme?.palette?.success?.dark} fontSize='20px'/>):
-                (<IconByName iconName='ErrorTwoTone' color={theme.palette.error.main} fontSize='20px'/>)
+                (<IconByName iconName='LightbulbCircleTwoTone' color={theme?.palette?.text.secondary} fontSize='35'/>):
+                (<IconByName iconName='ErrorTwoTone' color={theme.palette.text.primary} fontSize='35px'/>)
               }
                {props?.MessageHeader}
             </div>
            
             
             </div>
-          <div onMouseEnter={()=>{setIsIconFocused(true)}} onMouseLeave={()=>{setIsIconFocused(false)}} style={{marginRight:'10px'}}   onClick={props?.onClosePress}>
+          {/* <div onMouseEnter={()=>{setIsIconFocused(true)}} onMouseLeave={()=>{setIsIconFocused(false)}} style={{marginRight:'10px'}}   onClick={props?.onClosePress}>
             <IconByName iconName='HighlightOffTwoTone' color={isIconFocused?(theme?.palette?.secondary?.dark):(theme?.palette?.secondary?.light)} fontSize='22px'/>
-          </div>
+          </div> */}
         </div>
         <div style={{paddingTop:'5px',paddingBottom:'5px',paddingLeft:'5px',fontFamily:fonts.RegularFont,letterSpacing:1.5,fontSize:fonts.RegularFontSize}}>
            {props?.MessageBody}
@@ -838,6 +841,58 @@ export const QuantomErrorDialog=(props?:QuantomErrorDialogProps)=>{
         
        
       </Quantom_Grid>
+    </Dialog>
+  )
+}
+
+
+
+export interface QuantomConfirmationProps{
+  MessageHeader?:string;
+  MessageBody?:string;
+  open?:boolean;
+  OnYesPress?:()=>void;
+  OnNoPress?:()=>void ;
+}
+export const QuantomConfirmationDialog=(props?:QuantomConfirmationProps)=>{
+  const theme=useTheme();
+  const fonts= useQuantomFonts();
+   
+  React.useEffect(()=>{
+    if(props?.open){
+      setTimeout(() => {
+        FocusOnControlByControlId('quantom_alert_button_id')  
+      }, (400));
+    }
+  },[props?.open])
+  return(
+
+    <Dialog fullWidth open={props?.open??false}>
+      <Quantom_Grid container>
+        <div style={{width:'100%',backgroundColor:theme?.palette?.primary?.main,display:'flex',
+          fontFamily:fonts?.HeaderFont,fontWeight:500,fontSize:fonts.H3FontSize,flexDirection:"row",
+          paddingLeft:'10px',justifyContent:'center',alignItems:'center'
+        }}>
+          <div style={{flex:1,height:'42px'}} >
+            <div style={{marginRight:'10px', display:"flex" , alignItems:'center'}} >
+                <IconByName iconName='HelpCenterOutlined' color={theme.palette.text.primary} fontSize='40px'/>
+               {props?.MessageHeader}
+            </div>
+          </div>
+          
+        </div> 
+      </Quantom_Grid>
+          <div style={{marginLeft:'10px', marginRight:'10px'}}>
+          <div className='row g-1' style={{paddingTop:'15px',paddingBottom:'15px',}}>
+            {/* <POSActionButton label='OK' /> */}
+            <div className='col-6'>
+                 <POSActionButton iconName='CheckBoxOutlined' label='YES' onClick={()=>{props?.OnYesPress?.()}}/>
+            </div>
+            <div className='col-6'>
+                <POSActionButton iconName='CancelPresentationOutlined' label='CANCEL'onClick={()=>{props?.OnNoPress?.()}}/>
+            </div>
+        </div>
+        </div>
     </Dialog>
   )
 }
