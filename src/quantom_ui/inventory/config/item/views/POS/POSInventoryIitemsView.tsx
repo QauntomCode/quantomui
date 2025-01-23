@@ -187,6 +187,7 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
      const [items,setItems]=React.useState<InventoryItemsModel[]>([])
      const [search,setSearch]=React.useState('');
 
+     const [searchCategory,setSearchCategory]=React.useState('');
       React.useEffect(()=>{
         if(category){
             handleLoadItems()
@@ -224,7 +225,18 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
     <> 
       <div className="row g-2" style={{marginTop:'8px'}}>
          <div className="col-md-4 col-lg-3">
+            
+             
+              <Quantom_Grid container  sx={{marginBottom:"5px"}}>
+                 <Quantom_Input label='Search Category' value={searchCategory} onChange={(e)=>{
+                    setSearchCategory(e.target.value)
+                 }}/>
+              </Quantom_Grid>    
+              <Quantom_Grid container  
+                sx={{fontFamily:fonts.HeaderFont,color:theme.palette.text.primary,backgroundColor:theme.palette.primary.main,justifyContent:'center'}}>All Categories</Quantom_Grid>
+
             {
+               
                 categories?.map((item,index)=>{
                     return(
                         <div onClick={()=>{
@@ -258,28 +270,36 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
                         <POSActionButton label="Add New"/>
                      </Quantom_Grid> */}
                   </Quantom_Grid>
-                  <Quantom_Grid container spacing={.5} padding={'10px'}>
+                  <Quantom_Grid container spacing={1} padding={'10px'}>
+                  {/* <Quantom_Grid size={{xs:12}} sx={{fontFamily:fonts.HeaderFont,color:theme.palette.text.primary,backgroundColor:theme.palette.primary.main,justifyContent:'center'}}>
+                    All Items</Quantom_Grid> */}
                  {items?.map((item,index)=>{
                     return(
-                        <Quantom_Grid component={Paper} sx={{}} item size={{xs:12,sm:6,md:4,lg:3,xl:3}}>
+                        <Quantom_Grid component={Paper} sx={{}} item size={{xs:12,sm:6,md:4,lg:3,xl:2.4}}>
                             <div onClick={()=>{
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_SET_ITEM_CODE,Data:item?.ItemCode}})))
                                 props?.setState?.({});
 
                             }} style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
-                                <div  style={{flex:1,color:theme.palette.text.primary}}>
+                                <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
                                     
-                                    <IconByName iconName="BallotOutlined"/>
-                                  {item?.SearchKey??item.ManualCode}
+                                    <IconByName iconName="BallotOutlined" fontSize="20px"/>
+                                    <div style={{marginLeft:'5px'}}>
+                                        {item?.SearchKey??item.ManualCode}
+                                    </div>
                                 </div>
-                                <div  style={{flex:1,fontSize:'14px'}}>
-                                  <IconByName iconName="InventoryOutlined"/>
-                                  {item.ItemName}
+                                <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                                  <IconByName iconName="InventoryOutlined" fontSize="20px"/>
+                                  <div style={{marginLeft:'5px'}}>
+                                    {item?.ItemName}
+                                  </div>
                                 </div>
-                                <div  style={{flex:1,fontSize:'14px'}}>
-                                    <IconByName iconName="DnsOutlined"/>
-                                  {item.category?.Name}
+                                <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                                    <IconByName iconName="DnsOutlined" fontSize="20px"/>
+                                    <div style={{marginLeft:'5px'}}>
+                                    {item?.category?.Name}
+                                  </div>
                                 </div>
                             </div>
                         </Quantom_Grid>
