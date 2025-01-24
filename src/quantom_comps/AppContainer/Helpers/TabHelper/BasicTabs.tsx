@@ -66,7 +66,7 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                       ? "1px solid black"
                       : undefined,
                     // borderLeftWidth:'.5px',
-                    borderTopLeftRadius: "10px",
+                    borderTopLeftRadius: "20px",
                     transform: "none",
                     fontWeight: "bold",
                     fontSize: "12px",

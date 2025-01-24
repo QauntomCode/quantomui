@@ -2,10 +2,10 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode } from 'react'
 import { useSelector } from 'react-redux';
-import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu } from '../../../../redux/store';
+import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu, get_helperData_by_key } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
-import { Alert, Box, Dialog, DialogContent, Grid, Paper, Snackbar, useTheme } from '@mui/material';
-import { change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
+import { Alert, Box, CircularProgress, Dialog, DialogContent, Grid, Paper, Slide, Snackbar, useTheme } from '@mui/material';
+import { add_helper_data_single_key, change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
 // import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -38,6 +38,7 @@ import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleV
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
 import { POS_INVENTORY_ITEM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+
 
 export const AppContainerTabHelper = () => {
   const selectedTab=useSelector((state:any)=>get_selected_menu_index(state))??0;
@@ -233,20 +234,21 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   React.useEffect(()=>{
     setDefaultTabs([...getDefaultTabs(props?.UniqueId,fullState?.compSettings?.WillHideUserLog)])
   },[fullState?.compSettings?.WillHideUserLog])
-  //const defaultTabs=[...getDefaultTabs(props?.UniqueId,props?.fullState?.compSettings?.WillHideUserLog)??[]]
 
   return(
     <div  >
+
+      < ProcessingDialog/>
       <QUANTOM_Toast {...alertProps}/>
       <QuantomErrorDialog Type='ERROR' Open={isShowAlert} MessageHeader='Error' MessageBody={alertProps?.message} onClosePress={()=>{
         setIsShowAlert(false);
       }}/>
       <UserLocationsModalComp  basProps={{...nProps}}/>
-    {
-      fullState?.compSettings?.wWillHideToolbar?(<></>):(
-       <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
-      )
-    }
+      {
+        fullState?.compSettings?.wWillHideToolbar?(<></>):(
+        <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
+        )
+      }
       <div style={{paddingLeft:'10px',paddingRight:'10px'}}>
       {
         fullState?.FormState==='LIST'?listComp:selectedComponent
@@ -847,6 +849,18 @@ export const QuantomErrorDialog=(props?:QuantomErrorDialogProps)=>{
 
 
 
+export const ProcessingDialog=()=>{
+   const open:boolean= useSelector((state?:any)=>get_helperData_by_key(state,GLOBAL_UNIQUE_KEY,LOADING_MODAL_KEY))??false;
+      
+  return(
+  <Dialog sx={{padding:'20'}} open={open }  aria-labelledby="form-dialog-title">
+      <DialogContent>
+        <CircularProgress  color="secondary" />
+      </DialogContent>
+  </Dialog>
+  )
+}
+
 export interface QuantomConfirmationProps{
   MessageHeader?:string;
   MessageBody?:string;
@@ -906,4 +920,16 @@ export interface ComponentTabProps{
   TabCaption?:string;
   TabComponent?:ReactNode;
   SortNumber?:number;
+}
+
+
+
+export const GLOBAL_UNIQUE_KEY="LOADING_DIALOG_UNIQUE_KEY_GLOBAL_UNIQUE_KEY"
+export const LOADING_MODAL_KEY="LOADING_DIALOG_MODAL_KEY";
+export const ShowLoadingDialog=()=>{
+   store.dispatch(add_helper_data_single_key({UniqueId:GLOBAL_UNIQUE_KEY,data:{keyNo:LOADING_MODAL_KEY,Data:true}}))
+}
+
+export const HideLoadingDialog=()=>{
+  store.dispatch(add_helper_data_single_key({UniqueId:GLOBAL_UNIQUE_KEY,data:{keyNo:LOADING_MODAL_KEY,Data:false}}))
 }
