@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode } from 'react'
@@ -24,11 +25,10 @@ import { OpeningBalanceView } from '../../../../quantom_ui/account/processing/op
 import { GetLocationsByUserId } from '../../../../quantom_ui/Settings/Location/impl/LocationImpl';
 import { LocationModel } from '../../../../quantom_ui/Settings/Location/Model/LocationModel';
 import { PettyCashView } from '../../../../quantom_ui/account/processing/pettyCash/view/PettyCashView';
-import { FocusOnControlByControlId, isNullOrEmpty } from '../../../../CommonMethods';
+import { FocusOnControlByControlId} from '../../../../CommonMethods';
 import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/view/VoucherView';
 import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/LedgerView'
 import * as Icons from '@mui/icons-material';
-import { hover } from '@testing-library/user-event/dist/hover';
 import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLedger/view/LedgerDetailView';
 import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
 import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
@@ -37,7 +37,9 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_INVENTORY_ITEM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGOR_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
+
 
 
 export const AppContainerTabHelper = () => {
@@ -133,8 +135,15 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   
   const getDefaultTabs=(uniqueKyeNo?:string,willHideUserLog?:boolean):BasicTabProps[]=>{
       let tabs:BasicTabProps[]=[]
+      
+      var appType= GetAPPType();
+    
+      if(appType=== APP_TYPE.SIMPLE_POS){
+        
+        return tabs;
+      }
       // alert(props?.fullState?.compSettings?.WillHideUserLog)
-      if(!willHideUserLog){
+      if(!willHideUserLog ){
 
         tabs.push( {
           Component:(<UserLogView UniqueId={props?.UniqueId}/>),
@@ -238,7 +247,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   return(
     <div  >
 
-      < ProcessingDialog/>
+      
       <QUANTOM_Toast {...alertProps}/>
       <QuantomErrorDialog Type='ERROR' Open={isShowAlert} MessageHeader='Error' MessageBody={alertProps?.message} onClosePress={()=>{
         setIsShowAlert(false);
@@ -262,7 +271,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       } 
       </div>
       </div>
-        
+      < ProcessingDialog/>
     </div>
   )
 }
@@ -490,6 +499,11 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCode:POS_INVENTORY_ITEM_MENU_CODE,
     MenuCaption:'Item setup',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSInventoryItemsView{...props}/>)
+  },
+  {
+    MenuCode:POS_CATEGOR_FORM_MENU_CODE,
+    MenuCaption:'Item Category',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POS_SetupFormView{...props}/>)
   },
 
 ]
@@ -932,4 +946,15 @@ export const ShowLoadingDialog=()=>{
 
 export const HideLoadingDialog=()=>{
   store.dispatch(add_helper_data_single_key({UniqueId:GLOBAL_UNIQUE_KEY,data:{keyNo:LOADING_MODAL_KEY,Data:false}}))
+}
+
+
+export enum APP_TYPE{SIMPLE_POS,ERP}
+
+export const GetAPPType=():APP_TYPE=>{
+  let appType=window.globalConfig.appType;
+  if(appType?.toLocaleLowerCase()==="pos"){
+    return APP_TYPE.SIMPLE_POS;
+  }
+  return APP_TYPE.ERP;
 }

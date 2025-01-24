@@ -206,6 +206,8 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
 export const POS_INVENTORY_ITEM_MENU_CODE="POS_INVENTORY_ITEM_MENU_CODE";
 export const POS_INVENTORY_ITEM_VIEW_TYPE="POS_INVENTORY_ITEM_VIEW_TYPE";
 export const POS_INVENTORY_ITEM_SET_ITEM_CODE="POS_INVENTORY_SET_ITEM_CODE";
+export const POS_CATEGOR_FORM_MENU_CODE="POS_CATEGORY_FORM_MENU_CODE";
+
 
 
 
@@ -398,6 +400,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){
+                        // alert('hello')
                         setOPenConfirmation(false);
 
                         let res= await props?.responseClick?.();
@@ -489,5 +492,23 @@ export const Toast=(props?:ToastProps)=>{
       />
     </Box>
 
+    )
+}
+
+
+interface QuantomSwithProps{
+    value?:boolean;
+    label?:string;
+    onChange?:(checked?:boolean)=>void;
+}
+
+export const QuantomSwith=(props?:QuantomSwithProps)=>{
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+    return(
+        <div style={{display:'flex',color:theme.palette.text.primary,fontWeight:600,alignItems:'center',fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize}} >
+                    <Switch checked={props?.value} onChange={(e)=>{props?.onChange?.(e.target.checked)}} />
+                    {props?.label}
+                </div>
     )
 }
