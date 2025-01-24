@@ -52,16 +52,39 @@ export const QuantomGET = async <T>(
       retObj.ResStatus = HTTP_RESPONSE_TYPE.SUCCESS;
       return retObj;
     } else {
-      let errorRes: any = await res.json();
+      let errorRes: any;
+      // alert(1);
+      const contentType = res.headers.get("Content-Type") || "";
+      if (contentType.includes("application/json")) {
+        errorRes = await res.json();
+      } else {
+        errorRes = await res.text(); // Handle non-JSON response
+      }
+      // let errorRes: any = await res?.json();
+      // alert(2);
+      // console.log("error response is", await res?.json());
+
+      console.log("1 completed");
       console.warn("error response is", errorRes);
-      let retObj: HttpResponse<T> = {};
+      let retObj: any = {};
+      console.log("2 completed");
+
       retObj.ResStatus = HTTP_RESPONSE_TYPE.ERROR;
-      retObj.Response = errorRes;
-      // store.dispatch(StopLoading());
-      // store.dispatch(SetErrorMessage({willShowError:true,errorMessage:errorRes.ErrorMessage,errorHeader:"Error",}))
+      console.log("3 completed");
+
+      // retObj.Response = errorRes;
+      retObj.ErrorMessage = errorRes;
+      console.log("4 completed");
+
+      console.log("return response is", retObj);
       return retObj;
     }
   } catch (e1: any) {
+    console.log("error message is ", e1);
+    return {
+      ResStatus: HTTP_RESPONSE_TYPE.ERROR,
+      ErrorMessage: "Something invalid happen",
+    };
     // store.dispatch(StopLoading());
     // store.dispatch(SetErrorMessage({willShowError:true,errorMessage:"Transaction Fail , Something Invalid Happen",errorHeader:"Error",}))
 

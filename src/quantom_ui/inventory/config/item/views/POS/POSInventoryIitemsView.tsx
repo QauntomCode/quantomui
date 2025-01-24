@@ -334,7 +334,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
     return(
         <>
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-        <QuantomErrorDialog Open={openEerrorMessage} MessageHeader="Error" MessageBody="THIS IS MY ERROR" onClosePress={()=>{setOpenErrorMessage(false)}} />
+        <QuantomErrorDialog Open={openEerrorMessage} MessageHeader="Error" MessageBody={errorMessage} onClosePress={()=>{setOpenErrorMessage(false)}} />
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){
