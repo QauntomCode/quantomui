@@ -4,10 +4,10 @@
 import { useSelector } from "react-redux";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { VmCustomerModel } from "../model/VmCustomerModel";
-import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
+import store, { full_component_state, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
 import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, QuantomSwitch } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
-import { useTheme } from "styled-components";
+import { useTheme } from '@mui/material/styles';
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
 import { Paper } from "@mui/material";
@@ -15,6 +15,8 @@ import { isNullOrEmpty } from "../../../../../CommonMethods";
 import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 import { CustomerDeleteMethod, CustomerGetOneMethod, CustomerSaveMethod, CustomersGetCodeNameMethod } from "../impl/CustomerImpl";
 import { CommonCodeName } from "../../../../../database/db";
+import { CustomerLocationModel } from "../model/CustomerLocationModel";
+import { json } from "node:stream/consumers";
 
 
 export const POSCustomerSetup=(props?:MenuComponentProps<VmCustomerModel>)=>{
@@ -48,17 +50,49 @@ export const POSCustomerSetup=(props?:MenuComponentProps<VmCustomerModel>)=>{
 export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
 
     const[allCustomers,setAllCustomers]=useState<CommonCodeName[]>([]);
+    const[customers,setCustomers]=useState<CommonCodeName[]>([]);
+
+    const[search,setSearch]=useState('');
     
     useEffect(()=>{
         handleGetAllCustomers();
     },[])
 
+    useEffect(()=>{
+        ApplyFilter();
+    },[search])
+
     const handleGetAllCustomers=async()=>{
      
      let res = await CustomersGetCodeNameMethod();
      if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-        setAllCustomers([...res?.Response??[]])
+        setAllCustomers([...res?.Response??[]]);
+    
+        var topCust=  await JSON.parse(JSON.stringify(res?.Response));
+        setCustomers(topCust?.slice(0,100));
      }
+    }
+
+    
+    const ApplyFilter=()=>{
+
+        var filtered:CommonCodeName[]=[];
+        let count= 0;
+        const lowSearch=search?.toLocaleLowerCase();
+        for(const record of allCustomers){
+          if(count>99){
+            break;
+          }
+          if(record?.Name?.toLowerCase()?.includes?.(lowSearch) || record?.Code?.toLocaleLowerCase()?.includes(lowSearch))
+          {
+            filtered.push({...record})
+            count++;
+          }
+        } 
+        setCustomers([...filtered??[]])
+        //   let custs= allCustomers?.filter(x=>x.Name?.toLocaleLowerCase()===search.toLocaleLowerCase() || x?.Code?.toLocaleLowerCase()===search?.toLocaleLowerCase());
+        //   var topCusts= [...custs?.slice(0,100)??[]];
+        //   setCustomers(topCusts)
     }
     const fonts= useQuantomFonts();
     const theme= useTheme();
@@ -73,17 +107,17 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
                         }} label="AddNew" iconName="AddBoxOutlined"/>
                  </div>
                  <div className="col-md-10">
-                    <Quantom_Input label="Search Category" />
+                    <Quantom_Input label="Search Category" value={search} onChange={((e)=>{setSearch(e.target.value)})} />
                 </div>
             </div>
             <Quantom_Grid   container spacing={1.5}>
                 {
-                    allCustomers?.map((item,index)=>{
+                    customers?.map((item,index)=>{
                         return(
                             <Quantom_Grid component={Paper} sx={{}} item size={{xs:12,sm:6,md:4,lg:3,xl:2}}>
                             <div onClick={()=>{
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
-                                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_CAT_CODE',Data:item?.Code}})))
+                                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_CUSTOMER_CODE',Data:item?.Code}})))
                                 props?.setState?.({});
 
                             }} style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
@@ -116,6 +150,7 @@ const Form=(props?:MenuComponentProps<VmCustomerModel>)=>{
     
     var custCode= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",'SELECTED_CUSTOMER_CODE'));
     useEffect(()=>{
+        // alert(custCode)
         handleGetOne();
     },[custCode])
 
@@ -171,7 +206,7 @@ const Form=(props?:MenuComponentProps<VmCustomerModel>)=>{
         
          <div className="row g-0" style={{marginTop:'16px'}}>
             <div className="col-md-3  offset-md-2">
-                <Quantom_Input label="code" value={props?.state?.customer?.CustCode} disabled/>
+                <Quantom_Input label="code" value={props?.state?.customer?.CustCode}/>
             </div>
          </div>
 

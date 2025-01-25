@@ -449,6 +449,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                         else if(res.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
                             setOpenErrorMessage(true);
                             setErrorMessage(res?.ErrorMessage??"");
+                            HideLoadingDialog();
                         }
                         }
                         else{

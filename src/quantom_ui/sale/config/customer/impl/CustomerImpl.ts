@@ -1,3 +1,4 @@
+import { isNullOrEmpty } from "../../../../../CommonMethods";
 import { CommonCodeName } from "../../../../../database/db";
 import { HttpResponse, QuantomGET, QuantomPOST } from "../../../../../HTTP/QuantomHttpMethods";
 import { CustomerModel } from "../model/CustomerModel";
@@ -12,14 +13,15 @@ const CUSTOMER_GET_CODE_NAME_URL = "Sale/Customer/GetCodeNames";
 
 
 export const CustomerSaveMethod=async(cust?:VmCustomerModel):Promise<HttpResponse<VmCustomerModel>>=>{
-     if(cust?.customer?.CustCode){
+    // alert(cust?.customer?.CustCode)
+    //  if(isNullOrEmpty( cust?.customer?.CustCode)){
         let res = await QuantomPOST<VmCustomerModel>(CUSTOMER_INSERT_URL,true,cust,'NONE');
         return Promise.resolve(res);
-     }
-     else{
-        let res= await QuantomPOST<VmCustomerModel>(CUSTOMER_UPDATE_URL,true,cust);
-        return res;
-     }
+    //  }
+    //  else{
+    //     let res= await QuantomPOST<VmCustomerModel>(CUSTOMER_UPDATE_URL,true,cust);
+    //     return res;
+    //  }
 }
 
 export const CustomerDeleteMethod=async(cust?:VmCustomerModel):Promise<HttpResponse<CustomerModel>>=>{
