@@ -129,12 +129,11 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
                                     </div>
                                 </div>
                                 <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
-                                  <IconByName iconName="InventoryOutlined" fontSize="20px"/>
+                                  <IconByName iconName="AccountBoxOutlined" fontSize="20px"/>
                                   <div style={{marginLeft:'5px'}}>
                                     {item?.Name}
                                   </div>
                                 </div>
-                                
                             </div>
                         </Quantom_Grid>
                         )

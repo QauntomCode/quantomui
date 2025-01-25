@@ -10,7 +10,7 @@ import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/ListAltOutlined';
 import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
 import { open_new_menu } from '../../redux/reduxSlice';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_SALE_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import SaleIcon from '@mui/icons-material/BusAlertOutlined';
 import { POSCustomerSetup } from '../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
@@ -85,14 +85,12 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
                    Customer Setup
              </Quantom_Grid>
              <Quantom_Grid onClick={()=>{
-               openNewMenu(POS_INVENTORY_ITEM_MENU_CODE,'Item Setup');
+               openNewMenu(POS_SALE_FORM_MENU_CODE,'Sale');
              }} item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
-                {/* <Box  style={{}> */}
                 <>
                   <SaleIcon color='primary' sx={{fontSize:'60px'}}></SaleIcon>
                 </>
                 Sale
-                {/* </Box> */}
              </Quantom_Grid>
 
             
