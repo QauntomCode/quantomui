@@ -206,7 +206,10 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
 export const POS_INVENTORY_ITEM_MENU_CODE="POS_INVENTORY_ITEM_MENU_CODE";
 export const POS_INVENTORY_ITEM_VIEW_TYPE="POS_INVENTORY_ITEM_VIEW_TYPE";
 export const POS_INVENTORY_ITEM_SET_ITEM_CODE="POS_INVENTORY_SET_ITEM_CODE";
-export const POS_CATEGOR_FORM_MENU_CODE="POS_CATEGORY_FORM_MENU_CODE";
+export const POS_CATEGORY_FORM_MENU_CODE="POS_CATEGORY_FORM_MENU_CODE";
+
+export const POS_CUSTOMER_FORM_MENU_CODE="POS_CUSTOMER_FORM_MENU_CODE";
+
 
 
 
@@ -502,7 +505,7 @@ interface QuantomSwithProps{
     onChange?:(checked?:boolean)=>void;
 }
 
-export const QuantomSwith=(props?:QuantomSwithProps)=>{
+export const QuantomSwitch=(props?:QuantomSwithProps)=>{
     const theme= useTheme();
     const fonts= useQuantomFonts();
     return(

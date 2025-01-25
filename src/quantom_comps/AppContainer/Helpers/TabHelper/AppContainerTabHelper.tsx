@@ -37,8 +37,9 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_CATEGOR_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
+import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 
 
 
@@ -398,146 +399,6 @@ export interface MenuInfoModel<T>{
 }
 export interface MenuComponentProps<T> extends MenuContainerProps<T>{
 }
-
-
-export const InventoryMenus:MenuInfoModel<any>[]=[
-  {
-    MenuCode:"003-001",
-    MenuCaption:"Inventory Unit",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
-  },
-  {
-    MenuCode:"003-002",
-    MenuCaption:"Inventory Category",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
-  },
-  {
-    MenuCode:"003-003",
-    MenuCaption:"Inventory Company",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
-  },
-  {
-    MenuCode:"003-030",
-    MenuCaption:"Price Group",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
-  },
-  {
-    MenuCode:"003-004",
-    MenuCaption:"Inventory Items",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryItemsView {...props}/>)
-  },
-]
-
-export const AccountMenus:MenuInfoModel<any>[]=[
-  {
-    MenuCode:"001-001",
-    MenuCaption:"Main Account",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<MainAccountView {...props}/>)
-  },
-  {
-    MenuCode:"001-002",
-    MenuCaption:"Sub Account",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<SubAccountView {...props}/>)
-  },
-  {
-    MenuCode:"001-003",
-    MenuCaption:"Sub Sub Account",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<SubSubAccountView {...props}/>)
-  },
-  {
-    MenuCode:"001-004",
-    MenuCaption:"Register Account",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<RegisterAccountView {...props}/>)
-  },
-  {
-    MenuCode:"001-006",
-    MenuCaption:"Opening Balance",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<OpeningBalanceView {...props}/>)
-  },
-  {
-    MenuCode:"001-009",
-    MenuCaption:"Petty Cash",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<PettyCashView {...props}/>)
-  },
-  {
-    MenuCode:"001-008",
-    MenuCaption:"Voucher",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<VoucherView {...props}/>)
-  },
-  {
-    MenuCode:"002-001",
-    MenuCaption:"General Ledger",
-    GetComponent:(props?:MenuContainerProps<any>)=>(<LedgerView {...props}/>)
-  },
-  {
-    MenuCode:"001-010",
-    MenuCaption:"Detail Ledger",
-    GetComponent:(props?:MenuContainerProps<any>)=>(<LedgerDetailView {...props}/>)
-  },
-]
-
-export const SaleMenus:MenuInfoModel<any>[]=[
-  {
-    MenuCode:"005-007",
-    MenuCaption:"Sale",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<SaleView {...props}/>)
-  },
-  {
-    MenuCode:"005-007_01",
-    MenuCaption:"Restaurant Sale",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<RestaurantSaleView {...props}/>)
-  },
-]
-
-export const POS_MENUS:MenuInfoModel<any>[]=[
-  {
-    MenuCode:'POS_MAIN_SCREEN',
-    MenuCaption:'MAIN_MENUS',
-    GetComponent:(props?:MenuComponentProps<any>)=>(<POSMainScreen{...props}/>)
-  },
-  {
-    MenuCode:POS_INVENTORY_ITEM_MENU_CODE,
-    MenuCaption:'Item setup',
-    GetComponent:(props?:MenuComponentProps<any>)=>(<POSInventoryItemsView{...props}/>)
-  },
-  {
-    MenuCode:POS_CATEGOR_FORM_MENU_CODE,
-    MenuCaption:'Item Category',
-    GetComponent:(props?:MenuComponentProps<any>)=>(<POS_SetupFormView{...props}/>)
-  },
-
-]
-export const  AllCompMenus:MenuInfoModel<any>[]=[
-  {
-    MenuCode:"001",
-    MenuCaption:"Menus",
-    GetComponent:(props?:MenuComponentProps<unknown>)=>(<AllMenuRenderer {...props}/>)
-  },
-  // {
-  //   MenuCode:"002",
-  //   MenuCaption:"Sale Component",
-  //   GetComponent:(props?:MenuComponentProps<any>)=>(<SaleComponent {...props}/>)
-  // },
-  {
-    MenuCode:"TEST_REPORT",
-    MenuCaption:"All Reports",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<QuantomReportView {...props}/>)
-  },
-  {
-    MenuCode:"TEST_REPORT",
-    MenuCaption:"Report Component",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<QuantomReportView {...props}/>)
-  },
-  {
-    MenuCode:"001-0036",
-    MenuCaption:"Layout",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<DashboardLayoutBasic/>)
-  },
-  ...AccountMenus,
-  ...InventoryMenus,
-  ...SaleMenus,
-  ...POS_MENUS
-]
 
 
 
@@ -958,3 +819,166 @@ export const GetAPPType=():APP_TYPE=>{
   }
   return APP_TYPE.ERP;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const InventoryMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"003-001",
+    MenuCaption:"Inventory Unit",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-002",
+    MenuCaption:"Inventory Category",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-003",
+    MenuCaption:"Inventory Company",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-030",
+    MenuCaption:"Price Group",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryUnitView {...props}/>)
+  },
+  {
+    MenuCode:"003-004",
+    MenuCaption:"Inventory Items",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryItemsView {...props}/>)
+  },
+]
+
+export const AccountMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"001-001",
+    MenuCaption:"Main Account",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<MainAccountView {...props}/>)
+  },
+  {
+    MenuCode:"001-002",
+    MenuCaption:"Sub Account",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<SubAccountView {...props}/>)
+  },
+  {
+    MenuCode:"001-003",
+    MenuCaption:"Sub Sub Account",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<SubSubAccountView {...props}/>)
+  },
+  {
+    MenuCode:"001-004",
+    MenuCaption:"Register Account",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<RegisterAccountView {...props}/>)
+  },
+  {
+    MenuCode:"001-006",
+    MenuCaption:"Opening Balance",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<OpeningBalanceView {...props}/>)
+  },
+  {
+    MenuCode:"001-009",
+    MenuCaption:"Petty Cash",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<PettyCashView {...props}/>)
+  },
+  {
+    MenuCode:"001-008",
+    MenuCaption:"Voucher",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<VoucherView {...props}/>)
+  },
+  {
+    MenuCode:"002-001",
+    MenuCaption:"General Ledger",
+    GetComponent:(props?:MenuContainerProps<any>)=>(<LedgerView {...props}/>)
+  },
+  {
+    MenuCode:"001-010",
+    MenuCaption:"Detail Ledger",
+    GetComponent:(props?:MenuContainerProps<any>)=>(<LedgerDetailView {...props}/>)
+  },
+]
+
+export const SaleMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"005-007",
+    MenuCaption:"Sale",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<SaleView {...props}/>)
+  },
+  {
+    MenuCode:"005-007_01",
+    MenuCaption:"Restaurant Sale",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<RestaurantSaleView {...props}/>)
+  },
+]
+
+export const POS_MENUS:MenuInfoModel<any>[]=[
+  {
+    MenuCode:'POS_MAIN_SCREEN',
+    MenuCaption:'MAIN_MENUS',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSMainScreen{...props}/>)
+  },
+  {
+    MenuCode:POS_INVENTORY_ITEM_MENU_CODE,
+    MenuCaption:'Item setup',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSInventoryItemsView{...props}/>)
+  },
+  {
+    MenuCode:POS_CATEGORY_FORM_MENU_CODE,
+    MenuCaption:'Item Category',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POS_SetupFormView{...props}/>)
+  },
+  {
+    MenuCode:POS_CUSTOMER_FORM_MENU_CODE,
+    MenuCaption:'Customer Setup',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSCustomerSetup{...props}/>)
+  },
+
+]
+export const  AllCompMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"001",
+    MenuCaption:"Menus",
+    GetComponent:(props?:MenuComponentProps<unknown>)=>(<AllMenuRenderer {...props}/>)
+  },
+  // {
+  //   MenuCode:"002",
+  //   MenuCaption:"Sale Component",
+  //   GetComponent:(props?:MenuComponentProps<any>)=>(<SaleComponent {...props}/>)
+  // },
+  {
+    MenuCode:"TEST_REPORT",
+    MenuCaption:"All Reports",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<QuantomReportView {...props}/>)
+  },
+  {
+    MenuCode:"TEST_REPORT",
+    MenuCaption:"Report Component",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<QuantomReportView {...props}/>)
+  },
+  {
+    MenuCode:"001-0036",
+    MenuCaption:"Layout",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<DashboardLayoutBasic/>)
+  },
+  ...AccountMenus,
+  ...InventoryMenus,
+  ...SaleMenus,
+  ...POS_MENUS
+]
