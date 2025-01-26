@@ -1,34 +1,61 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useSelector } from "react-redux";
-import { MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
+import { IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { VmSale } from "../model/VmSaleModel"
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
-import { POS_INVENTORY_ITEM_VIEW_TYPE } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { SetupFromGetAll } from "../../../../inventory/config/unit/impl/setupFormImp";
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { SetupFormModel } from "../../../../inventory/config/unit/model/setupFormModel";
 import { Category, Padding } from "@mui/icons-material";
-import { Paper, useTheme } from "@mui/material";
+import { Box, Dialog, DialogContent, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
 import { Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
+import { isNullOrEmpty, safeParseToNumber } from "../../../../../CommonMethods";
+import { CommonCodeName } from "../../../../../database/db";
+import { InventoryItemsModel } from "../../../../inventory/config/item/model/InventoryItemsModel";
+import { GetItemsByCategory } from "../../../../inventory/config/item/impl/InventoryitemsImpl";
+import { AddOrRemoveExtendedMethod } from "../../../../inventory/CommonComp/CommonInvDetail/Impl/InventoryIoMethods";
+import { CommonInvDetailModel, InventoryAction } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
+import { INVENTORY_PERFORMED_ACTION } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
+import { AccountSettings, GetSingleSetting } from "../../../../../Config/Settings/SettingsImp";
+import { InsertSale } from "../impl/SaleImpl";
+import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
 export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
 
     const [catCode,setCatCode]=useState<string>()
+    const [cashCustomer,setCashCustomer]=useState<string>('')
     const fullState= useSelector((state?:any)=>(full_component_state(state,props?.UniqueId??"")));
     const isList= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEM_VIEW_TYPE)) ==='LIST'
-    const categories= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY)) as SetupFormModel[]
+    const categories= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY)) 
+    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
 
+    const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
+    const disAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.Sale?.ExtraDiscount??0)
+    const netAmount= grossAmount-disAmount;
+    const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
 
+    useEffect(()=>{
+        handleLoadCashCustomer()
+    },[])
+
+    const handleLoadCashCustomer=async()=>{
+       let res= await GetSingleSetting(AccountSettings.sale_cash_customer)
+       setCashCustomer(res?.DefaultValue??"");
+    }
     useEffect(()=>{
         if(fullState?.IsFirstUseEffectCall){
           setFormBasicKeys<VmSale>({
             uniqueKey:props?.UniqueId??"",
             baseProps:props??{},
-            settings:{WillHideUserLog:true,wWillHideToolbar:true}
+            settings:{WillHideUserLog:true,wWillHideToolbar:true,willShowLocations:true},
+            InitOnLocationChange:(location)=>{
+                store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_SALE_LOCID_KEY,Data:location?.LocId}}))
+            }
          })
 
          handleCategories();
@@ -41,13 +68,100 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
         store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY,Data:categories}}));
         return Promise.resolve(categories)
     }
+
+    const handleAddItem=async(workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
+        
+        var oldItems= props?.state?.SaleDetails??[];
+        var taxDetail= props?.state?.TaxDetail;
+        let res= 
+        await AddOrRemoveExtendedMethod(oldItems,workingItem,InventoryAction.Sale,action,{
+            VendorCode:props?.state?.Sale?.CustCode,
+            BillDate:new Date(),
+            LocId:locid,
+        },taxDetail,{
+            BpCode:props?.state?.Sale?.CustCode,
+            BpType:"CUSTOMER",
+            TaxForm:"SALE",
+            EffectedDate:new Date(),
+            WillBypassTaxCaluclations:true,
+        })
+
+        if(!isNullOrEmpty(res?.Message)){
+            alert(res?.Message)
+        }
+        else{
+       
+        props?.setState?.({...props?.state,SaleDetails:[...res?.InventoryDTO?.InventoryList??[]],TaxDetail:[...res?.InventoryDTO?.InventoryIOTaxList??[]]})
+        }
+
+    }
     
+    const theme= useTheme();
     return(
-        <div className="row">
+        <div className="row g-1">
             <div className="col-md-2">
-                <RenderCategories selectedCategory={catCode} onSelected={(code)=>{
+                <POSCategoriesRendrer selectedCategory={catCode} onSelected={(code)=>{
                     setCatCode(code)
-                }} categories={[...categories]} />
+                }} categories={categories} />
+            </div>
+            <div className="col-md-6">
+               <PosItemsRendrer OnItemClick={(item)=>{handleAddItem({ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:3}} />
+            </div>
+            <div className="col-md-4" style={{height:'100vh',display:'flex',flexDirection:'column',flexGrow:1}}>
+                <div style={{overflowY: 'auto',flexGrow: 1}}>
+                  
+                          <SoldItemsRenderer baseProps={props} onEditItem={(item)=>{
+                            handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
+                          }} onDeleteItem={(item)=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}/>
+                </div>
+
+                <div style={{position: 'sticky',bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',marginTop:'32px'}}>
+                    <div className="row g-1">
+                        <div className="col-md-5">
+                            <Quantom_Input label="Gross Am" value={grossAmount}/>
+                        </div>
+                        <div className="col-md-2">
+                            <Quantom_Input label="Dis" value={disAmount}/>
+                        </div>
+                        <div className="col-md-5">
+                            <Quantom_Input label="Net Amount" value={netAmount}/>
+                        </div>
+                    </div>
+                    <div className="row g-1" style={{}}>
+                        <div className="col-md-6">
+                            <Quantom_Input label="Received" value={props?.state?.Sale?.TotalReceived} onChange={(e)=>{
+                                props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,TotalReceived:safeParseToNumber(e.target?.value)}})
+                            }}/>
+                        </div>
+                        <div className="col-md-6">
+                            <Quantom_Input label="Balance" value={balance}/>
+                        </div>
+                    </div>
+                    <div className="row g-1" style={{marginTop:'10px',marginBottom:'5px'}}>
+                        <div className="col-md-4">
+                            <POSActionButton buttonType='SAVE' responseClick={async()=>{
+                                let nSate:VmSale={...props?.state,Sale:{...props?.state?.Sale,LocId:locid,CustCode:props?.state?.Sale?.CustCode??cashCustomer,BillDate:props?.state?.Sale?.BillDate??new Date()}}
+                                 let res=await InsertSale(nSate) 
+                                 if(res?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
+                                    props?.setState?.({});
+                                 }
+                                 return Promise.resolve(res)
+
+                            }} label="Save" iconName="SaveOutlined"
+                                    iconColor={theme.palette.secondary.main}/>
+                        </div>
+                        <div className="col-md-4">
+                            <POSActionButton  label="Customer" iconName="PermIdentityOutlined" 
+                                    iconColor={theme.palette.secondary.main}/>
+                        </div>
+                        <div className="col-md-4">
+                            <POSActionButton buttonType='LIST' label="List" iconName="FactCheckOutlined" 
+                                            iconColor={theme.palette.secondary.main}/>
+                        </div>
+                        
+                    </div>
+                </div>
+                
             </div>
             
         </div>
@@ -60,21 +174,43 @@ export interface RenderCategoriesProps{
      onSelected?:(code?:string)=>void;
 }
 
-export const RenderCategories=(props?:RenderCategoriesProps)=>{
+export const POSCategoriesRendrer=(props?:RenderCategoriesProps)=>{
     const fonts= useQuantomFonts();
     const theme= useTheme();
     const [search,setSearch]=useState('');
     const [searchtedCats,setSearchedCats]=useState<SetupFormModel[]>([])
 
     useEffect(()=>{
-        if(props?.categories){
+        if(props?.categories && props?.categories?.length>0){
             setSearchedCats(JSON.parse(JSON.stringify(props?.categories)))
             return;
         }
         else{
-            set
+            setSearchedCats([])
         }
     },[props?.categories])
+
+    useEffect(()=>{
+        handleSearch()
+    },[search,searchtedCats])
+
+    const handleSearch=()=>{
+
+        if(isNullOrEmpty(search) || !props?.categories || props?.categories?.length<1){
+            setSearchedCats([...props?.categories??[]]);
+            return;
+        }
+
+
+        let matchedItems:CommonCodeName[]=[] 
+        for(const item of  props?.categories??[]){
+              if(item?.Code?.toLocaleLowerCase().includes(search?.toLocaleLowerCase())|| item?.Name?.toLowerCase()?.includes(search?.toLocaleLowerCase())){
+                matchedItems.push({...item});
+              }
+        }
+
+        setSearchedCats([...matchedItems])
+    }
     return(
         <Quantom_Grid container>
             <Quantom_Grid container size={{xs:12}} sx={{marginBottom:"5px"}}>
@@ -82,14 +218,14 @@ export const RenderCategories=(props?:RenderCategoriesProps)=>{
             </Quantom_Grid>
             <Quantom_Grid container>
             {
-                props?.categories?.map((item,index)=>{
+                searchtedCats?.map((item,index)=>{
                     return(
-                        <Quantom_Grid 
+                        <Quantom_Grid container fullWidth size={{xs:12,md:12,lg:12,xl:12}}
                             onClick={()=>{props?.onSelected?.(item?.Code)}}
-                            size={{xs:12}} 
+                            
                             sx={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,paddingLeft:'8px',borderBottom:`1px solid ${theme?.palette?.text?.primary}`,
                             paddingTop:'5px',paddingBottom:'5px',backgroundColor:(item.Code===props?.selectedCategory)?theme?.palette?.secondary?.main:undefined}} 
-                                        item component={Paper} className="col-12">
+                                         component={Paper}>
                             {item?.Name}
                         </Quantom_Grid>
                     )
@@ -104,4 +240,246 @@ export const RenderCategories=(props?:RenderCategoriesProps)=>{
 
 
 
+export interface POSItemsRendrerViewProps{
+  uniquId?:string;
+  selectedCat?:string;
+  size?:QuantomSize
+  OnItemClick?:(itemCode?:InventoryItemsModel)=>void;
+}
 
+interface QuantomSize{
+    md?:number;
+    xs?:number;
+    lg?:number;
+    xl?:number;
+}
+
+export const PosItemsRendrer=(props?:POSItemsRendrerViewProps)=>{
+
+    //const categories= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY)) as SetupFormModel[];
+    const fonts= useQuantomFonts();
+    const theme= useTheme();
+    const [allItems,setAllItems]=useState<InventoryItemsModel[]>([])
+    const [items,setItems]=useState<InventoryItemsModel[]>([])
+    const [itemSearch,setItemSearch]=useState('');
+
+     useEffect(()=>{
+       if(props?.selectedCat){
+           handleLoadItems()
+       }
+     },[props?.selectedCat])
+
+
+      useEffect(()=>{
+       if(itemSearch){
+           handleSearch();
+       }
+       else{
+           setItems([...allItems])
+       }
+     },[itemSearch])
+   
+
+     const handleSearch=()=>{
+       const search= itemSearch?.toLocaleLowerCase();
+        let searchedItems= allItems?.filter(x=>
+                   x.ItemName?.toLocaleLowerCase()?.includes(search) 
+                   || x?.SearchKey?.toLocaleLowerCase()?.includes(search)
+                   ||x?.category?.Name?.toLocaleLowerCase()?.includes(search)
+               )
+
+       setItems([...searchedItems])
+     }
+
+     const handleLoadItems=async()=>{
+          let res= await GetItemsByCategory(props?.selectedCat??"0");
+          setItems([...res])
+          setAllItems([...res])
+     }
+
+   return(
+   <> 
+     <div className="row">
+           <Box sx={{height:'100%',width:'100%'}}>
+                 <Quantom_Grid container spacing={.5} sx={{paddingLeft:'10px',paddingRight:'10px'}} >
+                 
+                    <Quantom_Grid item size={{xs:6,sm:6,md:4,lg:7.5,xl:7.5}}>
+                        <Quantom_Input value={itemSearch} onChange={(e)=>{setItemSearch(e.target.value)}} label='Search' />
+                    </Quantom_Grid>
+                    <Quantom_Grid item size={{xs:6,sm:6,md:4,lg:1.5,xl:1.5}} sx={{marginTop:'5px'}}>
+                       <POSActionButton label="Search"/>
+                    </Quantom_Grid>
+                   
+                 </Quantom_Grid>
+                 <Quantom_Grid container spacing={1} padding={'10px'}>
+                 
+                {items?.map((item,index)=>{
+                   return(
+                       <Quantom_Grid component={Paper} sx={{}} item size={{xs:12,sm:6,md:4,lg:4,xl:3,...props?.size}}>
+                           <div onClick={()=>{props?.OnItemClick?.(item)}} 
+                               style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
+                               <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
+                                   
+                                   <IconByName iconName="BallotOutlined" fontSize="20px"/>
+                                   <div style={{marginLeft:'5px'}}>
+                                       {item?.SearchKey??item.ManualCode}
+                                   </div>
+                               </div>
+                               <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                                 <IconByName iconName="InventoryOutlined" fontSize="20px"/>
+                                 <div style={{marginLeft:'5px'}}>
+                                   {item?.ItemName}
+                                 </div>
+                               </div>
+                               <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                                   <IconByName iconName="DnsOutlined" fontSize="20px"/>
+                                   <div style={{marginLeft:'5px'}}>
+                                   {item?.category?.Name}
+                                 </div>
+                               </div>
+                           </div>
+                       </Quantom_Grid>
+                   )
+                })}
+                </Quantom_Grid>
+           </Box>
+        </div>
+   </>
+ )
+}
+
+
+
+interface SoldItemsRendererProps{
+  baseProps?:MenuComponentProps<VmSale>
+  itemGridSize?:QuantomSize;
+  onDeleteItem?:(workingItem?:CommonInvDetailModel)=>void;
+  onEditItem?:(workingItem?:CommonInvDetailModel)=>void;
+
+}
+
+export const SoldItemsRenderer=(props?: SoldItemsRendererProps)=>{
+
+    const [showDialog,setShowDialog]=useState(false);
+    const[selecteditem,setSelectedItem]=useState<CommonInvDetailModel>();
+    const soldItems= props?.baseProps?.state?.SaleDetails;
+    const fonts= useQuantomFonts();
+    const headerFont={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:'bold'};
+    const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
+    const theme= useTheme();
+    return(
+        <>
+        <ShowSingleSelectedItemDialog item={selecteditem} open={showDialog} onClose={(type,item)=>{
+            setShowDialog(false);
+            if(type==='APPLIED'){
+                props?.onEditItem?.(item);
+            }
+        }}></ShowSingleSelectedItemDialog>
+        <Quantom_Grid container sx={{height:'100%',backgroundColor:theme.palette.primary.main}} spacing={1}>
+            <TableContainer component={Paper} sx={{backgroundColor:theme.palette.primary.main}}>
+            <Table size="small" aria-label="a dense table">
+                <TableHead >
+                    <TableRow>
+                        <TableCell sx={{...headerFont,width:'10px'}}></TableCell>
+                        <TableCell sx={{...headerFont,width:'10px'}}>#</TableCell>
+                        <TableCell sx={{...headerFont,width:'auto'}}>Item Name</TableCell>
+                        <TableCell sx={{...headerFont,width:'25px'}}>Qty</TableCell>
+                        <TableCell sx={{...headerFont,width:'15px'}}>Rate</TableCell>
+                        <TableCell sx={{...headerFont,width:'15px'}}>Amount</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                {soldItems?.map((item, index) => (
+                    <TableRow key={index} sx={{padding:0,lineHeight:'10px'}}>
+                    <TableCell sx={{...bodyFont,wdith:'10px'}}>
+                        <div style={{display:'flex'}}>
+                            <div onClick={()=>{setShowDialog(true);setSelectedItem(item)}}>
+                                <IconByName fontSize="22px"  iconName="EditCalendarOutlined"/>
+                            </div>
+                            <div>
+                                <IconByName fontSize="22px"  iconName="DeleteOutlineOutlined"/>
+                            </div>
+                        </div>
+
+                    </TableCell>
+                    <TableCell sx={{...bodyFont,wdith:'10px'}}>{item?.CustomSortNo}</TableCell>
+                    <TableCell sx={{...bodyFont,width:'auto'}}>{item?.ItemName}</TableCell>
+                    <TableCell sx={{...bodyFont,width:'25px'}}>{item?.Qty}</TableCell>
+                    <TableCell sx={{...bodyFont,width:'15px'}}>{item?.Price}</TableCell>
+                    <TableCell sx={{...bodyFont,width:'15px'}}>{item?.Amount}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+            </TableContainer>
+        </Quantom_Grid>
+        </>
+    )
+}
+
+export interface ShowSingleSelectedItemDialogProps{
+    open?:boolean;
+    item?:CommonInvDetailModel;
+    onClose?:(type?:"APPLIED"|"CANCEL",item?:CommonInvDetailModel)=>void;
+}
+
+export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogProps)=>{
+  
+    const theme= useTheme();
+    const [qty,setQty]=useState(0);
+    const [rate,setRate]=useState(0);
+    const [amount,setAmount]=useState(0);
+    useEffect(()=>{
+        setQty(props?.item?.Qty??0);
+        setRate(props?.item?.Price??0);
+        //setQty(props?.item?.Qty??0);
+    },[props?.item?.Qty,props?.item?.Price])
+
+    useEffect(()=>{
+        setAmount(safeParseToNumber(qty)*safeParseToNumber(rate))
+    },[qty,rate])
+
+    return(
+    <Dialog fullWidth open={props?.open??false} >
+        <DialogContent>
+            <div className="row g-1">
+                 <div className="col-md-4">
+                     <Quantom_Input label="Item Code" value={props?.item?.ItemCode}/>
+                 </div>
+                 <div className="col-md-8">
+                    <Quantom_Input label="Item Item Name" value={props?.item?.ItemName}/>
+                 </div>
+            </div>
+
+            <div className="row g-1">
+                 <div className="col-md-3">
+                     <Quantom_Input label="Qty" value={qty} onChange={(e)=>{setQty(safeParseToNumber(e.target.value))}}/>
+                 </div>
+                 <div className="col-md-4">
+                    <Quantom_Input label="Rate" value={rate} onChange={(e)=>{setRate(safeParseToNumber(e.target.value))}}/>
+                 </div>
+                 <div className="col-md-5">
+                    <Quantom_Input label="Amount" value={amount}/>
+                 </div>
+            </div>
+
+            <div className="row g-1" style={{marginTop:'16px'}}>
+                 <div className="col-md-6">
+                     <POSActionButton label="Apply Change" backgroundColor={theme.palette.primary.main} onClick={()=>{
+                        props?.onClose?.('APPLIED',{...props?.item,Qty:qty,Price:rate})
+                     }}/>
+                 </div>
+                 <div className="col-md-6">
+                    <POSActionButton label="Cancel" backgroundColor={theme.palette.primary.main}
+                      onClick={()=>{props?.onClose?.('CANCEL')}}/>
+                 </div>
+                
+            </div>
+        </DialogContent>
+    </Dialog>
+    )
+}
+
+
+
+export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"

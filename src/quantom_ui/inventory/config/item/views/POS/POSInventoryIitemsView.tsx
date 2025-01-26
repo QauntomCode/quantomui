@@ -386,9 +386,11 @@ export const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGOR
 interface POSActionButtonProps{
   label?:string;
   iconName?:string;
+  iconColor?:string;
   onClick?:()=>void;
   buttonType?:'SAVE'|'RESET'|'DELETE'|'LIST'
   responseClick?:()=>Promise<HttpResponse<any>>
+  backgroundColor?:string;
 }
 export const POSActionButton=(props?:POSActionButtonProps)=>{
     const fonts= useQuantomFonts();
@@ -464,10 +466,10 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                 }
             }
         }    
-         style={{display:'flex',justifyContent:'center',alignItems:'center',lineHeight:'35px',backgroundColor:theme?.palette?.background.paper,zIndex:999,width:'100%',border:`1px solid ${theme.palette.primary.main}`,
+         style={{display:'flex',justifyContent:'center',alignItems:'center',lineHeight:'35px',backgroundColor:(props?.backgroundColor)?props?.backgroundColor:theme?.palette?.background.paper,zIndex:999,width:'100%',border:`1px solid ${theme.palette.primary.main}`,
                      borderRadius:'5px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:'16px',color:theme.palette.text.primary,opacity:.8}}>
                     <div style={{display:'flex',justifyContent:'center',marginRight:'10px'}}>
-                        <IconByName iconName={props?.iconName}/>
+                        <IconByName iconName={props?.iconName} color={props?.iconColor??undefined}/>
                     </div>
                 {props?.label}
                 
