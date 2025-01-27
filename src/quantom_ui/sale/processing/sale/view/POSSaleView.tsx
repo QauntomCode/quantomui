@@ -559,10 +559,17 @@ export interface POSSaleBillsProps{
 }
 
 export const POSSaleBills=(props?:POSSaleBillsProps)=>{
-    const[fromDate,setFromDate]=useState<Date>(new Date())
-    const[toDate,setToDate]=useState<Date>(new Date())
+    const [fromDate,setFromDate]=useState<Date>(new Date())
+    const [toDate,setToDate]=useState<Date>(new Date())
     const [Search,setSearch]=useState('')
 
+    useEffect(()=>{
+        handleSearch();
+    },[])
+
+    const handleSearch=()=>{
+        saleinertmo
+    }
     return(
         <div> Testing</div>
     )
