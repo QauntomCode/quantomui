@@ -20,3 +20,6 @@ export const InsertSale = async (
   var res = QuantomPOST<VmSale>(url, true, sale, "LOADING");
   return res;
 };
+
+
+export const SaleGetAll=(fromDate?:Date,toDate?:Date,)=>{}
