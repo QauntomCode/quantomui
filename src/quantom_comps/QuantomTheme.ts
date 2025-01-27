@@ -29,7 +29,7 @@ const QuantomTheme = createTheme({
     palette: {
       primary: {
         main:  "#A16EFF", // changed
-        dark: '#323259',
+        dark: '#FFB925',
         contrastText: '#FFFFFF',// CHANGED QuantomColors.SelectedElementTextColor,
         light:'#FF70B2',
       
@@ -45,9 +45,12 @@ const QuantomTheme = createTheme({
       },
       text: {
         primary:  "#FFFFFF",
-        secondary:'#FFFFFF'
+        secondary:'#FFFFFF',
       },
+      
+      
     },
+    
 
   }
 );
