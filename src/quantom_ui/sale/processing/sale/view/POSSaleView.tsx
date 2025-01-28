@@ -568,7 +568,7 @@ export const POSSaleBills=(props?:POSSaleBillsProps)=>{
     },[])
 
     const handleSearch=()=>{
-        saleinertmo
+        // saleinertmo
     }
     return(
         <div> Testing</div>
