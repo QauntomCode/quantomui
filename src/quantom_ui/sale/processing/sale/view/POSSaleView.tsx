@@ -10,8 +10,8 @@ import { SetupFromGetAll } from "../../../../inventory/config/unit/impl/setupFor
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { SetupFormModel } from "../../../../inventory/config/unit/model/setupFormModel";
 import { BorderBottom, Category, Padding } from "@mui/icons-material";
-import { Box, Dialog, DialogContent, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
-import { Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
+import { Box, Dialog, DialogContent, DialogTitle, Paper, PopoverPaper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
+import { Quantom_Button, Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
 import { isNullOrEmpty, safeParseToNumber } from "../../../../../CommonMethods";
 import { CommonCodeName } from "../../../../../database/db";
 import { InventoryItemsModel } from "../../../../inventory/config/item/model/InventoryItemsModel";
@@ -24,23 +24,23 @@ import { InsertSale } from "../impl/SaleImpl";
 import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 import { CustomersGetCodeNameMethod } from "../../../config/customer/impl/CustomerImpl";
 import { BlobOptions } from "buffer";
+import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Date";
+import dayjs from "dayjs";
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
+const POS_CASH_CUSTOMER_VALUE_KEY="POS_CASH_CUSTOMER_VALUE_KEY";
+
 export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
 
-    const [showCustomerDialog,setShowCustomerDialog]=useState(false)
-    const [catCode,setCatCode]=useState<string>()
-    const [cashCustomer,setCashCustomer]=useState<string>('')
+    
+    
+    
     const fullState= useSelector((state?:any)=>(full_component_state(state,props?.UniqueId??"")));
     const isList= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEM_VIEW_TYPE)) ==='LIST'
-    const categories= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY)) 
-    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
-
-    const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
-    const disAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.Sale?.ExtraDiscount??0)
-    const netAmount= grossAmount-disAmount;
-    const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
+   
+    
+    
 
     useEffect(()=>{
         handleLoadCashCustomer()
@@ -48,7 +48,8 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
 
     const handleLoadCashCustomer=async()=>{
        let res= await GetSingleSetting(AccountSettings.sale_cash_customer)
-       setCashCustomer(res?.DefaultValue??"");
+       //setCashCustomer(res?.DefaultValue??"");
+       store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_CASH_CUSTOMER_VALUE_KEY,Data:res?.DefaultValue??""}}));
     }
     useEffect(()=>{
         if(fullState?.IsFirstUseEffectCall){
@@ -61,6 +62,7 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
             }
          })
 
+         handleLoadCashCustomer();
          handleCategories();
         }
     },[fullState?.IsFirstUseEffectCall])
@@ -71,6 +73,40 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
         store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY,Data:categories}}));
         return Promise.resolve(categories)
     }
+
+    
+    return(
+        <>
+          {
+            isList?(
+                <POSBillList uniqueId={props?.UniqueId} />
+                
+            ):(
+                <POSBillView {...props}/>
+            )
+          }
+          
+        </>
+    )
+}
+
+
+
+export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
+    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+    const categories= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY)) 
+
+    const [showCustomerDialog,setShowCustomerDialog]=useState(false)
+    const [catCode,setCatCode]=useState<string>()
+    const cashCustomer=useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_CASH_CUSTOMER_VALUE_KEY));
+
+
+    
+
+    const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
+    const disAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.Sale?.ExtraDiscount??0)
+    const netAmount= grossAmount-disAmount;
+    const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
 
     const handleAddItem=async(workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
         
@@ -98,13 +134,10 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
         }
 
     }
-
-    
-    
     const theme= useTheme();
     return(
-        <>
-        <QuantomDialog open={showCustomerDialog} onClosePress={()=>{setShowCustomerDialog(false)}} heading="Customers List">
+      <>
+       <QuantomDialog open={showCustomerDialog} onClosePress={()=>{setShowCustomerDialog(false)}} heading="Customers List">
             <POSCustomerControlRenderer onSelection={(cust)=>{
                 props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:cust?.Code,CustName:cust?.Name}})
                 setShowCustomerDialog(false);
@@ -152,7 +185,10 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
                                     iconColor={theme.palette.secondary.main}/>
                         </div>
                         <div className="col-md-2">
-                            <POSActionButton buttonType='LIST' label="List" iconName="FactCheckOutlined" 
+                            <POSActionButton onClick={()=>{
+
+                               store.dispatch( add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}}))
+                            }} buttonType='LIST' label="List" iconName="FactCheckOutlined" 
                                             iconColor={theme.palette.secondary.main}/>
                         </div>
                       
@@ -195,6 +231,43 @@ export const POSSaleView=(props?:MenuComponentProps<VmSale>)=>{
             </div>
             
         </div>
+      </>
+    )
+
+}
+
+
+interface POSBillListProps{
+    uniqueId?:string;
+}
+
+export const POSBillList=(props?:POSBillListProps)=>{
+
+    const [fromDate,setFromDate]=useState(new Date());
+    const [toDate,setToDate]=useState(new Date());
+    const [search,setSearch] =useState<String>('')
+    return(
+        <>
+          <Quantom_Grid container  spacing={.5} size={{xs:12}}>
+               <Quantom_Grid container size={{xs:12}}>
+                  <Quantom_Grid item size={{md:2}}>
+                     <POSActionButton iconName="LocalHospitalOutlined" label="Add New"/>
+                  </Quantom_Grid>
+                  <Quantom_Grid item  size={{md:2}}>
+                    <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)}/>
+                  </Quantom_Grid>
+                  <Quantom_Grid item size={{md:2}}>
+                    <QUANTOM_Date  label ="To Date" value={dayjs(toDate)}/>
+                  </Quantom_Grid>
+                  <Quantom_Grid item size={{md:5}}>
+                    <Quantom_Input  label ="Search" value={search}/>
+                  </Quantom_Grid>
+                  <Quantom_Grid item size={{md:1}}>
+                     <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search"/>
+                  </Quantom_Grid>
+                  
+               </Quantom_Grid>
+          </Quantom_Grid>
         </>
     )
 }
@@ -558,7 +631,7 @@ export interface POSSaleBillsProps{
      onBillSelection?:(billNo?:string)=>void;
 }
 
-export const POSSaleBills=(props?:POSSaleBillsProps)=>{
+export const POSSaleBillList=(props?:POSSaleBillsProps)=>{
     const [fromDate,setFromDate]=useState<Date>(new Date())
     const [toDate,setToDate]=useState<Date>(new Date())
     const [Search,setSearch]=useState('')
