@@ -1,14 +1,18 @@
 import { isNullOrEmpty } from "../../../../../CommonMethods";
 import {
+  HTTP_RESPONSE_TYPE,
   HttpResponse,
+  QuantomGET,
   QuantomPOST,
 } from "../../../../../HTTP/QuantomHttpMethods";
+import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
+import { SaleModel } from "../model/SaleModel";
 import { VmSale } from "../model/VmSaleModel";
 
 const SALE_INSERT_URL = "Sale/Sale/Insert";
 const SALE_UPDATE_URL = "Sale/Sale/update";
 const SALE_DELETE_URL = "Sale/Sale/delete";
-const SALE_GET_ALL_URL = "Sale/Sale/getAll";
+const SALE_GET_ALL_URL = "Sale/Sale/getAllV1";
 const SALE_GET_ONE_URL = "Sale/Sale/getOne";
 export const InsertSale = async (
   sale?: VmSale
@@ -22,4 +26,26 @@ export const InsertSale = async (
 };
 
 
-export const SaleGetAll=(fromDate?:Date,toDate?:Date,)=>{}
+export const SaleGetAll=async(fromDate?:Date,toDate?:Date,search?:string,locId?:string):Promise<SaleModel[]>=>{
+
+   let md:SaleGetAllQuery={FromDate:fromDate,ToDate:toDate,Search:search,LocId:locId}
+   let res= await QuantomPOST<SaleModel[]>(SALE_GET_ALL_URL,true,md);
+   if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+      return res?.Response??[];
+   }
+   else{
+      ShowQuantomError({MessageHeader:"Error",MessageBody:res?.ErrorMessage})
+   }
+
+   return res?.Response??[]
+    
+
+}
+
+export interface SaleGetAllQuery{
+  FromDate?:Date;
+  ToDate?:Date;
+  Search?:string;
+  LocId?:string;
+}
+

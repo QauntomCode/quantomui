@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import { useSelector } from "react-redux";
-import { HideLoadingDialog, IconByName, MenuComponentProps, QuantomConfirmationDialog, QuantomErrorDialog, setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { HideLoadingDialog, IconByName, MenuComponentProps, QuantomConfirmationDialog,  setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { VMInventoryItemsModel } from "../../model/VMInventory_itemsModel";
 import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
 import React, { useEffect } from "react";
@@ -403,7 +403,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
     return(
         <>
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-        <QuantomErrorDialog Open={openEerrorMessage} MessageHeader="Error" MessageBody={errorMessage} onClosePress={()=>{setOpenErrorMessage(false)}} />
+        
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){

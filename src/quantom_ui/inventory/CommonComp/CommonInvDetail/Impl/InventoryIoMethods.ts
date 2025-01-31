@@ -29,6 +29,9 @@ export const AddOrRemoveInventoryItem = async (
   if (res.ResStatus === HTTP_RESPONSE_TYPE.SUCCESS) {
     return res.Response;
   }
+  else{
+    return Promise.resolve({InventoryDTO:query?.OldItems,Message:res?.ErrorMessage??"Some Thing Invalid Happen"})
+  }
 };
 
 export const AddOrRemoveExtendedMethod = async (
@@ -53,5 +56,6 @@ export const AddOrRemoveExtendedMethod = async (
   };
 
   let res = await AddOrRemoveInventoryItem(q);
+  
   return res;
 };

@@ -9,7 +9,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { SetupFromGetAll } from "../../../../inventory/config/unit/impl/setupFormImp";
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { SetupFormModel } from "../../../../inventory/config/unit/model/setupFormModel";
-import { BorderBottom, Category, Padding } from "@mui/icons-material";
+import { BorderBottom, Category, Padding, Today } from "@mui/icons-material";
 import { Box, Dialog, DialogContent, DialogTitle, Paper, PopoverPaper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
 import { Quantom_Button, Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
 import { isNullOrEmpty, safeParseToNumber } from "../../../../../CommonMethods";
@@ -20,12 +20,14 @@ import { AddOrRemoveExtendedMethod } from "../../../../inventory/CommonComp/Comm
 import { CommonInvDetailModel, InventoryAction } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
 import { AccountSettings, GetSingleSetting } from "../../../../../Config/Settings/SettingsImp";
-import { InsertSale } from "../impl/SaleImpl";
+import { InsertSale, SaleGetAll } from "../impl/SaleImpl";
 import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 import { CustomersGetCodeNameMethod } from "../../../config/customer/impl/CustomerImpl";
 import { BlobOptions } from "buffer";
 import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
+import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
+import { SaleModel } from "../model/SaleModel";
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
@@ -126,7 +128,7 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
         })
 
         if(!isNullOrEmpty(res?.Message)){
-            alert(res?.Message)
+            ShowQuantomError({MessageHeader:"Error !", MessageBody:res?.Message})
         }
         else{
        
@@ -245,27 +247,72 @@ export const POSBillList=(props?:POSBillListProps)=>{
 
     const [fromDate,setFromDate]=useState(new Date());
     const [toDate,setToDate]=useState(new Date());
-    const [search,setSearch] =useState<String>('')
+    const [search,setSearch] =useState<string>('');
+    const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.uniqueId??"",POS_SALE_LOCID_KEY))) as string;
+
+    const SALE_DATA_KEY="SALE_LIST_DATA"
+    const listData= useSelector((state?:any)=>get_helperData_by_key(state,props?.uniqueId??"",SALE_DATA_KEY)) as SaleModel[];
+    const theme= useTheme();
+    const font= useQuantomFonts();
     return(
         <>
           <Quantom_Grid container  spacing={.5} size={{xs:12}}>
                <Quantom_Grid container size={{xs:12}}>
                   <Quantom_Grid item size={{md:2}}>
-                     <POSActionButton iconName="LocalHospitalOutlined" label="Add New"/>
+                     <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+                        store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
+                     }}/>
                   </Quantom_Grid>
                   <Quantom_Grid item  size={{md:2}}>
-                    <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)}/>
+                    <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)} onChange={(date,ctc)=>{setFromDate(date?.toDate()??new Date())}}/>
                   </Quantom_Grid>
                   <Quantom_Grid item size={{md:2}}>
-                    <QUANTOM_Date  label ="To Date" value={dayjs(toDate)}/>
+                    <QUANTOM_Date  label ="To Date" value={dayjs(toDate)} onChange={(date,ctc)=>{setToDate(date?.toDate()??new Date())}}/>
                   </Quantom_Grid>
                   <Quantom_Grid item size={{md:5}}>
-                    <Quantom_Input  label ="Search" value={search}/>
+                    <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
                   </Quantom_Grid>
                   <Quantom_Grid item size={{md:1}}>
-                     <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search"/>
+                     <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
+                        let res = await SaleGetAll(fromDate,toDate,search,locId);
+                        store.dispatch(add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:SALE_DATA_KEY,Data:res}}))
+                     }}/>
                   </Quantom_Grid>
                   
+               </Quantom_Grid>
+
+               <Quantom_Grid container size={{xs:12}} component={Paper} spacing={2} sx={{padding:"20px"}}>
+                  {listData?.map((item,index)=>{
+                    // alert(item?.CustName)
+                     return(
+                        <Quantom_Grid sx={{FontFamily:font.HeaderFont,fontSize:font.RegularFont,backgroundColor:theme.palette?.background.default,padding:"8px",borderRadius:'8px'}} 
+                        size={{xs:12,sm:12,md:6,lg:4,xl:3}}> 
+                        <div style={{display:'flex',borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}>
+                            <div style={{fontWeight:'bold',fontSize:font.H4FontSize,display:'flex',alignItems:'center',flex:1}}>
+                                
+                                <div style={{marginRight:"8px"}}>
+                                    <IconByName iconName="BrandingWatermarkOutlined"/>
+                                </div>
+                                    {item?.BillNo}
+                            </div>
+                            <div style={{fontWeight:'bold',fontSize:font.H4FontSize,display:'flex',alignItems:'center',flex:1}}>
+                                
+                                <div style={{marginRight:"8px"}}>
+                                    <IconByName iconName="BrandingWatermarkOutlined"/>
+                                </div>
+                                    {dayjs(item?.BillDate).format('DD-MMM-YYYY') }
+                            </div>
+
+                          </div>
+                          <div style={{fontSize:font.H4FontSize,fontWeight:"bold",display:'flex',fontFamily:font.H3FontSize,alignItems:'center',marginTop:'5px'}}>
+                                 <div style={{marginRight:"8px"}}>
+                                    <IconByName iconName="PersonOutlineOutlined"/>
+                                </div>
+                            {item?.CustName}
+                          </div>
+                        </Quantom_Grid>
+                     )
+                  })}
                </Quantom_Grid>
           </Quantom_Grid>
         </>

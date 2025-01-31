@@ -41,6 +41,7 @@ import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
+import { QuantomErrorDialog } from './QuantomError';
 
 
 
@@ -251,9 +252,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
 
       
       <QUANTOM_Toast {...alertProps}/>
-      <QuantomErrorDialog Type='ERROR' Open={isShowAlert} MessageHeader='Error' MessageBody={alertProps?.message} onClosePress={()=>{
-        setIsShowAlert(false);
-      }}/>
+      <QuantomErrorDialog />
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
         fullState?.compSettings?.wWillHideToolbar?(<></>):(
@@ -646,82 +645,6 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
 //  }, (500));
   
 
-
-export interface QuantomErrorDialogProps{
-  MessageHeader?:string;
-  MessageBody?:string;
-  Open?:boolean;
-  onClosePress?:()=>void;
-  Type?:'ERROR'|'INFO'
-}
-
-
-
-
-export const QuantomErrorDialog=(props?:QuantomErrorDialogProps)=>{
-  const theme=useTheme();
-  const fonts= useQuantomFonts();
-  const [isFocused,setIsFocused]=React.useState(false)
-  const [isIconFocused,setIsIconFocused]=React.useState(false)
-
-   
-  React.useEffect(()=>{
-    if(props?.Open){
-      setTimeout(() => {
-        FocusOnControlByControlId('quantom_alert_button_id')  
-      }, (400));
-    }
-  },[props?.Open])
-  return(
-    <Dialog fullWidth open={props?.Open??true}>
-      <Quantom_Grid container>
-        <div style={{width:'100%',backgroundColor:theme.palette.error.main,display:'flex',
-          fontFamily:fonts?.HeaderFont, letterSpacing:1.5,fontWeight:600,fontSize:fonts.H3FontSize,flexDirection:"row",
-          paddingLeft:'10px',justifyContent:'center',alignItems:'center'
-        }}>
-          <div style={{flex:1,height:'42px'}} >
-            <div style={{marginRight:'10px', display:"flex" , alignItems:'center'}} >
-              {props?.Type==='INFO'?
-                (<IconByName iconName='LightbulbCircleTwoTone' color={theme?.palette?.text.secondary} fontSize='35'/>):
-                (<IconByName iconName='ErrorTwoTone' color={theme.palette.text.primary} fontSize='35px'/>)
-              }
-               {props?.MessageHeader}
-            </div>
-           
-            
-            </div>
-          {/* <div onMouseEnter={()=>{setIsIconFocused(true)}} onMouseLeave={()=>{setIsIconFocused(false)}} style={{marginRight:'10px'}}   onClick={props?.onClosePress}>
-            <IconByName iconName='HighlightOffTwoTone' color={isIconFocused?(theme?.palette?.secondary?.dark):(theme?.palette?.secondary?.light)} fontSize='22px'/>
-          </div> */}
-        </div>
-        <div style={{paddingTop:'5px',paddingBottom:'5px',paddingLeft:'5px',fontFamily:fonts.RegularFont,letterSpacing:1.5,fontSize:fonts.RegularFontSize}}>
-           {props?.MessageBody}
-        </div>
-
-        <div style={{display:'flex',marginBottom:'5px',width:'100%',justifyContent:'center',alignItems:'center',}}>
-            <button type='button' id='quantom_alert_button_id' 
-              onFocus={()=>(setIsFocused(true))} 
-              onBlur={()=>{setIsFocused(false)}} 
-              // tabIndex={0} 
-              onClick={props?.onClosePress} 
-              onMouseEnter={()=>{setIsFocused(true)}}
-              onMouseLeave={()=>{setIsFocused(false)}}
-              style={{borderRadius:'5px',backgroundColor:isFocused?(theme?.palette?.secondary?.dark):(theme?.palette?.secondary?.light)}} >
-              <div style={{display:'flex',justifyContent:'center'}}>
-               <IconByName fontSize='22px' iconName='HighlightOffTwoTone' />
-               <div style={{marginLeft:'20px', marginRight:'15px',fontWeight:'bold',fontFamily:fonts.HeaderFont,fontSize:fonts?.RegularFont}}>
-                  Ok
-               </div>
-               </div>
-            </button>
-        </div>
-        
-        
-       
-      </Quantom_Grid>
-    </Dialog>
-  )
-}
 
 
 
