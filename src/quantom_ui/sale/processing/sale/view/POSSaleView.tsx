@@ -304,12 +304,27 @@ export const POSBillList=(props?:POSBillListProps)=>{
                             </div>
 
                           </div>
-                          <div style={{fontSize:font.H4FontSize,fontWeight:"bold",display:'flex',fontFamily:font.H3FontSize,alignItems:'center',marginTop:'5px'}}>
+                          <div style={{fontSize:font.H4FontSize,fontWeight:"bold",display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
                                  <div style={{marginRight:"8px"}}>
                                     <IconByName iconName="PersonOutlineOutlined"/>
                                 </div>
                             {item?.CustName}
                           </div>
+                          <div style={{fontSize:"20px",fontWeight:"bold",display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
+                            <div style={{display:'flex',alignItems:'center',flex:1}}>
+                                 <div style={{marginRight:"8px",fontSize:font.H4FontSize,opacity:0.6}}>
+                                     Sale Amount :
+                                </div>
+                                {item?.TAmount}
+                            </div>
+                            <div style={{display:'flex',alignItems:'center',flex:1}}>
+                                 <div style={{marginRight:"8px",fontSize:font.H4FontSize,opacity:0.6}}>
+                                     Sale Amount :
+                                </div>
+                                {item?.TAmount}
+                            </div>
+                          </div>
+
                         </Quantom_Grid>
                      )
                   })}

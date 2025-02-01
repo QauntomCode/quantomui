@@ -17,6 +17,7 @@ import { SetupFormModel } from "../../../unit/model/setupFormModel";
 import { add_helper_data, add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
 import { InventoryItemsModel } from "../../model/InventoryItemsModel";
 import { BorderBottom, BorderLeft } from "@mui/icons-material";
+import { ShowQuantomError } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 
 export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
     // const theme= useTheme();
@@ -407,17 +408,14 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){
-                        // alert('hello')
                         setOPenConfirmation(false);
-
                         let res= await props?.responseClick?.();
                         if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
                             setOpenToast(true);
                             setToastMessage('Record Deleted Successfully...')
                         }
                         else{
-                            setOpenErrorMessage(true);
-                            setErrorMessage(res?.ErrorMessage??"");
+                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
                         }
                     }
                     if(props?.buttonType==='RESET'){
@@ -451,9 +449,9 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                             // success message
                         }
                         else if(res.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
-                            setOpenErrorMessage(true);
-                            setErrorMessage(res?.ErrorMessage??"");
                             HideLoadingDialog();
+                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
+                           
                         }
                         }
                         else{

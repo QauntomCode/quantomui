@@ -35,4 +35,5 @@ export interface SaleModel {
   Username?: string; // [NotMapped] in C#.
   IsCounterSale?: boolean; // Defaults to false in C#.
   TaxInfo?: TaxAggregationModel; // [NotMapped] in C#.
+  TAmount?: number;
 }
