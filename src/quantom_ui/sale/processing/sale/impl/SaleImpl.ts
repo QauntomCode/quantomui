@@ -1,3 +1,4 @@
+import { BlindOutlined } from "@mui/icons-material";
 import { isNullOrEmpty } from "../../../../../CommonMethods";
 import {
   HTTP_RESPONSE_TYPE,
@@ -25,6 +26,18 @@ export const InsertSale = async (
   return res;
 };
 
+
+export const SaleGetOne=async(billNo?:string):Promise<VmSale>=>{
+   let res= await QuantomGET<VmSale>(SALE_GET_ONE_URL+`?Code=${billNo}`,true);
+   if(res?.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
+     ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"})
+     return Promise?.resolve({})
+   }
+   else{
+      
+    return Promise.resolve(res?.Response??{})
+   }
+}
 
 export const SaleGetAll=async(fromDate?:Date,toDate?:Date,search?:string,locId?:string):Promise<SaleModel[]>=>{
 

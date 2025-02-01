@@ -10,7 +10,7 @@ import { SetupFromGetAll } from "../../../../inventory/config/unit/impl/setupFor
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { SetupFormModel } from "../../../../inventory/config/unit/model/setupFormModel";
 import { BorderBottom, Category, Padding, Today } from "@mui/icons-material";
-import { Box, Dialog, DialogContent, DialogTitle, Paper, PopoverPaper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
+import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton, Paper, PopoverPaper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
 import { Quantom_Button, Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
 import { isNullOrEmpty, safeParseToNumber } from "../../../../../CommonMethods";
 import { CommonCodeName } from "../../../../../database/db";
@@ -20,7 +20,7 @@ import { AddOrRemoveExtendedMethod } from "../../../../inventory/CommonComp/Comm
 import { CommonInvDetailModel, InventoryAction } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
 import { AccountSettings, GetSingleSetting } from "../../../../../Config/Settings/SettingsImp";
-import { InsertSale, SaleGetAll } from "../impl/SaleImpl";
+import { InsertSale, SaleGetAll, SaleGetOne } from "../impl/SaleImpl";
 import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 import { CustomersGetCodeNameMethod } from "../../../config/customer/impl/CustomerImpl";
 import { BlobOptions } from "buffer";
@@ -103,12 +103,23 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
     const cashCustomer=useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_CASH_CUSTOMER_VALUE_KEY));
 
 
-    
 
     const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
     const disAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.Sale?.ExtraDiscount??0)
     const netAmount= grossAmount-disAmount;
     const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
+
+    const billNo= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SELECTED_BILL_NO_HELPER_DATA_KEY)));
+    useEffect(()=>{
+        handleGetOneBillNo();
+    },[billNo])
+
+    const handleGetOneBillNo=async()=>{
+        if(billNo){
+            let res= await SaleGetOne(billNo);
+            props?.setState?.({...res})
+        }
+    }
 
     const handleAddItem=async(workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
         
@@ -132,11 +143,12 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
         }
         else{
        
-        props?.setState?.({...props?.state,SaleDetails:[...res?.InventoryDTO?.InventoryList??[]],TaxDetail:[...res?.InventoryDTO?.InventoryIOTaxList??[]]})
+            props?.setState?.({...props?.state,SaleDetails:[...res?.InventoryDTO?.InventoryList??[]],TaxDetail:[...res?.InventoryDTO?.InventoryIOTaxList??[]]})
         }
 
     }
     const theme= useTheme();
+    const fonts= useQuantomFonts();
     return(
       <>
        <QuantomDialog open={showCustomerDialog} onClosePress={()=>{setShowCustomerDialog(false)}} heading="Customers List">
@@ -145,92 +157,121 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
                 setShowCustomerDialog(false);
             }} />
         </QuantomDialog>
+        
         <div className="row g-2">
-            <div className="col-md-7" style={{height:'100vh',display:'flex',flexDirection:'column',flexGrow:1}}>
-                <div className="row g-2" style={{overflowY: 'auto',overflowX:'hidden',flexGrow:1}}>
-                    
-                    <div className="col-md-3">
-                        <POSCategoriesRenderer selectedCategory={catCode} onSelected={(code)=>{
-                            setCatCode(code)
-                        }} categories={categories} />
+           
+                <div className="col-md-7" >
+                    <div className="row g-2" style={{marginBottom:'5px'}}>
+                        <Quantom_Grid container component={Paper} spacing={2} sx={{padding:'8px',fontFamily:fonts.HeaderFont}}>
+                            <Quantom_Grid size={{md:8}} sx={{backgroundColor:theme.palette.background.default,padding:'5px',fontSize:fonts.H4FontSize,display:"flex",alignItems:'center',borderRadius:'5px'}}>
+                                <div style={{marginRight:'5px'}}>
+                                    <IconByName iconName="PermIdentityOutlined"></IconByName>
+                                </div>
+                                {props?.state?.Sale?.CustName??"Cash Customer"}
+                            </Quantom_Grid>
+                            <Quantom_Grid size={{md:2}} sx={{backgroundColor:theme.palette.background.default,padding:'5px',fontSize:fonts.H4FontSize,display:"flex",alignItems:'center',borderRadius:'5px'}}>
+                                <div style={{marginRight:"8px"}}>
+                                                    <IconByName iconName="DateRangeOutlined"/>
+                                                </div>
+                                                    {dayjs(props?.state?.Sale?.BillDate?? new Date()).format('DD-MMM-YYYY') }
+                            </Quantom_Grid>
+                            <Quantom_Grid size={{md:2}} sx={{backgroundColor:theme.palette.background.default,padding:'5px',fontSize:fonts.H4FontSize,display:"flex",alignItems:'center',borderRadius:'5px'}}>
+                                <div style={{marginRight:"8px"}}>
+                                                    <IconByName iconName="DateRangeOutlined"/>
+                                                </div>
+                                                    {props?.state?.Sale?.BillNo}
+                            </Quantom_Grid>
+
+                        </Quantom_Grid>
                     </div>
-                    <div className="col-md-9" style={{backgroundColor:theme?.palette?.background.paper}}>
-                        <PosItemsRenderer OnItemClick={(item)=>{handleAddItem({ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:4}} />
+                        
+                    <div style={{display:'flex',flexDirection:'column',height:'100vh'}}>
+                        <div className="row g-2" style={{overflowY: 'auto',overflowX:'hidden',flexGrow:1,marginBottom:'80px',paddingBottom:'8px'}}>
+                            
+                            <div className="col-md-3">
+                                <POSCategoriesRenderer selectedCategory={catCode} onSelected={(code)=>{
+                                    setCatCode(code)
+                                }} categories={categories} />
+                            </div>
+                            <div className="col-md-9" style={{backgroundColor:theme?.palette?.background.paper}}>
+                                <PosItemsRenderer OnItemClick={(item)=>{handleAddItem({ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:4}} />
+                            </div>
+                        </div>
+                        <div style={{bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',position:'sticky'}}>
+                            <div className="row g-1" style={{marginBottom:'10px'}}>
+                                <div className="col-md-2">
+                                    <POSActionButton  label="Customer" iconName="FactCheckOutlined" onClick={()=>{setShowCustomerDialog(true)}} 
+                                                    iconColor={theme.palette.secondary.main}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <POSActionButton buttonType='SAVE' responseClick={async()=>{
+                                        let nSate:VmSale={...props?.state,Sale:{...props?.state?.Sale,LocId:locid,CustCode:props?.state?.Sale?.CustCode??cashCustomer,BillDate:props?.state?.Sale?.BillDate??new Date()}}
+                                        let res=await InsertSale(nSate) 
+                                        if(res?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
+                                            props?.setState?.({});
+                                        }
+                                        return Promise.resolve(res)
+
+                                    }} label="Save" iconName="SaveOutlined"
+                                            iconColor={theme.palette.secondary.main}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <POSActionButton buttonType='LIST' label="List" iconName="FactCheckOutlined" 
+                                                    iconColor={theme.palette.secondary.main}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <POSActionButton onClick={()=>{
+                                        props?.setState?.({})
+                                    }}  label="Reset" buttonType='RESET' iconName="PermIdentityOutlined" 
+                                            iconColor={theme.palette.secondary.main}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <POSActionButton onClick={()=>{
+
+                                    store.dispatch( add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}}))
+                                    }} buttonType='LIST' label="List" iconName="FactCheckOutlined" 
+                                                    iconColor={theme.palette.secondary.main}/>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div style={{bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px'}}>
-                <div className="row g-1" style={{marginBottom:'30px'}}>
-                        <div className="col-md-2">
-                            <POSActionButton  label="Customer" iconName="FactCheckOutlined" onClick={()=>{setShowCustomerDialog(true)}} 
-                                            iconColor={theme.palette.secondary.main}/>
-                        </div>
-                        <div className="col-md-2">
-                            <POSActionButton buttonType='SAVE' responseClick={async()=>{
-                                let nSate:VmSale={...props?.state,Sale:{...props?.state?.Sale,LocId:locid,CustCode:props?.state?.Sale?.CustCode??cashCustomer,BillDate:props?.state?.Sale?.BillDate??new Date()}}
-                                 let res=await InsertSale(nSate) 
-                                 if(res?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
-                                    props?.setState?.({});
-                                 }
-                                 return Promise.resolve(res)
+                <div className="col-md-5" style={{height:'100vh',display:'flex',flexDirection:'column',flexGrow:1}}>
+                    <div style={{overflowY: 'auto',flexGrow: 1}}>
+                            <SoldItemsRenderer baseProps={props} onEditItem={(item)=>{
+                            handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
+                            }} onDeleteItem={(item)=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}/>
+                    </div>
 
-                            }} label="Save" iconName="SaveOutlined"
-                                    iconColor={theme.palette.secondary.main}/>
+                    <div style={{position: 'sticky',bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',marginTop:'30px'}}>
+                        <div className="row g-1">
+                            <div className="col-md-5">
+                                <Quantom_Input label="Gross Am" value={grossAmount}/>
+                            </div>
+                            <div className="col-md-2">
+                                <Quantom_Input label="Dis" value={disAmount}/>
+                            </div>
+                            <div className="col-md-5">
+                                <Quantom_Input label="Net Amount" value={netAmount}/>
+                            </div>
                         </div>
-                        <div className="col-md-2">
-                            <POSActionButton buttonType='LIST' label="List" iconName="FactCheckOutlined" 
-                                            iconColor={theme.palette.secondary.main}/>
+                        <div className="row g-1" style={{}}>
+                            <div className="col-md-6">
+                                <Quantom_Input label="Received" value={props?.state?.Sale?.TotalReceived} onChange={(e)=>{
+                                    props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,TotalReceived:safeParseToNumber(e.target?.value)}})
+                                }}/>
+                            </div>
+                            <div className="col-md-6">
+                                <Quantom_Input label="Balance" value={balance}/>
+                            </div>
                         </div>
-                        <div className="col-md-2">
-                            <POSActionButton onClick={()=>{
-                                  props?.setState?.({})
-                            }}  label="Reset" buttonType='RESET' iconName="PermIdentityOutlined" 
-                                    iconColor={theme.palette.secondary.main}/>
-                        </div>
-                        <div className="col-md-2">
-                            <POSActionButton onClick={()=>{
-
-                               store.dispatch( add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}}))
-                            }} buttonType='LIST' label="List" iconName="FactCheckOutlined" 
-                                            iconColor={theme.palette.secondary.main}/>
-                        </div>
-                      
                         
                     </div>
-                </div>
-            </div>
-            <div className="col-md-5" style={{height:'100vh',display:'flex',flexDirection:'column',flexGrow:1}}>
-                <div style={{overflowY: 'auto',flexGrow: 1}}>
-                        <SoldItemsRenderer baseProps={props} onEditItem={(item)=>{
-                        handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
-                        }} onDeleteItem={(item)=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}/>
-                </div>
-
-                <div style={{position: 'sticky',bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',marginTop:'30px'}}>
-                    <div className="row g-1">
-                        <div className="col-md-5">
-                            <Quantom_Input label="Gross Am" value={grossAmount}/>
-                        </div>
-                        <div className="col-md-2">
-                            <Quantom_Input label="Dis" value={disAmount}/>
-                        </div>
-                        <div className="col-md-5">
-                            <Quantom_Input label="Net Amount" value={netAmount}/>
-                        </div>
-                    </div>
-                    <div className="row g-1" style={{}}>
-                        <div className="col-md-6">
-                            <Quantom_Input label="Received" value={props?.state?.Sale?.TotalReceived} onChange={(e)=>{
-                                props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,TotalReceived:safeParseToNumber(e.target?.value)}})
-                            }}/>
-                        </div>
-                        <div className="col-md-6">
-                            <Quantom_Input label="Balance" value={balance}/>
-                        </div>
-                    </div>
                     
                 </div>
-                
-            </div>
+       
             
         </div>
       </>
@@ -257,9 +298,11 @@ export const POSBillList=(props?:POSBillListProps)=>{
     return(
         <>
           <Quantom_Grid container  spacing={.5} size={{xs:12}}>
+            
                <Quantom_Grid container size={{xs:12}}>
                   <Quantom_Grid item size={{md:2}}>
                      <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+                        store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                      }}/>
                   </Quantom_Grid>
@@ -298,7 +341,7 @@ export const POSBillList=(props?:POSBillListProps)=>{
                             <div style={{fontWeight:'bold',fontSize:font.H4FontSize,display:'flex',alignItems:'center',flex:1}}>
                                 
                                 <div style={{marginRight:"8px"}}>
-                                    <IconByName iconName="BrandingWatermarkOutlined"/>
+                                    <IconByName iconName="DateRangeOutlined"/>
                                 </div>
                                     {dayjs(item?.BillDate).format('DD-MMM-YYYY') }
                             </div>
@@ -311,17 +354,24 @@ export const POSBillList=(props?:POSBillListProps)=>{
                             {item?.CustName}
                           </div>
                           <div style={{fontSize:"20px",fontWeight:"bold",display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
-                            <div style={{display:'flex',alignItems:'center',flex:1}}>
-                                 <div style={{marginRight:"8px",fontSize:font.H4FontSize,opacity:0.6}}>
-                                     Sale Amount :
+                            <div style={{display:'flex',alignItems:'center',flex:1,fontSize:'16px'}}>
+                                 <div style={{marginRight:"8px",opacity:0.6}}>
+                                     Sale Amount:
                                 </div>
                                 {item?.TAmount}
                             </div>
-                            <div style={{display:'flex',alignItems:'center',flex:1}}>
-                                 <div style={{marginRight:"8px",fontSize:font.H4FontSize,opacity:0.6}}>
-                                     Sale Amount :
-                                </div>
-                                {item?.TAmount}
+                            <div style={{display:'flex',alignItems:'center',flex:1,marginLeft:'8px'}}>
+                                 <Button 
+                                    onClick={()=>{
+                                        store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:item?.BillNo}})))
+                                        store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
+                                    }}
+                                    style={{border:`1px solid ${theme.palette.primary.main}`,width:'100%',fontFamily:font.HeaderFont,fontWeight:'bold',color:theme.palette.secondary.main ,display:'flex',justifyContent:'center',alignItems:'center'   }}>
+                                    View   
+                                    <div style={{marginLeft:'10px'}}>
+                                     <IconByName iconName="EastOutlined"/>
+                                    </div>
+                                 </Button>
                             </div>
                           </div>
 
@@ -743,3 +793,4 @@ export const QuantomDialog=(props?:QuantomDialogProps)=>{
 
 
 export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"
+export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_DATA_KEY"
