@@ -23,6 +23,8 @@ import { InventoryIODTOModel } from "../../../../inventory/CommonComp/CommonInvD
 import { QUANTOM_Table } from "../../../../account/config/mainAccount/view/MainAccountView";
 import { ShowSingleSelectedItemDialog } from "../../../../sale/processing/sale/view/POSSaleView";
 import { SupplierGetCodeNameMethod } from "../../../Config/Supplier/customer/impl/SuppierImpl";
+import { PurchaseDeleteMethod, PurchaseGetOneMethod, PurchaseInsertMethod } from "../impl/PurchaseImp";
+import { BlindOutlined } from "@mui/icons-material";
 
 
 
@@ -85,8 +87,11 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
 
     const grossAmount= props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
-    const disAmount= props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.purchase?.ExtraDiscount??0)
-    const netAmount= grossAmount??0-disAmount??0;
+    const disAmount= safeParseToNumber((props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.purchase?.ExtraDiscount??0))
+     console.warn('discount amount is'+disAmount)
+     console.warn('Extra discount is'+props?.state?.purchase?.ExtraDiscount)
+
+    const netAmount= safeParseToNumber(grossAmount??0)-safeParseToNumber(disAmount??0);
     const balance= (netAmount-(props?.state?.purchase?.PaidAmount??0))
 
     const billNo= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SELECTED_BILL_NO_HELPER_DATA_KEY)));
@@ -96,38 +101,11 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
     const handleGetOneBillNo=async()=>{
         if(billNo){
-            //let res= await SaleGetOne(billNo);
-            //props?.setState?.({...res})
+           let res = PurchaseGetOneMethod(billNo)
         }
     }
 
-    const handleAddItem=async(workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
-        
-        var oldItems= props?.state?.purchaseDetails??[];
-         var taxDetail:any= [];
-        let res= 
-        await AddOrRemoveExtendedMethod(oldItems,workingItem,InventoryAction.Sale,action,{
-            VendorCode:props?.state?.purchase?.SuppCode,
-            BillDate:new Date(),
-            LocId:locid,
-        }
-        ,taxDetail,{
-            BpCode:props?.state?.purchase?.SuppCode,
-            BpType:"SUPPLIER",
-            TaxForm:"PURCHASE",
-            EffectedDate:new Date(),
-            WillBypassTaxCaluclations:true,
-        })
-
-        if(!isNullOrEmpty(res?.Message)){
-            ShowQuantomError({MessageHeader:"Error !", MessageBody:res?.Message})
-        }
-        else{
-       
-            props?.setState?.({...props?.state,purchaseDetails:[...res?.InventoryDTO?.InventoryList??[]]})
-        }
-
-    }
+   
     const theme= useTheme();
     const fonts= useQuantomFonts();
     return(
@@ -137,13 +115,15 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                 <div className="row g-1" style={{marginTop:'10px',marginBottom:'10px'}}>
 
                 <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton label="Save" buttonType="SAVE"  iconName="SaveOutlined"/>
+                    <POSActionButton responseAfterMethod={(res?:VMPurchaseModel)=>{
+                       props?.setState?.({...res})
+                    }} label="Save" buttonType="SAVE"  iconName="SaveOutlined" responseClick={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locid}})}/>
                 </div>
                 <div className="col-sm-3 col-md-2 col-3">
                     <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.setState?.({})}} iconName="CancelPresentationOutlined"/>
                 </div>
                 <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined"/>
+                    <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined" responseClick={()=>PurchaseDeleteMethod(props?.state)}/>
                 </div>
                 <div className="col-sm-3 col-md-2 col-3">
                     <POSActionButton label="List" onClick={()=>{
@@ -478,6 +458,7 @@ interface POSBillListProps{
           <Quantom_Grid container  spacing={.5} size={{xs:12}}>
             
                <Quantom_Grid container size={{xs:12}}>
+                  THIS IS MY LIST
                   <Quantom_Grid item size={{md:2}}>
                      <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))

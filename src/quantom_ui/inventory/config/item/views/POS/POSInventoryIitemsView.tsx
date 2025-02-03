@@ -394,6 +394,7 @@ interface POSActionButtonProps{
   onClick?:()=>void;
   buttonType?:'SAVE'|'RESET'|'DELETE'|'LIST'
   responseClick?:()=>Promise<HttpResponse<any>>
+  responseAfterMethod?:(state?:any)=>void;
   backgroundColor?:string;
 }
 export const POSActionButton=(props?:POSActionButtonProps)=>{
@@ -446,7 +447,8 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                         if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
                             if(props.buttonType==='SAVE'){
                                 setOpenToast(true);
-                                setToastMessage('Record Saved Successfully...')
+                                setToastMessage('Record Saved Successfully...');
+                                props?.responseAfterMethod?.(res?.Response)
                             }
                             HideLoadingDialog();
                             // success message
