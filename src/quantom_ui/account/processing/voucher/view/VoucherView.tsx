@@ -249,12 +249,12 @@ export const GroupContainer=(props?:GroupContainerProps)=>{
     <Box 
         fullWidth 
         component={Paper}  
-        sx={{border:`.5px solid ${theme?.palette?.secondary?.main}`,paddingBottom:'8px',marginTop:'8px' }}>
-            <Box sx={{backgroundColor:theme?.palette?.secondary?.light,borderBottom:`.5px solid ${theme?.palette?.secondary?.main}`,padding:'2px 10px',fontFamily:fonts?.HeaderFont,
-               fontSize:'12px',fontWeight:'bold',letterSpacing:1.2,color:theme.palette.secondary.contrastText,borderTopLeftRadius:'5px',borderTopRightRadius:'5px'}}>
+        sx={{border:`.5px solid ${theme?.palette?.primary?.main}`,paddingBottom:'8px',marginTop:'15px' }}>
+            <Box sx={{backgroundColor:theme?.palette?.primary?.main,borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,padding:'2px 10px',fontFamily:fonts?.HeaderFont,
+               fontSize:'12px',fontWeight:'bold',letterSpacing:1.2,color:theme.palette.primary.contrastText,borderTopLeftRadius:'5px',borderTopRightRadius:'5px'}}>
                 {props?.Label}
             </Box>
-            <Box sx={{paddingLeft:'8px',paddingRight:'8px',height:props?.height??undefined,overflowY: props?.height?'scroll':undefined}}>
+            <Box sx={{paddingLeft:'8px',paddingRight:'8px',height:props?.height??undefined,overflowY: props?.height?'scroll':undefined,}}>
               {
                 props?.children
               }

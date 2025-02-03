@@ -660,24 +660,26 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
     <Dialog fullWidth open={props?.open??false} >
         <DialogContent>
             <div className="row g-1">
-                 <div className="col-md-4">
-                     <Quantom_Input label="Item Code" value={props?.item?.ItemCode}/>
-                 </div>
-                 <div className="col-md-8">
-                    <Quantom_Input label="Item Item Name" value={props?.item?.ItemName}/>
+                 
+                 <div className="col-md-12">
+                    <Quantom_Input size='medium' label="Item Name" value={props?.item?.ItemName}/>
                  </div>
             </div>
 
             <div className="row g-1">
-                 <div className="col-md-3">
+                 <div className="col-md-6">
                      <Quantom_Input label="Qty" value={qty} onChange={(e)=>{setQty(safeParseToNumber(e.target.value))}}/>
                  </div>
-                 <div className="col-md-4">
+            </div>
+            <div className="row g-1">
+                <div className="col-md-6">
                     <Quantom_Input label="Rate" value={rate} onChange={(e)=>{setRate(safeParseToNumber(e.target.value))}}/>
-                 </div>
-                 <div className="col-md-5">
+                </div>
+            </div>
+            <div className="row g-1">
+                <div className="col-md-6">
                     <Quantom_Input label="Amount" value={amount}/>
-                 </div>
+                </div>
             </div>
 
             <div className="row g-1" style={{marginTop:'16px'}}>
