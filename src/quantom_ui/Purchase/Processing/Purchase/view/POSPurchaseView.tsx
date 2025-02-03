@@ -22,6 +22,7 @@ import { GroupContainer } from "../../../../account/processing/voucher/view/Vouc
 import { InventoryIODTOModel } from "../../../../inventory/CommonComp/CommonInvDetail/Model/InventoryIODTOModel";
 import { QUANTOM_Table } from "../../../../account/config/mainAccount/view/MainAccountView";
 import { ShowSingleSelectedItemDialog } from "../../../../sale/processing/sale/view/POSSaleView";
+import { SupplierGetCodeNameMethod } from "../../../Config/Supplier/customer/impl/SuppierImpl";
 
 
 
@@ -40,15 +41,6 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
     
     
 
-    // useEffect(()=>{
-    //     handleLoadCashCustomer()
-    // },[])
-
-    // const handleLoadCashCustomer=async()=>{
-    //    let res= await GetSingleSetting(AccountSettings.sale_cash_customer)
-    //    //setCashCustomer(res?.DefaultValue??"");
-    //    store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_CASH_CUSTOMER_VALUE_KEY,Data:res?.DefaultValue??""}}));
-    // }
     useEffect(()=>{
         if(fullState?.IsFirstUseEffectCall){
           setFormBasicKeys<VMPurchaseModel>({
@@ -92,10 +84,10 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
 
 
-    const grossAmount= 0//props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
-    const disAmount= 0//props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.Sale?.ExtraDiscount??0)
-    const netAmount= 0//grossAmount-disAmount;
-    const balance= 0//(netAmount-(props?.state?.Sale?.TotalReceived??0))
+    const grossAmount= props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
+    const disAmount= props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0+(props?.state?.purchase?.ExtraDiscount??0)
+    const netAmount= grossAmount??0-disAmount??0;
+    const balance= (netAmount-(props?.state?.purchase?.PaidAmount??0))
 
     const billNo= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SELECTED_BILL_NO_HELPER_DATA_KEY)));
     useEffect(()=>{
@@ -169,12 +161,20 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                         }}/>
                     </div>
                     <div className="col-md-6">
-                        <Quantom_LOV label="Supplier"/>
+                    <Quantom_LOV1  uniqueKeyNo={props?.UniqueId??""}  selected={{Code:props?.state?.purchase?.SuppCode,
+                                                                                 Name:props?.state?.purchase?.SuppName}} 
+                                onChange={(item)=>{
+                                    // alert('onchage item is called')
+                                    props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,SuppCode:item?.Code,SuppName:item?.Name}})
+                                }} 
+                                keyNo="PURCHASE_SUPLIER_LOV_1" label="Supplier"  FillDtaMethod={SupplierGetCodeNameMethod} />
                     </div>
                 </div>
                 <div className="row g-2" style={{marginTop:'0px',paddingBottom:'10px',borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}>
                     <div className="col-md-12">
-                        <Quantom_Input label="Remarks" value={props?.state?.purchase?.Remarks} />
+                        <Quantom_Input label="Remarks" value={props?.state?.purchase?.Remarks} onChange={(e)=>{
+                            props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,Remarks:e?.target?.value}})
+                        }}/>
                     </div>
                 </div>
 
@@ -203,7 +203,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                           Total
                      </div>
                      <div className="col-md-6" style={{textAlign:'right'}} >
-                        1500
+                        {grossAmount}
                      </div>
                 </div>
                 <div className="row pt-1 pb-1 " style={{backgroundColor:theme?.palette?.background?.default,marginLeft:'0px', marginRight:'0px',
@@ -214,7 +214,9 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                           Discount
                      </div>
                      <div className="col-md-6" style={{textAlign:'right'}} >
-                         <input style={{width:'100%',
+                         <input value={props?.state?.purchase?.ExtraDiscount} onChange={(e)=>{
+                            props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,ExtraDiscount:safeParseToNumber(e?.target?.value)}})
+                         }} style={{width:'100%',
                                 border:`1px solid ${theme?.palette?.primary.main}`,fontFamily:fonts.HeaderFont,borderRadius:'5px',textAlign:'right',fontWeight:'bold',fontSize:'20px'}} />
                      </div>
                 </div>
@@ -226,7 +228,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                           Net Amount
                      </div>
                      <div className="col-md-6" style={{textAlign:'right'}} >
-                        1500
+                        {netAmount}
                      </div>
                 </div>
 
@@ -238,7 +240,9 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                           Paid
                      </div>
                      <div className="col-md-6" style={{textAlign:'right'}} >
-                         <input style={{width:'100%',
+                         <input value={props?.state?.purchase?.PaidAmount}
+                                onChange={(e)=>{props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,PaidAmount:safeParseToNumber(e.target?.value)}})}}
+                          style={{width:'100%',
                                 border:`1px solid ${theme?.palette?.primary.main}`,fontFamily:fonts.HeaderFont,borderRadius:'5px',textAlign:'right',fontWeight:'bold',fontSize:'20px'}} />
                      </div>
                 </div>
@@ -251,7 +255,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                           Balance
                      </div>
                      <div className="col-md-6" style={{textAlign:'right',fontSize:'40px',color:theme.palette.secondary.main}} >
-                        1500
+                        {balance}
                      </div>
                 </div>
             </div>

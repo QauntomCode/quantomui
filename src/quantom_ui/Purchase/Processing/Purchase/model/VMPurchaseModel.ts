@@ -21,6 +21,7 @@ export interface PurchaseModel {
   SuppBillDate?: Date; // Column(TypeName = "Date")
   DueDate?: Date; // Optional (nullable in C#)
   SuppCode?: string; // Optional
+  SuppName?: string;
   PONo?: string; // Optional
   Remarks?: string; // Optional
   Freight?: number; // double in C#

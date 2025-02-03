@@ -63,13 +63,12 @@ export const List=(props?:MenuComponentProps<VmSupplierModel>)=>{
     const handleGetAllSuppliers=async()=>{
      
      let res = await SupplierGetCodeNameMethod();
-     if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-        setAllCustomers([...res?.Response??[]]);
+        setAllCustomers([...res??[]]);
     
-        var topCust=  await JSON.parse(JSON.stringify(res?.Response));
+        var topCust=  await JSON.parse(JSON.stringify(res));
         setCustomers(topCust?.slice(0,100));
      }
-    }
+    
 
     
     const ApplyFilter=()=>{
