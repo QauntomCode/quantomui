@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useSelector } from "react-redux";
 import { PurchaseModel, VMPurchaseModel } from "../model/VMPurchaseModel";
-import { IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
 import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
@@ -23,8 +23,9 @@ import { InventoryIODTOModel } from "../../../../inventory/CommonComp/CommonInvD
 import { QUANTOM_Table } from "../../../../account/config/mainAccount/view/MainAccountView";
 import { ShowSingleSelectedItemDialog } from "../../../../sale/processing/sale/view/POSSaleView";
 import { SupplierGetCodeNameMethod } from "../../../Config/Supplier/customer/impl/SuppierImpl";
-import { PurchaseDeleteMethod, PurchaseGetOneMethod, PurchaseInsertMethod } from "../impl/PurchaseImp";
-import { BlindOutlined } from "@mui/icons-material";
+import { PurchaseDeleteMethod, PurchaseGetAll, PurchaseGetOneMethod, PurchaseInsertMethod } from "../impl/PurchaseImp";
+import { BlindOutlined, Today } from "@mui/icons-material";
+import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 
 
 
@@ -77,12 +78,8 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
 
  const POSBillView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
-    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
-    const categories= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY)) 
-
-    const [showCustomerDialog,setShowCustomerDialog]=useState(false)
-    const [catCode,setCatCode]=useState<string>()
-    const cashCustomer=useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_CASH_CUSTOMER_VALUE_KEY));
+    const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+    
 
 
 
@@ -101,7 +98,16 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
     const handleGetOneBillNo=async()=>{
         if(billNo){
-           let res = PurchaseGetOneMethod(billNo)
+            ShowLoadingDialog();
+           let res = await PurchaseGetOneMethod(billNo);
+           HideLoadingDialog();
+           if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+                props?.setState?.({...res?.Response})
+           }
+           else{
+              ShowQuantomError({MessageHeader:"Error !",MessageBody:res?.ErrorMessage})
+           }
+           
         }
     }
 
@@ -115,9 +121,13 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                 <div className="row g-1" style={{marginTop:'10px',marginBottom:'10px'}}>
 
                 <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton responseAfterMethod={(res?:VMPurchaseModel)=>{
-                       props?.setState?.({...res})
-                    }} label="Save" buttonType="SAVE"  iconName="SaveOutlined" responseClick={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locid}})}/>
+                    <POSActionButton 
+                        responseAfterMethod={(res?:VMPurchaseModel)=>{
+                                props?.setState?.({...res})
+                        }} 
+                        label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
+                        responseClick={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locId}})}
+                    />
                 </div>
                 <div className="col-sm-3 col-md-2 col-3">
                     <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.setState?.({})}} iconName="CancelPresentationOutlined"/>
@@ -159,10 +169,10 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                 </div>
 
                 <div className="row g-2 mt-2" >
-                <RenderItemGrid items={props?.state?.purchaseDetails} vendorType="SUPPLIER" locId={locid} fromName={InventoryAction.Purchase} formNameString="PURCHAES"
+                <RenderItemGrid items={props?.state?.purchaseDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Purchase} formNameString="PURCHAES"
                                     vendorCode={props?.state?.purchase?.SuppCode} onChange={(items)=>{
                     props?.setState?.({...props?.state,purchaseDetails:[...items??[]]})
-                }} basePrpos={props}/>
+                }} baseProps={props}/>
 
                 </div>
             </div>
@@ -251,7 +261,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
 
 export interface RenderItemGridProps{
-    basePrpos?:MenuComponentProps<VMPurchaseModel>
+    baseProps?:MenuComponentProps<VMPurchaseModel>
     fromName?:InventoryAction;
     vendorCode?:string;
     vendorType?:string;
@@ -328,9 +338,8 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
             
             <div className="row g-1">
                 <div className="col-md-6">
-                    <Quantom_LOV1 id={ITEM_CONTROL_ID} uniqueKeyNo={props?.basePrpos?.UniqueId??""}  selected={{Code:lineObj?.ItemCode,Name:lineObj?.ItemName}} 
+                    <Quantom_LOV1 id={ITEM_CONTROL_ID} uniqueKeyNo={props?.baseProps?.UniqueId??""}  selected={{Code:lineObj?.ItemCode,Name:lineObj?.ItemName}} 
                                 onChange={(item)=>{
-                                    // alert('onchage item is called')
                                     setLineObj({...lineObj,ItemCode:item?.Code,ItemName:item?.Name})
                                 }} 
                                 keyNo="PURCHASE_ALL_ITEMS" label="Item"  FillDtaMethod={GetActiveItemCodeName} />
@@ -449,8 +458,8 @@ interface POSBillListProps{
     const [search,setSearch] =useState<string>('');
     const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.uniqueId??"",POS_SALE_LOCID_KEY))) as string;
 
-    const SALE_DATA_KEY="SALE_LIST_DATA"
-    const listData= useSelector((state?:any)=>get_helperData_by_key(state,props?.uniqueId??"",SALE_DATA_KEY)) as PurchaseModel[];
+    const PURCHASE_DATA_KEY_RECORD="PURCHASE_DATA_KEY_RECORD"
+    const listData= useSelector((state?:any)=>get_helperData_by_key(state,props?.uniqueId??"",PURCHASE_DATA_KEY_RECORD)) as PurchaseModel[];
     const theme= useTheme();
     const font= useQuantomFonts();
     return(
@@ -458,7 +467,6 @@ interface POSBillListProps{
           <Quantom_Grid container  spacing={.5} size={{xs:12}}>
             
                <Quantom_Grid container size={{xs:12}}>
-                  THIS IS MY LIST
                   <Quantom_Grid item size={{md:2}}>
                      <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
@@ -476,8 +484,10 @@ interface POSBillListProps{
                   </Quantom_Grid>
                   <Quantom_Grid item size={{md:1}}>
                      <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
+                        let res = await PurchaseGetAll({FromDate:fromDate,ToDate:toDate,Search:search,LocId:locId});
+                        console.warn('this is my response',res);
                         // let res = await SaleGetAll(fromDate,toDate,search,locId);
-                        // store.dispatch(add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:SALE_DATA_KEY,Data:res}}))
+                        store.dispatch(add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:PURCHASE_DATA_KEY_RECORD,Data:res}}))
                      }}/>
                   </Quantom_Grid>
                   
@@ -516,7 +526,7 @@ interface POSBillListProps{
                           <div style={{fontSize:"20px",fontWeight:"bold",display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
                             <div style={{display:'flex',alignItems:'center',flex:1,fontSize:'16px'}}>
                                  <div style={{marginRight:"8px",opacity:0.6}}>
-                                     Sale Amount:
+                                     Purchase Amount:
                                 </div>
                                 {/* {item?.TAmount} */} 152000
                             </div>
