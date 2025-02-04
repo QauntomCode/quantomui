@@ -37,13 +37,14 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
 import { QuantomErrorDialog } from './QuantomError';
 import { POSSupplierView } from '../../../../quantom_ui/Purchase/Config/Supplier/customer/view/POSSupplierView';
 import { POSPurchaseView } from '../../../../quantom_ui/Purchase/Processing/Purchase/view/POSPurchaseView';
+import { POSCustomerReceiptView } from '../../../../quantom_ui/payments/customerReceipts/view/POSCustomerReceiptView';
 
 
 
@@ -890,6 +891,18 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCode:POS_PURCHASE_FORM_MENU_CODE,
     MenuCaption:'Purchase',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSPurchaseView{...props}/>)
+  },
+
+
+  {
+    MenuCode:POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE,
+    MenuCaption:'Supplier Payment',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSSupplierView{...props}/>)
+  },
+  {
+    MenuCode:POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,
+    MenuCaption:'Customer Receipt',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSCustomerReceiptView{...props}/>)
   },
 
 ]
