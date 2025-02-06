@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import {IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import {HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 
 import { useSelector } from "react-redux";
 import store, { full_component_state,  get_helperData_by_key, useQuantomFonts } from "../../../../redux/store";
@@ -10,27 +10,29 @@ import { add_helper_data_single_key } from "../../../../redux/reduxSlice";
 
 import { CustomerPaymentReceiptDtoModel, VmCustomerPaymentModel } from "../model/CustomerPaymentReceiptModel";
 import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, QuantomSwitch } from "../../../inventory/config/item/views/POS/POSInventoryIitemsView";
-import { Paper, useTheme } from "@mui/material";
+import { Box, Paper, useTheme } from "@mui/material";
 import { Quantom_Grid, Quantom_Input } from "../../../../quantom_comps/base_comps";
 import { QUANTOM_Date } from "../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
 import { Quantom_LOV1 } from "../../../../quantom_comps/Quantom_Lov";
 import { CustomersGetCodeNameMethod } from "../../../sale/config/customer/impl/CustomerImpl";
 import { safeParseToNumber } from "../../../../CommonMethods";
-import { CustomerPaymentReceiptDeleteMethod, CustomerPaymentReceiptGetAll, CustomerPaymentReceiptInsertMethod } from "../impl/CustomerPaymentImp";
+import { CustomerPaymentReceiptDeleteMethod, CustomerPaymentReceiptGetAll, CustomerPaymentReceiptGetOneMethod, CustomerPaymentReceiptInsertMethod } from "../impl/CustomerPaymentImp";
 import { POS_SALE_LOCID_KEY, POS_SELECTED_BILL_NO_HELPER_DATA_KEY } from "../../../sale/processing/sale/view/POSSaleView";
+import { HTTP_RESPONSE_TYPE } from "../../../../HTTP/QuantomHttpMethods";
+import { ShowQuantomError } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 
 export const POSCustomerReceiptView=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
 
     
     const fullState= useSelector((state?:any)=>(full_component_state(state,props?.UniqueId??"")));
     
-    const locid= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))
+    const locId= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))
     const isList= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_INVENTORY_ITEM_VIEW_TYPE)) ==='LIST'
-
+    
     useEffect(()=>{
-        props?.setState?.({...props?.state,master:{...props?.state?.master,LocId:locid}})
-    },[locid])
+        props?.setState?.({...props?.state,master:{...props?.state?.master,LocId:locId}})
+    },[locId])
 
     useEffect(()=>{
         if(fullState?.IsFirstUseEffectCall){
@@ -60,7 +62,7 @@ export const List=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
     const[fromDate,setFromDate]=useState(new Date())
     const [toDate,setToDate]=useState(new Date());
     const[search,setSearch]=useState('')
-     const locid= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))
+    const locId= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))
      const receiptData= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",CUSTOMER_DATA_LIST_RECORDS_KEY)) as  CustomerPaymentReceiptDtoModel[]
 
     const fonts= useQuantomFonts();
@@ -71,6 +73,7 @@ export const List=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
             <Quantom_Grid container size={{xs:12}} spacing={1} >
                     <Quantom_Grid item size={{md:2}}>
                         <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+                            props?.setState?.({});
                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                         }}/>
@@ -86,33 +89,68 @@ export const List=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
                     </Quantom_Grid>
                     <Quantom_Grid item size={{md:1}}>
                         <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
-                            let res= await CustomerPaymentReceiptGetAll(fromDate,toDate,locid)
+                            let res= await CustomerPaymentReceiptGetAll(fromDate,toDate,locId)
                              store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:CUSTOMER_DATA_LIST_RECORDS_KEY,Data:res}}))
                         }}/>
                     </Quantom_Grid>
                     
                 </Quantom_Grid>
 
-                <Quantom_Grid container spacing={1}>
+                 <div className="row m-1 " style={{zIndex:999,
+                  color:theme.palette.text.primary,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize }}>
                     {
                         receiptData?.map((item,index)=>{
                            return(
-                               <Quantom_Grid  sx={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,marginTop:'8px'}} 
-                                             size={{xs:12,sm:12,md:6,lg:4}} container component={Paper}>
-                                                
-                                    
-                                    <Quantom_Grid container sx={{display:'flex',justifycontent:'center'}}>
-                                        <IconByName iconName="PermIdentityOutlined"/>   
-                                        {item?.CustName}
-                                    </Quantom_Grid>
-                                    
-                                    
-                                </Quantom_Grid>
-                           )
+                                <div className="col-md-4 col-md-lg-4 col-md-xl-3 p-1 mb-2" style={{padding:'5px'}} >
+                                    <div className="col-md-12" style={{backgroundColor:theme?.palette?.background?.paper,}}>
+                                    <div className="col-12"  style={{display:'flex',alignItems:'center',borderBottom:`1px solid ${theme.palette.primary.main}`}}>
+                                        <div className="col-md-6" style={{display:'flex',alignItems:'center'}}>
+                                            <IconByName iconName="Grid3x3Outlined" />
+                                            <div style={{marginLeft:'10px'}}>{item?.Code}</div>
+                                        </div>
+                                        <div className="col-md-6" style={{display:'flex',alignItems:'center'}}>
+                                            <IconByName iconName="CalendarTodayOutlined" />
+                                            <div style={{marginLeft:'10px'}}>{dayjs(item?.ReceiptDate)?.format('DD-MMM-YYYY')}</div>
+                                        </div>
+                                    </div>
+                                    <div  className="col-md-12" style={{display:'flex',alignItems:'center'}}>
+                                        <IconByName iconName="PermIdentityOutlined" />
+                                        <div style={{marginLeft:'10px'}}>{item?.CustName}</div>
+                                    </div>
+
+                                    <div className="col-12"  style={{display:'flex',alignItems:'center'}}>
+                                        <div className="col-5" style={{display:'flex',alignItems:'center'}}>
+                                            <IconByName iconName="MoneyOutlined" />
+                                            <div style={{marginLeft:'10px'}}>{item?.TotalReceive}</div>
+                                        </div>
+                                        <div className="col-4" style={{display:'flex',alignItems:'center'}}>
+                                            <div style={{fontWeight:'bold'}}> Discount</div>
+                                            <div style={{marginLeft:'10px'}}>{item?.Discount}</div>
+                                        </div>
+                                        <div className="col-3" style={{display:'flex',alignItems:'center'}}>
+                                           <button onClick={()=>{
+                                              store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:item?.Code}})))
+                                              store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
+                                           }} style={{
+                                                            height:'100%',width:'100%',backgroundColor:theme.palette.primary.main,
+                                                            border:`1px solid ${theme.palette.text.primary}`,borderRadius:'5px',
+                                                            fontFamily:fonts.HeaderFont,fontWeight:'bold',
+                                                            color:theme?.palette?.text?.primary,
+                                                            marginRight:'10px'
+                                                            }}>
+                                               View 
+                                               <IconByName iconName="EastOutlined"/>
+                                           </button>
+                                        </div>
+                                    </div>
+
+                                    </div>
+                                  
+                                </div>
+                        )
                         })
                     }
-                </Quantom_Grid>
-
+                </div>
         </>
     )
 }
@@ -122,11 +160,27 @@ const CUSTOMER_DATA_LIST_RECORDS_KEY="CUSTOMER_RECEIPT_LIST_RECORDS_KEY"
 const Form=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
     const [resetAfterSave,setResetAfterSave]=useState(true);
    
-    var catCode= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",'SELECTED_CAT_CODE'));
-    useEffect(()=>{
-        handleGetOne();
-    },[catCode])
+    const billNo= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_SELECTED_BILL_NO_HELPER_DATA_KEY))
+    const locId= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))
 
+
+    useEffect(()=>{
+        GetSelectedGetOne();
+    },[billNo])
+
+    const GetSelectedGetOne=async()=>{
+        if(billNo){
+            ShowLoadingDialog();
+            let res= await CustomerPaymentReceiptGetOneMethod(billNo);
+            HideLoadingDialog();
+            if(res?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
+                props?.setState?.({...res?.Response})
+            }
+            else{
+               ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:'Error !'})
+            }
+        }
+    }
 
     useEffect(()=>{
         
@@ -136,23 +190,7 @@ const Form=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
         }
     },[props?.state])
 
-    const handleGetOne=async()=>{
-        // if(isNullOrEmpty(catCode)){
-        //     return;
-        // }
-
-        // try{
-        //     ShowLoadingDialog();
-        //       let res= await SetupFormGetOne(catCode,menuCode);
-        //       HideLoadingDialog();
-        //       if(res.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
-        //         props?.setState?.(res?.Response)
-        //       }
-        // }
-        // catch{
-        //    HideLoadingDialog();
-        // }
-    }
+   
 
     return(
         <>
@@ -163,7 +201,7 @@ const Form=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
            <div className="col-sm-3 col-md-2 col-3">
                 <POSActionButton label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
                 responseAfterMethod={(data?:VmCustomerPaymentModel)=>{
-                     props?.setState?.({...data});
+                     props?.setState?.({...data,master:{...props?.state?.master,LocId:locId}});
                      if(resetAfterSave){
                         props?.setState?.({});
                      }
