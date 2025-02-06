@@ -65,12 +65,12 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
     const handleGetAllCustomers=async()=>{
      
      let res = await CustomersGetCodeNameMethod();
-     if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-        setAllCustomers([...res?.Response??[]]);
+    //  if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+        setAllCustomers([...res??[]]);
     
-        var topCust=  await JSON.parse(JSON.stringify(res?.Response));
+        var topCust=  await JSON.parse(JSON.stringify(res??[]));
         setCustomers(topCust?.slice(0,100));
-     }
+     
     }
 
     

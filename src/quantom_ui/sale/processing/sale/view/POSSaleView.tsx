@@ -710,9 +710,9 @@ export const POSCustomerControlRenderer=(props?:POSCustomerControlProps)=>{
     },[])
     const handleLoadAllCustomers=async()=>{
         const custs=  await CustomersGetCodeNameMethod();
-        if(custs?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
-            setCustomers([...custs?.Response??[]])
-        }   
+        // if(custs?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
+            setCustomers([...custs??[]])
+        // }   
     }
 
     const fonts= useQuantomFonts();
