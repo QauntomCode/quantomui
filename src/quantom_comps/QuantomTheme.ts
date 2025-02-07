@@ -1,5 +1,5 @@
 // theme.js
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 // const QuantomTheme = createTheme({
 //   palette: {
@@ -24,36 +24,30 @@ import { createTheme } from '@mui/material/styles';
 //     },
 //   },
 // });
-export const QuantomColors={SelectedElementTextColor:"#FF70B2"}
+export const QuantomColors = { SelectedElementTextColor: "#FF70B2" };
 const QuantomTheme = createTheme({
-    palette: {
-      primary: {
-        main:  "#A16EFF", // changed
-        dark: '#FFB925',
-        contrastText: '#FFFFFF',// CHANGED QuantomColors.SelectedElementTextColor,
-        light:'#FF70B2',
-      
-      },
-      secondary: {
-        main:  "#05D890",
-        contrastText:'#4d524f',
-        light:'#05D890'
-      },
-      background: {
-        default: "#1B1B37",   //changed
-        paper: "#323259", // changed
-      },
-      text: {
-        primary:  "#FFFFFF",
-        secondary:'#FFFFFF',
-      },
-      
-      
+  palette: {
+    primary: {
+      main: "#A16EFF", // changed
+      dark: "#FFB925",
+      contrastText: "#FFFFFF", // CHANGED QuantomColors.SelectedElementTextColor,
+      light: "#FF70B2",
     },
-    
-
-  }
-);
-
+    secondary: {
+      main: "#05D890",
+      contrastText: "#4d524f",
+      light: "#05D890",
+    },
+    background: {
+      default: "#1B1B37", //changed
+      paper: "#323259", // changed
+    },
+    text: {
+      primary: "#FFFFFF",
+      secondary: "#FFFFFF",
+      disabled: "#e4e7ed",
+    },
+  },
+});
 
 export default QuantomTheme;

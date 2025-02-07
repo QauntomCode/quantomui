@@ -5,7 +5,7 @@ import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from './base_comps'
 import {  Box, Dialog, DialogContent,Grid, Paper, useTheme } from '@mui/material'
 import { IconByName } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 import { ListCompButton } from '../quantom_ui/account/report/Ledger/view/LedgerView';
-import store, { get_helperData_by_key, useQuantomFonts } from '../redux/store';
+import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from '../redux/store';
 import { BorderBottom, LocationDisabled } from '@mui/icons-material';
 import { add_helper_data_single_key } from '../redux/reduxSlice';
 import { useSelector } from 'react-redux';
@@ -304,6 +304,7 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
 
   const inputRef = useRef<any>(null);
 
+  const fullState= useSelector((state?:any)=>(full_component_state(state,props?.uniqueKeyNo??"")));
   useImperativeHandle(props?.ref, () => inputRef.current);
 
   // React.useEffect(()=>{
@@ -315,23 +316,36 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
       // if(props?.RefreshFillDtaMethod && (props?.RefreshFillDtaMethod??0)>0){
          loadAllValues();
       // }
-  },[props?.FillDtaMethod])
+  },[props?.FillDtaMethod,allValues])
 
+  React.useEffect(()=>{
+    if(fullState?.IsFirstUseEffectCall)
+    {
+      handleLoadInitialData();
+    }
+  },[fullState?.IsFirstUseEffectCall])
 
-  async function loadAllValues(){
-    // alert('load all values are called')
+  const handleLoadInitialData=async()=>{
+    // alert('method called')
     let vals= await props?.FillDtaMethod?.();
     console.warn('all values are',vals)
     store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueKeyNo,data:{keyNo:props?.keyNo,Data:vals}})))
+  }
+
+  async function loadAllValues(){
+    // alert('load all values are called')
+    
+    let vals= [...allValues]
 
     if(vals && vals.length>0){
          setValues( await JSON.parse(JSON.stringify(vals)))
-    }
+    
     // setAllValues([...vals??[]]);
     if(!props?.selected && props?.selectedIndex!==undefined){
       let nVal= vals?.[props?.selectedIndex??0];
       props?.onChange?.(nVal);
     }
+  }
 }
 
 

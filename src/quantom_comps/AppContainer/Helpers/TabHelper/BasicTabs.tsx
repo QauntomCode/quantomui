@@ -35,7 +35,9 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
         >
           {props?.tabs?.map((item, index) => {
             function handleTabClose(index: number): void {
-              props?.OnRemoveClick?.(index)
+              if(index!==0){
+                props?.OnRemoveClick?.(index)
+              }
              // remove_menu(index)
             }
 
@@ -88,7 +90,8 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
                     size="small"
                      onClick={(e) => {
                       e.preventDefault();
-                      handleTabClose(index)
+                      handleTabClose(index);
+
                      }}
                     sx={{
                       position: "absolute",

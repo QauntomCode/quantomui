@@ -10,12 +10,12 @@ import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/LocalMallOutlined';
 import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
 import { open_new_menu } from '../../redux/reduxSlice';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import SaleIcon from '@mui/icons-material/BusAlertOutlined';
 import CustomerReceiptIcon from '@mui/icons-material/AddCardOutlined';
 import SupplierPaymentIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import { POSCustomerSetup } from '../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
+import POSSoftwareReportIcon from '@mui/icons-material/AssessmentOutlined';
 
 export interface model{
     testing?:string;
@@ -151,6 +151,28 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
             </Quantom_Grid>
 
           </Quantom_Grid>
+
+
+
+
+          <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >
+
+            
+         <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+
+            <Quantom_Grid onClick={()=>{
+               openNewMenu(POS_SOFTWARE_REPORTS_MENU_CODE,'Reports')
+            }} container component={Paper} size={{md:6,sm:12,xs:12,lg:6,xl:6}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
+               <>
+               <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon>
+               </>
+                  Reports
+            </Quantom_Grid>
+
+          </Quantom_Grid>
+
+
+          
       
 
             
