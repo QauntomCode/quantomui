@@ -506,10 +506,19 @@ export const formsSlice = createSlice({
       }
       console.log("menus are ", menus);
 
+      let helperData= [...state.HelperData??[]];
+      if(obj && helperData && helperData?.length>0){
+          let helperObj= helperData?.find(x=>x.UniqueId===obj?.UniqueKeyNo);
+           if(helperObj){
+             let index= helperData.indexOf(helperObj);
+             helperData.splice(index,1)
+           }
+      }
       //  alert('length is',menus?.length-1)
       state = {
         ...state,
         OpenMenus: { ...state.OpenMenus, Menus: [...menus] },
+        HelperData:[...helperData]
       };
       return state;
     },

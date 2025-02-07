@@ -25,7 +25,7 @@ import { ShowSingleSelectedItemDialog } from "../../../../sale/processing/sale/v
 import { SupplierGetCodeNameMethod } from "../../../Config/Supplier/customer/impl/SuppierImpl";
 import { PurchaseDeleteMethod, PurchaseGetAll, PurchaseGetOneMethod, PurchaseInsertMethod } from "../impl/PurchaseImp";
 import { BlindOutlined, Today } from "@mui/icons-material";
-import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
+import { HTTP_RESPONSE_TYPE, HttpResponse } from "../../../../../HTTP/QuantomHttpMethods";
 
 
 
@@ -116,31 +116,44 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
     const fonts= useQuantomFonts();
     return(
       <>
-        <div className="row g-2">
-            <div className="col-md-9">
-                <div className="row g-1" style={{marginTop:'10px',marginBottom:'10px'}}>
+        <POSToolBarComp />
+        <div style={{display:'flex'}}>
 
-                <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton 
-                        responseAfterMethod={(res?:VMPurchaseModel)=>{
-                                props?.setState?.({...res})
-                        }} 
-                        label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
-                        responseClick={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locId}})}
-                    />
-                </div>
-                <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.setState?.({})}} iconName="CancelPresentationOutlined"/>
-                </div>
-                <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined" responseClick={()=>PurchaseDeleteMethod(props?.state)}/>
-                </div>
-                <div className="col-sm-3 col-md-2 col-3">
-                    <POSActionButton label="List" onClick={()=>{
-                        store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
-                    }} iconName="FeaturedPlayListOutlined"/>
-                </div>
-                </div>
+                        <POSActionButton 
+                            responseAfterMethod={(res?:VMPurchaseModel)=>{
+                                    props?.setState?.({...res})
+                            }} 
+                            label="New"  iconName="FeedOutlined" 
+                            
+                        /> 
+                        <POSActionButton 
+                            responseAfterMethod={(res?:VMPurchaseModel)=>{
+                                    props?.setState?.({...res})
+                            }} 
+                            label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
+                            responseClick={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locId}})}
+                        />
+                        <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.setState?.({})}} iconName="CancelPresentationOutlined"/>
+                        <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined" responseClick={()=>PurchaseDeleteMethod(props?.state)}/>
+                        <POSActionButton label="List" onClick={()=>{
+                            store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
+                             }} iconName="FeaturedPlayListOutlined"/>
+                        
+                        <POSActionButton 
+                            responseAfterMethod={(res?:VMPurchaseModel)=>{
+                                    props?.setState?.({...res})
+                            }} 
+                            label="PRINT"  iconName="LocalPrintshopOutlined" 
+                            
+                        /> 
+                        
+            </div>
+        <div className="row g-2">
+            
+            <div className="col-md-9">
+
+                        
+                
                 <div className="row  g-2">
                     <div className=" col-md-3">
                         <Quantom_Input label="Bill No" value={props?.state?.purchase?.BillNo} disabled/>
@@ -557,3 +570,47 @@ interface POSBillListProps{
 
 export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"
 export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_DATA_KEY"
+
+
+
+interface POSToolBarCompProps<T,>{
+    NewAction?:()=>void;
+    ListAction?:()=>void;
+
+    ResetAction?:()=>void;
+
+    SaveAction?:()=>Promise<HttpResponse<T>>;
+    DeleteAction?:()=>Promise<HttpResponse<T>>;
+
+    SaveAfterAction?:(data?:any)=>void
+
+}
+
+export const POSToolBarComp=<T,>(props?:POSToolBarCompProps<T>)=>{
+    return(
+        <div style={{display:'flex'}}>
+
+                        <POSActionButton
+                        onClick={()=>
+                                    props?.NewAction?.()
+                        } 
+                         label="New"  iconName="FeedOutlined" 
+                            
+                        /> 
+                        <POSActionButton 
+                            responseAfterMethod={props?.SaveAfterAction} 
+                            label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
+                            responseClick={props?.SaveAction}
+                        />
+                        <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.ResetAction?.()}} iconName="CancelPresentationOutlined"/>
+                        <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined" responseClick={props?.DeleteAction}/>
+                        <POSActionButton label="List" onClick={props?.ListAction} iconName="FeaturedPlayListOutlined"/>
+                        
+                        <POSActionButton 
+                            label="PRINT"  iconName="LocalPrintshopOutlined" 
+                            
+                        /> 
+                        
+            </div>
+    )
+}

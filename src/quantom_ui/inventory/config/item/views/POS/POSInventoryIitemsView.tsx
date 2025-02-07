@@ -413,7 +413,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
     const [toastMessage,setToastMessage]=React.useState('');
     const[openToast,setOpenToast]=React.useState(false);
     return(
-        <>
+        <div style={{width:'60px',marginRight:'10px'}}>
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
         
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
@@ -476,15 +476,18 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                 }
             }
         }    
-         style={{display:'flex',justifyContent:'center',alignItems:'center',lineHeight:'35px',backgroundColor:(props?.backgroundColor)?props?.backgroundColor:theme?.palette?.background.paper,zIndex:999,width:'100%',border:`1px solid ${theme.palette.primary.main}`,
-                     borderRadius:'5px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:'16px',color:theme.palette.text.primary,opacity:.8}}>
-                    <div style={{display:'flex',justifyContent:'center',marginRight:'10px'}}>
-                        <IconByName iconName={props?.iconName} color={props?.iconColor??undefined}/>
+         style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',paddingLeft:'5px',paddingRight:'5px',
+                     backgroundColor:(props?.backgroundColor)?props?.backgroundColor:theme?.palette?.background.paper,zIndex:999,border:`1px solid ${theme.palette.primary.main}`,
+                     borderRadius:'5px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:fonts.H4FontSize,color:theme.palette.text.primary,opacity:.8}}>
+                    <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                        <IconByName iconName={props?.iconName} fontSize="45px" color={theme?.palette?.secondary?.main}/>
                     </div>
-                {props?.label}
+                    <div style={{letterSpacing:1.5}}>
+                        {props?.label?.toLocaleUpperCase()}
+                    </div>
                 
               </button>
-        </>
+        </div>
     )
 }
 
