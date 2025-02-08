@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { HideLoadingDialog, IconByName, MenuComponentProps, QuantomConfirmationDialog,  setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { VMInventoryItemsModel } from "../../model/VMInventory_itemsModel";
 import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
 import { Box,FormControlLabel,Paper, Snackbar, Switch, useTheme } from "@mui/material";
 import { Quantom_LOV } from "../../../../../../quantom_comps/Quantom_Lov";
@@ -412,6 +412,19 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
     const [openEerrorMessage,setOpenErrorMessage]=React.useState(false);
     const [toastMessage,setToastMessage]=React.useState('');
     const[openToast,setOpenToast]=React.useState(false);
+    const[iconColor,setIconColor]=useState<string>();
+
+    useEffect(()=>{
+        let color= theme?.palette?.primary?.main;
+        if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
+            color= theme?.palette?.error?.main;
+        }
+        if(props?.buttonType==='SAVE'){
+            color= theme?.palette?.success?.main;
+        }
+        setIconColor(theme?.palette?.secondary?.main)
+    },[theme])
+
     return(
         <div style={{width:'60px',marginRight:'10px'}}>
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
@@ -480,7 +493,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                      backgroundColor:(props?.backgroundColor)?props?.backgroundColor:theme?.palette?.background.paper,zIndex:999,border:`1px solid ${theme.palette.primary.main}`,
                      borderRadius:'5px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:fonts.H4FontSize,color:theme.palette.text.primary,opacity:.8}}>
                     <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                        <IconByName iconName={props?.iconName} fontSize="45px" color={theme?.palette?.secondary?.main}/>
+                        <IconByName iconName={props?.iconName} fontSize="45px" color={iconColor}/>
                     </div>
                     <div style={{letterSpacing:1.5}}>
                         {props?.label?.toLocaleUpperCase()}

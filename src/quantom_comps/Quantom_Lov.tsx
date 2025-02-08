@@ -287,6 +287,7 @@ export interface Quantom_LOV_V1Props {
   selectedIndex?:number;
   ref?: React.Ref<any>;
   id?:string  ;
+  willHideLabel?:boolean;
 }
 export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   
@@ -452,6 +453,7 @@ return (
    <Quantom_Input1 
         value={props?.selected?.Name} 
         fullWidth
+        willHideLabel={props?.willHideLabel}
         id={props?.id??""}
         inputRef={inputRef}
         onChange={(e)=>{

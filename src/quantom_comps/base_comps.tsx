@@ -153,6 +153,7 @@ export const Quantom_Input1=(props: {
   willHandleTabOnEnter?:boolean;
   willDisableBorder?:boolean;
   willDisablePaper?:boolean;
+  willHideLabel?:boolean;
   rightIcons?:RightSideIconsProps[]
 
 } & Omit<TextFieldProps, 'variant'>)=>{
@@ -196,14 +197,17 @@ export const Quantom_Input1=(props: {
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
     <FormControl   fullWidth variant="outlined">
-    <InputLabel shrink sx={{ 
-      // fontSize: '20px',
-              fontWeight:'bold',
-              letterSpacing:1.2,
-              fontFamily:font.HeaderFont,
-              color:theme?.palette?.text.primary,
-              opacity:0.6
-              }}>{props?.label}</InputLabel>
+    {props?.willHideLabel?(<></>):(
+      <InputLabel shrink sx={{ 
+        // fontSize: '20px',
+                fontWeight:'bold',
+                letterSpacing:1.2,
+                fontFamily:font.HeaderFont,
+                color:theme?.palette?.text.primary,
+                opacity:0.6
+                }}>{props?.label}</InputLabel>
+    )}
+    
     <OutlinedInput
           
           id={props?.id}

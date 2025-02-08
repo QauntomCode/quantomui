@@ -116,8 +116,16 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
     const fonts= useQuantomFonts();
     return(
       <>
-        <POSToolBarComp />
-        <div style={{display:'flex'}}>
+        <POSToolBarComp
+            SaveAction={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locId}})}  
+            SaveAfterAction={(res?:VMPurchaseModel)=>{props?.setState?.({...res})}} 
+            ResetAction={()=>{props?.setState?.({})}}
+            DeleteAction={()=>PurchaseDeleteMethod(props?.state)}
+            ListAction={()=>{
+                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
+                 }}
+            NewAction= {()=>{props?.setState?.({})}}/>
+        {/* <div style={{display:'flex'}}>
 
                         <POSActionButton 
                             responseAfterMethod={(res?:VMPurchaseModel)=>{
@@ -147,7 +155,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                             
                         /> 
                         
-            </div>
+            </div> */}
         <div className="row g-2">
             
             <div className="col-md-9">
@@ -349,47 +357,57 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
     return(
         <>
             
-            <div className="row g-1">
-                <div className="col-md-6">
-                    <Quantom_LOV1 id={ITEM_CONTROL_ID} uniqueKeyNo={props?.baseProps?.UniqueId??""}  selected={{Code:lineObj?.ItemCode,Name:lineObj?.ItemName}} 
-                                onChange={(item)=>{
-                                    setLineObj({...lineObj,ItemCode:item?.Code,ItemName:item?.Name})
-                                }} 
-                                keyNo="PURCHASE_ALL_ITEMS" label="Item"  FillDtaMethod={GetActiveItemCodeName} />
+            <div style={{display:'flex'}}>
+                <div style={{flexGrow:1}}>
+                    <div className="row g-0" style={{backgroundColor:theme?.palette?.primary?.main,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:500,paddingTop:'4px',paddingBottom:'4px',color:theme?.palette?.text?.primary}}>
+                    <div className="col-md-6" style={{paddingLeft:'5px'}}>ITEM INFO</div>
+                    <div className="col-md-2" style={{}}>QTY</div>
+                    <div className="col-md-2" style={{}}>PRICE</div>
+                    <div className="col-md-2" style={{}}>AMOUNT</div>
+                    </div>
+                    <div className="row g-0">
+                        <div className="col-md-6">
+                            <Quantom_LOV1 willHideLabel id={ITEM_CONTROL_ID} uniqueKeyNo={props?.baseProps?.UniqueId??""}  selected={{Code:lineObj?.ItemCode,Name:lineObj?.ItemName}} 
+                                        onChange={(item)=>{
+                                            setLineObj({...lineObj,ItemCode:item?.Code,ItemName:item?.Name})
+                                        }} 
+                                        keyNo="PURCHASE_ALL_ITEMS"   FillDtaMethod={GetActiveItemCodeName} />
+                        </div>
+                        <div className="col-md-2">
+                            <Quantom_Input  willHideLabel  value={lineObj?.Qty??0} onChange={(e)=>{
+                                const qty=safeParseToNumber(e?.target?.value);
+                                setLineObj({...lineObj,Qty:qty,Amount:getAmount(qty,lineObj?.Price)})
+                            }}/>
+                        </div>
+                        <div className="col-md-2">
+                            <Quantom_Input willHideLabel  value={lineObj?.Price??0} onChange={(e)=>{
+                                const price=safeParseToNumber(e?.target?.value);
+                                setLineObj({...lineObj,Price:price,Amount:getAmount(price,lineObj?.Qty)})
+                            }}/>
+                        </div>
+                        <div className="col-md-2">
+                            <Quantom_Input   willHideLabel value={lineObj?.Amount??0} />
+                        </div>
+                    </div>
                 </div>
-                <div className="col-md-1">
-                    <Quantom_Input label="Qty" value={lineObj?.Qty??0} onChange={(e)=>{
-                        const qty=safeParseToNumber(e?.target?.value);
-                        setLineObj({...lineObj,Qty:qty,Amount:getAmount(qty,lineObj?.Price)})
-                    }}/>
-                </div>
-                <div className="col-md-1">
-                    <Quantom_Input label="Rate" value={lineObj?.Price??0} onChange={(e)=>{
-                        const price=safeParseToNumber(e?.target?.value);
-                        setLineObj({...lineObj,Price:price,Amount:getAmount(price,lineObj?.Qty)})
-                    }}/>
-                </div>
-                <div className="col-md-2">
-                    <Quantom_Input label="Amount"  value={lineObj?.Amount??0} />
-                </div>
-                <div className="col-md-2" style={{marginTop:'6px'}}>
+                <div style={{marginLeft:'5px'}}>
                     <POSActionButton label="Add" iconName="LocalHospitalOutlined" onClick={()=>{
-                        if(isNullOrEmpty(lineObj?.ItemCode)){
-                            ShowQuantomError({MessageBody:"Item Code Can't Be Null Or Empty     ",MessageHeader:"Error !"});
-                            return;
-                        }
-                        if((lineObj?.Qty??0)<1){
-                            ShowQuantomError({MessageBody:"Qty Must Be Greater Than '0'",MessageHeader:"Error !"});
-                            return;
-                        }
-                        
-                        handleAddItem({...lineObj},INVENTORY_PERFORMED_ACTION.NEW);
-                        setLineObj({})
-                        FocusOnControlByControlId(ITEM_CONTROL_ID)
-                    }}/>
+                            if(isNullOrEmpty(lineObj?.ItemCode)){
+                                ShowQuantomError({MessageBody:"Item Code Can't Be Null Or Empty     ",MessageHeader:"Error !"});
+                                return;
+                            }
+                            if((lineObj?.Qty??0)<1){
+                                ShowQuantomError({MessageBody:"Qty Must Be Greater Than '0'",MessageHeader:"Error !"});
+                                return;
+                            }
+                            
+                            handleAddItem({...lineObj},INVENTORY_PERFORMED_ACTION.NEW);
+                            setLineObj({})
+                            FocusOnControlByControlId(ITEM_CONTROL_ID)
+                        }}/>
                 </div>
-
             </div>
+            
             <div className="row g-2" style={{color:'white',height:'calc(100vh - 200px)',overflowY:'auto'}}>
                 <ShowSingleSelectedItemDialog item={selectedItemForChange} open={showItemChangeDialog} onClose={(type,item)=>{
                     
@@ -587,8 +605,9 @@ interface POSToolBarCompProps<T,>{
 }
 
 export const POSToolBarComp=<T,>(props?:POSToolBarCompProps<T>)=>{
+    const theme =useTheme();
     return(
-        <div style={{display:'flex'}}>
+        <div style={{display:'flex',paddingBottom:'4px',marginBottom:'4px',}}>
 
                         <POSActionButton
                         onClick={()=>
