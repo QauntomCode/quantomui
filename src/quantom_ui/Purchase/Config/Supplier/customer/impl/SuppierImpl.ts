@@ -29,8 +29,8 @@ export const SupplierSaveMethod = async (
 
 export const SupplierDeleteMethod = async (
   supp?: VmSupplierModel
-): Promise<HttpResponse<SupplierModel>> => {
-  let res = await QuantomPOST<SupplierModel>(
+): Promise<HttpResponse<VmSupplierModel>> => {
+  let res = await QuantomPOST<VmSupplierModel>(
     SUPPLIER_DELETE_URL,
     true,
     supp?.supplier

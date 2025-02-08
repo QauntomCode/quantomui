@@ -15,6 +15,7 @@ import { add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
 import { isNullOrEmpty } from "../../../../../../CommonMethods";
 import { Paper, useTheme } from "@mui/material";
+import { POSToolBarComp } from "../../../../Processing/Purchase/view/POSPurchaseView";
 
 
 export const POSSupplierView=(props?:MenuComponentProps<VmSupplierModel>)=>{
@@ -176,30 +177,25 @@ const Form=(props?:MenuComponentProps<VmSupplierModel>)=>{
            <div className="col-md-2 col-lg-2 col-xl-2 col-12">
               
            </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="Save" buttonType="SAVE" responseClick={async()=>{
-                      const newState= await get_form_state_without_selector<VmSupplierModel>(props?.UniqueId);
-                      let res= await  SupplierSaveMethod(newState) //SetupFormInsert(newState,menuCode);
-                      if(res?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
-                           if(resetAfterSave){
-                             props?.setState?.({});
-                           }
-                      }
-                      return Promise.resolve(res);
-                      
-                    }} iconName="SaveOutlined"/>
+           <div className="col-md-10">
+             <POSToolBarComp 
+                SaveAction={()=>(SupplierSaveMethod(props?.state))} 
+                ResetAction={()=>{props?.setState?.({})}}
+                NewAction={()=>{props?.setState?.({})}}
+                DeleteAction={()=>SupplierDeleteMethod(props?.state)}
+                ListAction={()=>{store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))}}
+                SaveAfterAction={(obj)=>{
+                     if(resetAfterSave){
+                        props?.setState?.({})
+                     }
+                     else{
+                        props?.setState?.({...obj});
+                     }
+                }}
+                />
            </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.setState?.({})}} iconName="CancelPresentationOutlined"/>
-           </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="Delete" buttonType='DELETE' responseClick={()=>SupplierDeleteMethod(props?.state)} iconName="DeleteOutlined"/>
-           </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="List" onClick={()=>{
-                    store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
-                }} iconName="FeaturedPlayListOutlined"/>
-           </div>
+         
+           
         </div>
         
          <div className="row g-0" style={{marginTop:'16px'}}>

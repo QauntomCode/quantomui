@@ -11,7 +11,7 @@ import { Quantom_LOV } from "../../../../../../quantom_comps/Quantom_Lov";
 import { CommonCodeName } from "../../../../../../database/db";
 import { GetSetupFormTypByMenuCode, SetupFromGetAll } from "../../../unit/impl/setupFormImp";
 import { isNullOrEmpty, safeParseToNumber } from "../../../../../../CommonMethods";
-import { GetItemsByCategory, InventoryItemsGetOne, InventoryItemsInsert } from "../../impl/InventoryitemsImpl";
+import { GetItemsByCategory, InventoryItemsDelete, InventoryItemsGetOne, InventoryItemsInsert } from "../../impl/InventoryitemsImpl";
 import { HTTP_RESPONSE_TYPE, HttpResponse } from "../../../../../../HTTP/QuantomHttpMethods";
 import { SetupFormModel } from "../../../unit/model/setupFormModel";
 import { add_helper_data, add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
@@ -19,6 +19,7 @@ import { InventoryItemsModel } from "../../model/InventoryItemsModel";
 import { BorderBottom, BorderLeft } from "@mui/icons-material";
 import { ShowQuantomError } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import POSSoftwareReportIcon from '@mui/icons-material/AssessmentOutlined';
+import { POSToolBarComp } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
 
 export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
     // const theme= useTheme();
@@ -100,6 +101,11 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
         }
     }
 
+    const handleSaveAction=async()=>{
+        const newState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId);
+        let res= await  InventoryItemsInsert(newState);
+        return Promise.resolve(res);
+      }
 
     return(
         <>
@@ -107,30 +113,23 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
            <div className="col-md-2 col-lg-2 col-xl-2 col-12">
               
            </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="Save" buttonType="SAVE" responseClick={async()=>{
-                      const newState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId);
-                      let res= await  InventoryItemsInsert(newState);
-                      if(res?.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
-                           if(props?.resetAfterSave){
-                             props?.baseProps?.setState?.({});
-                           }
-                      }
-                      return Promise.resolve(res);
-                      
-                    }} iconName="SaveOutlined"/>
+           <div className="col-md-8">
+            <POSToolBarComp 
+                SaveAction={handleSaveAction} 
+                ResetAction={()=>{props?.baseProps?.setState?.({})}}
+                DeleteAction={()=>InventoryItemsDelete(props?.baseProps?.state)}
+                ListAction={()=>{store.dispatch((add_helper_data_single_key({UniqueId:props?.baseProps?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))}}
+                SaveAfterAction={(obj)=>{
+                    if(props?.resetAfterSave){
+                        props?.baseProps?.setState?.({})
+                    }
+                    else{
+                        props?.baseProps?.setState?.({...obj});
+                    }
+                }}
+                />
            </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.baseProps?.setState?.({})}} iconName="CancelPresentationOutlined"/>
-           </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="Delete" buttonType='DELETE' onClick={()=>{alert('save button pressed')}} iconName="DeleteOutlined"/>
-           </div>
-           <div className="col-sm-3 col-md-2 col-3">
-                <POSActionButton label="List" onClick={()=>{
-                    store.dispatch((add_helper_data_single_key({UniqueId:props?.baseProps?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
-                }} iconName="FeaturedPlayListOutlined"/>
-           </div>
+           
         </div>
 
         <div className="row" style={{marginTop:'25px'}}>
@@ -312,7 +311,7 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
                  }}/>
               </Quantom_Grid>    
               <Quantom_Grid container  
-                sx={{fontFamily:fonts.HeaderFont,color:theme.palette.text.primary,backgroundColor:theme.palette.primary.main,justifyContent:'center'}}>All Categories</Quantom_Grid>
+                sx={{fontFamily:fonts.HeaderFont,color:theme.palette.primary.contrastText,backgroundColor:theme.palette.primary.main,justifyContent:'center',letterSpacing:1.5,fontWeight:650}}>All Categories</Quantom_Grid>
 
             {
                
@@ -322,7 +321,7 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
                             setCategory(item?.Code??"")
                         }}>
                         <Quantom_Grid contain component={Paper} 
-                            sx={{fontFamily:fonts.HeaderFont,fontWeight:500,backgroundColor:item?.Code===category?(theme?.palette?.secondary?.main): undefined,fontSize:fonts.H4FontSize,borderBottom:`1px solid ${theme.palette.primary.contrastText}`,
+                            sx={{fontFamily:fonts.HeaderFont,fontWeight:500,backgroundColor:item?.Code===category?(theme?.palette?.secondary?.main): undefined,fontSize:fonts.H4FontSize,borderBottom:`1px solid ${theme.palette.primary.main}`,
                                 paddingTop:'8px',paddingBottom:'8px',alignItems:'center',paddingLeft:'15px'}}>{item?.Name}</Quantom_Grid>
                         </div>
                     )
@@ -331,19 +330,20 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
          </div>
          <div className="col-md-8 col-lg-9">
             <Box sx={{height:'100%',width:'100%'}}>
-                  <Quantom_Grid container spacing={.5} sx={{paddingLeft:'10px',paddingRight:'10px'}} >
-                  <Quantom_Grid item size={{xs:12,sm:12,md:4,lg:3,xl:3}} sx={{marginTop:'5px'}}>
-                        <POSActionButton onClick={()=>{
+                  <Quantom_Grid display='flex' container spacing={.5} sx={{paddingLeft:'10px',paddingRight:'10px'}} >
+                    
+                    <Quantom_Grid item >
+                        <POSActionButton1 onClick={()=>{
                              store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
                              store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_SET_ITEM_CODE,Data:''}})))
                              props?.setState?.({});
-                        }} label="AddNew" iconName="AddBoxOutlined"/>
+                        }} label="Add New" iconName="AddBoxOutlined"/>
                      </Quantom_Grid>
-                     <Quantom_Grid item size={{xs:6,sm:6,md:4,lg:7.5,xl:7.5}}>
+                     <Quantom_Grid item flex={1}>
                          <Quantom_Input value={itemSearch} onChange={(e)=>{setItemSearch(e.target.value)}} label='Search' />
                      </Quantom_Grid>
-                     <Quantom_Grid item size={{xs:6,sm:6,md:4,lg:1.5,xl:1.5}} sx={{marginTop:'5px'}}>
-                        <POSActionButton label="Search"/>
+                     <Quantom_Grid  >
+                        <POSActionButton1 label="Search" iconName="ScreenSearchDesktopOutlined"/>
                      </Quantom_Grid>
                      {/* <Quantom_Grid item size={{xs:2}} sx={{marginTop:'5px'}}>
                         <POSActionButton label="Add New"/>
@@ -354,7 +354,7 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
                     All Items</Quantom_Grid> */}
                  {items?.map((item,index)=>{
                     return(
-                        <Quantom_Grid component={Paper} sx={{}} item size={{xs:12,sm:6,md:4,lg:3,xl:2.4}}>
+                        <Quantom_Grid component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}} item size={{xs:12,sm:6,md:4,lg:3,xl:2.4}}>
                             <div onClick={()=>{
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_SET_ITEM_CODE,Data:item?.ItemCode}})))
@@ -363,19 +363,19 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
                             }} style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
                                 <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
                                     
-                                    <IconByName iconName="BallotOutlined" fontSize="20px"/>
-                                    <div style={{marginLeft:'5px'}}>
+                                    <IconByName  color={theme?.palette?.primary?.main} iconName="BallotOutlined" fontSize="20px"/>
+                                    <div style={{marginLeft:'5px',fontWeight:650}}>
                                         {item?.SearchKey??item.ManualCode}
                                     </div>
                                 </div>
                                 <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
-                                  <IconByName iconName="InventoryOutlined" fontSize="20px"/>
+                                  <IconByName color={theme?.palette?.primary?.main} iconName="InventoryOutlined" fontSize="20px"/>
                                   <div style={{marginLeft:'5px'}}>
                                     {item?.ItemName}
                                   </div>
                                 </div>
                                 <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
-                                    <IconByName iconName="DnsOutlined" fontSize="20px"/>
+                                    <IconByName color={theme?.palette?.primary?.main} iconName="DnsOutlined" fontSize="20px"/>
                                     <div style={{marginLeft:'5px'}}>
                                     {item?.category?.Name}
                                   </div>
@@ -432,7 +432,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
         <div style={{width:'60px',marginRight: (props?.rightMargin)?props?.rightMargin:'10px'}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-         <Paper>
+         <Paper sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){
@@ -494,16 +494,16 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                 }
             }
         }    
-         style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',
+         style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',height:'70px',
                      border:'none',color:theme?.palette?.text?.primary,
-                    fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:fonts.H4FontSize}}>
+                    fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
                       
                     <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                        <IconByName iconName={props?.iconName} fontSize="35px" color={iconColor}/>
+                        <IconByName iconName={props?.iconName} fontSize="30px" color={iconColor}/>
                        {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
 
                     </div>
-                    <div style={{letterSpacing:1.5}}>
+                    <div style={{letterSpacing:1.2}}>
                         {props?.label?.toLocaleUpperCase()}
                     </div>
                    
@@ -554,5 +554,116 @@ export const QuantomSwitch=(props?:QuantomSwithProps)=>{
                     <Switch checked={props?.value} onChange={(e)=>{props?.onChange?.(e.target.checked)}} />
                     {props?.label}
                 </div>
+    )
+}
+
+
+
+
+export const POSActionButton1=(props?:POSActionButtonProps)=>{
+    const fonts= useQuantomFonts();
+    const theme= useTheme();
+    const[openConfirmation,setOPenConfirmation]=React.useState(false);
+    const [errorMessage,setErrorMessage]=React.useState('');
+    const [openEerrorMessage,setOpenErrorMessage]=React.useState(false);
+    const [toastMessage,setToastMessage]=React.useState('');
+    const[openToast,setOpenToast]=React.useState(false);
+    const[iconColor,setIconColor]=useState<string>();
+
+    useEffect(()=>{
+        let color= theme?.palette?.primary?.main;
+        if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
+            color= theme?.palette?.error?.main;
+        }
+        if(props?.buttonType==='SAVE'){
+            color= theme?.palette?.success?.main;
+        }
+        setIconColor(theme?.palette?.primary?.main)
+    },[theme])
+
+    return(
+       
+        <div style={{width:'130px',marginRight:props?.rightMargin}}>
+             
+         <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
+         <Paper sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
+        {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
+                <QuantomConfirmationDialog OnYesPress={async()=>{
+                    if(props?.buttonType==='DELETE'){
+                        setOPenConfirmation(false);
+                        let res= await props?.responseClick?.();
+                        if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+                            setOpenToast(true);
+                            setToastMessage('Record Deleted Successfully...')
+                        }
+                        else{
+                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
+                        }
+                    }
+                    if(props?.buttonType==='RESET'){
+                        props?.onClick?.();
+                        setOPenConfirmation(false);
+                    }
+                }} 
+                OnNoPress={()=>{
+                    setOPenConfirmation(false);
+                }}
+                open={openConfirmation} MessageHeader="Are You Sure Delete !"/>  
+            ):(<></>)} 
+        <button 
+        onClick={async()=>{
+                try {
+                    if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
+                        setOPenConfirmation(true);
+                        return;
+                    }
+                    if(props?.responseClick){
+                    
+                        if(props?.buttonType==='SAVE'){
+                            ShowLoadingDialog();
+                        }
+                        let res= await props?.responseClick?.()
+                        if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+                            if(props.buttonType==='SAVE'){
+                                setOpenToast(true);
+                                setToastMessage('Record Saved Successfully...');
+                                props?.responseAfterMethod?.(res?.Response)
+                            }
+                            HideLoadingDialog();
+                            // success message
+                        }
+                        else if(res.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
+                            HideLoadingDialog();
+                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
+                           
+                        }
+                        }
+                        else{
+                            props?.onClick?.()
+                        }
+                
+                }
+                catch{
+                HideLoadingDialog();
+                }
+            }
+        }    
+         style={{     justifyContent:'center',display:'flex',flexDirection:'row',alignItems:'center',width:'100%',height:'40px',
+                     border:'none',color:theme?.palette?.text?.primary,
+                    fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
+                      
+                    <div style={{display:'flex',justifyContent:'center',alignItems:'center',marginRight:'5px'}}>
+                        <IconByName iconName={props?.iconName} fontSize="30px" color={iconColor}/>
+                       {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
+
+                    </div>
+                    <div style={{letterSpacing:1.2}}>
+                        {props?.label?.toLocaleUpperCase()}
+                    </div>
+                   
+              </button>
+           
+        </Paper>
+        </div>
     )
 }

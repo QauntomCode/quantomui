@@ -36,8 +36,8 @@ export const CustomerSaveMethod = async (
 
 export const CustomerDeleteMethod = async (
   cust?: VmCustomerModel
-): Promise<HttpResponse<CustomerModel>> => {
-  let res = await QuantomPOST<CustomerModel>(
+): Promise<HttpResponse<VmCustomerModel>> => {
+  let res = await QuantomPOST<VmCustomerModel>(
     CUSTOMER_DELETE_URL,
     true,
     cust?.customer

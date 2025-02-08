@@ -248,6 +248,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
    }
   },[alertProps])
 
+  const appType= GetAPPType();
   const [defaultTabs,setDefaultTabs]=React.useState<BasicTabProps[]>([]);
   React.useEffect(()=>{
     setDefaultTabs([...getDefaultTabs(props?.UniqueId,fullState?.compSettings?.WillHideUserLog)])
@@ -261,7 +262,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <QuantomErrorDialog />
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
-        fullState?.compSettings?.wWillHideToolbar?(<></>):(
+        fullState?.compSettings?.wWillHideToolbar || appType===APP_TYPE.SIMPLE_POS ?(<></>):(
         <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
         )
       }
