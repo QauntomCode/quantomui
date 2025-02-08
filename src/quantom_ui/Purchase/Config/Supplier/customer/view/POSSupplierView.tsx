@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { VmSupplierModel } from "../model/VmSupplier";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, QuantomSwitch } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, POSActionButton1, QuantomSwitch } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { CommonCodeName } from "../../../../../../database/db";
 import { SupplierDeleteMethod, SupplierGetCodeNameMethod, SupplierGetOneMethod, SupplierSaveMethod } from "../impl/SuppierImpl";
@@ -97,22 +97,25 @@ export const List=(props?:MenuComponentProps<VmSupplierModel>)=>{
     return(
         <>
             <div className="row" style={{marginTop:'16px',marginBottom:'5px'}}>
-                 <div className="col-md-2">
-                 <POSActionButton onClick={()=>{
-                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
-                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_SUPPLIER_CODE',Data:''}})))
-                             props?.setState?.({});
-                        }} label="AddNew" iconName="AddBoxOutlined"/>
-                 </div>
-                 <div className="col-md-10">
-                    <Quantom_Input label="Search Category" value={search} onChange={((e)=>{setSearch(e.target.value)})} />
+                <div style={{display:'flex'}}>
+                    <div>
+                        <POSActionButton1 rightMargin="10px" onClick={()=>{
+                                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
+                                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_SUPPLIER_CODE',Data:''}})))
+                                props?.setState?.({});
+                            }} label="Add New" iconName="AddBoxOutlined"/>
+                     </div>
+                     <div style={{flex:1}}>
+                        <Quantom_Input label="Search Supplier" value={search} onChange={((e)=>{setSearch(e.target.value)})} />
+                     </div>
                 </div>
             </div>
+                 
             <Quantom_Grid   container spacing={1.5}>
                 {
                     customers?.map((item,index)=>{
                         return(
-                            <Quantom_Grid component={Paper} sx={{}} item size={{xs:12,sm:6,md:4,lg:3,xl:2}}>
+                            <Quantom_Grid component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}} item size={{xs:12,sm:6,md:4,lg:3,xl:2}}>
                             <div onClick={()=>{
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_SUPPLIER_CODE',Data:item?.Code}})))
@@ -121,13 +124,13 @@ export const List=(props?:MenuComponentProps<VmSupplierModel>)=>{
                             }} style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
                                 <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
                                     
-                                    <IconByName iconName="BallotOutlined" fontSize="20px"/>
-                                    <div style={{marginLeft:'5px'}}>
+                                    <IconByName color={theme?.palette?.primary?.main} iconName="BallotOutlined" fontSize="20px"/>
+                                    <div style={{marginLeft:'5px',fontWeight:650}}>
                                         {item?.Code}
                                     </div>
                                 </div>
                                 <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
-                                  <IconByName iconName="AccountBoxOutlined" fontSize="20px"/>
+                                  <IconByName color={theme?.palette?.primary?.main} iconName="AccountBoxOutlined" fontSize="20px"/>
                                   <div style={{marginLeft:'5px'}}>
                                     {item?.Name}
                                   </div>

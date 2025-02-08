@@ -127,7 +127,7 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
                                 <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
                                     
                                     <IconByName color={theme?.palette?.primary?.main} iconName="BallotOutlined" fontSize="20px"/>
-                                    <div style={{marginLeft:'5px'}}>
+                                    <div style={{marginLeft:'5px',fontWeight:650}}>
                                         {item?.Code}
                                     </div>
                                 </div>
