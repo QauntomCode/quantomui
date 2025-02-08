@@ -359,7 +359,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
             
             <div style={{display:'flex'}}>
                 <div style={{flexGrow:1}}>
-                    <div className="row g-0" style={{backgroundColor:theme?.palette?.primary?.main,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:500,paddingTop:'4px',paddingBottom:'4px',color:theme?.palette?.text?.primary}}>
+                    <div className="row g-0" style={{backgroundColor:theme?.palette?.primary?.main,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:500,paddingTop:'4px',paddingBottom:'4px',color:theme?.palette?.primary?.contrastText}}>
                     <div className="col-md-7" style={{paddingLeft:'5px'}}>ITEM INFO</div>
                     <div className="col-md-1" style={{}}>QTY</div>
                     <div className="col-md-2" style={{}}>PRICE</div>

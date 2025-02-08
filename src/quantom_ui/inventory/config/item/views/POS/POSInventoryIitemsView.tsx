@@ -18,6 +18,7 @@ import { add_helper_data, add_helper_data_single_key } from "../../../../../../r
 import { InventoryItemsModel } from "../../model/InventoryItemsModel";
 import { BorderBottom, BorderLeft } from "@mui/icons-material";
 import { ShowQuantomError } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
+import POSSoftwareReportIcon from '@mui/icons-material/AssessmentOutlined';
 
 export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
     // const theme= useTheme();
@@ -423,13 +424,15 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
         if(props?.buttonType==='SAVE'){
             color= theme?.palette?.success?.main;
         }
-        setIconColor(theme?.palette?.secondary?.main)
+        setIconColor(theme?.palette?.primary?.main)
     },[theme])
 
     return(
+       
         <div style={{width:'60px',marginRight: (props?.rightMargin)?props?.rightMargin:'10px'}}>
+             
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-        
+         <Paper>
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){
@@ -453,7 +456,8 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                 }}
                 open={openConfirmation} MessageHeader="Are You Sure Delete !"/>  
             ):(<></>)} 
-        <button onClick={async()=>{
+        <button 
+        onClick={async()=>{
                 try {
                     if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
                         setOPenConfirmation(true);
@@ -490,17 +494,22 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
                 }
             }
         }    
-         style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',paddingLeft:'5px',paddingRight:'5px',
-                     backgroundColor:(props?.backgroundColor)?props?.backgroundColor:theme?.palette?.background.paper,zIndex:999,border:`1px solid ${theme.palette.primary.main}`,
-                     borderRadius:'5px',fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:fonts.H4FontSize,color:theme.palette.text.primary,opacity:.8}}>
+         style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',
+                     border:'none',color:theme?.palette?.text?.primary,
+                    fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:fonts.H4FontSize}}>
+                      
                     <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                        <IconByName iconName={props?.iconName} fontSize="45px" color={iconColor}/>
+                        <IconByName iconName={props?.iconName} fontSize="35px" color={iconColor}/>
+                       {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
+
                     </div>
                     <div style={{letterSpacing:1.5}}>
                         {props?.label?.toLocaleUpperCase()}
                     </div>
-                
+                   
               </button>
+           
+        </Paper>
         </div>
     )
 }

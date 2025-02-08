@@ -50,4 +50,31 @@ const QuantomTheme = createTheme({
   },
 });
 
+
+export const QuantomLightTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#3366FF", // changed
+      dark: "#3366FF",
+      contrastText: "#FFFFFF", // CHANGED QuantomColors.SelectedElementTextColor,
+      light: "#FF70B2",
+    },
+    secondary: {
+      main: "#FFAB04",
+      contrastText: "#FFFFFF",
+      light: "#05D890",
+    },
+    background: {
+      default: "#FFFFFF", //changed
+      paper: "#EDF1F7", // changed
+    },
+    text: {
+      primary: "#222B45",
+      secondary: "#FFFFFF",
+      disabled: "#222B45",
+    },
+  },
+});
+
+
 export default QuantomTheme;

@@ -10,8 +10,8 @@ import { QuantomFormState, set_state,create_initial_state } from './redux/reduxS
 import { AppContainer } from './quantom_comps/AppContainer/AppContainer';
 // import { ThemeProvider } from 'styled-components';
 // import theme from './quantom_comps/theme';
-import { createTheme, Theme, ThemeProvider } from "@mui/material/styles";
-import QuantomTheme from './quantom_comps/QuantomTheme';
+import { createTheme, Theme, ThemeProvider, useTheme } from "@mui/material/styles";
+import QuantomTheme, { QuantomLightTheme } from './quantom_comps/QuantomTheme';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginComp } from './Config/Login/Views/LoginComp';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
@@ -53,11 +53,12 @@ function App() {
   //   },
   // });
 
+  const theme= useTheme();
   return (
     <>
     <React.StrictMode>
-    <div style={{minHeight:window?.innerHeight,backgroundColor:QuantomTheme?.palette?.background?.default}}>
-      <ThemeProvider theme={QuantomTheme}>
+    <div style={{minHeight:window?.innerHeight,backgroundColor:theme?.palette?.background?.default}}>
+      <ThemeProvider theme={QuantomLightTheme}>
          <RouterProvider router={router}/>
       </ThemeProvider>
     </div>
