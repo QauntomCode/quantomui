@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { VmCustomerModel } from "../model/VmCustomerModel";
 import store, { full_component_state, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, POSActionButton1, QuantomSwitch } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE, QuantomSwitch } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { useTheme } from '@mui/material/styles';
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
@@ -15,7 +15,8 @@ import { isNullOrEmpty } from "../../../../../CommonMethods";
 import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
 import { CustomerDeleteMethod, CustomerGetOneMethod, CustomerSaveMethod, CustomersGetCodeNameMethod } from "../impl/CustomerImpl";
 import { CommonCodeName } from "../../../../../database/db";
-import { POSToolBarComp } from "../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
+import { POSToolBarComp } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
+import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 
 export const POSCustomerSetup=(props?:MenuComponentProps<VmCustomerModel>)=>{

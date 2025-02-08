@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { VmSale } from "../model/VmSaleModel"
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { ReactNode, useEffect, useState } from "react";
 import { SetupFromGetAll } from "../../../../inventory/config/unit/impl/setupFormImp";
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
@@ -28,6 +28,7 @@ import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Dat
 import dayjs from "dayjs";
 import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import { SaleModel } from "../model/SaleModel";
+import { POSActionButton } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"

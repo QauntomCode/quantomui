@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { PurchaseModel, VMPurchaseModel } from "../model/VMPurchaseModel";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE} from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { CommonInvDetailModel, InventoryAction } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
@@ -12,8 +12,8 @@ import { INVENTORY_PERFORMED_ACTION } from "../../../../inventory/CommonComp/Com
 import { AddOrRemoveExtendedMethod } from "../../../../inventory/CommonComp/CommonInvDetail/Impl/InventoryIoMethods";
 import { FocusOnControlByControlId, isNullOrEmpty, safeParseToNumber } from "../../../../../CommonMethods";
 import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
-import { Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, useTheme } from "@mui/material";
+import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from "../../../../../quantom_comps/base_comps";
 import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
 import { Quantom_LOV, Quantom_LOV1 } from "../../../../../quantom_comps/Quantom_Lov";
@@ -24,8 +24,11 @@ import { QUANTOM_Table } from "../../../../account/config/mainAccount/view/MainA
 import { ShowSingleSelectedItemDialog } from "../../../../sale/processing/sale/view/POSSaleView";
 import { SupplierGetCodeNameMethod } from "../../../Config/Supplier/customer/impl/SuppierImpl";
 import { PurchaseDeleteMethod, PurchaseGetAll, PurchaseGetOneMethod, PurchaseInsertMethod } from "../impl/PurchaseImp";
-import { BlindOutlined, Today } from "@mui/icons-material";
+import { BlindOutlined, Flare, PaddingTwoTone, Today } from "@mui/icons-material";
 import { HTTP_RESPONSE_TYPE, HttpResponse } from "../../../../../HTTP/QuantomHttpMethods";
+import { POSToolBarComp } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
+import { POSActionButton } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
+import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 
 
@@ -111,7 +114,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
         }
     }
 
-   
+    const PURCHASE_SUPPLIER_CONTROL_ID="SUPPLIER_CONTROL_ID_PURCHASE_CONTROL";
     const theme= useTheme();
     const fonts= useQuantomFonts();
     return(
@@ -119,60 +122,26 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
         <POSToolBarComp
             SaveAction={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locId}})}  
             SaveAfterAction={(res?:VMPurchaseModel)=>{props?.setState?.({...res})}} 
-            ResetAction={()=>{props?.setState?.({})}}
+            ResetAction={()=>{props?.setState?.({});FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)}}
             DeleteAction={()=>PurchaseDeleteMethod(props?.state)}
             ListAction={()=>{
                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
                  }}
-            NewAction= {()=>{props?.setState?.({})}}/>
-        {/* <div style={{display:'flex'}}>
-
-                        <POSActionButton 
-                            responseAfterMethod={(res?:VMPurchaseModel)=>{
-                                    props?.setState?.({...res})
-                            }} 
-                            label="New"  iconName="FeedOutlined" 
-                            
-                        /> 
-                        <POSActionButton 
-                            responseAfterMethod={(res?:VMPurchaseModel)=>{
-                                    props?.setState?.({...res})
-                            }} 
-                            label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
-                            responseClick={()=>PurchaseInsertMethod({...props?.state,purchase:{...props?.state?.purchase,BillDate:props?.state?.purchase?.BillDate?? new Date(),LocId:props?.state?.purchase?.LocId??locId}})}
-                        />
-                        <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.setState?.({})}} iconName="CancelPresentationOutlined"/>
-                        <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined" responseClick={()=>PurchaseDeleteMethod(props?.state)}/>
-                        <POSActionButton label="List" onClick={()=>{
-                            store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
-                             }} iconName="FeaturedPlayListOutlined"/>
-                        
-                        <POSActionButton 
-                            responseAfterMethod={(res?:VMPurchaseModel)=>{
-                                    props?.setState?.({...res})
-                            }} 
-                            label="PRINT"  iconName="LocalPrintshopOutlined" 
-                            
-                        /> 
-                        
-            </div> */}
+            NewAction= {()=>{props?.setState?.({});FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)}}/>
         <div className="row g-2">
             
             <div className="col-md-9">
-
-                        
-                
                 <div className="row  g-2">
                     <div className=" col-md-3">
                         <Quantom_Input label="Bill No" value={props?.state?.purchase?.BillNo} disabled/>
                     </div>
                     <div className=" col-md-3">
-                        <QUANTOM_Date label="Bill Date" value={dayjs(props?.state?.purchase?.BillDate?? new Date())} onChange={(date)=>{
+                        <QUANTOM_Date   label="Bill Date" value={dayjs(props?.state?.purchase?.BillDate?? new Date())} onChange={(date)=>{
                             props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,BillDate:date?.toDate()??new Date()}})
                         }}/>
                     </div>
                     <div className="col-md-6">
-                    <Quantom_LOV1  uniqueKeyNo={props?.UniqueId??""}  selected={{Code:props?.state?.purchase?.SuppCode,
+                    <Quantom_LOV1 id={PURCHASE_SUPPLIER_CONTROL_ID} uniqueKeyNo={props?.UniqueId??""}  selected={{Code:props?.state?.purchase?.SuppCode,
                                                                                  Name:props?.state?.purchase?.SuppName}} 
                                 onChange={(item)=>{
                                     // alert('onchage item is called')
@@ -190,85 +159,96 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                 </div>
 
                 <div className="row g-2 mt-2" >
-                <RenderItemGrid items={props?.state?.purchaseDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Purchase} formNameString="PURCHAES"
-                                    vendorCode={props?.state?.purchase?.SuppCode} onChange={(items)=>{
-                    props?.setState?.({...props?.state,purchaseDetails:[...items??[]]})
-                }} baseProps={props}/>
+                    <RenderItemGrid items={props?.state?.purchaseDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Purchase} formNameString="PURCHAES"
+                                        vendorCode={props?.state?.purchase?.SuppCode} onChange={(items)=>{
+                        props?.setState?.({...props?.state,purchaseDetails:[...items??[]]})
+                    }} baseProps={props}/>
 
                 </div>
             </div>
-            <div className="col-md-3" style={{height:'calc(100vh - 22px)',backgroundColor:theme?.palette?.background?.paper}}>
-                <div className="col-md-12 p-2 m-0" 
-                    style={{textAlign:'center',fontSize:'25px',color:theme?.palette?.text.primary,fontFamily:fonts.HeaderFont,fontWeight:'bold',letterSpacing:3,
-                        backgroundColor:theme.palette.background.default,
-                        borderBottom:`1px solid ${theme?.palette?.text?.primary}`
-                    }}>
-                      SUMMARY
-                </div>
+            <div className="col-md-3" >
+                <Quantom_Grid container display='flex' flexDirection='column' component={Paper} sx={{height:'calc(100vh - 40px)',
+                                    fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
+                    
+                    <Quantom_Grid display='flex' container  sx={{padding:'5px',paddingTop:'30px',paddingBottom:'30px',
+                            borderTopLeftRadius:'5px',borderTopRightRadius:'5px',
+                            backgroundColor:theme.palette.primary.main,borderBottom:`1px solid ${theme?.palette?.text.primary}`}}>
+                        <div style={{flex:1,fontSize:'25px',letterSpacing:1,fontWeight:700,display:'flex',justifyContent:'center',color:theme.palette.primary.contrastText,
+                        }}>Summary </div>
+                             
+                    </Quantom_Grid>
+                    <Quantom_Grid display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,
+                    padding:'5px'}}>
+                        <div style={{flex:1,alignItems:'center',display:'flex'}}>
+                            <div style={{marginRight:'5px'}}>
+                                <IconByName color={theme?.palette?.primary?.main} iconName="BusAlertOutlined"/>
+                            </div>
+                            Total Am 
+                        </div>
+                        <div style={{marginRight:'5px',fontWeight:700,fontSize:fonts.H3FontSize}}>{grossAmount}</div>     
+                    </Quantom_Grid>
+                    <Quantom_Grid  display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,padding:'5px',}}>
+                        
+                                <Quantom_Grid style={{marginRight:'15px',display:'flex',alignItems:'center'}}>
+                                    <div style={{marginRight:'5px'}}>
+                                        <IconByName color={theme?.palette?.primary?.main} iconName="DoNotDisturbOnTotalSilenceOutlined"/>
+                                    </div>
+                                    Discount 
+                                </Quantom_Grid>
+                                
 
-                <div className="row pt-2 pb-2 " style={{backgroundColor:theme?.palette?.background?.default,marginLeft:'0px', marginRight:'0px',
-                            fontFamily:fonts.HeaderFont,fontSize:'16px',fontWeight:'bold',letterSpacing:1.5,color:theme?.palette?.text?.primary,
-                            borderBottom:`1px solid ${theme?.palette?.text.primary}`
-                            }}>
-                     <div className="col-md-6" style={{fontSize:'16px'}} >
-                          Total
-                     </div>
-                     <div className="col-md-6" style={{textAlign:'right'}} >
-                        {grossAmount}
-                     </div>
-                </div>
-                <div className="row pt-1 pb-1 " style={{backgroundColor:theme?.palette?.background?.default,marginLeft:'0px', marginRight:'0px',
-                            fontFamily:fonts.HeaderFont,fontSize:'16px',fontWeight:'bold',letterSpacing:1.5,color:theme?.palette?.text?.primary,
-                            borderBottom:`1px solid ${theme?.palette?.text.primary}`
-                            }}>
-                     <div className="col-md-6" style={{fontSize:'16px'}} >
-                          Discount
-                     </div>
-                     <div className="col-md-6" style={{textAlign:'right'}} >
-                         <input value={props?.state?.purchase?.ExtraDiscount} onChange={(e)=>{
-                            props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,ExtraDiscount:safeParseToNumber(e?.target?.value)}})
-                         }} style={{width:'100%',
-                                border:`1px solid ${theme?.palette?.primary.main}`,fontFamily:fonts.HeaderFont,borderRadius:'5px',textAlign:'right',fontWeight:'bold',fontSize:'20px'}} />
-                     </div>
-                </div>
-                <div className="row pt-2 pb-2 " style={{backgroundColor:theme?.palette?.background?.default,marginLeft:'0px', marginRight:'0px',
-                            fontFamily:fonts.HeaderFont,fontSize:'20px',fontWeight:'bold',letterSpacing:1.5,color:theme?.palette?.text?.primary,
-                            borderBottom:`1px solid ${theme?.palette?.text.primary}`
-                            }}>
-                     <div className="col-md-6" style={{fontSize:'20px'}} >
-                          Net Amount
-                     </div>
-                     <div className="col-md-6" style={{textAlign:'right'}} >
-                        {netAmount}
-                     </div>
-                </div>
+                                <Quantom_Grid style={{flex:1}}>
+                                    <input  value={props?.state?.purchase?.ExtraDiscount} 
+                                            onChange={(e)=>{props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,ExtraDiscount:safeParseToNumber(e?.target?.value)}})}}
+                                            type="text" style={{border:`1px solid ${theme?.palette?.primary?.main}`,width:'100%',
+                                            paddingRight:'5px',borderRadius:'5px',textAlign:'right',fontFamily:fonts.HeaderFont,fontSize:fonts.H3FontSize,fontWeight:650}}/>
+                                </Quantom_Grid>
+                           
+                    </Quantom_Grid>
+                    <Quantom_Grid display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,padding:'5px',
+                                    paddingTop:'10px',paddingBottom:'10px'}}>
+                        <div style={{flex:1,alignItems:'center',display:'flex'}}>
+                            <div style={{marginRight:'5px'}}>
+                                <IconByName color={theme?.palette?.primary?.main} iconName="AccountBalanceWalletOutlined"/>
+                            </div>
+                            Net  Am
+                        </div>
+                        <div style={{marginRight:'5px',fontWeight:700,fontSize:fonts.H3FontSize}}>{netAmount}</div>     
+                    </Quantom_Grid>
 
-                <div className="row pt-1 pb-1 " style={{backgroundColor:theme?.palette?.background?.default,marginLeft:'0px', marginRight:'0px',
-                            fontFamily:fonts.HeaderFont,fontSize:'16px',fontWeight:'bold',letterSpacing:1.5,color:theme?.palette?.text?.primary,
-                            borderBottom:`1px solid ${theme?.palette?.text.primary}`
-                            }}>
-                     <div className="col-md-6" style={{fontSize:'16px'}} >
-                          Paid
-                     </div>
-                     <div className="col-md-6" style={{textAlign:'right'}} >
-                         <input value={props?.state?.purchase?.PaidAmount}
-                                onChange={(e)=>{props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,PaidAmount:safeParseToNumber(e.target?.value)}})}}
-                          style={{width:'100%',
-                                border:`1px solid ${theme?.palette?.primary.main}`,fontFamily:fonts.HeaderFont,borderRadius:'5px',textAlign:'right',fontWeight:'bold',fontSize:'20px'}} />
-                     </div>
-                </div>
+                    <Quantom_Grid  display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,padding:'5px'}}>
+                        
+                                <Quantom_Grid style={{marginRight:'15px',display:'flex',alignItems:'center'}}>
+                                    <div style={{marginRight:'5px'}}>
+                                        <IconByName color={theme?.palette?.primary?.main} iconName="CreditScoreOutlined"/>
+                                    </div>
+                                    Paid Am 
+                                </Quantom_Grid>
+                                
 
-                <div className="row pt-2 pb-2 " style={{backgroundColor:theme?.palette?.background?.default,marginLeft:'0px', marginRight:'0px',
-                            fontFamily:fonts.HeaderFont,fontSize:'20px',fontWeight:'bold',letterSpacing:1.5,color:theme?.palette?.text?.primary,
-                            borderBottom:`1px solid ${theme?.palette?.text.primary}`
-                            }}>
-                     <div className="col-md-6" style={{fontSize:'20px'}} >
-                          Balance
-                     </div>
-                     <div className="col-md-6" style={{textAlign:'right',fontSize:'40px',color:theme.palette.secondary.main}} >
-                        {balance}
-                     </div>
-                </div>
+                                <Quantom_Grid style={{flex:1}}>
+                                    <input value={props?.state?.purchase?.PaidAmount} onChange={(e)=>{
+                                        props?.setState?.({...props?.state,purchase:{...props?.state?.purchase,PaidAmount:safeParseToNumber(e?.target?.value)}})
+                                    }} type="text" style={{border:`1px solid ${theme?.palette?.primary?.main}`,width:'100%',
+                                            paddingRight:'5px',borderRadius:'5px',textAlign:'right',fontFamily:fonts.HeaderFont,fontSize:fonts.H3FontSize,fontWeight:650}}/>
+                                </Quantom_Grid>
+                           
+                    </Quantom_Grid>
+
+                    <Quantom_Grid display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,
+                            padding:'5px',paddingLeft:'0px',paddingTop:'25px',paddingBottom:'25px'}}>
+                        <div style={{flex:1,alignItems:'center',display:'flex'}}>
+                            <div style={{marginRight:'0px'}}>
+                                <IconByName fontSize="80px" color={theme?.palette?.primary?.main} iconName="CurrencyBitcoinOutlined"/>
+                            </div>
+                             
+                        </div>
+                        <div style={{marginRight:'5px',fontWeight:700,fontSize:'60px',color:theme.palette.primary.main}}>{balance}</div>     
+                    </Quantom_Grid>
+                   
+                </Quantom_Grid>
+                  
+              
             </div>
 
             
@@ -438,20 +418,22 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                                                         <TableCell className="col-md-7" style={{...headerStyle}}>
                                                             <div className="row">
                                                             
-                                                                <div className="col-md-4">
+                                                                <div className="col-md-5 ">
                                                                     <div style={{display:'flex',alignItems:'center'}}>
                                                                         <div className="col-md-1">{item?.CustomSortNo}</div>
                                                                         <div onClick={()=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}> 
-                                                                            <IconByName iconName="DeleteOutlined" />
+                                                                            <IconByName color={theme?.palette?.primary.main} iconName="DeleteOutlined" />
                                                                         </div>
                                                                         <div onClick={()=>{
                                                                             setselectedItemForChange(item);
                                                                             setShowItemChangeDialog(true);
-                                                                        }}><IconByName iconName="EditCalendarOutlined"/></div>
-                                                                        <div style={{flex:1.5,marginLeft:'20px'}}> {item?.ItemCode} </div>
+                                                                        }}>
+                                                                            <IconByName color={theme?.palette?.primary.main} iconName="EditCalendarOutlined"/>
+                                                                        </div>
+                                                                        <div style={{flex:1,marginLeft:'5px'}}> {item?.ItemCode} </div>
                                                                     </div>
                                                                 </div>
-                                                                <div className="col-md-8">{item?.ItemName}</div>
+                                                                <div className="col-md-7">{item?.ItemName}</div>
                                                             </div>
                                                         </TableCell>
                                                         <TableCell className="col-md-1" style={{...headerStyle}}>
@@ -510,8 +492,8 @@ interface POSBillListProps{
           <Quantom_Grid container  spacing={.5} size={{xs:12}}>
             
                <Quantom_Grid container size={{xs:12}}>
-                  <Quantom_Grid item size={{md:2}}>
-                     <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+                  <Quantom_Grid item >
+                     <POSActionButton1 iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                      }}/>
@@ -525,8 +507,8 @@ interface POSBillListProps{
                   <Quantom_Grid item size={{md:5}}>
                     <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
                   </Quantom_Grid>
-                  <Quantom_Grid item size={{md:1}}>
-                     <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
+                  <Quantom_Grid item >
+                     <POSActionButton1 iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
                         let res = await PurchaseGetAll({FromDate:fromDate,ToDate:toDate,Search:search,LocId:locId});
                         console.warn('this is my response',res);
                         // let res = await SaleGetAll(fromDate,toDate,search,locId);
@@ -536,40 +518,44 @@ interface POSBillListProps{
                   
                </Quantom_Grid>
 
-               <Quantom_Grid container size={{xs:12}} component={Paper} spacing={2} sx={{padding:"20px"}}>
+               <Quantom_Grid container size={{xs:12}}  spacing={2} sx={{padding:"20px"}}>
                   {listData?.map((item,index)=>{
                     // alert(item?.CustName)
                      return(
-                        <Quantom_Grid sx={{FontFamily:font.HeaderFont,fontSize:font.RegularFont,backgroundColor:theme.palette?.background.default,padding:"8px",borderRadius:'8px'}} 
+                        <Quantom_Grid 
+                                component={Paper} 
+                                sx={{FontFamily:font.HeaderFont,fontSize:font.HeaderFont,padding:"8px",borderRadius:'8px',
+                                    borderBottom:`1px solid ${theme?.palette?.primary?.main}`
+                                }} 
                         size={{xs:12,sm:12,md:6,lg:4,xl:3}}> 
                         <div style={{display:'flex',borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}>
-                            <div style={{fontWeight:'bold',fontSize:font.H4FontSize,display:'flex',alignItems:'center',flex:1}}>
+                            <div style={{fontWeight:600,fontFamily:font.HeaderFont,fontSize:font.H4FontSize,display:'flex',alignItems:'center',flex:1}}>
                                 
                                 <div style={{marginRight:"8px"}}>
-                                    <IconByName iconName="BrandingWatermarkOutlined"/>
+                                    <IconByName color={theme?.palette?.primary?.main} iconName="TagOutlined"/>
                                 </div>
                                     {item?.BillNo}
                             </div>
                             <div style={{fontWeight:'bold',fontSize:font.H4FontSize,display:'flex',alignItems:'center',flex:1}}>
                                 
                                 <div style={{marginRight:"8px"}}>
-                                    <IconByName iconName="DateRangeOutlined"/>
+                                    <IconByName color={theme?.palette?.primary?.main} iconName="DateRangeOutlined"/>
                                 </div>
                                     {dayjs(item?.BillDate).format('DD-MMM-YYYY') }
                             </div>
 
                           </div>
-                          <div style={{fontSize:font.H4FontSize,fontWeight:"bold",display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
+                          <div style={{fontSize:font.H3FontSize,fontWeight:600,display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
                                  <div style={{marginRight:"8px"}}>
-                                    <IconByName iconName="PersonOutlineOutlined"/>
+                                    <IconByName color={theme?.palette?.primary?.main} iconName="PersonOutlineOutlined"/>
                                 </div>
                             {/* {item?.supplier} */}
-                             Supplier Name
+                             {item?.SuppName}
                           </div>
                           <div style={{fontSize:"20px",fontWeight:"bold",display:'flex',fontFamily:font.HeaderFont,alignItems:'center',marginTop:'5px'}}>
-                            <div style={{display:'flex',alignItems:'center',flex:1,fontSize:'16px'}}>
-                                 <div style={{marginRight:"8px",opacity:0.6}}>
-                                     Purchase Amount:
+                            <div style={{display:'flex',alignItems:'center',flex:2,fontSize:'30px'}}>
+                                 <div style={{marginRight:"8px"}}>
+                                 <IconByName fontSize="40px" color={theme?.palette?.primary?.main} iconName="AccountBalanceWalletOutlined"/>
                                 </div>
                                 {/* {item?.TAmount} */} 152000
                             </div>
@@ -579,10 +565,14 @@ interface POSBillListProps{
                                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:item?.BillNo}})))
                                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                                     }}
-                                    style={{border:`1px solid ${theme.palette.primary.main}`,width:'100%',fontFamily:font.HeaderFont,fontWeight:'bold',color:theme.palette.secondary.main ,display:'flex',justifyContent:'center',alignItems:'center'   }}>
+                                    style={{
+                                            border:`1px solid ${theme.palette.primary.main}`,width:'100%',
+                                            fontFamily:font.HeaderFont,fontWeight:'bold',color:theme.palette.primary.contrastText ,
+                                            backgroundColor:theme?.palette?.primary?.main,
+                                            display:'flex',justifyContent:'center',alignItems:'center'   }}>
                                     View   
                                     <div style={{marginLeft:'10px'}}>
-                                     <IconByName iconName="EastOutlined"/>
+                                     <IconByName color={theme?.palette?.primary?.contrastText} iconName="EastOutlined"/>
                                     </div>
                                  </Button>
                             </div>
@@ -602,46 +592,3 @@ export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"
 export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_DATA_KEY"
 
 
-
-interface POSToolBarCompProps<T,>{
-    NewAction?:()=>void;
-    ListAction?:()=>void;
-
-    ResetAction?:()=>void;
-
-    SaveAction?:()=>Promise<HttpResponse<T>>;
-    DeleteAction?:()=>Promise<HttpResponse<T>>;
-
-    SaveAfterAction?:(data?:any)=>void
-
-}
-
-export const POSToolBarComp=<T,>(props?:POSToolBarCompProps<T>)=>{
-    const theme =useTheme();
-    return(
-        <div style={{display:'flex',paddingBottom:'4px',marginBottom:'4px',}}>
-
-                        <POSActionButton
-                        onClick={()=>
-                                    props?.NewAction?.()
-                        } 
-                         label="New"  iconName="FeedOutlined" 
-                            
-                        /> 
-                        <POSActionButton 
-                            responseAfterMethod={props?.SaveAfterAction} 
-                            label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
-                            responseClick={props?.SaveAction}
-                        />
-                        <POSActionButton label="Reset" buttonType='RESET' onClick={()=>{props?.ResetAction?.()}} iconName="CancelPresentationOutlined"/>
-                        <POSActionButton label="Delete" buttonType='DELETE'  iconName="DeleteOutlined" responseClick={props?.DeleteAction}/>
-                        <POSActionButton label="List" onClick={props?.ListAction} iconName="FeaturedPlayListOutlined"/>
-                        
-                        <POSActionButton 
-                            label="PRINT"  iconName="LocalPrintshopOutlined" 
-                            
-                        /> 
-                        
-            </div>
-    )
-}

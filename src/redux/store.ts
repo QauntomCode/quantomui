@@ -152,14 +152,30 @@ export const useHoverStyle = (theme?: Theme) => {
   return hoverStyle;
 };
 
-
-export const get_form_state_without_selector=<T>(uniqueId?:string):Promise<T>=>{
-   let obj= store.getState().formsState?.FormsState?.find?.(x=>x.stateKey===uniqueId)?.QuantomFormCoreState;
-   return Promise.resolve(obj);
-}
-
-export const get_form_full_state_without_selector=<T,>(uniqueId?:string):Promise<QuantomFormState<T>>=>{
-  let obj:any= store.getState().formsState?.FormsState?.find?.(x=>x.stateKey===uniqueId);
+export const get_form_state_without_selector = <T>(
+  uniqueId?: string
+): Promise<T> => {
+  let obj = store
+    .getState()
+    .formsState?.FormsState?.find?.(
+      (x) => x.stateKey === uniqueId
+    )?.QuantomFormCoreState;
   return Promise.resolve(obj);
-}
+};
+
+export const get_form_full_state_without_selector = <T>(
+  uniqueId?: string
+): Promise<QuantomFormState<T>> => {
+  let obj: any = store
+    .getState()
+    .formsState?.FormsState?.find?.((x) => x.stateKey === uniqueId);
+  return Promise.resolve(obj);
+};
+
+export const get_current_user_locations_with_out_selector = (): Promise<
+  LocationModel[]
+> => {
+  let obj: any = store.getState().formsState?.UserLocations;
+  return Promise.resolve(obj);
+};
 export default store;

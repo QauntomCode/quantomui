@@ -39,7 +39,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
 
     const theme= useTheme();
     const fonts= useQuantomFonts();
-    const border=`1px solid ${theme?.palette.primary.contrastText}`;
+    const border=`1px solid ${theme?.palette.primary.main}`;
     const fontStyle={fontFamily:fonts.HeaderFont,fontSize:'20px',fontWeight:'bold'}
     const flexStyle={flex:5,display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}
 

@@ -5,7 +5,7 @@ import React, { ReactNode } from 'react'
 import { useSelector } from 'react-redux';
 import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu, get_helperData_by_key } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
-import { Alert, Box, CircularProgress, Dialog, DialogContent, Grid, Paper, Slide, Snackbar, useTheme } from '@mui/material';
+import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, Grid, List, ListItem, ListItemText, Paper, Slide, Snackbar, useTheme } from '@mui/material';
 import { add_helper_data_single_key, change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
 // import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
@@ -37,7 +37,7 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSActionButton, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
@@ -48,6 +48,7 @@ import { POSCustomerReceiptView } from '../../../../quantom_ui/payments/customer
 import { POSSupplierPaymentView } from '../../../../quantom_ui/payments/supplierPayments/view/POSSupplierPaymentView';
 import { POSStockDetailReportView } from '../../../../quantom_ui/inventory/reports/stockReport/view/StockReportView';
 import { POSReportScreenView } from '../../POSReportScreen';
+import { POSActionButton1 } from '../../POSHelpers/POSActionButton1';
 
 
 
@@ -317,25 +318,52 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
          }
     },[locs, fState?.LocationInitMethod,fState?.compSettings?.willShowLocations])
 
-
+  const fonts= useQuantomFonts();
+  const theme= useTheme();
     return(
       <>
         <Dialog fullWidth open={(fState?.compSettings?.willShowLocations && !fState?.Location?.LocId)??false}>
-          <DialogContent>
+          <DialogTitle style={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,lineHeight:'30px',paddingTop:'8px',paddingBottom:'8px'}}>
+              <div style={{display:'flex',fontWeight:600,fontFamily:fonts?.HeaderFont,fontSize:fonts.H3FontSize}}>
+                <div style={{flex:1}}>
+                   Select Location
+                </div>
+                <div onClick={()=>{
+                   const x=locs?.[0];
+                   store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:x}));
+                   fState?.LocationInitMethod?.(x);
+                }}>
+                   <IconByName fontSize='30px' iconName='CancelPresentationOutlined' color={theme?.palette.error?.main}/>
+                </div>
+                
+              </div>
+          </DialogTitle>
+          <DialogContent sx={{pading:'5px'}}>
              {
               locs?.map((x,index)=>
                 (
-                 <Quantom_Grid container component={Paper}  sx={{fontFamily:font.HeaderFont,fontSiz:font.H3FontSize,marginTop:'5px',hover:{
+                 <Quantom_Grid component={Paper} container siz={{xs:12}}   sx={{fontFamily:font.HeaderFont,fontSize:font.H4FontSize,fontWeight:400,borderBottom:`1px solid ${theme?.palette?.primary?.main}`,hover:{
                    cursor:'pointer'
                  }}}>
-                  <Box onClick={()=>{
+                  {/* <Box onClick={()=>{
                      store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:x}));
                      fState?.LocationInitMethod?.(x);
                   }} sx={{width:'100%',height:'100%',fontSize:font.H4FontSize,fontFamily:font.RegularFont,marginLeft:'10px',paddingTop:'5px',paddingBottom:'5px'}}>
                     {x?.LocName}
-                  </Box>
-                  
+                  </Box> */}
+                    <div
+                       onClick={()=>{
+                        store.dispatch(set_component_selected_locations({stateKey:props?.basProps?.UniqueId,Location:x}));
+                        fState?.LocationInitMethod?.(x);
+                       }} 
+                      style={{width:'100%',fontSize:fonts.H4FontSize,fontWeight:500,display:'flex',paddingLeft:'5px',paddingRight:'5px',paddingTop:'4px',paddingBottom:'4px',alignItems:'center'}}>
+                       <div style={{marginRight:'10px'}}>
+                         <IconByName  iconName='StorefrontOutlined' color={theme?.palette?.primary?.main}/>
+                       </div>
+                       <div style={{flex:1}}>{x?.LocName}</div>
+                    </div>
                   </Quantom_Grid>
+               
                 )
               )
              }
@@ -694,8 +722,8 @@ export const QuantomConfirmationDialog=(props?:QuantomConfirmationProps)=>{
           paddingLeft:'10px',justifyContent:'center',alignItems:'center'
         }}>
           <div style={{flex:1,height:'42px'}} >
-            <div style={{marginRight:'10px', display:"flex" , alignItems:'center'}} >
-                <IconByName iconName='HelpCenterOutlined' color={theme.palette.text.primary} fontSize='40px'/>
+            <div style={{marginRight:'10px',color:theme?.palette?.primary?.contrastText, display:"flex" , alignItems:'center'}} >
+                <IconByName iconName='HelpCenterOutlined' color={theme.palette.primary.contrastText} fontSize='40px'/>
                {props?.MessageHeader}
             </div>
           </div>
@@ -706,10 +734,10 @@ export const QuantomConfirmationDialog=(props?:QuantomConfirmationProps)=>{
           <div className='row g-1' style={{paddingTop:'15px',paddingBottom:'15px',}}>
             {/* <POSActionButton label='OK' /> */}
             <div className='col-6'>
-                 <POSActionButton iconName='CheckBoxOutlined' label='YES' onClick={()=>{props?.OnYesPress?.()}}/>
+                 <POSActionButton1 iconName='CheckBoxOutlined' label='YES' onClick={()=>{props?.OnYesPress?.()}}/>
             </div>
             <div className='col-6'>
-                <POSActionButton iconName='CancelPresentationOutlined' label='CANCEL'onClick={()=>{props?.OnNoPress?.()}}/>
+                <POSActionButton1 iconName='CancelPresentationOutlined' label='CANCEL'onClick={()=>{props?.OnNoPress?.()}}/>
             </div>
         </div>
         </div>
@@ -955,3 +983,14 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
   ...SaleMenus,
   ...POS_MENUS
 ]
+
+
+const listStyle = {
+  p: 0,
+  width: '100%',
+  maxWidth: 360,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: 'divider',
+  backgroundColor: 'background.paper',
+};

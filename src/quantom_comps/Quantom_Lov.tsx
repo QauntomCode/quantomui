@@ -388,6 +388,7 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
     }
     let res:any[]= [];
     let upperSearch= search?.toUpperCase();
+    var searchArray = upperSearch.split(/(\s+)/);
     for(let i=0;i<(tValus?.length??0);i++){
        if(queryId!== METHOD_FILTER_ID){
           console.log('out with id is changed')
@@ -398,7 +399,16 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
          console.log("out with break limit is exceed")
         break;
        }
-       let isOk= tValus[i]?.Code?.toUpperCase()?.includes(upperSearch) || allValues[i]?.Name?.toUpperCase()?.includes(upperSearch);
+       let isOk=true;
+      //  let loopOkRes=false;
+       for(let s of searchArray){
+          if(!isOk){
+            break;
+          }
+          isOk = tValus[i]?.Code?.toUpperCase()?.includes(s) || allValues[i]?.Name?.toUpperCase()?.includes(s);
+
+       }
+       //let isOk= tValus[i]?.Code?.toUpperCase()?.includes(upperSearch) || allValues[i]?.Name?.toUpperCase()?.includes(upperSearch);
        if(isOk){
         res?.push({...tValus[i]})
        }

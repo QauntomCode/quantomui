@@ -5,7 +5,7 @@ import { HideLoadingDialog, IconByName, MenuComponentProps, QuantomConfirmationD
 import { VMInventoryItemsModel } from "../../model/VMInventory_itemsModel";
 import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
 import React, { useEffect, useState } from "react";
-import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
+import {  Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
 import { Box,FormControlLabel,Paper, Snackbar, Switch, useTheme } from "@mui/material";
 import { Quantom_LOV } from "../../../../../../quantom_comps/Quantom_Lov";
 import { CommonCodeName } from "../../../../../../database/db";
@@ -19,7 +19,8 @@ import { InventoryItemsModel } from "../../model/InventoryItemsModel";
 import { BorderBottom, BorderLeft } from "@mui/icons-material";
 import { ShowQuantomError } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import POSSoftwareReportIcon from '@mui/icons-material/AssessmentOutlined';
-import { POSToolBarComp } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
+import { POSToolBarComp } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
+import { POSActionButton1 } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 export const POSInventoryItemsView=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
     // const theme= useTheme();
@@ -395,124 +396,6 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
 
 export const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
 
-interface POSActionButtonProps{
-  label?:string;
-  iconName?:string;
-  iconColor?:string;
-  onClick?:()=>void;
-  buttonType?:'SAVE'|'RESET'|'DELETE'|'LIST'
-  responseClick?:()=>Promise<HttpResponse<any>>
-  responseAfterMethod?:(state?:any)=>void;
-  backgroundColor?:string;
-  rightMargin?:string 
-}
-export const POSActionButton=(props?:POSActionButtonProps)=>{
-    const fonts= useQuantomFonts();
-    const theme= useTheme();
-    const[openConfirmation,setOPenConfirmation]=React.useState(false);
-    const [errorMessage,setErrorMessage]=React.useState('');
-    const [openEerrorMessage,setOpenErrorMessage]=React.useState(false);
-    const [toastMessage,setToastMessage]=React.useState('');
-    const[openToast,setOpenToast]=React.useState(false);
-    const[iconColor,setIconColor]=useState<string>();
-
-    useEffect(()=>{
-        let color= theme?.palette?.primary?.main;
-        if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
-            color= theme?.palette?.error?.main;
-        }
-        if(props?.buttonType==='SAVE'){
-            color= theme?.palette?.success?.main;
-        }
-        setIconColor(theme?.palette?.primary?.main)
-    },[theme])
-
-    return(
-       
-        <div style={{width:'60px',marginRight: (props?.rightMargin)?props?.rightMargin:'10px'}}>
-             
-         <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-         <Paper sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
-        {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
-                <QuantomConfirmationDialog OnYesPress={async()=>{
-                    if(props?.buttonType==='DELETE'){
-                        setOPenConfirmation(false);
-                        let res= await props?.responseClick?.();
-                        if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                            setOpenToast(true);
-                            setToastMessage('Record Deleted Successfully...')
-                        }
-                        else{
-                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
-                        }
-                    }
-                    if(props?.buttonType==='RESET'){
-                        props?.onClick?.();
-                        setOPenConfirmation(false);
-                    }
-                }} 
-                OnNoPress={()=>{
-                    setOPenConfirmation(false);
-                }}
-                open={openConfirmation} MessageHeader="Are You Sure Delete !"/>  
-            ):(<></>)} 
-        <button 
-        onClick={async()=>{
-                try {
-                    if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
-                        setOPenConfirmation(true);
-                        return;
-                    }
-                    if(props?.responseClick){
-                    
-                        if(props?.buttonType==='SAVE'){
-                            ShowLoadingDialog();
-                        }
-                        let res= await props?.responseClick?.()
-                        if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                            if(props.buttonType==='SAVE'){
-                                setOpenToast(true);
-                                setToastMessage('Record Saved Successfully...');
-                                props?.responseAfterMethod?.(res?.Response)
-                            }
-                            HideLoadingDialog();
-                            // success message
-                        }
-                        else if(res.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
-                            HideLoadingDialog();
-                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
-                           
-                        }
-                        }
-                        else{
-                            props?.onClick?.()
-                        }
-                
-                }
-                catch{
-                HideLoadingDialog();
-                }
-            }
-        }    
-         style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',height:'70px',
-                     border:'none',color:theme?.palette?.text?.primary,
-                    fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
-                      
-                    <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                        <IconByName iconName={props?.iconName} fontSize="30px" color={iconColor}/>
-                       {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
-
-                    </div>
-                    <div style={{letterSpacing:1.2}}>
-                        {props?.label?.toLocaleUpperCase()}
-                    </div>
-                   
-              </button>
-           
-        </Paper>
-        </div>
-    )
-}
 
 
 export interface ToastProps{
@@ -559,111 +442,3 @@ export const QuantomSwitch=(props?:QuantomSwithProps)=>{
 
 
 
-
-export const POSActionButton1=(props?:POSActionButtonProps)=>{
-    const fonts= useQuantomFonts();
-    const theme= useTheme();
-    const[openConfirmation,setOPenConfirmation]=React.useState(false);
-    const [errorMessage,setErrorMessage]=React.useState('');
-    const [openEerrorMessage,setOpenErrorMessage]=React.useState(false);
-    const [toastMessage,setToastMessage]=React.useState('');
-    const[openToast,setOpenToast]=React.useState(false);
-    const[iconColor,setIconColor]=useState<string>();
-
-    useEffect(()=>{
-        let color= theme?.palette?.primary?.main;
-        if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
-            color= theme?.palette?.error?.main;
-        }
-        if(props?.buttonType==='SAVE'){
-            color= theme?.palette?.success?.main;
-        }
-        setIconColor(theme?.palette?.primary?.main)
-    },[theme])
-
-    return(
-       
-        <div style={{width:'130px',marginRight:props?.rightMargin}}>
-             
-         <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-         <Paper sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
-        {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
-                <QuantomConfirmationDialog OnYesPress={async()=>{
-                    if(props?.buttonType==='DELETE'){
-                        setOPenConfirmation(false);
-                        let res= await props?.responseClick?.();
-                        if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                            setOpenToast(true);
-                            setToastMessage('Record Deleted Successfully...')
-                        }
-                        else{
-                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
-                        }
-                    }
-                    if(props?.buttonType==='RESET'){
-                        props?.onClick?.();
-                        setOPenConfirmation(false);
-                    }
-                }} 
-                OnNoPress={()=>{
-                    setOPenConfirmation(false);
-                }}
-                open={openConfirmation} MessageHeader="Are You Sure Delete !"/>  
-            ):(<></>)} 
-        <button 
-        onClick={async()=>{
-                try {
-                    if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
-                        setOPenConfirmation(true);
-                        return;
-                    }
-                    if(props?.responseClick){
-                    
-                        if(props?.buttonType==='SAVE'){
-                            ShowLoadingDialog();
-                        }
-                        let res= await props?.responseClick?.()
-                        if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                            if(props.buttonType==='SAVE'){
-                                setOpenToast(true);
-                                setToastMessage('Record Saved Successfully...');
-                                props?.responseAfterMethod?.(res?.Response)
-                            }
-                            HideLoadingDialog();
-                            // success message
-                        }
-                        else if(res.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
-                            HideLoadingDialog();
-                            ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"});
-                           
-                        }
-                        }
-                        else{
-                            props?.onClick?.()
-                        }
-                
-                }
-                catch{
-                HideLoadingDialog();
-                }
-            }
-        }    
-         style={{     justifyContent:'center',display:'flex',flexDirection:'row',alignItems:'center',width:'100%',height:'40px',
-                     border:'none',color:theme?.palette?.text?.primary,
-                    fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
-                      
-                    <div style={{display:'flex',justifyContent:'center',alignItems:'center',marginRight:'5px'}}>
-                        <IconByName iconName={props?.iconName} fontSize="30px" color={iconColor}/>
-                       {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
-
-                    </div>
-                    <div style={{letterSpacing:1.2}}>
-                        {props?.label?.toLocaleUpperCase()}
-                    </div>
-                   
-              </button>
-           
-        </Paper>
-        </div>
-    )
-}

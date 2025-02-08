@@ -9,7 +9,7 @@ import store, { full_component_state,  get_helperData_by_key, useQuantomFonts } 
 import { add_helper_data_single_key } from "../../../../redux/reduxSlice";
 
 import { CustomerPaymentReceiptDtoModel, VmCustomerPaymentModel } from "../model/CustomerPaymentReceiptModel";
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, POSActionButton1, QuantomSwitch } from "../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE, QuantomSwitch } from "../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { Box, Paper, useTheme } from "@mui/material";
 import { Quantom_Grid, Quantom_Input } from "../../../../quantom_comps/base_comps";
 import { QUANTOM_Date } from "../../../../quantom_comps/BaseComps/Quantom_Date";
@@ -21,7 +21,8 @@ import { CustomerPaymentReceiptDeleteMethod, CustomerPaymentReceiptGetAll, Custo
 import { POS_SALE_LOCID_KEY, POS_SELECTED_BILL_NO_HELPER_DATA_KEY } from "../../../sale/processing/sale/view/POSSaleView";
 import { HTTP_RESPONSE_TYPE } from "../../../../HTTP/QuantomHttpMethods";
 import { ShowQuantomError } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
-import { POSToolBarComp } from "../../../Purchase/Processing/Purchase/view/POSPurchaseView";
+import { POSToolBarComp } from "../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
+import { POSActionButton1 } from "../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 export const POSCustomerReceiptView=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
 

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { VmSupplierModel } from "../model/VmSupplier";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, POSActionButton1, QuantomSwitch } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE, QuantomSwitch } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { CommonCodeName } from "../../../../../../database/db";
 import { SupplierDeleteMethod, SupplierGetCodeNameMethod, SupplierGetOneMethod, SupplierSaveMethod } from "../impl/SuppierImpl";
@@ -15,7 +15,8 @@ import { add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
 import { isNullOrEmpty } from "../../../../../../CommonMethods";
 import { Paper, useTheme } from "@mui/material";
-import { POSToolBarComp } from "../../../../Processing/Purchase/view/POSPurchaseView";
+import { POSToolBarComp } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
+import { POSActionButton1 } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 
 export const POSSupplierView=(props?:MenuComponentProps<VmSupplierModel>)=>{

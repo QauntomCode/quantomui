@@ -8,7 +8,7 @@ import store, { full_component_state,  get_helperData_by_key, useQuantomFonts } 
 
 import { add_helper_data_single_key } from "../../../../redux/reduxSlice";
 
-import { POS_INVENTORY_ITEM_VIEW_TYPE, POSActionButton, QuantomSwitch } from "../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { POS_INVENTORY_ITEM_VIEW_TYPE, QuantomSwitch } from "../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { Box, Paper, useTheme } from "@mui/material";
 import { Quantom_Grid, Quantom_Input } from "../../../../quantom_comps/base_comps";
 import { QUANTOM_Date } from "../../../../quantom_comps/BaseComps/Quantom_Date";
@@ -22,6 +22,8 @@ import { ShowQuantomError } from "../../../../quantom_comps/AppContainer/Helpers
 import { SupplierPaymentsModel, VmSupplierPaymentsModel } from "../model/SupplierPaymentModel";
 import { SupplierPaymentDeleteMethod, SupplierPaymentGetAll, SupplierPaymentGetOne, SupplierPaymentInsertMethod } from "../impl/SupplierPaymentImpl";
 import { SupplierGetCodeNameMethod } from "../../../Purchase/Config/Supplier/customer/impl/SuppierImpl";
+import { POSToolBarComp } from "../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
+import { POSActionButton1 } from "../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 export const POSSupplierPaymentView=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
 
@@ -72,9 +74,10 @@ export const List=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
     return(
         <>
            
-            <Quantom_Grid container size={{xs:12}} spacing={1} >
-                    <Quantom_Grid item size={{md:2}}>
-                        <POSActionButton iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+            <Quantom_Grid container size={{xs:12}} spacing={1}>
+
+                    <Quantom_Grid item >
+                        <POSActionButton1 iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
                             props?.setState?.({});
                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
@@ -89,8 +92,8 @@ export const List=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
                     <Quantom_Grid item size={{md:5}}>
                         <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
                     </Quantom_Grid>
-                    <Quantom_Grid item size={{md:1}}>
-                        <POSActionButton iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
+                    <Quantom_Grid item >
+                        <POSActionButton1 iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
                              let res= await SupplierPaymentGetAll(fromDate,toDate,locId)
                              store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:CUSTOMER_DATA_LIST_RECORDS_KEY,Data:res}}))
                         }}/>
@@ -103,10 +106,10 @@ export const List=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
                     {
                         receiptData?.map((item,index)=>{
                            return(
-                                <div className="col-md-4 col-md-lg-4 col-md-xl-3 p-1 mb-2" style={{padding:'5px'}} >
-                                    <div className="col-md-12" style={{backgroundColor:theme?.palette?.background?.paper,}}>
+                                <div className="col-md-4 col-md-lg-4 col-md-xl-3 p-1 mb-2" style={{padding:'5px',}} >
+                                    <div className="col-md-12" style={{backgroundColor:theme?.palette?.background?.paper,borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}>
                                     <div className="col-12"  style={{display:'flex',alignItems:'center',borderBottom:`1px solid ${theme.palette.primary.main}`}}>
-                                        <div className="col-md-6" style={{display:'flex',alignItems:'center'}}>
+                                        <div className="col-md-6" style={{display:'flex',alignItems:'center',fontWeight:600}}>
                                             <IconByName iconName="Grid3x3Outlined" />
                                             <div style={{marginLeft:'10px'}}>{item?.Code}</div>
                                         </div>
@@ -134,10 +137,10 @@ export const List=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
                                               store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:item?.Code}})))
                                               store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                                            }} style={{
-                                                            height:'100%',width:'100%',backgroundColor:theme.palette.primary.main,
+                                                            height:'100%',width:'100%',backgroundColor:theme.palette.secondary.main,
                                                             border:`1px solid ${theme.palette.text.primary}`,borderRadius:'5px',
                                                             fontFamily:fonts.HeaderFont,fontWeight:'bold',
-                                                            color:theme?.palette?.text?.primary,
+                                                            color:theme?.palette?.secondary?.contrastText,
                                                             marginRight:'10px'
                                                             }}>
                                                View 
@@ -200,7 +203,22 @@ const Form=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
            <div className="col-md-2 col-lg-2 col-xl-2 col-12">
               
            </div>
-           <div className="col-sm-3 col-md-2 col-3">
+           <div className="col-md-8">
+             <POSToolBarComp 
+                SaveAction={()=>SupplierPaymentInsertMethod({...props?.state,Payments:{...props?.state?.Payments,LocId:locId}})}
+                ResetAction={()=>{props?.setState?.({})}}
+                DeleteAction={()=>SupplierPaymentDeleteMethod(props?.state)}
+                NewAction={()=>{props?.setState?.({})}}
+                ListAction={()=>{store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))}}
+                SaveAfterAction={(data?:VmSupplierPaymentsModel)=>{
+                    props?.setState?.({...data,Payments:{...props?.state?.Payments}});
+                    if(resetAfterSave){
+                       props?.setState?.({});
+                    }
+                }}
+                />
+           </div>
+           {/* <div className="col-sm-3 col-md-2 col-3">
                 <POSActionButton label="Save" buttonType="SAVE"  iconName="SaveOutlined" 
                 responseAfterMethod={(data?:VmSupplierPaymentsModel)=>{
                      props?.setState?.({...data,Payments:{...props?.state?.Payments}});
@@ -223,10 +241,10 @@ const Form=(props?:MenuComponentProps<VmSupplierPaymentsModel>)=>{
                 <POSActionButton label="List" onClick={()=>{
                     store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
                 }} iconName="FeaturedPlayListOutlined"/>
-           </div>
+           </div> */}
         </div>
         
-         <div className="row g-1" style={{marginTop:'16px'}}>
+         <div className="row g-1" style={{marginTop:'10px'}}>
             <div className="col-md-2  offset-md-2">
         
                 <Quantom_Input label="Code"  disabled value={props?.state?.Payments?.Code}/>
