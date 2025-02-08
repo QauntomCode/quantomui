@@ -350,7 +350,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
     }
 
     const fonts= useQuantomFonts();
-    const headerStyle={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:'bold'}
+    const headerStyle={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:400}
  
     const theme= useTheme();
     const ITEM_CONTROL_ID="ITEM_CONTROL_ID_202514";
@@ -360,20 +360,20 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
             <div style={{display:'flex'}}>
                 <div style={{flexGrow:1}}>
                     <div className="row g-0" style={{backgroundColor:theme?.palette?.primary?.main,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:500,paddingTop:'4px',paddingBottom:'4px',color:theme?.palette?.text?.primary}}>
-                    <div className="col-md-6" style={{paddingLeft:'5px'}}>ITEM INFO</div>
-                    <div className="col-md-2" style={{}}>QTY</div>
+                    <div className="col-md-7" style={{paddingLeft:'5px'}}>ITEM INFO</div>
+                    <div className="col-md-1" style={{}}>QTY</div>
                     <div className="col-md-2" style={{}}>PRICE</div>
                     <div className="col-md-2" style={{}}>AMOUNT</div>
                     </div>
                     <div className="row g-0">
-                        <div className="col-md-6">
+                        <div className="col-md-7">
                             <Quantom_LOV1 willHideLabel id={ITEM_CONTROL_ID} uniqueKeyNo={props?.baseProps?.UniqueId??""}  selected={{Code:lineObj?.ItemCode,Name:lineObj?.ItemName}} 
                                         onChange={(item)=>{
                                             setLineObj({...lineObj,ItemCode:item?.Code,ItemName:item?.Name})
                                         }} 
                                         keyNo="PURCHASE_ALL_ITEMS"   FillDtaMethod={GetActiveItemCodeName} />
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-1">
                             <Quantom_Input  willHideLabel  value={lineObj?.Qty??0} onChange={(e)=>{
                                 const qty=safeParseToNumber(e?.target?.value);
                                 setLineObj({...lineObj,Qty:qty,Amount:getAmount(qty,lineObj?.Price)})
@@ -391,7 +391,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                     </div>
                 </div>
                 <div style={{marginLeft:'5px'}}>
-                    <POSActionButton label="Add" iconName="LocalHospitalOutlined" onClick={()=>{
+                    <POSActionButton rightMargin="0px" label="Add" iconName="LocalHospitalOutlined" onClick={()=>{
                             if(isNullOrEmpty(lineObj?.ItemCode)){
                                 ShowQuantomError({MessageBody:"Item Code Can't Be Null Or Empty     ",MessageHeader:"Error !"});
                                 return;
@@ -408,64 +408,76 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                 </div>
             </div>
             
-            <div className="row g-2" style={{color:'white',height:'calc(100vh - 200px)',overflowY:'auto'}}>
-                <ShowSingleSelectedItemDialog item={selectedItemForChange} open={showItemChangeDialog} onClose={(type,item)=>{
-                    
-                    setShowItemChangeDialog(false)
-                    if(type==='APPLIED'){
-                        handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
-                    }
-                }}/>
-                <TableContainer component={Paper}>
-                    <Table  size="small" aria-label="a dense table" >
-                        <TableHead style={{backgroundColor:theme?.palette?.primary?.main}}>
-                            <TableRow>
-                                 <TableCell className="col-8" style={{...headerStyle}}>ITEM_INFORMATION</TableCell>
-                                 <TableCell className="col-md-1" style={{...headerStyle}}>QTY</TableCell>
-                                 <TableCell className="col-md-1" style={{...headerStyle}}>RATE</TableCell>
-                                 <TableCell className="col-md-2" style={{...headerStyle}}>AMOUNT</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody style={{backgroundColor:theme?.palette?.background?.default}}>
-                            {
-                                props?.items?.map((item,index)=>{
-                                    return(
-                                        <TableRow>
-                                               <TableCell style={{...headerStyle}}>
-                                                    <div className="row">
-                                                       
-                                                         <div className="col-md-4">
-                                                            <div style={{display:'flex',alignItems:'center'}}>
-                                                                <div className="col-md-1">{index+1}</div>
-                                                                <div onClick={()=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}> 
-                                                                    <IconByName iconName="DeleteOutlined" />
+            <div >
+                <div className="row g-0 " style={{color:'white',height:'calc(100vh - 200px)',overflowY:'auto'}}>
+                    <ShowSingleSelectedItemDialog item={selectedItemForChange} open={showItemChangeDialog} onClose={(type,item)=>{
+                        
+                        setShowItemChangeDialog(false)
+                        if(type==='APPLIED'){
+                            handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
+                        }
+                    }}/>
+                    <TableContainer component={Paper}>
+                        <Table  size="small" aria-label="a dense table" >
+                            {/* <TableHead style={{backgroundColor:theme?.palette?.primary?.main}}>
+                                <TableRow>
+                                    <TableCell className="col-8" style={{...headerStyle}}>ITEM_INFORMATION</TableCell>
+                                    <TableCell className="col-md-1" style={{...headerStyle}}>QTY</TableCell>
+                                    <TableCell className="col-md-1" style={{...headerStyle}}>RATE</TableCell>
+                                    <TableCell className="col-md-2" style={{...headerStyle}}>AMOUNT</TableCell>
+                                </TableRow>
+                            </TableHead> */}
+                            <TableBody style={{backgroundColor:theme?.palette?.background?.default}}>
+                                {
+                                    props?.items?.map((item,index)=>{
+                                        return(
+                                            <TableRow >
+                                                <div style={{display:'flex'}}>
+
+                                                    <div className="row" style={{flexGrow:1}}>
+                                                        <TableCell className="col-md-7" style={{...headerStyle}}>
+                                                            <div className="row">
+                                                            
+                                                                <div className="col-md-4">
+                                                                    <div style={{display:'flex',alignItems:'center'}}>
+                                                                        <div className="col-md-1">{item?.CustomSortNo}</div>
+                                                                        <div onClick={()=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}> 
+                                                                            <IconByName iconName="DeleteOutlined" />
+                                                                        </div>
+                                                                        <div onClick={()=>{
+                                                                            setselectedItemForChange(item);
+                                                                            setShowItemChangeDialog(true);
+                                                                        }}><IconByName iconName="EditCalendarOutlined"/></div>
+                                                                        <div style={{flex:1.5,marginLeft:'20px'}}> {item?.ItemCode} </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div onClick={()=>{
-                                                                    setselectedItemForChange(item);
-                                                                    setShowItemChangeDialog(true);
-                                                                }}><IconByName iconName="EditCalendarOutlined"/></div>
-                                                                <div style={{flex:1,marginLeft:'20px'}}> {item?.ItemCode} </div>
+                                                                <div className="col-md-8">{item?.ItemName}</div>
                                                             </div>
-                                                         </div>
-                                                         <div className="col-md-8">{item?.ItemName}</div>
+                                                        </TableCell>
+                                                        <TableCell className="col-md-1" style={{...headerStyle}}>
+                                                            {item?.Qty}
+                                                        </TableCell>
+                                                        <TableCell className="col-md-2" style={{...headerStyle}}>
+                                                            {item?.Price}
+                                                        </TableCell>
+                                                        <TableCell className="col-md-2" style={{...headerStyle}}>
+                                                            {item?.Amount}
+                                                        </TableCell>
                                                     </div>
-                                                </TableCell>
-                                                <TableCell style={{...headerStyle}}>
-                                                    {item?.Qty}
-                                                </TableCell>
-                                                <TableCell style={{...headerStyle}}>
-                                                    {item?.Price}
-                                                </TableCell>
-                                                <TableCell style={{...headerStyle}}>
-                                                    {item?.Amount}
-                                                </TableCell>
-                                        </TableRow>
-                                    )
-                                })
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                                    <div style={{width:'70px',borderBottom:`1px solid ${theme?.palette?.text?.disabled}`}}></div>
+                                                </div>
+                                                
+                                                
+
+                                                   
+                                            </TableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
             </div>
         </>
     )

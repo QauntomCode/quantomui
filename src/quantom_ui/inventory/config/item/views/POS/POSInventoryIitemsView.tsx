@@ -403,6 +403,7 @@ interface POSActionButtonProps{
   responseClick?:()=>Promise<HttpResponse<any>>
   responseAfterMethod?:(state?:any)=>void;
   backgroundColor?:string;
+  rightMargin?:string 
 }
 export const POSActionButton=(props?:POSActionButtonProps)=>{
     const fonts= useQuantomFonts();
@@ -426,7 +427,7 @@ export const POSActionButton=(props?:POSActionButtonProps)=>{
     },[theme])
 
     return(
-        <div style={{width:'60px',marginRight:'10px'}}>
+        <div style={{width:'60px',marginRight: (props?.rightMargin)?props?.rightMargin:'10px'}}>
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
         
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
