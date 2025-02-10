@@ -94,12 +94,11 @@ export const POSLedgerView = (props?:MenuComponentProps<LedgerComponentState>) =
 
                             <Quantom_Grid item size={{xs:12,md:1.5,lg:1.5,xl:1.5}}>
                                 <div style={{display:'flex',alignItems:'center'}}>
-                                    <div style={{marginLeft:'8px',fontSize:fonts.H4FontSize,}}>{item?.Balance}</div>
+                                    <IconByName iconName="MedicalInformationOutlined" color={theme?.palette?.text?.disabled}/>
+                                    <div style={{marginLeft:'8px',fontSize:'14px',fontWeight:600}}>{item?.Balance}</div>
                                 </div>
                             </Quantom_Grid>
                              
-
-                            {/* {item?.Balance} */}
                         </Quantom_Grid>
                      )
                 })
