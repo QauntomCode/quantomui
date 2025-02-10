@@ -26,39 +26,57 @@ export const InsertSale = async (
   return res;
 };
 
+export const DeleteSale = async (
+  sale?: VmSale
+): Promise<HttpResponse<VmSale>> => {
+  var res = QuantomPOST<VmSale>(SALE_DELETE_URL, true, sale?.Sale, "LOADING");
+  return res;
+};
 
-export const SaleGetOne=async(billNo?:string):Promise<VmSale>=>{
-   let res= await QuantomGET<VmSale>(SALE_GET_ONE_URL+`?Code=${billNo}`,true);
-   if(res?.ResStatus=== HTTP_RESPONSE_TYPE.ERROR){
-     ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error"})
-     return Promise?.resolve({})
-   }
-   else{
-      
-    return Promise.resolve(res?.Response??{})
-   }
+export const SaleGetOne = async (billNo?: string): Promise<VmSale> => {
+  let res = await QuantomGET<VmSale>(
+    SALE_GET_ONE_URL + `?Code=${billNo}`,
+    true
+  );
+  if (res?.ResStatus === HTTP_RESPONSE_TYPE.ERROR) {
+    ShowQuantomError({
+      MessageBody: res?.ErrorMessage,
+      MessageHeader: "Error",
+    });
+    return Promise?.resolve({});
+  } else {
+    return Promise.resolve(res?.Response ?? {});
+  }
+};
+
+export const SaleGetAll = async (
+  fromDate?: Date,
+  toDate?: Date,
+  search?: string,
+  locId?: string
+): Promise<SaleModel[]> => {
+  let md: SaleGetAllQuery = {
+    FromDate: fromDate,
+    ToDate: toDate,
+    Search: search,
+    LocId: locId,
+  };
+  let res = await QuantomPOST<SaleModel[]>(SALE_GET_ALL_URL, true, md);
+  if (res?.ResStatus === HTTP_RESPONSE_TYPE.SUCCESS) {
+    return res?.Response ?? [];
+  } else {
+    ShowQuantomError({
+      MessageHeader: "Error",
+      MessageBody: res?.ErrorMessage,
+    });
+  }
+
+  return res?.Response ?? [];
+};
+
+export interface SaleGetAllQuery {
+  FromDate?: Date;
+  ToDate?: Date;
+  Search?: string;
+  LocId?: string;
 }
-
-export const SaleGetAll=async(fromDate?:Date,toDate?:Date,search?:string,locId?:string):Promise<SaleModel[]>=>{
-
-   let md:SaleGetAllQuery={FromDate:fromDate,ToDate:toDate,Search:search,LocId:locId}
-   let res= await QuantomPOST<SaleModel[]>(SALE_GET_ALL_URL,true,md);
-   if(res?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-      return res?.Response??[];
-   }
-   else{
-      ShowQuantomError({MessageHeader:"Error",MessageBody:res?.ErrorMessage})
-   }
-
-   return res?.Response??[]
-    
-
-}
-
-export interface SaleGetAllQuery{
-  FromDate?:Date;
-  ToDate?:Date;
-  Search?:string;
-  LocId?:string;
-}
-

@@ -50,7 +50,6 @@ const QuantomTheme = createTheme({
   },
 });
 
-
 export const QuantomLightTheme = createTheme({
   palette: {
     primary: {
@@ -71,10 +70,9 @@ export const QuantomLightTheme = createTheme({
     text: {
       primary: "#222B45",
       secondary: "#FFFFFF",
-      disabled: "#222B45",
+      disabled: "#878683",
     },
   },
 });
-
 
 export default QuantomTheme;

@@ -100,7 +100,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
     },[billNo])
 
     const handleGetOneBillNo=async()=>{
-        if(billNo){
+        if(billNo && billNo!=="0"){
             ShowLoadingDialog();
            let res = await PurchaseGetOneMethod(billNo);
            HideLoadingDialog();
@@ -110,7 +110,10 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
            else{
               ShowQuantomError({MessageHeader:"Error !",MessageBody:res?.ErrorMessage})
            }
-           
+        }
+        if(billNo==="0"){
+            props?.setState?.({})
+            store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
         }
     }
 
@@ -159,7 +162,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                 </div>
 
                 <div className="row g-2 mt-2" >
-                    <RenderItemGrid items={props?.state?.purchaseDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Purchase} formNameString="PURCHAES"
+                    <RenderItemGrid  items={props?.state?.purchaseDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Purchase} formNameString="PURCHAES"
                                         vendorCode={props?.state?.purchase?.SuppCode} onChange={(items)=>{
                         props?.setState?.({...props?.state,purchaseDetails:[...items??[]]})
                     }} baseProps={props}/>
@@ -185,7 +188,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                             </div>
                             Total Am 
                         </div>
-                        <div style={{marginRight:'5px',fontWeight:700,fontSize:fonts.H3FontSize}}>{grossAmount}</div>     
+                        <div style={{marginRight:'5px',fontWeight:700,fontSize:fonts.H3FontSize}}>{grossAmount?.toFixed(2)}</div>     
                     </Quantom_Grid>
                     <Quantom_Grid  display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,padding:'5px',}}>
                         
@@ -213,7 +216,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                             </div>
                             Net  Am
                         </div>
-                        <div style={{marginRight:'5px',fontWeight:700,fontSize:fonts.H3FontSize}}>{netAmount}</div>     
+                        <div style={{marginRight:'5px',fontWeight:700,fontSize:fonts.H3FontSize}}>{netAmount?.toFixed(2)}</div>     
                     </Quantom_Grid>
 
                     <Quantom_Grid  display='flex' container component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,padding:'5px'}}>
@@ -243,7 +246,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
                             </div>
                              
                         </div>
-                        <div style={{marginRight:'5px',fontWeight:700,fontSize:'60px',color:theme.palette.primary.main}}>{balance}</div>     
+                        <div style={{marginRight:'5px',fontWeight:700,fontSize:'60px',color:theme.palette.primary.main}}>{balance?.toFixed(2)}</div>     
                     </Quantom_Grid>
                    
                 </Quantom_Grid>
@@ -270,6 +273,7 @@ export interface RenderItemGridProps{
     items?:CommonInvDetailModel[];
     onChange?:(vals?:CommonInvDetailModel[])=>void;
     locId?:string;
+    height?:string;
 
 }
 
@@ -389,7 +393,8 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
             </div>
             
             <div >
-                <div className="row g-0 " style={{color:'white',height:'calc(100vh - 200px)',overflowY:'auto'}}>
+                <div className="row g-0 " style={{color:'white',height:'calc(100vh - 255px)',overflowY:'auto'}}>
+                    <Paper>
                     <ShowSingleSelectedItemDialog item={selectedItemForChange} open={showItemChangeDialog} onClose={(type,item)=>{
                         
                         setShowItemChangeDialog(false)
@@ -397,7 +402,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                             handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
                         }
                     }}/>
-                    <TableContainer component={Paper}>
+                    <TableContainer>
                         <Table  size="small" aria-label="a dense table" >
                             {/* <TableHead style={{backgroundColor:theme?.palette?.primary?.main}}>
                                 <TableRow>
@@ -407,11 +412,11 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                                     <TableCell className="col-md-2" style={{...headerStyle}}>AMOUNT</TableCell>
                                 </TableRow>
                             </TableHead> */}
-                            <TableBody style={{backgroundColor:theme?.palette?.background?.default}}>
+                            <TableBody>
                                 {
                                     props?.items?.map((item,index)=>{
                                         return(
-                                            <TableRow >
+                                            <TableRow component={Paper}  sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}>
                                                 <div style={{display:'flex'}}>
 
                                                     <div className="row" style={{flexGrow:1}}>
@@ -446,7 +451,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                                                             {item?.Amount}
                                                         </TableCell>
                                                     </div>
-                                                    <div style={{width:'70px',borderBottom:`1px solid ${theme?.palette?.text?.disabled}`}}></div>
+                                                    <div style={{width:'70px'}}></div>
                                                 </div>
                                                 
                                                 
@@ -459,6 +464,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    </Paper>
                 </div>
             </div>
         </>
@@ -494,7 +500,7 @@ interface POSBillListProps{
                <Quantom_Grid container size={{xs:12}}>
                   <Quantom_Grid item >
                      <POSActionButton1 iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
-                        store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
+                        store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:"0"}})))
                         store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                      }}/>
                   </Quantom_Grid>
@@ -557,7 +563,7 @@ interface POSBillListProps{
                                  <div style={{marginRight:"8px"}}>
                                  <IconByName fontSize="40px" color={theme?.palette?.primary?.main} iconName="AccountBalanceWalletOutlined"/>
                                 </div>
-                                {/* {item?.TAmount} */} 152000
+                              {item?.NetTotal?.toFixed(2)} 
                             </div>
                             <div style={{display:'flex',alignItems:'center',flex:1,marginLeft:'8px'}}>
                                  <Button 
@@ -567,12 +573,12 @@ interface POSBillListProps{
                                     }}
                                     style={{
                                             border:`1px solid ${theme.palette.primary.main}`,width:'100%',
-                                            fontFamily:font.HeaderFont,fontWeight:'bold',color:theme.palette.primary.contrastText ,
-                                            backgroundColor:theme?.palette?.primary?.main,
+                                            fontFamily:font.HeaderFont,fontWeight:'bold',color:theme.palette.secondary.contrastText ,
+                                            backgroundColor:theme?.palette?.secondary?.main,
                                             display:'flex',justifyContent:'center',alignItems:'center'   }}>
                                     View   
                                     <div style={{marginLeft:'10px'}}>
-                                     <IconByName color={theme?.palette?.primary?.contrastText} iconName="EastOutlined"/>
+                                     <IconByName color={theme?.palette?.secondary?.contrastText} iconName="EastOutlined"/>
                                     </div>
                                  </Button>
                             </div>

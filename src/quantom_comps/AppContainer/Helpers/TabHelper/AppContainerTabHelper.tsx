@@ -49,6 +49,7 @@ import { POSSupplierPaymentView } from '../../../../quantom_ui/payments/supplier
 import { POSStockDetailReportView } from '../../../../quantom_ui/inventory/reports/stockReport/view/StockReportView';
 import { POSReportScreenView } from '../../POSReportScreen';
 import { POSActionButton1 } from '../../POSHelpers/POSActionButton1';
+import { POSSaleView1 } from '../../../../quantom_ui/sale/processing/sale/view/POSSale/POSSaleView1';
 
 
 
@@ -911,7 +912,7 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
   {
     MenuCode:POS_SALE_FORM_MENU_CODE,
     MenuCaption:'Sale',
-    GetComponent:(props?:MenuComponentProps<any>)=>(<POSSaleView{...props}/>)
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSSaleView1{...props}/>)
   },
 
   {
