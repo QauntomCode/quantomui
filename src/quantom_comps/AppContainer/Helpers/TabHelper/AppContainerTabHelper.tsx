@@ -37,7 +37,7 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
@@ -50,6 +50,8 @@ import { POSStockDetailReportView } from '../../../../quantom_ui/inventory/repor
 import { POSReportScreenView } from '../../POSReportScreen';
 import { POSActionButton1 } from '../../POSHelpers/POSActionButton1';
 import { POSSaleView1 } from '../../../../quantom_ui/sale/processing/sale/view/POSSale/POSSaleView1';
+import { POSCustomerPaymentReceiptReport } from '../../../../quantom_ui/payments/reports/CustomerReceipt/view/POSCustomerReceiptReport';
+import { POSLedgerView } from '../../../../quantom_ui/account/report/Ledger/view/POSLedgerView';
 
 
 
@@ -925,6 +927,11 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCaption:'Purchase',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSPurchaseView{...props}/>)
   },
+  {
+    MenuCode:POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,
+    MenuCaption:'Customer Receipt Report',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSCustomerPaymentReceiptReport{...props}/>)
+  },
 
 
   {
@@ -939,8 +946,8 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
   },
 
   {
-    MenuCode:POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,
-    MenuCaption:'Stock Report',
+    MenuCode:POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE,
+    MenuCaption:'Customer Receipts Report',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSCustomerReceiptView{...props}/>)
   },
 
@@ -955,6 +962,11 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCode:POS_INVENTORY_STOCK_REPORT_MEN_CODE,
     MenuCaption:'Stock Report',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSStockDetailReportView{...props}/>)
+  },
+  {
+    MenuCode:POS_ACCOUNT_REPORT_LEDGER,
+    MenuCaption:'Account Ledger',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSLedgerView{...props}/>)
   },
 
 ]

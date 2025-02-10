@@ -19,6 +19,7 @@ import { GetLedgerData } from "../impl/LedgerImpl";
 import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView";
 import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
 import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
+import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 
 
@@ -88,44 +89,47 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
     }
 
     return(
-        <GroupContainer Label="Ledger Filters">
-                <Quantom_Grid container spacing={.5}>
-                    <Quantom_Grid size={{xs:2}}>
-                        <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
-                                    onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
+        <div style={{display:'flex'}}>
+               <div style={{flex:1}}>
+                    <Quantom_Grid  container spacing={.5}>
+                        
+                        <Quantom_Grid size={{xs:2.5}}>
+                            <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
+                                        onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
+                        </Quantom_Grid>
+                        <Quantom_Grid item size={{xs:2.5}}>
+                            <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
+                                            onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
+                        </Quantom_Grid>
+                        <Quantom_Grid item size={{xs:3.5}}>
+                            <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
+                                            onChange={(selected)=>{
+                                                props?.setState?.({...props?.state,glAccount:(selected),filters:{
+                                                    ...props?.state?.filters,
+                                                    FilterDetail:[
+                                                        {
+                                                            FitlerType: FilterEntities.GL_CODES,
+                                                            Keys:[{
+                                                                Code:selected?.Code,
+                                                                Name:selected?.Name,
+                                                            }]
+                                                        }
+                                                    ]
+                                                }});
+                                            }}/>
+                        </Quantom_Grid>
+                        <Quantom_Grid item size={{xs:3.5}}>
+                            <MultiLocationSelectionlOVComp  />
+                        </Quantom_Grid>
                     </Quantom_Grid>
-                    <Quantom_Grid item size={{xs:2}}>
-                        <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
-                                        onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
-                    </Quantom_Grid>
-                    <Quantom_Grid item size={{xs:3}}>
-                        <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
-                                        onChange={(selected)=>{
-                                            props?.setState?.({...props?.state,glAccount:(selected),filters:{
-                                                ...props?.state?.filters,
-                                                FilterDetail:[
-                                                    {
-                                                        FitlerType: FilterEntities.GL_CODES,
-                                                        Keys:[{
-                                                            Code:selected?.Code,
-                                                            Name:selected?.Name,
-                                                        }]
-                                                    }
-                                                ]
-                                            }});
-                                        }}/>
-                    </Quantom_Grid>
-                    <Quantom_Grid item size={{xs:3}}>
-                        <MultiLocationSelectionlOVComp  />
-                    </Quantom_Grid>
-                    <Quantom_Grid item size={{xs:.5}}>
-                            <ListCompButton onClick={handleLedger} iconName="PageviewTwoTone" Label="Load"/>
-                    </Quantom_Grid>
-                    <Quantom_Grid item size={{xs:.5}}>
-                            <ListCompButton iconName="LocalPrintshopTwoTone" Label="Print"/>
-                    </Quantom_Grid>
-                </Quantom_Grid>
-            </GroupContainer>
+                </div>
+                <div style={{display:'flex'}}>
+                        <div style={{marginLeft:'8px'}}>
+                            <POSActionButton1 rightMargin="8px" onClick={handleLedger} iconName="PageviewTwoTone" label="Load"/>   
+                        </div>
+                        <POSActionButton1  iconName="LocalPrintshopTwoTone" label="Print"/>
+                </div>
+            </div>
         )
 }
 
