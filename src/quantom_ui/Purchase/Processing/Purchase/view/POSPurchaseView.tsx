@@ -380,8 +380,8 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                                 ShowQuantomError({MessageBody:"Item Code Can't Be Null Or Empty     ",MessageHeader:"Error !"});
                                 return;
                             }
-                            if((lineObj?.Qty??0)<1){
-                                ShowQuantomError({MessageBody:"Qty Must Be Greater Than '0'",MessageHeader:"Error !"});
+                            if((lineObj?.Qty??0)===0){
+                                ShowQuantomError({MessageBody:"Qty Can't Be Zero '0'",MessageHeader:"Error !"});
                                 return;
                             }
                             
