@@ -364,13 +364,13 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
                             }}/>
                         </div>
                         <div className="col-md-2">
-                            <Quantom_Input willHideLabel  value={lineObj?.Price??0} onChange={(e)=>{
+                            <Quantom_Input  willHideLabel  value={lineObj?.Price??0} onChange={(e)=>{
                                 const price=safeParseToNumber(e?.target?.value);
                                 setLineObj({...lineObj,Price:price,Amount:getAmount(price,lineObj?.Qty)})
                             }}/>
                         </div>
                         <div className="col-md-2">
-                            <Quantom_Input   willHideLabel value={lineObj?.Amount??0} />
+                            <Quantom_Input disabled   willHideLabel value={lineObj?.Amount??0} />
                         </div>
                     </div>
                 </div>

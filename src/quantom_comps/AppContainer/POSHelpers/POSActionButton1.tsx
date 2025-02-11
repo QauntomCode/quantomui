@@ -3,7 +3,7 @@ import { HideLoadingDialog, IconByName, QuantomConfirmationDialog, ShowLoadingDi
 import { ShowQuantomError } from "../Helpers/TabHelper/QuantomError";
 import { HTTP_RESPONSE_TYPE } from "../../../HTTP/QuantomHttpMethods";
 import { Toast } from "../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView";
-import { Paper, useTheme } from "@mui/material";
+import { Box, Paper, useTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useQuantomFonts } from "../../../redux/store";
 import { POSActionButtonProps } from "./POSActionButton";
@@ -35,7 +35,9 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
         <div style={{width:'130px',marginRight:props?.rightMargin}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-         <Paper sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
+         <Box component={Paper} sx={{borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {
+                    backgroundColor:theme?.palette?.primary.light,
+                }}}>
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
                 <QuantomConfirmationDialog OnYesPress={async()=>{
                     if(props?.buttonType==='DELETE'){
@@ -59,7 +61,7 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
                 }}
                 open={openConfirmation} MessageHeader="Are You Sure Delete !"/>  
             ):(<></>)} 
-        <button 
+        <Box 
         onClick={async()=>{
                 try {
                     if(props?.buttonType==='DELETE' || props?.buttonType==='RESET'){
@@ -110,9 +112,9 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
                         {props?.label?.toLocaleUpperCase()}
                     </div>
                    
-              </button>
+              </Box>
            
-        </Paper>
+        </Box>
         </div>
     )
 }

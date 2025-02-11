@@ -56,7 +56,7 @@ export const QuantomLightTheme = createTheme({
       main: "#3366FF", // changed
       dark: "#3366FF",
       contrastText: "#FFFFFF", // CHANGED QuantomColors.SelectedElementTextColor,
-      light: "#FF70B2",
+      light: "#c9ced6",
     },
     secondary: {
       main: "#FFAB04",

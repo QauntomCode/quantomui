@@ -72,9 +72,6 @@ export const POSSaleView1=(props?:MenuComponentProps<VmSale>)=>{
 
  const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
     const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
-    
-
-
 
     const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
     const disAmount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
@@ -107,6 +104,10 @@ export const POSSaleView1=(props?:MenuComponentProps<VmSale>)=>{
         }
     }
 
+    useEffect(()=>{
+        FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)
+    },[])
+
     const PURCHASE_SUPPLIER_CONTROL_ID="SUPPLIER_CONTROL_ID_PURCHASE_CONTROL";
     const theme= useTheme();
     const fonts= useQuantomFonts();
@@ -115,7 +116,9 @@ export const POSSaleView1=(props?:MenuComponentProps<VmSale>)=>{
         <POSToolBarComp
             SaveAction={()=>InsertSale({...props?.state,Sale:{...props?.state?.Sale,BillDate:props?.state?.Sale?.BillDate?? new Date(),LocId:props?.state?.Sale?.LocId??locId}})}  
             SaveAfterAction={(res?:VmSale)=>{props?.setState?.({...res})}} 
-            ResetAction={()=>{props?.setState?.({});FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)}}
+            ResetAction={()=>{props?.setState?.({});setTimeout(() => {
+                FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)
+            }, 100);}}
             DeleteAction={()=>DeleteSale(props?.state)}
             ListAction={()=>{
                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
