@@ -15,6 +15,8 @@ const SALE_UPDATE_URL = "Sale/Sale/update";
 const SALE_DELETE_URL = "Sale/Sale/delete";
 const SALE_GET_ALL_URL = "Sale/Sale/getAllV1";
 const SALE_GET_ONE_URL = "Sale/Sale/getOne";
+const PRINT_SALE_SLIP_URL = "Sale/Sale/PrintSaleReport";
+
 export const InsertSale = async (
   sale?: VmSale
 ): Promise<HttpResponse<VmSale>> => {
@@ -79,4 +81,11 @@ export interface SaleGetAllQuery {
   ToDate?: Date;
   Search?: string;
   LocId?: string;
+}
+
+
+export const SalePrintData=async(billNo?:string):Promise<VmSale>=>{
+  let res =await QuantomGET<VmSale>(PRINT_SALE_SLIP_URL+`?BillNo=${billNo}`,true);
+   return res.Response??{};
+
 }

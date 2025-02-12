@@ -13,7 +13,7 @@ import { POSActionButton1 } from "../../../../../../quantom_comps/AppContainer/P
 import { QUANTOM_Date } from "../../../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
 import { FocusOnControlByControlId, safeParseToNumber } from "../../../../../../CommonMethods";
-import { DeleteSale, InsertSale, SaleGetAll, SaleGetOne } from "../../impl/SaleImpl";
+import { DeleteSale, InsertSale, SaleGetAll, SaleGetOne, SalePrintData } from "../../impl/SaleImpl";
 import { HTTP_RESPONSE_TYPE } from "../../../../../../HTTP/QuantomHttpMethods";
 import { POSToolBarComp } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
 import { Quantom_LOV1 } from "../../../../../../quantom_comps/Quantom_Lov";
@@ -21,6 +21,13 @@ import { CustomersGetCodeNameMethod } from "../../../../config/customer/impl/Cus
 import { RenderItemGrid } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
 import { InventoryAction } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { SaleModel } from "../../model/SaleModel";
+// import { PrintSaleSlip } from "../../../../reports/SaleSlips/A4Slip";
+
+
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import { GetReportHeaders } from "../../../../reports/SaleSlips/A4Slip";
+pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
@@ -120,6 +127,7 @@ export const POSSaleView1=(props?:MenuComponentProps<VmSale>)=>{
                 FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)
             }, 100);}}
             DeleteAction={()=>DeleteSale(props?.state)}
+            PrintAction={()=>PrintSaleSlip(props?.state?.Sale?.BillNo)}
             ListAction={()=>{
                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
                  }}
@@ -397,4 +405,114 @@ interface POSBillListProps{
 export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"
 export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_DATA_KEY"
 
+
+
+
+ const PrintSaleSlip = async(billNo?:string) => {
+    let data= await SalePrintData(billNo);
+    let headers =await GetReportHeaders(data?.Sale?.LocId);
+    // alert('header one is'+data?.Sale?.LocId)
+
+    
+    let detailTableBody=[];
+
+     detailTableBody.push([
+        { text: "Sr#",alignment:'center',bold:true, fontSize:12,padding:[0,4,0,4] },
+        { text: "ItemName",alignment:'center',bold:true, fontSize:12,padding:[0,4,0,4] },
+        { text: "Qty",bold:true, fontSize:12,alignment:'center',padding:[0,4,0,4] },
+        { text: "Price",bold:true, fontSize:12,alignment:'center',padding:[0,4,0,4] },
+        { text: "Amount",bold:true, fontSize:12,alignment:'center', }
+    ])
+    for(let i of data?.SaleDetails??[]){
+        
+        detailTableBody.push(
+            [
+                { text: data?.SaleDetails?.indexOf(i),bold:true, fontSize:9, },
+                { text: i?.ItemName,bold:true, fontSize:9, },
+                { text: i?.Qty?.toFixed(2),bold:true, fontSize:9,alignment:'right'},
+                { text: i?.Price?.toFixed(2),bold:true, fontSize:9,alignment:'right'},
+                { text: i?.Amount?.toFixed(2),bold:true, fontSize:9,alignment:'right' }
+            ],
+        )
+    }
+
+    const docDefinition:any = {
+        pageSize: "A4", // Set page size to A4
+        pageMargins: [20, 25, 40, 60], // 
+      content: [
+        {
+			style: 'tableExample',
+            
+            table: {
+                widths: ['*'],
+                body: [
+                [{ text: headers?.Header1,alignment:'center',bold:true, fontSize:20,border: [false, false, false, true] },],
+                [{ text: headers?.Header2,alignment:'center',fontSize:12, border: [false, false, false, true] },],
+                [{ text: headers?.Header3, alignment:'center',fontSize:15,border: [false, false, false, true] },]
+                ]
+            },
+		},
+        {
+            text: '', // Add a title or separator
+            margin: [0, 10, 0, 10], // Top 20px margin
+            bold: true,
+            fontSize: 14
+          },
+        {
+            table: {
+                widths: ['*',150,100,],
+                body: [
+                    [
+                        { text: "Customer Name",bold:true, fontSize:12,border: [false, false, false, true] },
+                        { text: "Bill No",bold:true, fontSize:12,border: [false, false, false, true] },
+                        { text: "Bill Date",bold:true, fontSize:12,border: [false, false, false, true] },
+                    ],
+                    [
+                        { text: data?.Sale?.CustName, bold:true,fontSize:8,border: [false, false, false, false] },
+                        { text: data?.Sale?.BillNo, bold:true,fontSize:8,border: [false, false, false, false] },
+                        { text: dayjs(data?.Sale?.BillDate)?.format('DD MMM YYYY'), bold:true,fontSize:8,border: [false, false, false, false] },
+                    ],
+                ]
+            },
+        },
+        {
+            text: '', // Add a title or separator
+            margin: [0, 10, 0, 10], // Top 20px margin
+            bold: true,
+            fontSize: 14
+          },
+        {
+            style: 'tableExample',
+            
+            table: {
+                widths: [30,'*',50,50,100],
+                body: detailTableBody
+            },
+        }
+      ],
+      styles: {
+        header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10] },
+      },
+    };
+
+    
+    pdfMake.createPdf(docDefinition).getBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        
+        // Create a hidden iframe and append it to the document
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "absolute";
+        iframe.style.width = "0px";
+        iframe.style.height = "0px";
+        iframe.style.border = "none";
+        iframe.src = url;
+        
+        document.body.appendChild(iframe);
+        
+        iframe.onload = () => {
+          iframe.contentWindow?.print(); // Trigger print in the same window
+        };
+      });
+    ;
+  };
 

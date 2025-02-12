@@ -13,7 +13,7 @@ interface POSToolBarCompProps<T,>{
     DeleteAction?:()=>Promise<HttpResponse<T>>;
 
     SaveAfterAction?:(data?:any)=>void
-
+    PrintAction?:()=>void;
 }
 
 
@@ -39,6 +39,7 @@ export const POSToolBarComp=<T,>(props?:POSToolBarCompProps<T>)=>{
                         <POSActionButton label="List" onClick={props?.ListAction} iconName="FeaturedPlayListOutlined"/>
                         
                         <POSActionButton 
+                            onClick={props?.PrintAction}
                             label="PRINT"  iconName="LocalPrintshopOutlined" 
                             
                         /> 
