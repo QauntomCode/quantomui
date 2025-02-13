@@ -37,7 +37,7 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_PURCHASE_REPORT, POS_INVENTORY_SALE_REPORT, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_PURCHASE_REPORT, POS_INVENTORY_SALE_REPORT, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SALE_FORM_WITH_EMPTY_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
@@ -55,6 +55,7 @@ import { POSLedgerView } from '../../../../quantom_ui/account/report/Ledger/view
 import { POSSupplierPaymentReportView } from '../../../../quantom_ui/payments/reports/SupplierPament/view/POSSupplierPaymentReportView';
 import { POSSaleReportView } from '../../../../quantom_ui/sale/reports/SaleReports/View/POSSaleReportView';
 import { POSPurchaseReportView } from '../../../../quantom_ui/Purchase/reports/Purchase/view/POSPurchaseReportView';
+import { POSSaleViewWithEmpty } from '../../../../quantom_ui/sale/processing/sale/view/POSSale/POSSaleViewWithEmpty';
 
 
 
@@ -154,7 +155,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       
       var appType= GetAPPType();
     
-      if(appType=== APP_TYPE.SIMPLE_POS){
+      if(appType=== APP_TYPE.SIMPLE_POS || appType===APP_TYPE.EGG_ERP){
         
         return tabs;
       }
@@ -269,7 +270,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <QuantomErrorDialog />
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
-        fullState?.compSettings?.wWillHideToolbar || appType===APP_TYPE.SIMPLE_POS ?(<></>):(
+        fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType) ?(<></>):(
         <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
         )
       }
@@ -775,13 +776,17 @@ export const HideLoadingDialog=()=>{
 }
 
 
-export enum APP_TYPE{SIMPLE_POS,ERP}
+export enum APP_TYPE{SIMPLE_POS,ERP,EGG_ERP}
 
 export const GetAPPType=():APP_TYPE=>{
   let appType=window.globalConfig.appType;
-  if(appType?.toLocaleLowerCase()==="pos"){
+  if(appType?.toLowerCase()==="pos"){
     return APP_TYPE.SIMPLE_POS;
   }
+  if(appType?.toLowerCase()==="EGG_APP".toLowerCase()){
+    return APP_TYPE.EGG_ERP;
+  }
+  
   return APP_TYPE.ERP;
 }
 
@@ -919,7 +924,11 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCaption:'Sale',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSSaleView1{...props}/>)
   },
-
+  {
+    MenuCode:POS_SALE_FORM_WITH_EMPTY_MENU_CODE,
+    MenuCaption:'Sale',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<POSSaleViewWithEmpty{...props}/>)
+  },
   {
     MenuCode:POS_SUPPLIER_FORM_MENU_CODE,
     MenuCaption:'Supplier',

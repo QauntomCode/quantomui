@@ -121,7 +121,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
     const fonts= useQuantomFonts();
     return(
       <>
-        <POSToolBarComp
+        {/* <POSToolBarComp
             SaveAction={()=>InsertSale({...props?.state,Sale:{...props?.state?.Sale,BillDate:props?.state?.Sale?.BillDate?? new Date(),LocId:props?.state?.Sale?.LocId??locId}})}  
             SaveAfterAction={(res?:VmSale)=>{props?.setState?.({...res})}} 
             ResetAction={()=>{props?.setState?.({});setTimeout(() => {
@@ -133,6 +133,8 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}})))
                  }}
             NewAction= {()=>{props?.setState?.({});FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)}}/>
+        <h1>This is Empty  Sale</h1> */}
+        
         <div className="row g-2">
             
             <div className="col-md-9">
@@ -585,4 +587,14 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
     }
 
     return Promise.resolve(obj);
+  }
+
+
+  export const  GetCustomerDialog=()=>{
+
+    return(
+        <Quantom_Grid container>
+
+        </Quantom_Grid>
+    )
   }
