@@ -591,10 +591,10 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
 
 
   export const  GetCustomerDialog=()=>{
-
+    const [customers,setCustComers]
     return(
         <Quantom_Grid container>
-
+            
         </Quantom_Grid>
     )
   }
