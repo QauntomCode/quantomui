@@ -31,6 +31,9 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
           value={props?.selectedTabIndex}
           onChange={handleChange}
           aria-label="basic tabs example"
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
           sx={{ minHeight: tabHeight }}
         >
           {props?.tabs?.map((item, index) => {
