@@ -27,6 +27,7 @@ import { SaleModel } from "../../model/SaleModel";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { GetReportHeaders } from "../../../../reports/SaleSlips/A4Slip";
+import { Discount } from "@mui/icons-material";
 pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
@@ -413,21 +414,22 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
     let headers =await GetReportHeaders(data?.Sale?.LocId);
     // alert('header one is'+data?.Sale?.LocId)
 
+    const headerStyle={alignment:'center',bold:true, fontSize:12,margin:[0,4,0,4],fillColor:'#b2b1b3'}
     
     let detailTableBody=[];
 
      detailTableBody.push([
-        { text: "Sr#",alignment:'center',bold:true, fontSize:12,padding:[0,4,0,4] },
-        { text: "ItemName",alignment:'center',bold:true, fontSize:12,padding:[0,4,0,4] },
-        { text: "Qty",bold:true, fontSize:12,alignment:'center',padding:[0,4,0,4] },
-        { text: "Price",bold:true, fontSize:12,alignment:'center',padding:[0,4,0,4] },
-        { text: "Amount",bold:true, fontSize:12,alignment:'center', }
+        { text: "Sr#", ...headerStyle},
+        { text: "ItemName" , ...headerStyle },
+        { text: "Qty",...headerStyle },
+        { text: "Price",...headerStyle },
+        { text: "Amount",...headerStyle}
     ])
     for(let i of data?.SaleDetails??[]){
         
         detailTableBody.push(
             [
-                { text: data?.SaleDetails?.indexOf(i),bold:true, fontSize:9, },
+                { text:  safeParseToNumber(data?.SaleDetails?.indexOf(i))+1,bold:true, fontSize:9, },
                 { text: i?.ItemName,bold:true, fontSize:9, },
                 { text: i?.Qty?.toFixed(2),bold:true, fontSize:9,alignment:'right'},
                 { text: i?.Price?.toFixed(2),bold:true, fontSize:9,alignment:'right'},
@@ -435,6 +437,10 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
             ],
         )
     }
+
+
+    let totals=  await SalePrintAableTotalValue(data)
+
 
     const docDefinition:any = {
         pageSize: "A4", // Set page size to A4
@@ -454,7 +460,7 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
 		},
         {
             text: '', // Add a title or separator
-            margin: [0, 10, 0, 10], // Top 20px margin
+            margin: [0, 5, 0, 10], // Top 20px margin
             bold: true,
             fontSize: 14
           },
@@ -477,7 +483,7 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
         },
         {
             text: '', // Add a title or separator
-            margin: [0, 10, 0, 10], // Top 20px margin
+            margin: [0, 5, 0, 10], // Top 20px margin
             bold: true,
             fontSize: 14
           },
@@ -487,6 +493,29 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
             table: {
                 widths: [30,'*',50,50,100],
                 body: detailTableBody
+            },
+        },
+        {
+            text: '', // Add a title or separator
+            margin: [0, 5, 0, 10], // Top 20px margin
+            bold: true,
+            fontSize: 14
+          },
+        {
+            style: 'tableExample',
+            
+            table: {
+                widths: ['*',90,70],
+                body:[
+                    [{text:'',border:[0,0,0,0]},{text:'Gross Amount',bold:true,border:[0,0,0,1]},{alignment:'right',text:(totals?.TotalGrossAmount??0).toFixed(2),border:[0,0,0,1]}],
+                    [{text:'',border:[0,0,0,0]},{text:'Discount',bold:true,border:[0,0,0,1]},{alignment:'right',text:(totals?.TotalDiscount??0).toFixed(2),border:[0,0,0,1]}],
+                    [{text:'',border:[0,0,0,0]},{text:'Net Total',bold:true,border:[0,0,0,1]},{alignment:'right',text:(totals?.NetTotal??0).toFixed(2),border:[0,0,0,1]}],
+                    [{text:'',border:[0,0,0,0]},{text:'Pre Balance',bold:true,border:[0,0,0,1]},{alignment:'right',text:(totals?.PreBalance??0).toFixed(2),border:[0,0,0,1]}],
+                    [{text:'',border:[0,0,0,0]},{text:'Received',bold:true,border:[0,0,0,1]},{alignment:'right',text:(totals?.Received??0).toFixed(2),border:[0,0,0,1]}],
+                    [{text:'',border:[0,0,0,0]},{text:'Rem Balance',bold:true,border:[0,0,0,1]},{alignment:'right',text:(totals?.RemBalance??0).toFixed(2),border:[0,0,0,1]}],
+
+
+                ]
             },
         }
       ],
@@ -516,3 +545,44 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
     ;
   };
 
+
+  interface SalePrintNumbers{
+    TotalGrossAmount:number;
+    TotalDiscount:number;
+    Scheme:number;
+    PreBalance:number;
+    NetTotal:number;
+    TotalQty:number;
+    Received:number;
+    RemBalance:number;
+    AdvanceTax:number;
+  }
+  export const SalePrintAableTotalValue=(data?:VmSale):Promise<SalePrintNumbers>=>{
+    
+    let totalAmount = (data?.SaleDetails?.reduce((acc,runn)=>(safeParseToNumber(acc))+((safeParseToNumber(runn?.Qty))*(safeParseToNumber(runn.Price))),0))??0; //res.SaleDetails.Sum(x => (x.Qty * x.Price));
+    let discount = safeParseToNumber((data?.SaleDetails?.reduce((acc,runn)=>(safeParseToNumber(acc))+(safeParseToNumber(runn?.DisAmount)),0)))+(safeParseToNumber(data?.Sale?.ExtraDiscount)); //var disocunt = res.SaleDetails.Sum(x => x.DisAmount) + res.Sale.ExtraDiscount;
+    let scheme = (safeParseToNumber(data?.SaleDetails?.reduce((acc,runn)=>(safeParseToNumber(acc)),0)))+(safeParseToNumber(data?.Sale?.ExtraScheme)); 
+
+    let preBalance = data?.Sale?.PreBalance??0;
+    //let netTotal = totalAmount - (discount + scheme); //+ preBalance;
+    
+    let netTotal = safeParseToNumber((totalAmount - discount)+(safeParseToNumber(data?.Sale?.TaxInfo?.INVOICE_EXLUSIVE_TAX_AMOUNT)));
+    
+    let totalQty= (data?.SaleDetails?.reduce((acc,runn)=>(acc??0)+(runn?.Qty??0),0)??0)??0;
+    var received = data?.Sale?.TotalReceived??0;
+    var remBalance = (netTotal)- received;
+
+    let obj:SalePrintNumbers= {
+        TotalGrossAmount:totalAmount,
+        TotalDiscount:discount,
+        Scheme:scheme,
+        PreBalance:preBalance,
+        NetTotal:netTotal,
+        TotalQty:totalQty,
+        Received:received,
+        RemBalance:remBalance,
+        AdvanceTax:data?.Sale?.TaxInfo?.INVOICE_EXLUSIVE_TAX_AMOUNT??0
+    }
+
+    return Promise.resolve(obj);
+  }
