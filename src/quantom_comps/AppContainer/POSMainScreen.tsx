@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react'
-import { generateGUID, MenuComponentProps, setFormBasicKeys } from './Helpers/TabHelper/AppContainerTabHelper'
+import { APP_TYPE, generateGUID, GetAPPType, MenuComponentProps, setFormBasicKeys } from './Helpers/TabHelper/AppContainerTabHelper'
 import { useSelector } from 'react-redux'
 import store, { full_component_state, useQuantomFonts } from '../../redux/store'
 import { Box,Paper } from '@mui/material';
@@ -10,7 +10,7 @@ import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/LocalMallOutlined';
 import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
 import { open_new_menu } from '../../redux/reduxSlice';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SALE_FORM_WITH_EMPTY_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import SaleIcon from '@mui/icons-material/BusAlertOutlined';
 import CustomerReceiptIcon from '@mui/icons-material/AddCardOutlined';
@@ -22,6 +22,7 @@ export interface model{
 }
 export const POSMainScreen = (props?:MenuComponentProps<model>) => {
     
+   const appType= GetAPPType();
     const fullState= useSelector((state?:any)=>(full_component_state(state,props?.UniqueId??"")));
     useEffect(()=>{
         if(fullState?.IsFirstUseEffectCall){
@@ -87,7 +88,11 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
                    Customer Setup
              </Quantom_Grid>
              <Quantom_Grid onClick={()=>{
-               openNewMenu(POS_SALE_FORM_MENU_CODE,'Sale');
+               let menuCode=POS_SALE_FORM_MENU_CODE;
+               if(appType === APP_TYPE.EGG_ERP){
+                  menuCode=POS_SALE_FORM_WITH_EMPTY_MENU_CODE;
+               }
+               openNewMenu(menuCode,'Sale');
              }} item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
                 <>
                   <SaleIcon color='primary' sx={{fontSize:'60px'}}></SaleIcon>

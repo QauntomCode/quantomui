@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { open_new_menu } from '../../../redux/reduxSlice'
 import { useSelector } from 'react-redux'
 import store, { useQuantomFonts } from '../../../redux/store'
-import { generateGUID } from '../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { APP_TYPE, generateGUID, GetAPPType } from '../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { FormControl, FormHelperText, Grid, Grid2, InputAdornment, OutlinedInput, TextField } from '@mui/material'
 import { FullWidth } from 'ag-grid-community/dist/types/core/components/framework/componentTypes'
 
@@ -17,6 +17,8 @@ export const LoginComp = () => {
     const [error,setError]=React.useState<string>();
     const navigate= useNavigate()
     const fonts= useQuantomFonts();
+
+    const appType= GetAPPType()
   return (
   
     <div style={{width:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',height:'100vh'}}>
@@ -49,6 +51,10 @@ export const LoginComp = () => {
                 let comps= await GetAllCompaniesByUser();
                 if(comps.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS && (comps?.Response?.length??0)===1){
                     setLogedInUserCompany(comps?.Response?.[0])
+                    if(APP_TYPE.ERP===appType){
+                        navigate('/Home');
+                        return;
+                    }
                     //navigate('/Home')
                     navigate('/POS')
 
