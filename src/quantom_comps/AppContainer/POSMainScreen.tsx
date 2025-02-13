@@ -50,7 +50,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
   return (
      <>
         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'10px'}} spacing={.5} >
-            <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+            <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
              <Quantom_Grid onClick={()=>{
                openNewMenu(POS_INVENTORY_ITEM_MENU_CODE,'Item Setup');
              }} item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
@@ -76,7 +76,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >
 
          
-            <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+            <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
 
             <Quantom_Grid onClick={()=>{
                 openNewMenu(POS_CUSTOMER_FORM_MENU_CODE,'Customer Setup')
@@ -104,7 +104,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >
 
             
-         <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+         <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
 
             <Quantom_Grid onClick={()=>{
                openNewMenu(POS_SUPPLIER_FORM_MENU_CODE,'Supplier Setup')
@@ -130,7 +130,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
       <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >
 
             
-         <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+         <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
 
             <Quantom_Grid onClick={()=>{
                openNewMenu(POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,'Customer Receipt')
@@ -158,7 +158,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
           <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >
 
             
-         <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:2,xl:2}}></Quantom_Grid>
+          <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
 
             <Quantom_Grid onClick={()=>{
                openNewMenu(POS_SOFTWARE_REPORTS_MENU_CODE,'Reports')

@@ -9,6 +9,7 @@ import {
 import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import { SaleModel } from "../model/SaleModel";
 import { VmSale } from "../model/VmSaleModel";
+import { HideLoadingDialog, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 
 const SALE_INSERT_URL = "Sale/Sale/Insert";
 const SALE_UPDATE_URL = "Sale/Sale/update";
@@ -85,7 +86,14 @@ export interface SaleGetAllQuery {
 
 
 export const SalePrintData=async(billNo?:string):Promise<VmSale>=>{
-  let res =await QuantomGET<VmSale>(PRINT_SALE_SLIP_URL+`?BillNo=${billNo}`,true);
-   return res.Response??{};
-
+  try {
+      ShowLoadingDialog();
+      let res =await QuantomGET<VmSale>(PRINT_SALE_SLIP_URL+`?BillNo=${billNo}`,true);
+      HideLoadingDialog();
+      return res.Response??{};
+  }
+  catch{
+     HideLoadingDialog();
+     return{}
+  }
 }
