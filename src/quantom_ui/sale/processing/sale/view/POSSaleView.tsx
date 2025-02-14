@@ -29,6 +29,7 @@ import dayjs from "dayjs";
 import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import { SaleModel } from "../model/SaleModel";
 import { POSActionButton } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
+import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
@@ -462,6 +463,7 @@ export interface POSItemsRendererViewProps{
   selectedCat?:string;
   size?:QuantomSize
   OnItemClick?:(itemCode?:InventoryItemsModel)=>void;
+  ItemLoadType?:'CATEGORY_WISE'|'ALL_ITEMS'
 }
 
 interface QuantomSize{
@@ -481,10 +483,16 @@ export const PosItemsRenderer=(props?:POSItemsRendererViewProps)=>{
     const [itemSearch,setItemSearch]=useState('');
 
      useEffect(()=>{
-       if(props?.selectedCat){
+       if(props?.selectedCat && props?.ItemLoadType==='CATEGORY_WISE'){
            handleLoadItems()
        }
      },[props?.selectedCat])
+
+     useEffect(()=>{
+        if(props?.ItemLoadType==='ALL_ITEMS'){
+            handleLoadItems();
+        }
+     },[])
 
 
       useEffect(()=>{
@@ -509,58 +517,67 @@ export const PosItemsRenderer=(props?:POSItemsRendererViewProps)=>{
      }
 
      const handleLoadItems=async()=>{
-          let res= await GetItemsByCategory(props?.selectedCat??"0");
+          let res:InventoryItemsModel[]=[];
+          if(props?.ItemLoadType==='CATEGORY_WISE')
+          {
+            res=  await GetItemsByCategory(props?.selectedCat??"0");
+          }
+          else{
+            res = await GetItemsByCategory("")
+          }
           setItems([...res])
           setAllItems([...res])
      }
 
    return(
    <> 
-     <div className="row">
-           <Box sx={{height:'100%',width:'100%'}}>
-                 <Quantom_Grid container spacing={.5} sx={{paddingLeft:'10px',paddingRight:'10px'}} >
-                 
-                    <Quantom_Grid item size={{xs:6,sm:6,md:4,lg:7.5,xl:7.5}}>
+    
+        <Quantom_Grid container component={Paper}>
+                 <Quantom_Grid display='flex' size={{xs:12}} container spacing={.5} sx={{paddingLeft:'2px',paddingRight:'2px'}} >
+                    <Quantom_Grid sx={{flex:1}}>
                         <Quantom_Input value={itemSearch} onChange={(e)=>{setItemSearch(e.target.value)}} label='Search' />
                     </Quantom_Grid>
-                    <Quantom_Grid item size={{xs:6,sm:6,md:4,lg:1.5,xl:1.5}} sx={{marginTop:'5px'}}>
-                       <POSActionButton label="Search"/>
-                    </Quantom_Grid>
-                   
+                    <POSActionButton1 iconName="ScreenSearchDesktopOutlined" iconColor={theme?.palette?.primary?.main} label="Search"/>
                  </Quantom_Grid>
-                 <Quantom_Grid container spacing={1} padding={'10px'}>
+                 <Quantom_Grid container spacing={.5} padding={'2px'}>
                  
                 {items?.map((item,index)=>{
+                    if(index>99){
+                        return(<></>)
+                    }
                    return(
-                       <Quantom_Grid component={Paper} sx={{backgroundColor:theme?.palette?.background?.default}} item size={{xs:12,sm:6,md:4,lg:4,xl:3,...props?.size}}>
+                       <Quantom_Grid component={Paper}   size={{xs:12,sm:12,md:12,lg:12,xl:6,...props?.size}} sx={{borderBottom:`1px solid ${theme?.palette.primary.main}`}}>
                            <div onClick={()=>{props?.OnItemClick?.(item)}} 
-                               style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
-                               <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
-                                   
-                                   <IconByName iconName="BallotOutlined" fontSize="20px"/>
-                                   <div style={{marginLeft:'5px'}}>
-                                       {item?.SearchKey??item.ManualCode}
-                                   </div>
+                               style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize, display:'flex',alignItems:'center' }}>
+                                <div style={{marginLeft:'8px'}}>
+                                     <IconByName fontSize="30px" color={theme.palette.primary.main} iconName="LocalMallOutlined"/>
+                                </div>
+                                <div style={{flex:1,marginLeft:'10px'}}>
+                                    <div  style={{flex:1,color:theme.palette.text.primary,display:'flex',alignItems:'center'}}>
+                                        {/* <IconByName iconName="Grid3x3Outlined" fontSize="20px"/> */}
+                                        <div style={{marginLeft:'5px',fontWeight:'bold'}}>
+                                            {item.ItemCode}
+                                        </div>
+                                    </div>
+                                    <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                                        {/* <IconByName iconName="InventoryOutlined" fontSize="20px"/> */}
+                                        <div style={{marginLeft:'5px'}}>
+                                        {item?.ItemName}
+                                        </div>
+                                    </div>
                                </div>
-                               <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
-                                 <IconByName iconName="InventoryOutlined" fontSize="20px"/>
-                                 <div style={{marginLeft:'5px'}}>
-                                   {item?.ItemName}
-                                 </div>
-                               </div>
-                               <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                               {/* <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
                                    <IconByName iconName="DnsOutlined" fontSize="20px"/>
                                    <div style={{marginLeft:'5px'}}>
                                    {item?.category?.Name}
                                  </div>
-                               </div>
+                               </div> */}
                            </div>
                        </Quantom_Grid>
                    )
                 })}
                 </Quantom_Grid>
-           </Box>
-        </div>
+           </Quantom_Grid>
    </>
  )
 }
@@ -582,8 +599,8 @@ export const SoldItemsRenderer=(props?: SoldItemsRendererProps)=>{
     const soldItems= props?.baseProps?.state?.SaleDetails;
     const fonts= useQuantomFonts();
     const theme= useTheme();
-    const headerFont={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:'bold',backgroundColor:theme?.palette?.background?.default};
-    const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px',backgroundColor:theme?.palette?.background?.default};
+    const headerFont={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:1000,color:theme.palette.primary.main};
+    const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
     
     return(
         <>
@@ -593,17 +610,30 @@ export const SoldItemsRenderer=(props?: SoldItemsRendererProps)=>{
                 props?.onEditItem?.(item);
             }
         }}></ShowSingleSelectedItemDialog>
-        <Quantom_Grid container sx={{height:'100%',backgroundColor:theme.palette.background.paper}} spacing={1}>
-            <TableContainer component={Paper} sx={{backgroundColor:theme.palette.background.paper}}>
+        <Quantom_Grid container sx={{height:'100%'}} spacing={1}>
+            <TableContainer component={Paper} >
             <Table size="small" aria-label="a dense table">
-                <TableHead  >
+                <TableHead  component={Paper} sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
                     <TableRow>
-                        <TableCell sx={{...headerFont,width:'10px'}}></TableCell>
-                        <TableCell sx={{...headerFont,width:'10px'}}>#</TableCell>
-                        <TableCell sx={{...headerFont,width:'auto'}}>Item Name</TableCell>
-                        <TableCell sx={{...headerFont,width:'25px'}}>Qty</TableCell>
-                        <TableCell sx={{...headerFont,width:'15px'}}>Rate</TableCell>
-                        <TableCell sx={{...headerFont,width:'15px'}}>Amount</TableCell>
+                        <TableCell sx={{...headerFont,width:'10px'}}>
+                            <IconByName iconName="DynamicFormOutlined" color={theme.palette.primary.main}/>
+                        </TableCell>
+                        <TableCell sx={{...headerFont,width:'10px'}}>
+                            <IconByName iconName="Grid3x3Outlined"  color={theme.palette.primary.main}/>
+                        </TableCell>
+                        <TableCell sx={{...headerFont,width:'auto'}}>
+                            {/* <IconByName iconName="ShoppingBagOutlined"/> */}
+                            ITEM
+                        </TableCell>
+                        <TableCell sx={{...headerFont,width:'25px'}}>
+                            {/* <IconByName iconName="ShoppingCartOutlined" color={theme.palette.primary.main}/> */}
+                            QTY
+                        </TableCell>
+                        <TableCell sx={{...headerFont,width:'15px'}}>
+                            {/* <IconByName iconName="PriceChangeOutlined" color={theme.palette.primary.main}/> */}
+                            RATE
+                        </TableCell>
+                        <TableCell sx={{...headerFont,width:'15px'}}>AMOUNT</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

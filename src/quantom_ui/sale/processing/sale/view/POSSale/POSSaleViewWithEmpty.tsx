@@ -17,7 +17,7 @@ import { DeleteSale, InsertSale, SaleGetAll, SaleGetOne, SalePrintData } from ".
 import { HTTP_RESPONSE_TYPE } from "../../../../../../HTTP/QuantomHttpMethods";
 import { POSToolBarComp } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
 import { Quantom_LOV1 } from "../../../../../../quantom_comps/Quantom_Lov";
-import { CustomersGetCodeNameMethod } from "../../../../config/customer/impl/CustomerImpl";
+import { CustomersGetCodeNameMethod, GetAllCustomers } from "../../../../config/customer/impl/CustomerImpl";
 import { RenderItemGrid } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
 import { InventoryAction } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { SaleModel } from "../../model/SaleModel";
@@ -28,6 +28,9 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { GetReportHeaders } from "../../../../reports/SaleSlips/A4Slip";
 import { Discount } from "@mui/icons-material";
+import { CommonCodeName } from "../../../../../../database/db";
+import { CustomerModel } from "../../../../config/customer/model/CustomerModel";
+import { PosItemsRenderer, SoldItemsRenderer } from "../POSSaleView";
 pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
@@ -134,8 +137,19 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
                  }}
             NewAction= {()=>{props?.setState?.({});FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)}}/>
         <h1>This is Empty  Sale</h1> */}
-        
-        <div className="row g-2">
+        <div className="row g-1">
+            <div className="col-lg-3">
+                <CustomerListComp />
+            </div>
+            <div className="col-lg-4">
+                <PosItemsRenderer ItemLoadType='ALL_ITEMS' />
+            </div>
+            <div className="col-lg-5">
+                <SoldItemsRenderer />
+            </div>
+            
+        </div>
+        {/* <div className="row g-2">
             
             <div className="col-md-9">
                 <div className="row  g-2">
@@ -273,7 +287,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
 
             
            
-        </div>
+        </div> */}
             
       </>
     )
@@ -590,11 +604,68 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
   }
 
 
-  export const  GetCustomerDialog=()=>{
-    const [customers,setCustComers]
+  export const  CustomerListComp=()=>{
+    const [customers,setCustComers]=useState<CustomerModel[]>([]);
+    useEffect(()=>{
+        handleCustomers();
+    },[])
+
+    
+    const handleCustomers=async()=>{
+        let res= await GetAllCustomers();
+        console.log('get all customers',res)
+        setCustComers([...res])
+    }
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
     return(
-        <Quantom_Grid container>
-            
+        <Quantom_Grid container spacing={.5} component={Paper}>
+            {/* <Quantom_Grid item> Item Code</Quantom_Grid> */}
+            {
+                customers?.map((item,index)=>{
+                    if(index>100){
+                        return<></>
+                    }
+                    return(
+                        <Quantom_Grid 
+                            sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'4px'}} 
+                            size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
+                            <div style={{display:'flex',alignItems:'center'}}>
+                                <IconByName color={theme?.palette?.primary?.main} fontSize="30px" iconName="PermIdentityOutlined"/>
+                                <div style={{marginLeft:'5px'}}>
+                                    <div style={{fontWeight:'bold',display:'flex'}}>
+                                        <div style={{alignItems:'center',flex:1}}>
+                                            <IconByName fontSize="15px" iconName="Grid3x3Outlined"/>
+                                            {item?.CustCode}
+                                        </div>
+                                    </div>
+                                    <div>{item?.CustName}</div>
+                                    {item?.CellNo?
+                                    (<>
+                                        <div style={{alignItems:'center',flex:1}}>
+                                            <IconByName fontSize="15px" iconName="PhoneAndroidOutlined"/>
+                                            {item?.CellNo}
+                                        </div>
+                                    </>):(<></>)}
+                                    
+                                    {/* <div>{item?}</div> */}
+                                </div>
+                            </div>
+                            {/* <div style={{display:'flex'}}>
+                               <div style={{flex:1}}></div>
+                               <div style={{flex:1}}>
+                                   <button style={{display:'flex',justifyContent:'center',alignItems:'center',fontWeight:'bold',color:theme?.palette?.text?.secondary,backgroundColor:theme?.palette?.secondary?.main,fontFamily:fonts.HeaderFont,width:'100%',border:`.5px solid ${theme?.palette?.primary?.main}`,borderRadius:'5px'}}>
+                                       <div style={{marginRight:'10px'}}>
+                                            <IconByName iconName="FactCheckOutlined"/>
+                                       </div>
+                                       Select
+                                   </button>
+                               </div>
+                            </div> */}
+                        </Quantom_Grid>
+                    )
+                })
+            }
         </Quantom_Grid>
     )
   }

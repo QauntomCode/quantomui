@@ -14,6 +14,7 @@ const CUSTOMER_DELETE_URL = "Sale/Customer/delete";
 const CUSTOMER_GET_ALL_URL = "Sale/Customer/getAll";
 const CUSTOMER_GET_ONE_URL = "Sale/Customer/getOne";
 const CUSTOMER_GET_CODE_NAME_URL = "Sale/Customer/GetCodeNames";
+const CUSTOMER_GET_ALL_CUSTOMERS = "Sale/Customer/getAll";
 
 export const CustomerSaveMethod = async (
   cust?: VmCustomerModel
@@ -65,4 +66,9 @@ export const CustomersGetCodeNameMethod = async (): Promise<
 
   //   alert("get customer values method is called   ");
   return res?.Response ?? [];
+};
+
+export const GetAllCustomers = async (): Promise<CustomerModel[]> => {
+  let res = await QuantomGET<CustomerModel[]>(CUSTOMER_GET_ALL_CUSTOMERS, true);
+  return res.Response ?? [];
 };
