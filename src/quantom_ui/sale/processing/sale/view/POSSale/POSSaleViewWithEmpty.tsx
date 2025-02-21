@@ -30,7 +30,8 @@ import { GetReportHeaders } from "../../../../reports/SaleSlips/A4Slip";
 import { Discount } from "@mui/icons-material";
 import { CommonCodeName } from "../../../../../../database/db";
 import { CustomerModel } from "../../../../config/customer/model/CustomerModel";
-import { PosItemsRenderer, SoldItemsRenderer } from "../POSSaleView";
+import { PosItemsRenderer } from "./PosSaleHelpers/PosItemRenders";
+import { SoldItemsRenderer } from "./PosSaleHelpers/SoldItemsHelper";
 pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
