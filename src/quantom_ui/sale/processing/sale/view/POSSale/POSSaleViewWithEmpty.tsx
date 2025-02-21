@@ -7,7 +7,7 @@ import store, { full_component_state, get_helperData_by_key, useQuantomFonts } f
 import { POS_INVENTORY_ITEM_VIEW_TYPE } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
-import { Button, Paper, useTheme } from "@mui/material";
+import { Button, Paper, useTheme,IconButton } from "@mui/material";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
 import { POSActionButton1 } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 import { QUANTOM_Date } from "../../../../../../quantom_comps/BaseComps/Quantom_Date";
@@ -140,7 +140,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
         <h1>This is Empty  Sale</h1> */}
         <div className="row g-1">
             <div className="col-lg-3">
-                <CustomerListComp />
+                <POSCustomerComp />
             </div>
             <div className="col-lg-4">
                 <PosItemsRenderer ItemLoadType='ALL_ITEMS' />
@@ -604,6 +604,42 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
     return Promise.resolve(obj);
   }
 
+
+
+  export interface POSCustomerCompProps{
+     selectedCustomer?:CommonCodeName;
+     onChange?:(selected?:CommonCodeName)=>void
+  }
+  export const POSCustomerComp=()=>{
+    const theme= useTheme();
+    const fonts = useQuantomFonts();
+    return(
+         <Quantom_Grid display='flex' container component={Paper} size={{xs:12}} >
+            {/* <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <IconButton style={{backgroundColor:theme.palette.secondary.main}}>
+                     <IconByName iconName="PersonOutlined" color={theme?.palette?.text?.secondary} fontSize="30px"></IconByName>
+                </IconButton>
+            </div> */}
+            <Quantom_Grid size={{sm:12,md:12,lg:9}}>
+                <div style={{display:'flex',flexDirection:'column',alignItems:'center',flex:1,justifyContent:'center'}}>
+                    <div>
+                        <IconButton style={{backgroundColor:theme.palette.secondary.main}}>
+                            <IconByName iconName="PersonOutlined" color={theme?.palette?.text?.secondary} fontSize="30px"></IconByName>
+                        </IconButton>
+                    </div>
+                    <div style={{fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:700}}>
+                        Customer  Name
+                    </div>
+                </div>
+            </Quantom_Grid>
+            <Quantom_Grid size={{xs:12,sm:12,lg:3}} style={{alignItems:'center',display:'flex',fontWeight:900,fontFamily:fonts.HeaderFont,fontSize:fonts.H2FontSize,marginRight:'15px',justifyContent:'center',}}>
+                <IconByName iconName="CurrencyBitcoinOutlined" color={theme?.palette?.primary?.main} fontSize="35px"></IconByName>
+                5000
+            </Quantom_Grid>
+            {/* Selected Customer */}
+         </Quantom_Grid>
+    )
+  }
 
   export const  CustomerListComp=()=>{
     const [customers,setCustComers]=useState<CustomerModel[]>([]);
