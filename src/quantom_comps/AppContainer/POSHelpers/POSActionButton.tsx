@@ -15,7 +15,8 @@ export interface POSActionButtonProps{
     responseClick?:()=>Promise<HttpResponse<any>>
     responseAfterMethod?:(state?:any)=>void;
     backgroundColor?:string;
-    rightMargin?:string 
+    rightMargin?:string;
+    textColor?:string; 
   }
   export const POSActionButton=(props?:POSActionButtonProps)=>{
       const fonts= useQuantomFonts();

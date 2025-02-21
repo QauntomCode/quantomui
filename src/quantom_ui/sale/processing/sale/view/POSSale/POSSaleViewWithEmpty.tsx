@@ -7,8 +7,8 @@ import store, { full_component_state, get_helperData_by_key, useQuantomFonts } f
 import { POS_INVENTORY_ITEM_VIEW_TYPE } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
-import { Button, Paper, useTheme,IconButton } from "@mui/material";
-import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
+import { Button, Paper, useTheme,IconButton, Dialog } from "@mui/material";
+import { Quantom_Button, Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
 import { POSActionButton1 } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 import { QUANTOM_Date } from "../../../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
@@ -17,7 +17,7 @@ import { DeleteSale, InsertSale, SaleGetAll, SaleGetOne, SalePrintData } from ".
 import { HTTP_RESPONSE_TYPE } from "../../../../../../HTTP/QuantomHttpMethods";
 import { POSToolBarComp } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
 import { Quantom_LOV1 } from "../../../../../../quantom_comps/Quantom_Lov";
-import { CustomersGetCodeNameMethod, GetAllCustomers } from "../../../../config/customer/impl/CustomerImpl";
+import { CustomerGetOneMethod, CustomersGetCodeNameMethod, GetAllCustomers } from "../../../../config/customer/impl/CustomerImpl";
 import { RenderItemGrid } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
 import { InventoryAction } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { SaleModel } from "../../model/SaleModel";
@@ -32,6 +32,8 @@ import { CommonCodeName } from "../../../../../../database/db";
 import { CustomerModel } from "../../../../config/customer/model/CustomerModel";
 import { PosItemsRenderer } from "./PosSaleHelpers/PosItemRenders";
 import { SoldItemsRenderer } from "./PosSaleHelpers/SoldItemsHelper";
+import { handleAddItem, QuantomDialog } from "../POSSaleView";
+import { INVENTORY_PERFORMED_ACTION } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
 pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
@@ -83,7 +85,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
 
 
  const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
-    const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
 
     const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
     const disAmount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
@@ -139,14 +141,18 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
             NewAction= {()=>{props?.setState?.({});FocusOnControlByControlId(PURCHASE_SUPPLIER_CONTROL_ID)}}/>
         <h1>This is Empty  Sale</h1> */}
         <div className="row g-1">
-            <div className="col-lg-3">
-                <POSCustomerComp />
-            </div>
-            <div className="col-lg-4">
-                <PosItemsRenderer ItemLoadType='ALL_ITEMS' />
+            {/* <div className="col-lg-3">
+                
+            </div> */}
+            <div className="col-lg-7">
+                <POSCustomerComp 
+                    onChange={(sel)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:sel?.Code,CustName:sel?.Name}})}}
+                    selectedCustomer={{Code:props?.state?.Sale?.CustCode,Name:props?.state?.Sale?.CustName}} />
+
+                <PosItemsRenderer onItemSelction={(item)=>{handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)}} ItemLoadType='ALL_ITEMS' />
             </div>
             <div className="col-lg-5">
-                <SoldItemsRenderer />
+                <SoldItemsRenderer baseProps={props}/>
             </div>
             
         </div>
@@ -610,38 +616,71 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
      selectedCustomer?:CommonCodeName;
      onChange?:(selected?:CommonCodeName)=>void
   }
-  export const POSCustomerComp=()=>{
+  export const POSCustomerComp=(props?:POSCustomerCompProps)=>{
     const theme= useTheme();
     const fonts = useQuantomFonts();
+    const[open,setOpen]=useState(false);
+    const [custDetail,setCustDetail]=useState<CustomerModel>()
+    useEffect(()=>{
+          handleSetSelectedCustomer();
+    },[props?.selectedCustomer?.Code])
+
+    const handleSetSelectedCustomer=async()=>{
+        let res= await CustomerGetOneMethod(props?.selectedCustomer?.Code??"")
+        setCustDetail(res?.Response?.customer)
+    }
+     
     return(
-         <Quantom_Grid display='flex' container component={Paper} size={{xs:12}} >
-            {/* <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-                <IconButton style={{backgroundColor:theme.palette.secondary.main}}>
-                     <IconByName iconName="PersonOutlined" color={theme?.palette?.text?.secondary} fontSize="30px"></IconByName>
-                </IconButton>
-            </div> */}
-            <Quantom_Grid size={{sm:12,md:12,lg:9}}>
+        <Quantom_Grid pl={1} sx={{backgroundColor:theme?.palette?.primary?.main,paddingTop:'8px',paddingBottom:'8px',color:theme?.palette?.primary?.contrastText}} display='flex' container component={Paper} size={{xs:12}} >
+            <Quantom_Grid size={{xs:12,sm:12,md:12,lg:9}}>
                 <div style={{display:'flex',flexDirection:'column',alignItems:'center',flex:1,justifyContent:'center'}}>
-                    <div>
-                        <IconButton style={{backgroundColor:theme.palette.secondary.main}}>
-                            <IconByName iconName="PersonOutlined" color={theme?.palette?.text?.secondary} fontSize="30px"></IconByName>
-                        </IconButton>
+                    <div style={{display:'flex',flexDirection:'row'}}>
+                         <div>
+                            <POSActionButton1 textColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme?.palette?.secondary?.main} label="Refresh" iconName="OnDeviceTraining" iconColor={theme?.palette?.primary?.main}/>
+                        </div>
+                        <div style={{marginLeft:'10px'}}>
+                            <POSActionButton1 
+                                onClick={()=>{setOpen(true)}}
+                                textColor={theme?.palette?.secondary?.contrastText} 
+                                backgroundColor={theme?.palette?.secondary?.main} 
+                                label="Select" 
+                                iconName="AccountBoxOutlined" 
+                                iconColor={theme?.palette?.primary?.main}/>
+                        </div>
+
+                        {/* <IconButton onClick={()=>{
+                             setOpen(true);
+                        }} style={{backgroundColor:theme.palette.secondary.main}}>
+                            <IconByName iconName="PersonOutlined" color={theme?.palette?.text?.secondary} fontSize="50px"></IconByName>
+                        </IconButton> */}
                     </div>
-                    <div style={{fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:700}}>
-                        Customer  Name
+                    <div style={{fontFamily:fonts?.HeaderFont,fontSize:'20px',fontWeight:700}}>
+                        {props?.selectedCustomer?.Name}
                     </div>
                 </div>
             </Quantom_Grid>
-            <Quantom_Grid size={{xs:12,sm:12,lg:3}} style={{alignItems:'center',display:'flex',fontWeight:900,fontFamily:fonts.HeaderFont,fontSize:fonts.H2FontSize,marginRight:'15px',justifyContent:'center',}}>
-                <IconByName iconName="CurrencyBitcoinOutlined" color={theme?.palette?.primary?.main} fontSize="35px"></IconByName>
-                5000
+            <Quantom_Grid size={{xs:12,sm:12,md:12,lg:3}} style={{alignItems:'center',
+                display:'flex',fontWeight:700,fontFamily:fonts.HeaderFont,fontSize:'30px',justifyContent:'center',}}>
+                <IconByName iconName="CurrencyBitcoinSharp" color={theme?.palette?.secondary?.main} fontSize="35px"></IconByName>
+                 {custDetail?.Balance??0}
             </Quantom_Grid>
+            
+            <QuantomDialog open={open}  onClosePress={()=>{setOpen(false)}} heading="Select Customer" >
+                <CustomerListComp onSelect={(cust)=>{
+                    props?.onChange?.({Code:cust?.CustCode,Name:cust?.CustName})
+                    setOpen(false);
+                }}/>
+            </QuantomDialog>
+
             {/* Selected Customer */}
          </Quantom_Grid>
     )
   }
 
-  export const  CustomerListComp=()=>{
+  export interface CustomerListCompPorps{
+     onSelect?:(selected?:CustomerModel)=>void
+  }
+  export const  CustomerListComp=(props?:CustomerListCompPorps)=>{
     const [customers,setCustComers]=useState<CustomerModel[]>([]);
     useEffect(()=>{
         handleCustomers();
@@ -665,6 +704,9 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
                     }
                     return(
                         <Quantom_Grid 
+                           onClick={()=>{
+                             props?.onSelect?.(item)
+                           }}
                             sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'4px'}} 
                             size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
                             <div style={{display:'flex',alignItems:'center'}}>

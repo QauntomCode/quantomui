@@ -60,7 +60,7 @@ export const QuantomLightTheme = createTheme({
     },
     secondary: {
       main: "#FFAB04",
-      contrastText: "#FFFFFF",
+      contrastText: "#3366FF",
       light: "#05D890",
     },
     background: {

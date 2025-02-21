@@ -37,10 +37,15 @@
   }
 }
 
-.css-19ifyp0-MuiButtonBase-root-MuiTab-root, .css-1ax0ozr-MuiButtonBase-root-MuiTab-root{
+.css-19ifyp0-MuiButtonBase-root-MuiTab-root,
+.css-1ax0ozr-MuiButtonBase-root-MuiTab-root {
   opacity: 1 !important;
 }
-.pos_action_button{
-  background-color: 'red';
-  border: '1px solid red';
+.pos_action_button {
+  background-color: "red";
+  border: "1px solid red";
+}
+.focused-element:focus {
+  background-color: #1976d2;
+  color: white;
 }

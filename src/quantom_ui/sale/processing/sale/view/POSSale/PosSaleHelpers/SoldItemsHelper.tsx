@@ -24,7 +24,7 @@ interface SoldItemsRendererProps{
       const soldItems= props?.baseProps?.state?.SaleDetails;
       const fonts= useQuantomFonts();
       const theme= useTheme();
-      const headerFont={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:1000,color:theme.palette.primary.main};
+      const headerFont={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:800,color:theme?.palette?.primary?.contrastText};
       const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
       
       return(
@@ -38,13 +38,13 @@ interface SoldItemsRendererProps{
           <Quantom_Grid container sx={{height:'100%'}} spacing={1}>
               <TableContainer component={Paper} >
               <Table size="small" aria-label="a dense table">
-                  <TableHead  component={Paper} sx={{borderBottom:`1px solid ${theme.palette.primary.main}`}}>
+                  <TableHead style={{backgroundColor:theme?.palette?.primary?.main}}  component={Paper}>
                       <TableRow>
                           <TableCell sx={{...headerFont,width:'10px'}}>
-                              <IconByName iconName="DynamicFormOutlined" color={theme.palette.primary.main}/>
+                              <IconByName iconName="DynamicFormOutlined" color={theme.palette.primary.contrastText}/>
                           </TableCell>
                           <TableCell sx={{...headerFont,width:'10px'}}>
-                              <IconByName iconName="Grid3x3Outlined"  color={theme.palette.primary.main}/>
+                              <IconByName iconName="Grid3x3Outlined"  color={theme.palette.primary.contrastText}/>
                           </TableCell>
                           <TableCell sx={{...headerFont,width:'auto'}}>
                               {/* <IconByName iconName="ShoppingBagOutlined"/> */}
@@ -77,8 +77,8 @@ interface SoldItemsRendererProps{
                       </TableCell>
                       <TableCell sx={{...bodyFont,wdith:'10px'}}>{item?.CustomSortNo}</TableCell>
                       <TableCell sx={{...bodyFont,width:'auto'}}>{item?.ItemName}</TableCell>
-                      <TableCell sx={{...bodyFont,width:'25px'}}>{item?.Qty}</TableCell>
-                      <TableCell sx={{...bodyFont,width:'15px'}}>{item?.Price}</TableCell>
+                      <TableCell sx={{...bodyFont,width:'25px'}}>{item?.TransQty}</TableCell>
+                      <TableCell sx={{...bodyFont,width:'15px'}}>{item?.TransPrice}</TableCell>
                       <TableCell sx={{...bodyFont,width:'15px'}}>{item?.Amount}</TableCell>
                       </TableRow>
                   ))}

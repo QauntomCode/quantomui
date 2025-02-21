@@ -215,6 +215,7 @@ export const Quantom_Input1=(props: {
           multiline={props?.multiline}
           maxRows={props?.maxRows}
           disabled={props?.disabled}
+          type={props?.type}
           sx={{
                 borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
                 fontFamily:font.HeaderFont,

@@ -32,10 +32,10 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
 
     return(
        
-        <div style={{width:'130px',marginRight:props?.rightMargin}}>
+        <div  className="focused-element" tabIndex={0} style={{width:'130px',marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-         <Box component={Paper} sx={{borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {
+         <Box component={Paper} sx={{backgroundColor:props?.backgroundColor??undefined,borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {
                     backgroundColor:theme?.palette?.primary.light,
                 }}}>
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(
@@ -104,11 +104,11 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
                     fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
                       
                     <div style={{display:'flex',justifyContent:'center',alignItems:'center',marginRight:'5px'}}>
-                        <IconByName iconName={props?.iconName} fontSize="30px" color={iconColor}/>
+                        <IconByName iconName={props?.iconName} fontSize="30px" color={props?.iconColor?? iconColor}/>
                        {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
 
                     </div>
-                    <div style={{letterSpacing:1.2}}>
+                    <div style={{letterSpacing:1.2,color:props?.textColor}}>
                         {props?.label?.toLocaleUpperCase()}
                     </div>
                    
