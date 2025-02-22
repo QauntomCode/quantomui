@@ -12,6 +12,7 @@ import { CommonInvDetailComp } from "../../../../../../inventory/CommonComp/Comm
 import { handleAddItem, POS_SALE_LOCID_KEY } from "../../POSSaleView";
 import { useSelector } from "react-redux";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
+import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 interface SoldItemsRendererProps{
     baseProps?:MenuComponentProps<VmSale>
@@ -57,7 +58,7 @@ interface SoldItemsRendererProps{
    export const SoldItemCardView=(props?:ChildProps)=>{
     const fonts= useQuantomFonts();
     const theme= useTheme();
-    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'18px',fontWeight:600,p:1};
+    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1};
     const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
     const soldItems= props?.baseProps?.baseProps?.state?.SaleDetails;
 
@@ -66,28 +67,34 @@ interface SoldItemsRendererProps{
             {
                 soldItems?.map((item,index)=>{
                     return(
-                        <Quantom_Grid borderBottom={`1px solid ${theme?.palette?.primary?.main}`} coontainer component={Paper} size={{xs:12,md:12,lg:6,xl:6}} >
-                            
-                            <Quantom_Grid borderBottom={`1px solid black`} display='flex' justifyContent='cneter'  size={{xs:12}} sx={{...headerFont}}>
-                                <IconByName fontSize="35px" color={theme?.palette?.primary?.main} iconName="LocalMallOutlined"/>
-                                {item?.ItemName}
-                            </Quantom_Grid>
-                            <Quantom_Grid container>
-                                <Quantom_Grid size={{xs:3}} display='flex' alignItems='center'>
-                                    <div style={{fontWeight:700,fontSize:fonts.H4FontSize,marginRight:'8px'}}>Qty</div>
-                                    <div style={{fontWeight:800,fontSize:'20px'}}>{item?.TransQty}</div>
+                        <>
+                            <Quantom_Grid mt={1} borderBottom={`1px solid ${theme?.palette?.primary?.main}`} container component={Paper} size={{xs:12,md:12,lg:12,xl:6}} >
+                                
+                                <Quantom_Grid borderBottom={`1px solid black`} display='flex'  alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
+                                    <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="LocalMallOutlined"/>
+                                    {item?.ItemName}
                                 </Quantom_Grid>
-                                <Quantom_Grid size={{xs:3}} display='flex' alignItems='center'>
-                                    <div style={{fontWeight:700,fontSize:fonts.H4FontSize,marginRight:'8px'}}>Price</div>
-                                    <div style={{fontWeight:800,fontSize:'20px'}}>{item?.TransPrice}</div>
+                                
+                           
+                                <Quantom_Grid container sx={{flex:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
+                                    <Quantom_Grid size={{xs:5}} alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
+                                        <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="WidgetsOutlined"/>
+                                        {item?.TransUnitName}
+                                    </Quantom_Grid>
+                                    <Quantom_Grid size={{xs:3}} alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
+                                        <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="ShoppingCartOutlined"/>
+                                        {item?.TransQty?.toFixed(2)}
+                                    </Quantom_Grid>
+                                    <Quantom_Grid size={{xs:4}} alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
+                                        <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="LocalAtmOutlined"/>
+                                        {item?.TransPrice?.toFixed(2)}
+                                    </Quantom_Grid>
                                 </Quantom_Grid>
-                            </Quantom_Grid>
 
-                            <Quantom_Grid borderBottom={`1px solid black`} display='flex' justifyContent='center' alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
-                                    <div style={{fontWeight:800,fontSize:'35px'}}>{item?.TransPrice}</div>
+                              
+
                             </Quantom_Grid>
-                            
-                        </Quantom_Grid>
+                        </>
                     )
                 })
             }

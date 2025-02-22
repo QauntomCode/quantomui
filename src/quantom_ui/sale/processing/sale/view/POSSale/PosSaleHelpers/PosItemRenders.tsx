@@ -17,6 +17,7 @@ export interface POSItemsRendererViewProps{
     size?:QuantomSize
     onItemSelection?:(selectedDetail?:CommonInvDetailModel)=>void;
     ItemLoadType?:'CATEGORY_WISE'|'ALL_ITEMS'
+    onCartClick?:()=>void;
   }
   
   export interface QuantomSize{
@@ -104,7 +105,8 @@ export interface POSItemsRendererViewProps{
                       <Quantom_Grid sx={{flex:1}}>
                           <Quantom_Input value={itemSearch} onChange={(e)=>{setItemSearch(e.target.value)}} label='Search' />
                       </Quantom_Grid>
-                      <POSActionButton1 isIconOnly iconName="ScreenSearchDesktopOutlined" iconColor={theme?.palette?.primary?.main} label="Search"/>
+                      <POSActionButton1 isIconOnly iconName="ScreenSearchDesktopOutlined" iconColor={theme?.palette?.primary?.main} rightMargin="2px" label="Search"/>
+                      <POSActionButton1 onClick={props?.onCartClick} backgroundColor={theme?.palette?.secondary?.main} isIconOnly iconName="ShoppingCartCheckout" iconColor={theme?.palette?.secondary?.contrastText} label="Search"/>
                    </Quantom_Grid>
                    <Quantom_Grid container spacing={.5} padding={'2px'}>
                    

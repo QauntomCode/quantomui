@@ -34,6 +34,7 @@ import { PosItemsRenderer } from "./PosSaleHelpers/PosItemRenders";
 import { SoldItemsRenderer } from "./PosSaleHelpers/SoldItemsHelper";
 import { handleAddItem, QuantomDialog } from "../POSSaleView";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
+import { LocalDbFilterCustomers, LocalDbInsertCustomer } from "../../../../../../IndexedDb/Initialization/Operation/CustomerData";
 pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
@@ -86,7 +87,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
 
  const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
     const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
-
+    const[openSoldItemsDialog,setOpenSoldItemsDialog]=useState(false)
     const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
     const disAmount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
      console.warn('discount amount is'+disAmount)
@@ -149,11 +150,16 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
                     onChange={(sel)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:sel?.Code,CustName:sel?.Name}})}}
                     selectedCustomer={{Code:props?.state?.Sale?.CustCode,Name:props?.state?.Sale?.CustName}} />
 
-                <PosItemsRenderer onItemSelection={(item)=>{handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)}} ItemLoadType='ALL_ITEMS' />
+                <PosItemsRenderer onCartClick={()=>{setOpenSoldItemsDialog(true)}} onItemSelection={(item)=>{handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)}} ItemLoadType='ALL_ITEMS' />
             </div>
             <div className="col-lg-5">
                 <SoldItemsRenderer baseProps={props}/>
             </div>
+
+
+            <QuantomDialog heading="Selected Items " onClosePress={()=>{setOpenSoldItemsDialog(false)}} open={openSoldItemsDialog}>
+                <SoldItemsRenderer baseProps={props}/>
+            </QuantomDialog>
             
         </div>
         {/* <div className="row g-2">
@@ -636,7 +642,22 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
                 <div style={{display:'flex',flexDirection:'column',alignItems:'center',flex:1,justifyContent:'center'}}>
                     <div style={{display:'flex',flexDirection:'row'}}>
                          <div>
-                            <POSActionButton1 textColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme?.palette?.secondary?.main} label="Refresh" iconName="OnDeviceTraining" iconColor={theme?.palette?.primary?.main}/>
+                            <POSActionButton1 onClick={async()=>{
+                                try{
+                                    ShowLoadingDialog();
+                                    let res= await GetAllCustomers();
+                                    for(let cust of res){
+                                        LocalDbInsertCustomer(cust)
+                                    }
+                                    HideLoadingDialog();
+                                    console.log('get all customers',res)
+                                }
+                                catch{
+                                    HideLoadingDialog();
+                                }
+                                    //setCustComers([...res])
+                                }
+                            } textColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme?.palette?.secondary?.main} label="Refresh" iconName="OnDeviceTraining" iconColor={theme?.palette?.primary?.main}/>
                         </div>
                         <div style={{marginLeft:'10px'}}>
                             <POSActionButton1 
@@ -682,26 +703,30 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
   }
   export const  CustomerListComp=(props?:CustomerListCompPorps)=>{
     const [customers,setCustComers]=useState<CustomerModel[]>([]);
+    const[search,setSearch]=useState<string>();
+
     useEffect(()=>{
         handleCustomers();
-    },[])
+    },[search])
 
     
     const handleCustomers=async()=>{
-        let res= await GetAllCustomers();
+        let res= await LocalDbFilterCustomers(search);
         console.log('get all customers',res)
         setCustComers([...res])
     }
     const theme= useTheme();
     const fonts= useQuantomFonts();
     return(
-        <Quantom_Grid container spacing={.5} component={Paper}>
+
+        <Quantom_Grid size={{xs:12}} container spacing={.5} component={Paper}>
+            <Quantom_Grid container size={{xs:12}}>
+               <Quantom_Input label="Search" value={search} onChange={(e)=>{setSearch(e?.target?.value)}}/>
+            </Quantom_Grid>
             {/* <Quantom_Grid item> Item Code</Quantom_Grid> */}
             {
                 customers?.map((item,index)=>{
-                    if(index>100){
-                        return<></>
-                    }
+                    
                     return(
                         <Quantom_Grid 
                            onClick={()=>{
