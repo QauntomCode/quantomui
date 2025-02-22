@@ -32,7 +32,7 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
 
     return(
        
-        <div  className="focused-element" tabIndex={0} style={{width:'130px',marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
+        <div  className="focused-element" tabIndex={0} style={{width:props?.isIconOnly?'70px':'130px',marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
          <Box component={Paper} sx={{backgroundColor:props?.backgroundColor??undefined,borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {
@@ -108,9 +108,13 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
                        {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
 
                     </div>
-                    <div style={{letterSpacing:1.2,color:props?.textColor}}>
-                        {props?.label?.toLocaleUpperCase()}
-                    </div>
+                    {props?.isIconOnly?(<></>):(
+                            <div style={{letterSpacing:1.2,color:props?.textColor}}>
+                                {props?.label?.toLocaleUpperCase()}
+                            </div>
+                        )
+                    }
+                   
                    
               </Box>
            

@@ -15,7 +15,7 @@ export interface POSItemsRendererViewProps{
     uniqueId?:string;
     selectedCat?:string;
     size?:QuantomSize
-    onItemSelction?:(selectedDetail?:CommonInvDetailModel)=>void;
+    onItemSelection?:(selectedDetail?:CommonInvDetailModel)=>void;
     ItemLoadType?:'CATEGORY_WISE'|'ALL_ITEMS'
   }
   
@@ -90,7 +90,7 @@ export interface POSItemsRendererViewProps{
      return(
      <> 
           <POSRenderItemUnitsWithPirce OnSelect={(price,item)=>{
-              props?.onItemSelction?.(item)
+              props?.onItemSelection?.(item)
               //setSelectedItem({...selectedItem,TransUnitCode:price?.UnitCode,TransUnitName:item?.UnitName,Price:price?.Price})
             //   setShowQtySelector(true);
               setShowUnit(false);
@@ -104,7 +104,7 @@ export interface POSItemsRendererViewProps{
                       <Quantom_Grid sx={{flex:1}}>
                           <Quantom_Input value={itemSearch} onChange={(e)=>{setItemSearch(e.target.value)}} label='Search' />
                       </Quantom_Grid>
-                      <POSActionButton1 iconName="ScreenSearchDesktopOutlined" iconColor={theme?.palette?.primary?.main} label="Search"/>
+                      <POSActionButton1 isIconOnly iconName="ScreenSearchDesktopOutlined" iconColor={theme?.palette?.primary?.main} label="Search"/>
                    </Quantom_Grid>
                    <Quantom_Grid container spacing={.5} padding={'2px'}>
                    

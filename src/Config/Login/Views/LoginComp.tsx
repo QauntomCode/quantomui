@@ -85,13 +85,15 @@ export const LoginComp = () => {
         </div>
        <div className='row  mt-2'>
           <Box>
-            <Quantom_Input type='password' label="Passowrd" size='medium' value={user?.Password}
+            <Quantom_Input type='password' label="Password" size='medium' value={user?.Password}
               onChange={(e)=>{
                 setUser({...user,Password:e.target.value})
               }}/>
           </Box>
        </div>
-
+       <div style={{color:theme?.palette?.error?.main,fontFamily:fonts.HeaderFont}}>
+        {error}
+       </div>
        <div className='row  mt-2'>
           <Box display='flex'  justifyContent='center'>
             <POSActionButton1 onClick={handleLogin} iconName='LockOpen' iconColor={theme?.palette?.secondary?.contrastText} textColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme?.palette?.secondary?.main}  label='Login'/>

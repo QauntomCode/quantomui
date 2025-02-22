@@ -149,7 +149,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
                     onChange={(sel)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:sel?.Code,CustName:sel?.Name}})}}
                     selectedCustomer={{Code:props?.state?.Sale?.CustCode,Name:props?.state?.Sale?.CustName}} />
 
-                <PosItemsRenderer onItemSelction={(item)=>{handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)}} ItemLoadType='ALL_ITEMS' />
+                <PosItemsRenderer onItemSelection={(item)=>{handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)}} ItemLoadType='ALL_ITEMS' />
             </div>
             <div className="col-lg-5">
                 <SoldItemsRenderer baseProps={props}/>

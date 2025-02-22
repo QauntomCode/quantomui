@@ -17,6 +17,7 @@ export interface POSActionButtonProps{
     backgroundColor?:string;
     rightMargin?:string;
     textColor?:string; 
+    isIconOnly?:boolean;
   }
   export const POSActionButton=(props?:POSActionButtonProps)=>{
       const fonts= useQuantomFonts();
@@ -135,12 +136,13 @@ export interface POSActionButtonProps{
                   }}
                   open={openConfirmation} MessageHeader="Are You Sure Delete !"/>  
               ):(<></>)} 
-          <Box 
-          onClick={handleClick}    
-           style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',height:'70px',
-                       border:'none',color:theme?.palette?.text?.primary,
-                      fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
-                        
+          
+                <Box 
+                    onClick={handleClick}    
+                    style={{     justifyContent:'center',display:'flex',flexDirection:'column',alignItems:'center',width:'60px',height:'70px',
+                                border:'none',color:theme?.palette?.text?.primary,
+                                fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
+                                    
                       <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                           <IconByName iconName={props?.iconName} fontSize="30px" color={iconColor}/>
                          {/* <POSSoftwareReportIcon color='primary' sx={{fontSize:'60px'}}></POSSoftwareReportIcon> */}
@@ -151,6 +153,7 @@ export interface POSActionButtonProps{
                       </div>
                      
                 </Box>
+          
              
           </Box>
           </div>

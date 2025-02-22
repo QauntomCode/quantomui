@@ -173,7 +173,7 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
                                 }} categories={categories} />
                             </div>
                             <div className="col-md-9" style={{backgroundColor:theme?.palette?.background.paper}}>
-                                <PosItemsRenderer onItemSelction={(item)=>{handleAddItem(locid??"",props,{ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:4}} />
+                                <PosItemsRenderer onItemSelection={(item)=>{handleAddItem(locid??"",props,{ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:4}} />
                             </div>
                         </div>
                         <div style={{bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',position:'sticky'}}>
