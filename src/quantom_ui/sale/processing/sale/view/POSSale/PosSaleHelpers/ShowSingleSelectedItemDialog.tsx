@@ -19,10 +19,10 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
     const [rate,setRate]=useState(0);
     const [amount,setAmount]=useState(0);
     useEffect(()=>{
-        setQty(props?.item?.Qty??0);
-        setRate(props?.item?.Price??0);
+        setQty(props?.item?.TransQty??0);
+        setRate(props?.item?.TransPrice??0);
         //setQty(props?.item?.Qty??0);
-    },[props?.item?.Qty,props?.item?.Price])
+    },[props?.item?.TransQty,props?.item?.TransPrice])
 
     useEffect(()=>{
         setAmount(safeParseToNumber(qty)*safeParseToNumber(rate))
