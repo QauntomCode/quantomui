@@ -546,7 +546,7 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
   };
 
 
-  interface SalePrintNumbers{
+  export interface SalePrintNumbers{
     TotalGrossAmount:number;
     TotalDiscount:number;
     Scheme:number;
@@ -586,3 +586,4 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
 
     return Promise.resolve(obj);
   }
+

@@ -524,7 +524,9 @@ export const QuantomDialog=(props?:QuantomDialogProps)=>{
                 </div>
             </DialogTitle>
           <DialogContent>
-            {props?.children}
+            <div style={{marginBottom:'10px',marginTop:'10px'}}>
+                {props?.children}
+            </div>
           </DialogContent>
         </Dialog>
     )
@@ -536,11 +538,14 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
 
 
 export const handleAddItem=async(locid:string,props?:MenuComponentProps<VmSale>,workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
-        
+      
+    // alert(workingItem?.ItemCode);
+    // return  ;
     var oldItems= props?.state?.SaleDetails??[];
     var taxDetail= props?.state?.TaxDetail;
+    const wItem={...workingItem};
     let res= 
-    await AddOrRemoveExtendedMethod(oldItems,workingItem,InventoryAction.Sale,action,{
+    await AddOrRemoveExtendedMethod(oldItems,wItem,InventoryAction.Sale,action,{
         VendorCode:props?.state?.Sale?.CustCode,
         BillDate:new Date(),
         LocId:locid,

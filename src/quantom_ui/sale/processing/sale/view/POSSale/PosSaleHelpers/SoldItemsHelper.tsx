@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CommonInvDetailModel } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { get_helperData_by_key, useQuantomFonts } from "../../../../../../../redux/store";
 import { Quantom_Grid } from "../../../../../../../quantom_comps/base_comps";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
 import { IconByName, MenuComponentProps } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { ShowSingleSelectedItemDialog } from "./ShowSingleSelectedItemDialog";
 import { VmSale } from "../../../model/VmSaleModel";
@@ -13,12 +14,17 @@ import { handleAddItem, POS_SALE_LOCID_KEY } from "../../POSSaleView";
 import { useSelector } from "react-redux";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
 import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
+import { POSActionButton } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
+import { totalmem } from "os";
+import { SalePrintAableTotalValue, SalePrintNumbers } from "../POSSaleView1";
 
 interface SoldItemsRendererProps{
     baseProps?:MenuComponentProps<VmSale>
     itemGridSize?:QuantomSize;
     onDeleteItem?:(workingItem?:CommonInvDetailModel)=>void;
     onEditItem?:(workingItem?:CommonInvDetailModel)=>void;
+    onPaymentClik?:()=>void;
+    onListClick?:()=>void;
   
   }
   
@@ -28,6 +34,13 @@ interface SoldItemsRendererProps{
       const[selecteditem,setSelectedItem]=useState<CommonInvDetailModel>();
       const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
       
+    const handleEditItem=(item?:CommonInvDetailModel)=>{
+        setSelectedItem(item);
+        setShowDialog(true);
+    }
+    const hadnleDeleteItem=(item?:CommonInvDetailModel)=>{
+        handleAddItem(locid,props?.baseProps,item,INVENTORY_PERFORMED_ACTION.DELETE)
+    }
       return(
           <>
           <ShowSingleSelectedItemDialog item={selecteditem} open={showDialog} onClose={(type,item)=>{
@@ -38,10 +51,8 @@ interface SoldItemsRendererProps{
               }
           }}></ShowSingleSelectedItemDialog>
          
-          {/* <SoldItemGridView baseProps={props} showDialog={showDialog} setShowDialog={(val)=>{setShowDialog(val??false)}}
-                selectedItem={selecteditem} setSelectedItem={(item)=>{setSelectedItem(item)}}/> */}
 
-            <SoldItemCardView baseProps={props} showDialog={showDialog} setShowDialog={(val)=>{setShowDialog(val??false)}}
+            <SoldItemCardView onPaymentClick={props?.onPaymentClik} onListClick={props?.onListClick} onDeleteclick={hadnleDeleteItem} onEditClick={handleEditItem} baseProps={props} showDialog={showDialog} setShowDialog={(val)=>{setShowDialog(val??false)}}
                 selectedItem={selecteditem} setSelectedItem={(item)=>{setSelectedItem(item)}}/>
           </>
       )
@@ -53,30 +64,76 @@ interface SoldItemsRendererProps{
      setShowDialog?:(val?:boolean)=>void;
      selectedItem?:CommonInvDetailModel
      setSelectedItem?:(val?:CommonInvDetailModel)=>void;
+     onEditClick?:(item?:CommonInvDetailModel)=>void;
+     onDeleteclick?:(item?:CommonInvDetailModel)=>void;
+     onPaymentClick?:()=>void;
+     onListClick?:()=>void;
    }
 
    export const SoldItemCardView=(props?:ChildProps)=>{
+    const [totals,setTotals]=useState<SalePrintNumbers>()
     const fonts= useQuantomFonts();
     const theme= useTheme();
-    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1};
+    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1,pl:2};
     const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
     const soldItems= props?.baseProps?.baseProps?.state?.SaleDetails;
 
+    useEffect(()=>{
+        handleTotalvalue();
+    },[props?.baseProps?.baseProps?.state])
+
+    const handleTotalvalue=async()=>{
+        let res = await SalePrintAableTotalValue(props?.baseProps?.baseProps?.state)
+        setTotals(res);
+    }
+    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+
+
     return(
         <Quantom_Grid container size={{xs:12}} spacing={1}>
+            <Quantom_Grid pt={1} pb={1} component={Paper} sx={{backgroundColor:theme?.palette?.primary?.main}} container size={{xs:12}}>
+                <Quantom_Grid  size={{xs:12,md:12,lg:8,xl:8}} flexDirection='column'justifyContent='center' alignItems='center'>
+                    <Quantom_Grid display='flex' alignItems='center' justifyContent='center' size={{xs:12}}>
+                        <POSActionButton1 
+                            onClick={()=>{props?.onPaymentClick?.()}}
+                            label="Payment" 
+                            rightMargin="12px"
+                            backgroundColor={theme?.palette?.secondary?.main} 
+                            iconColor={theme?.palette?.secondary?.contrastText} 
+                            textColor={theme?.palette?.secondary?.contrastText} 
+                            iconName="AddCardOutlined"/>
+
+                        <POSActionButton1 
+                            onClick={()=>{props?.onListClick?.()}}
+                            label="Bill List" 
+                            textColor={theme?.palette?.secondary?.contrastText} 
+                            backgroundColor={theme?.palette?.secondary?.main} 
+                            iconColor={theme?.palette?.secondary?.contrastText} 
+                            iconName="BallotOutlined"/>
+                    </Quantom_Grid>
+                    <Quantom_Grid display='flex' justifyContent='center' alignItems='center' size={{xs:12}} style={{...headerFont,fontSize:'20px', color:theme.palette.primary.contrastText}}>
+                         Total Amount
+                    </Quantom_Grid>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:12,sm:12,lg:4,xl:4}} 
+                sx={{...headerFont,fontSize:'35px',fontWeight:800,color:theme.palette.primary.contrastText}} 
+                display='flex' justifyContent='center' alignItems='center'> {totals?.NetTotal??0}</Quantom_Grid>
+
+                
+            </Quantom_Grid>
             {
                 soldItems?.map((item,index)=>{
                     return(
                         <>
-                            <Quantom_Grid mt={1} borderBottom={`1px solid ${theme?.palette?.primary?.main}`} container component={Paper} size={{xs:12,md:12,lg:12,xl:6}} >
+                            <Quantom_Grid mt={.5} borderBottom={`1px solid ${theme?.palette?.primary?.main}`} container component={Paper} size={{xs:12,md:12,lg:12,xl:6}} >
                                 
-                                <Quantom_Grid borderBottom={`1px solid black`} display='flex'  alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
+                                <Quantom_Grid container borderBottom={`1px solid black`} display='flex'  alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
                                     <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="LocalMallOutlined"/>
                                     {item?.ItemName}
                                 </Quantom_Grid>
                                 
                            
-                                <Quantom_Grid container sx={{flex:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
+                                <Quantom_Grid container sx={{pl:2}} size={{xs:12}} borderBottom='1px solid black'>
                                     <Quantom_Grid size={{xs:5}} alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                                         <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="WidgetsOutlined"/>
                                         {item?.TransUnitName}
@@ -89,6 +146,25 @@ interface SoldItemsRendererProps{
                                         <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="LocalAtmOutlined"/>
                                         {item?.TransPrice?.toFixed(2)}
                                     </Quantom_Grid>
+                                </Quantom_Grid>
+
+
+                                <Quantom_Grid container sx={{p:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
+                                    <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
+                                        <IconButton onClick={()=>props?.onDeleteclick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
+                                            <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="DeleteOutlineOutlined"/>
+                                        </IconButton>
+                                    </Quantom_Grid>
+                                    <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize,ml:.5}}>
+                                        <IconButton onClick={()=>props?.onEditClick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
+                                                <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="EditCalendarOutlined"/>
+                                        </IconButton>
+                                    </Quantom_Grid>
+
+                                    <Quantom_Grid display="flex" flex={1} justifyContent='end' sx={{fontFamily:fonts.HeaderFont,fontWeight:800,fontSize:'25px',ml:.5}}>
+                                        {item?.Amount?.toFixed(0)}
+                                    </Quantom_Grid>
+                                   
                                 </Quantom_Grid>
 
                               

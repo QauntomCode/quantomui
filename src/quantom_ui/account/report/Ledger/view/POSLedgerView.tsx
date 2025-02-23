@@ -20,11 +20,13 @@ import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView"
 import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
 import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 import { LedgerComponentState, LedgerFilterHeaderComp } from "./LedgerView";
+import { useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 
 
 
 export const POSLedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
 
+    const isMobile= useIsMobile();
     const theme= useTheme();
     const fonts= useQuantomFonts();
     React.useEffect(()=>{
@@ -70,18 +72,21 @@ export const POSLedgerView = (props?:MenuComponentProps<LedgerComponentState>) =
                 [...props?.state?.ledgerData??[]].map((item,index)=>{
                      return(
                         <Quantom_Grid   alignItems='center' container component={Paper} size={{xs:12}} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,padding:'4px',paddingTop:'6px',paddingBottom:'6px'}}>
-                            <Quantom_Grid item size={{xs:12,md:3,lg:2,xl:1}}>
+                            <Quantom_Grid item size={{xs:4,md:3,lg:2,xl:1}}>
                                 <div style={{display:'flex',alignItems:'center'}}>
                                     <IconByName iconName="CalendarTodayTwoTone" color={theme?.palette?.primary?.main}/>
                                     <div style={{marginLeft:'8px',fontSize:fonts.H4FontSize,fontWeight:450}}>{dayjs(item?.VDate).format('DD MMM YY')}</div>
                                 </div>
                             </Quantom_Grid>
-                            <Quantom_Grid item size={{xs:12,md:6,lg:6,xl:8}}>
+                            <Quantom_Grid item size={{xs:8,md:6,lg:6,xl:8}}>
                                 <div style={{display:'flex',alignItems:'center',}}>
-                                    <IconByName iconName="PaymentOutlined" color={theme?.palette?.primary?.main} fontSize="30px"/>
+                                    <IconByName iconName="ClassOutlined" color={theme?.palette?.primary?.main} fontSize="30px"/>
                                     <div>
-                                        <div style={{marginLeft:'8px',fontSize:fonts.H4FontSize,fontWeight:450,marginBottom:'3px',}}>{item?.FormName}</div>
-                                        <div style={{marginLeft:'8px',fontSize:fonts.H4FontSize,color:theme.palette.text.disabled,fontWeight:350}}>{item?.Remarks}</div>
+                                        <div style={{marginLeft:'8px',fontSize:'14px',fontWeight:600,marginBottom:'3px',}}>{item?.FormName}</div>
+                                        {isMobile?(<></>):(<>
+                                            <div style={{marginLeft:'8px',fontSize:fonts.H4FontSize,color:theme.palette.text.disabled,fontWeight:350}}>{item?.Remarks}</div>
+                                        </>)}
+                                        
                                     </div>
                                 </div>
                             </Quantom_Grid>

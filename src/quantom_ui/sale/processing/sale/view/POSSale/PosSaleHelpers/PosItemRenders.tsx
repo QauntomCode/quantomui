@@ -18,6 +18,7 @@ export interface POSItemsRendererViewProps{
     onItemSelection?:(selectedDetail?:CommonInvDetailModel)=>void;
     ItemLoadType?:'CATEGORY_WISE'|'ALL_ITEMS'
     onCartClick?:()=>void;
+    onCancelClick?:()=>void;
   }
   
   export interface QuantomSize{
@@ -91,7 +92,7 @@ export interface POSItemsRendererViewProps{
      return(
      <> 
           <POSRenderItemUnitsWithPirce OnSelect={(price,item)=>{
-              props?.onItemSelection?.(item)
+              props?.onItemSelection?.(price)
               //setSelectedItem({...selectedItem,TransUnitCode:price?.UnitCode,TransUnitName:item?.UnitName,Price:price?.Price})
             //   setShowQtySelector(true);
               setShowUnit(false);
@@ -107,6 +108,7 @@ export interface POSItemsRendererViewProps{
                       </Quantom_Grid>
                       <POSActionButton1 isIconOnly iconName="ScreenSearchDesktopOutlined" iconColor={theme?.palette?.primary?.main} rightMargin="2px" label="Search"/>
                       <POSActionButton1 onClick={props?.onCartClick} backgroundColor={theme?.palette?.secondary?.main} isIconOnly iconName="ShoppingCartCheckout" iconColor={theme?.palette?.secondary?.contrastText} label="Search"/>
+                      <POSActionButton1 onClick={props?.onCancelClick} backgroundColor={theme?.palette?.error?.main} isIconOnly iconName="CancelPresentationOutlined" iconColor={theme?.palette?.error?.contrastText} label="Search"/>
                    </Quantom_Grid>
                    <Quantom_Grid container spacing={.5} padding={'2px'}>
                    

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
-import React from "react"
-import { IconByName, MenuComponentProps, setFormBasicKeys, ToolBarButton, ToolBarButtonProps } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
+import React, { useEffect, useState } from "react"
+import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog, ToolBarButton, ToolBarButtonProps } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { LedgerModel } from "../model/LedgerModel"
 import { GroupContainer } from "../../../processing/voucher/view/VoucherView"
 import { RegisterAccountModel } from "../../../config/registerAccount/model/registerAccountModel";
@@ -20,6 +20,7 @@ import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView"
 import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
 import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
+import { FilterHandler } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 
 
 
@@ -72,64 +73,103 @@ export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
 
 
 export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentState>)=>{
+    const[balance,setBalance]=useState(0);
+    useEffect(()=>{
+        
+        let bl= props?.state?.ledgerData?.at(-1)?.Balance??0;
+        setBalance(bl)
+    },[props?.state])
     const handleLedger=async()=> {
 
-        props?.setState?.({...props?.state,ledgerData:[],ledgerDetail:[]})
-        if(props?.state?.LedgerType==='DETAIL_LEDGER'){
-            let res= await getLedgerDetail(props?.state?.filters)
-            
-            props?.setState?.({...props?.state,ledgerDetail:res?.Response})
-        }
-        else{
+        try{
+            ShowLoadingDialog();
+            props?.setState?.({...props?.state,ledgerData:[],ledgerDetail:[]})
+            if(props?.state?.LedgerType==='DETAIL_LEDGER'){
+                let res= await getLedgerDetail(props?.state?.filters)
                 
-            let res= await GetLedgerData(props?.state?.filters)
-                props?.setState?.({...props?.state,ledgerData:res?.Response})
-            
+                props?.setState?.({...props?.state,ledgerDetail:res?.Response})
+            }
+            else{
+                    
+                    let res= await GetLedgerData(props?.state?.filters)
+                    props?.setState?.({...props?.state,ledgerData:res?.Response})
+            }
+            HideLoadingDialog();
         }
+        catch{
+            HideLoadingDialog();
+        }
+        finally{
+            HideLoadingDialog();
+        }
+       
     }
 
+    const theme = useTheme();
+    const fonts= useQuantomFonts();
+
     return(
-        <div style={{display:'flex'}}>
-               <div style={{flex:1}}>
-                    <Quantom_Grid  container spacing={.5}>
-                        
-                        <Quantom_Grid size={{xs:2.5}}>
-                            <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
-                                        onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
+        <>
+               
+                    <Quantom_Grid display='flex' size={{xs:12}}  container spacing={1}>
+                        <Quantom_Grid container flex={1}>
+                        <FilterHandler OkAndAplyFilter={()=>handleLedger()}>
+                                <Quantom_Grid size={{md:2.5}}>
+                                    <QUANTOM_Date label="From Date" value={dayjs(props?.state?.filters?.FromDate)} 
+                                                onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,FromDate:dayjs(date).toDate()}})}}/>
+                                </Quantom_Grid>
+                                <Quantom_Grid item size={{md:2.5}}>
+                                    <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
+                                                    onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
+                                </Quantom_Grid>
+                                <Quantom_Grid item size={{md:3.5}}>
+                                    <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
+                                                    onChange={(selected)=>{
+                                                        props?.setState?.({...props?.state,glAccount:(selected),filters:{
+                                                            ...props?.state?.filters,
+                                                            FilterDetail:[
+                                                                {
+                                                                    FitlerType: FilterEntities.GL_CODES,
+                                                                    Keys:[{
+                                                                        Code:selected?.Code,
+                                                                        Name:selected?.Name,
+                                                                    }]
+                                                                }
+                                                            ]
+                                                        }});
+                                                    }}/>
+                                </Quantom_Grid>
+                                <Quantom_Grid item size={{md:3.5}}>
+                                    <MultiLocationSelectionlOVComp  />
+                                </Quantom_Grid>
+                                
+                            </FilterHandler>
                         </Quantom_Grid>
-                        <Quantom_Grid item size={{xs:2.5}}>
-                            <QUANTOM_Date label="To Date" value={dayjs(props?.state?.filters?.ToDate)} 
-                                            onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
+                        <Quantom_Grid>
+                            <POSActionButton1 isIconOnly onClick={handleLedger} iconName="PageviewTwoTone" label="Load"/>   
                         </Quantom_Grid>
-                        <Quantom_Grid item size={{xs:3.5}}>
-                            <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
-                                            onChange={(selected)=>{
-                                                props?.setState?.({...props?.state,glAccount:(selected),filters:{
-                                                    ...props?.state?.filters,
-                                                    FilterDetail:[
-                                                        {
-                                                            FitlerType: FilterEntities.GL_CODES,
-                                                            Keys:[{
-                                                                Code:selected?.Code,
-                                                                Name:selected?.Name,
-                                                            }]
-                                                        }
-                                                    ]
-                                                }});
-                                            }}/>
-                        </Quantom_Grid>
-                        <Quantom_Grid item size={{xs:3.5}}>
-                            <MultiLocationSelectionlOVComp  />
+                        <Quantom_Grid>
+                            <POSActionButton1 isIconOnly iconName="LocalPrintshopTwoTone" label="Print"/>
                         </Quantom_Grid>
                     </Quantom_Grid>
-                </div>
-                <div style={{display:'flex'}}>
-                        <div style={{marginLeft:'8px'}}>
-                            <POSActionButton1 rightMargin="8px" onClick={handleLedger} iconName="PageviewTwoTone" label="Load"/>   
-                        </div>
-                        <POSActionButton1  iconName="LocalPrintshopTwoTone" label="Print"/>
-                </div>
-            </div>
+
+                    <Quantom_Grid mt={1} mb={1} display='flex' sx={{backgroundColor:theme?.palette?.primary?.main}} component={Paper} container size={{xs:12}}>
+                           <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center'}}>    
+                                <div>
+                                    <IconByName color={theme.palette.primary.contrastText} fontSize="50px" iconName="MenuBookOutlined"/>
+                                </div>
+                                <div style={{fontFamily:fonts?.HeaderFont,fontSize:'25px',fontWeight:500,color:theme.palette.primary.contrastText}}>
+                                    {
+                                        props?.state?.glAccount?.Name
+                                    }
+                                </div>
+                          </div>
+                          <div style={{marginRight:'10px',display:'flex',alignItems:'center',fontFamily:fonts?.HeaderFont,fontSize:'25px',fontWeight:900,color:theme.palette.primary.contrastText}}>
+                               {balance}                              
+                          </div>
+                    </Quantom_Grid>
+                    </>
+                
         )
 }
 

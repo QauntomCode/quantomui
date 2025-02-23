@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { useImperativeHandle, useRef } from 'react'
 import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from './base_comps'
-import {  Box, Dialog, DialogContent,Grid, Paper, useTheme } from '@mui/material'
+import {  Box, Dialog, DialogContent,DialogTitle,Grid, Paper, useTheme } from '@mui/material'
 import { IconByName } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 import { ListCompButton } from '../quantom_ui/account/report/Ledger/view/LedgerView';
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from '../redux/store';
@@ -250,7 +250,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
                        
                       style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none'}} 
                       key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
-                      onClick={()=>{setFocusedIndex(index) ; }}
+                      onClick={()=>{setFocusedIndex(index) ;handleSelection(item) }}
                       onDoubleClick={()=>{handleSelection(item) }
                 } tabIndex={-1} >
                     <Quantom_Grid  container component={Paper} spacing={1} 
@@ -504,6 +504,15 @@ return (
         },
       }}
       >
+        <DialogTitle sx={{padding:0,display:'flex'}}>
+           <div style={{flex:1}}></div>
+           <div style={{flex:0,paddingRight:'25px'}} onClick={()=>{
+                setOpen(false)
+           }}>
+              <IconByName color={theme.palette.error.main} iconName='CancelPresentation' ></IconByName>
+           </div>
+
+        </DialogTitle>
         <DialogContent>
        
         <Quantom_Input 
@@ -538,10 +547,10 @@ return (
                     onKeyDown={(e)=>{
                       handleKeyEvent(e,item)
                     }}
-                     
+                    
                     style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none'}} 
                     key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
-                    onClick={()=>{setFocusedIndex(index) ; }}
+                    onClick={()=>{ setFocusedIndex(index);handleSelection(item) }}
                     onDoubleClick={()=>{handleSelection(item) }
               } tabIndex={-1} >
                   <Quantom_Grid  container component={Paper} spacing={1} 

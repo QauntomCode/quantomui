@@ -32,7 +32,11 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
 
     return(
        
-        <div  className="focused-element" tabIndex={0} style={{width:props?.isIconOnly?'70px':'130px',marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
+        <div onKeyDown={(e)=>{
+            if (e.key === 'Enter') {
+                props?.onClick?.()
+            }
+        }}  className="focused-element" tabIndex={0} style={{width:props?.isIconOnly?'70px':'130px',marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
          <Box component={Paper} sx={{backgroundColor:props?.backgroundColor??undefined,borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {

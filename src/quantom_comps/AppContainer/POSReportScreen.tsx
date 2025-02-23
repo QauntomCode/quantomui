@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react'
-import { generateGUID, MenuComponentProps, setFormBasicKeys } from './Helpers/TabHelper/AppContainerTabHelper'
+import { APP_TYPE, generateGUID, GetAPPType, MenuComponentProps, setFormBasicKeys } from './Helpers/TabHelper/AppContainerTabHelper'
 import { useSelector } from 'react-redux'
 import store, { full_component_state, useQuantomFonts } from '../../redux/store'
 import { Box,Paper } from '@mui/material';
@@ -10,7 +10,7 @@ import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/LocalMallOutlined';
 import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
 import { open_new_menu } from '../../redux/reduxSlice';
-import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_PURCHASE_REPORT, POS_INVENTORY_SALE_REPORT, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,  POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_PURCHASE_REPORT, POS_INVENTORY_SALE_REPORT, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,  POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE,  POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import SaleIcon from '@mui/icons-material/BusAlertOutlined';
 import CustomerReceiptIcon from '@mui/icons-material/AddCardOutlined';
@@ -51,6 +51,7 @@ export const POSReportScreenView = (props?:MenuComponentProps<model>) => {
       let guid=await generateGUID();
       store.dispatch(open_new_menu({MenuCode:menuCode,MenuCaption:caption,UniqueKeyNo:guid}))
     }
+    const appType= GetAPPType();
   return (
      <>
         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'10px'}} spacing={.5} >
@@ -66,14 +67,6 @@ export const POSReportScreenView = (props?:MenuComponentProps<model>) => {
                 {/* </Box> */}
              </Quantom_Grid>
 
-            {/* <Quantom_Grid onClick={()=>{
-                openNewMenu(POS_CATEGORY_FORM_MENU_CODE,'Item Category')
-             }} container component={Paper} size={{md:2,sm:12,xs:12,lg:2,xl:2}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
-                <>
-                <CategoryICon color='primary' sx={{fontSize:'60px'}}></CategoryICon>
-                </>
-                   Category
-             </Quantom_Grid> */}
         </Quantom_Grid>
         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'10px'}} spacing={.5} >
             <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:3,xl:3}}></Quantom_Grid>
@@ -98,14 +91,21 @@ export const POSReportScreenView = (props?:MenuComponentProps<model>) => {
                  Sale Report
              </Quantom_Grid>
 
-             <Quantom_Grid onClick={()=>{
-               openNewMenu(POS_INVENTORY_PURCHASE_REPORT,'Purchase Report');
-             }} item component={Paper} size={{md:4,sm:12,xs:12,lg:3,xl:3}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
+             {
+              appType===APP_TYPE.EGG_ERP?(<></>):(
                 <>
-                  <PurchaseReportIcon color='primary' sx={{fontSize:'60px'}}></PurchaseReportIcon>
+                  <Quantom_Grid onClick={()=>{
+                      openNewMenu(POS_INVENTORY_PURCHASE_REPORT,'Purchase Report');
+                    }} item component={Paper} size={{md:4,sm:12,xs:12,lg:3,xl:3}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
+                    <>
+                      <PurchaseReportIcon color='primary' sx={{fontSize:'60px'}}></PurchaseReportIcon>
+                    </>
+                      Purchase Report
+                    </Quantom_Grid>
                 </>
-                  Purchase Report
-             </Quantom_Grid>
+              )
+             }
+             
         </Quantom_Grid>
 
 
@@ -113,7 +113,7 @@ export const POSReportScreenView = (props?:MenuComponentProps<model>) => {
         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'10px'}} spacing={.5} >
             <Quantom_Grid  item size={{sm:0,xs:0,md:2,lg:3,xl:3}}></Quantom_Grid>
              <Quantom_Grid onClick={()=>{
-               openNewMenu(POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,'Customer Receipts Report');
+               openNewMenu(POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE,'Customer Receipts Report');
              }} item component={Paper} size={{md:4,sm:12,xs:12,lg:3,xl:3}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
                 <>
                   <CustomerReceiptReportIcon color='primary' sx={{fontSize:'60px'}}></CustomerReceiptReportIcon>
@@ -121,14 +121,19 @@ export const POSReportScreenView = (props?:MenuComponentProps<model>) => {
                  Customer Receipts
              </Quantom_Grid>
 
-             <Quantom_Grid onClick={()=>{
-               openNewMenu(POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE,'Supplier Payment Report');
-             }} item component={Paper} size={{md:4,sm:12,xs:12,lg:3,xl:3}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
-                <>
-                  <SuppierPaymentIcon color='primary' sx={{fontSize:'60px'}}></SuppierPaymentIcon>
-                </>
-                  Supplier Payments
-             </Quantom_Grid>
+             {
+              appType===APP_TYPE.EGG_ERP?(<></>):(<>
+                <Quantom_Grid onClick={()=>{
+                      openNewMenu(POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE,'Supplier Payment Report');
+                    }} item component={Paper} size={{md:4,sm:12,xs:12,lg:3,xl:3}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
+                        <>
+                          <SuppierPaymentIcon color='primary' sx={{fontSize:'60px'}}></SuppierPaymentIcon>
+                        </>
+                          Supplier Payments
+                </Quantom_Grid>
+              </>)
+             }
+             
         </Quantom_Grid>
 
 

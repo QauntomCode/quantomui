@@ -940,7 +940,7 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSPurchaseView{...props}/>)
   },
   {
-    MenuCode:POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE,
+    MenuCode:POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE,
     MenuCaption:'Customer Receipt Report',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSCustomerPaymentReceiptReport{...props}/>)
   },

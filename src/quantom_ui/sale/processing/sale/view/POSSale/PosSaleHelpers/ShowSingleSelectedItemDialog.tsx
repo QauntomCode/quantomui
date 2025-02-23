@@ -5,6 +5,8 @@ import { safeParseToNumber } from "../../../../../../../CommonMethods";
 import { Dialog, DialogContent, useTheme } from "@mui/material";
 import { Quantom_Input } from "../../../../../../../quantom_comps/base_comps";
 import { POSActionButton } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
+import { QuantomDialog } from "../../POSSaleView";
+import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 export interface ShowSingleSelectedItemDialogProps{
     open?:boolean;
@@ -29,45 +31,44 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
     },[qty,rate])
 
     return(
-    <Dialog fullWidth open={props?.open??false} >
-        <DialogContent>
+     <QuantomDialog heading="Change Item" onClosePress={()=>{props?.onClose?.('CANCEL')}} open={props?.open??false}>
+        
             <div className="row g-1">
                  
-                 <div className="col-md-12">
+                 <div className="col-md-12 mt-2">
                     <Quantom_Input size='medium' label="Item Name" value={props?.item?.ItemName}/>
                  </div>
             </div>
 
-            <div className="row g-1">
-                 <div className="col-md-6">
+            <div className="row g-1 mt-1">
+                 <div className="col-md-12">
                      <Quantom_Input label="Qty" value={qty} onChange={(e)=>{setQty(safeParseToNumber(e.target.value))}}/>
                  </div>
             </div>
-            <div className="row g-1">
-                <div className="col-md-6">
+            <div className="row g-1 mt-1">
+                <div className="col-md-12">
                     <Quantom_Input label="Rate" value={rate} onChange={(e)=>{setRate(safeParseToNumber(e.target.value))}}/>
                 </div>
             </div>
-            <div className="row g-1">
-                <div className="col-md-6">
+            <div className="row g-12 mt-1">
+                <div className="col-md-12">
                     <Quantom_Input label="Amount" value={amount}/>
                 </div>
             </div>
 
-            <div className="row g-1" style={{marginTop:'16px'}}>
-                 <div className="col-md-6">
-                     <POSActionButton label="Apply Change" backgroundColor={theme.palette.primary.main} onClick={()=>{
+            <div className="row g-1" style={{marginTop:'16px',display:'flex',justifyContent:'center'}}>
+                 
+                     <POSActionButton1 iconName="CheckCircleOutlineOutlined" label="Apply" iconColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme.palette.secondary.main} onClick={()=>{
                         props?.onClose?.('APPLIED',{...props?.item,Qty:qty,Price:rate})
                      }}/>
-                 </div>
-                 <div className="col-md-6">
-                    <POSActionButton label="Cancel" backgroundColor={theme.palette.primary.main}
+                 
+                 
+                    <POSActionButton1 iconName="CancelPresentationOutlined" label="Cancel" iconColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme.palette.secondary.main}
                       onClick={()=>{props?.onClose?.('CANCEL')}}/>
-                 </div>
+                 
                 
             </div>
-        </DialogContent>
-    </Dialog>
+        </QuantomDialog>
     )
 }
 

@@ -23,6 +23,8 @@ import { HTTP_RESPONSE_TYPE } from "../../../../HTTP/QuantomHttpMethods";
 import { ShowQuantomError } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import { POSToolBarComp } from "../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
 import { POSActionButton1 } from "../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
+import { FilterHandler, useIsMobile } from "../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
+import { POSCustomerComp } from "../../../sale/processing/sale/view/POSSale/PosSaleHelpers/POSCustomerCompProps";
 
 export const POSCustomerReceiptView=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
 
@@ -70,31 +72,47 @@ export const List=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
     const fonts= useQuantomFonts();
     const theme= useTheme();
     
+    const handleLoadData=async()=>{
+        try{
+            ShowLoadingDialog();
+            let res= await CustomerPaymentReceiptGetAll(fromDate,toDate,locId)
+            store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:CUSTOMER_DATA_LIST_RECORDS_KEY,Data:res}}))
+            HideLoadingDialog();
+        }
+        catch{
+            HideLoadingDialog();
+        }
+        finally{
+            HideLoadingDialog();
+        }
+        
+    }
+
     return(
         <>
            
             <Quantom_Grid display='flex' container size={{xs:12}} spacing={1} >
                     <Quantom_Grid item >
-                        <POSActionButton1 iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+                        <POSActionButton1  isIconOnly iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
                             props?.setState?.({});
                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:""}})))
                             store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                         }}/>
+                    
                     </Quantom_Grid>
-                    <Quantom_Grid item  size={{md:2}}>
-                        <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)} onChange={(date,ctc)=>{setFromDate(date?.toDate()??new Date())}}/>
-                    </Quantom_Grid>
-                    <Quantom_Grid item size={{md:2}}>
-                        <QUANTOM_Date  label ="To Date" value={dayjs(toDate)} onChange={(date,ctc)=>{setToDate(date?.toDate()??new Date())}}/>
-                    </Quantom_Grid>
-                    <Quantom_Grid item size={{md:5}}>
-                        <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
-                    </Quantom_Grid>
+                    <FilterHandler OkAndAplyFilter={handleLoadData}>
+                        <Quantom_Grid item  size={{md:2}}>
+                            <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)} onChange={(date,ctc)=>{setFromDate(date?.toDate()??new Date())}}/>
+                        </Quantom_Grid>
+                        <Quantom_Grid item size={{md:2}}>
+                            <QUANTOM_Date  label ="To Date" value={dayjs(toDate)} onChange={(date,ctc)=>{setToDate(date?.toDate()??new Date())}}/>
+                        </Quantom_Grid>
+                        <Quantom_Grid item size={{md:5}}>
+                            <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
+                        </Quantom_Grid>
+                    </FilterHandler>
                     <Quantom_Grid item >
-                        <POSActionButton1 iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
-                            let res= await CustomerPaymentReceiptGetAll(fromDate,toDate,locId)
-                             store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:CUSTOMER_DATA_LIST_RECORDS_KEY,Data:res}}))
-                        }}/>
+                        <POSActionButton1 iconName="ScreenSearchDesktopOutlined" label="Search" onClick={handleLoadData}/>
                     </Quantom_Grid>
                     
                 </Quantom_Grid>
@@ -172,6 +190,8 @@ const Form=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
         GetSelectedGetOne();
     },[billNo])
 
+    const isMobile= useIsMobile();
+
     const GetSelectedGetOne=async()=>{
         if(billNo){
             ShowLoadingDialog();
@@ -234,10 +254,18 @@ const Form=(props?:MenuComponentProps<VmCustomerPaymentModel>)=>{
 
          <div className="row g-0" style={{marginTop:'8px'}}>
             <div className="col-md-4  offset-md-2">
-                <Quantom_LOV1  label="Customer" uniqueKeyNo={props?.UniqueId??""} keyNo="CUSTOMER_PAYMENT_RECEIPT_UNIQUE_KEY_NO"
-                  selected={{Code:props?.state?.master?.CustCode,Name:props?.state?.master?.CustName}}
-                  onChange={(sel)=>{props?.setState?.({...props?.state,master:{...props?.state?.master,CustCode:sel?.Code,CustName:sel?.Name}})}}
-                  FillDtaMethod={CustomersGetCodeNameMethod}/>
+                {
+                    isMobile?(<><POSCustomerComp 
+                        onChange={(sel)=>{props?.setState?.({...props?.state,master:{...props?.state?.master,CustCode:sel?.Code,CustName:sel?.Name}})}}
+                        selectedCustomer={{Code:props?.state?.master?.CustCode,Name:props?.state?.master?.CustName}} /></>)
+                        :(
+                            <Quantom_LOV1  label="Customer" uniqueKeyNo={props?.UniqueId??""} keyNo="CUSTOMER_PAYMENT_RECEIPT_UNIQUE_KEY_NO"
+                            selected={{Code:props?.state?.master?.CustCode,Name:props?.state?.master?.CustName}}
+                            onChange={(sel)=>{props?.setState?.({...props?.state,master:{...props?.state?.master,CustCode:sel?.Code,CustName:sel?.Name}})}}
+                            FillDtaMethod={CustomersGetCodeNameMethod}/>
+                        )
+                }
+
             </div>
          </div>
 
