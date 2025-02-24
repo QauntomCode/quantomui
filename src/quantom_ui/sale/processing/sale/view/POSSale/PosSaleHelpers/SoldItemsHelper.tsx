@@ -186,7 +186,7 @@ interface SoldItemsRendererProps{
     const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
     const soldItems= props?.baseProps?.baseProps?.state?.SaleDetails;
     return(
-        <Quantom_Grid container sx={{height:'100%'}} spacing={1}>
+        <Quantom_Grid container sx={{}} spacing={1}>
         <TableContainer component={Paper} >
         <Table size="small" aria-label="a dense table">
             <TableHead style={{backgroundColor:theme?.palette?.primary?.main}}  component={Paper}>

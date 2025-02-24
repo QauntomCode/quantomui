@@ -12,6 +12,7 @@ import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Dat
 import dayjs from "dayjs";
 import { SaleGetAll } from "../../../processing/sale/impl/SaleImpl";
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
+import { FilterHandler, useIsMobile } from "../../../processing/sale/view/POSSale/POSSaleViewWithEmpty";
 
 
 export const POSSaleReportView=(props?:MenuComponentProps<VmSale>)=>{
@@ -25,26 +26,29 @@ export const POSSaleReportView=(props?:MenuComponentProps<VmSale>)=>{
     const listData= useSelector((state?:any)=>get_helperData_by_key(state,props?.UniqueId??"",PURCHASE_DATA_KEY_RECORD)) as SaleModel[];
     const theme= useTheme();
     const font= useQuantomFonts();
+    const isMobile= useIsMobile();
     return(
         <>
           <Quantom_Grid container  spacing={.5} size={{xs:12}}>
             
-               <Quantom_Grid container size={{xs:12}}>
+               <Quantom_Grid spacing={.5} container size={{xs:12}}>
                   <Quantom_Grid item >
-                     <POSActionButton1 iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
+                     <POSActionButton1 isIconOnly={isMobile} iconName="LocalHospitalOutlined" label="Add New"  onClick={()=>{
                         // store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_SELECTED_BILL_NO_HELPER_DATA_KEY,Data:"0"}})))
                         // store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:"FORM"}})))
                      }}/>
                   </Quantom_Grid>
-                  <Quantom_Grid item  size={{md:2}}>
-                    <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)} onChange={(date,ctc)=>{setFromDate(date?.toDate()??new Date())}}/>
-                  </Quantom_Grid>
-                  <Quantom_Grid item size={{md:2}}>
-                    <QUANTOM_Date  label ="To Date" value={dayjs(toDate)} onChange={(date,ctc)=>{setToDate(date?.toDate()??new Date())}}/>
-                  </Quantom_Grid>
-                  <Quantom_Grid item size={{md:5}}>
-                    <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
-                  </Quantom_Grid>
+                  <FilterHandler>
+                    <Quantom_Grid item  size={{md:2}}>
+                      <QUANTOM_Date  label ="From Date" value={dayjs(fromDate)} onChange={(date,ctc)=>{setFromDate(date?.toDate()??new Date())}}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid item size={{md:2}}>
+                      <QUANTOM_Date  label ="To Date" value={dayjs(toDate)} onChange={(date,ctc)=>{setToDate(date?.toDate()??new Date())}}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid item size={{md:5}}>
+                      <Quantom_Input  label ="Search" value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
+                    </Quantom_Grid>
+                  </FilterHandler>
                   <Quantom_Grid item >
                      <POSActionButton1 iconName="ScreenSearchDesktopOutlined" label="Search" onClick={async()=>{
                         let res = await SaleGetAll(fromDate,toDate,'',locId);
