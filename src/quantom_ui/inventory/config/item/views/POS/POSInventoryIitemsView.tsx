@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import { useSelector } from "react-redux";
-import { HideLoadingDialog, IconByName, MenuComponentProps, QuantomConfirmationDialog,  setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { APP_TYPE, GetAPPType, HideLoadingDialog, IconByName, MenuComponentProps, QuantomConfirmationDialog,  setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { VMInventoryItemsModel } from "../../model/VMInventory_itemsModel";
 import store, { full_component_state, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
 import React, { useEffect, useState } from "react";
@@ -108,6 +108,15 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
         return Promise.resolve(res);
       }
 
+      const appType= GetAPPType();
+      const itemCodeCaption=appType===APP_TYPE.DENTAL_APP?"Service Code" :"Item Code"
+      const itemNameCatpion=appType===APP_TYPE.DENTAL_APP?"Service Name" :"Item Name"
+      const categoryCaption=appType===APP_TYPE.DENTAL_APP?"Service Type" :"Item Category"
+      const salePriceCatpion=appType===APP_TYPE.DENTAL_APP?"Price" :"Item Category"
+
+
+
+
     return(
         <>
         <div className="row g-1" style={{marginTop:'10px'}}>
@@ -136,28 +145,28 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
         <div className="row" style={{marginTop:'25px'}}>
 
           <div className="col-md-2" />
-          <div className="col-md-2">
+          {/* <div className="col-md-2">
              <Paper style={{width:'100%',height:'100%'}}>
-                 Image
+                 
              </Paper>
-          </div>
+          </div> */}
           <div className="col-md-6">
                <div className="row">
                    <div className=" col-md-6">
-                        <Quantom_Input label="Item Code" onChange={(e)=>{
+                        <Quantom_Input label={itemCodeCaption} onChange={(e)=>{
                         props?.baseProps?.setState?.({...props?.baseProps?.state,item:{...props?.baseProps?.state?.item,ManualCode:e.target.value}})
                         }} value={props?.baseProps?.state?.item?.ManualCode} size='small'/>
                     </div>
                     </div>
                     <div className="row" style={{marginTop:'8px'}}>
                         <div className="col-md-12">
-                            <Quantom_Input label="Item Name" onChange={(e)=>{
+                            <Quantom_Input label={itemNameCatpion} onChange={(e)=>{
                             props?.baseProps?.setState?.({...props?.baseProps?.state,item:{...props?.baseProps?.state?.item,ItemName:e.target.value}})
                             }} value={props?.baseProps?.state?.item?.ItemName} size='medium'/>
                         </div>
                     </div>
                     <div className="row" style={{marginTop:'8px'}}>
-                        <Quantom_LOV label="Category" RefreshFillDtaMethod={refresCategoreis} 
+                        <Quantom_LOV label={categoryCaption} RefreshFillDtaMethod={refresCategoreis} 
                                     FillDtaMethod={handleCategories}
                                     onChange={(code)=>{
                                           props?.baseProps?.setState?.({...props?.baseProps?.state,item:{...props?.baseProps?.state?.item,CatCode:code?.Code,category:{Code:code?.Code,Name:code?.Name}}})
@@ -172,21 +181,27 @@ export const POSInventoryItemFormView=(props?:POSInventoryItemFormViewProps)=>
             <div className="col-md-2" />
               <div className="col-md-8 col-12" style={{marginTop:'16px'}}>
                   <div className="row g-1">
-                     <div className="col-4">
-                        <Quantom_Input label="Sale Price" onChange={(e)=>{
+                     <div className="col-3">
+                        <Quantom_Input label={salePriceCatpion} onChange={(e)=>{
                         props?.baseProps?.setState?.({...props?.baseProps?.state,item:{...props?.baseProps?.state?.item,SalePrice:safeParseToNumber( e.target.value)}})
                         }} value={props?.baseProps?.state?.item?.SalePrice} size='small'/>
                      </div>
-                     <div className="col-4">
-                        <Quantom_Input label='Purchase price'  value={props?.baseProps?.state?.item?.PurchasePrice} onChange={(e)=>{
-                             props?.baseProps?.setState?.({...props?.baseProps?.state,item:{...props?.baseProps?.state?.item,PurchasePrice:safeParseToNumber(e.target.value)}})
-                        }}/>
-                     </div>
-                     <div className="col-4">
-                        <Quantom_Input label='Opening Stock'  value={props?.baseProps?.state?.OpeningQty} onChange={(e)=>{
-                            props?.baseProps?.setState?.({...props?.baseProps?.state,OpeningQty:safeParseToNumber(e.target.value)})
-                        }}/>
-                     </div>
+                     {
+                        appType=== APP_TYPE.DENTAL_APP?(<></>):(
+                        <>
+                             <div className="col-3">
+                                <Quantom_Input label='Purchase price'  value={props?.baseProps?.state?.item?.PurchasePrice} onChange={(e)=>{
+                                    props?.baseProps?.setState?.({...props?.baseProps?.state,item:{...props?.baseProps?.state?.item,PurchasePrice:safeParseToNumber(e.target.value)}})
+                                }}/>
+                            </div>
+                            <div className="col-3">
+                                <Quantom_Input label='Opening Stock'  value={props?.baseProps?.state?.OpeningQty} onChange={(e)=>{
+                                    props?.baseProps?.setState?.({...props?.baseProps?.state,OpeningQty:safeParseToNumber(e.target.value)})
+                                }}/>
+                            </div>
+                        </>)
+                     }
+                    
                   </div>
                   
             </div>
@@ -259,7 +274,8 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
 
      const [catSearch,setCatSearch]=React.useState('');
 
-
+     const appType= GetAPPType();
+    const categoryCaption=appType===APP_TYPE.DENTAL_APP?"Service Types" :"Category"
     //  useEffect(()=>{
     //      setCategories([...allCategories])
     //  },[allCategories])
@@ -323,12 +339,12 @@ export const PosInventoryItemsListView=(props?:MenuComponentProps<VMInventoryIte
             
              
               <Quantom_Grid container  sx={{marginBottom:"5px"}}>
-                 <Quantom_Input label='Search Category' value={catSearch} onChange={(e)=>{
+                 <Quantom_Input label={`Search ${categoryCaption}`} value={catSearch} onChange={(e)=>{
                     setCatSearch(e.target.value)
                  }}/>
               </Quantom_Grid>    
               <Quantom_Grid container  
-                sx={{fontFamily:fonts.HeaderFont,color:theme.palette.primary.contrastText,backgroundColor:theme.palette.primary.main,justifyContent:'center',letterSpacing:1.5,fontWeight:650}}>All Categories</Quantom_Grid>
+                sx={{fontFamily:fonts.HeaderFont,color:theme.palette.primary.contrastText,backgroundColor:theme.palette.primary.main,justifyContent:'center',letterSpacing:1.5,fontWeight:650}}>All {categoryCaption}</Quantom_Grid>
 
             {
                

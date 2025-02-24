@@ -48,6 +48,10 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
       let guid=await generateGUID();
       store.dispatch(open_new_menu({MenuCode:menuCode,MenuCaption:caption,UniqueKeyNo:guid}))
     }
+
+    const ItemMenuCaption=appType===APP_TYPE.DENTAL_APP?"Services" :"Item Setup"
+    const categoryCaption=appType===APP_TYPE.DENTAL_APP?"Service Types" :"Category"
+
   return (
      <>
         
@@ -57,21 +61,21 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
                   <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'10px'}} spacing={.5} >
                      <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
                      <Quantom_Grid onClick={()=>{
-                        openNewMenu(POS_INVENTORY_ITEM_MENU_CODE,'Item Setup');
+                        openNewMenu(POS_INVENTORY_ITEM_MENU_CODE,ItemMenuCaption);
                         }} item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
                         <>
                            <ItemsIcon color='primary' sx={{fontSize:'60px'}}></ItemsIcon>
                         </>
-                        Item Setup
+                        {ItemMenuCaption}
                      </Quantom_Grid>
 
                      <Quantom_Grid onClick={()=>{
-                        openNewMenu(POS_CATEGORY_FORM_MENU_CODE,'Item Category')
+                        openNewMenu(POS_CATEGORY_FORM_MENU_CODE,categoryCaption)
                         }} container component={Paper} size={{md:2,sm:12,xs:12,lg:2,xl:2}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
                         <>
                         <CategoryICon color='primary' sx={{fontSize:'60px'}}></CategoryICon>
                         </>
-                           Category
+                           {categoryCaption}
                      </Quantom_Grid>
                   </Quantom_Grid>
                   </>

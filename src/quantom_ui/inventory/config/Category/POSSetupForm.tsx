@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog, ToolBarButton } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { APP_TYPE, GetAPPType, HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog, ToolBarButton } from "../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { INVENTORY_CATEGORY_MENU_CODE, SetupFormDelete, SetupFormGetOne, SetupFormInsert, SetupFromGetAll } from "../unit/impl/setupFormImp";
 import { SetupFormModel, VMSetupForm } from "../unit/model/setupFormModel";
 import { useSelector } from "react-redux";
@@ -58,6 +58,8 @@ export const List=(props?:MenuComponentProps<SetupFormModel>)=>{
     }
     const fonts= useQuantomFonts();
     const theme= useTheme();
+    const appType= GetAPPType();
+    const categoryCaption=appType===APP_TYPE.DENTAL_APP?"Search Service" :"Search Category"
     return(
         <>
             <div className="row" style={{marginTop:'16px',marginBottom:'5px'}}>
@@ -71,7 +73,7 @@ export const List=(props?:MenuComponentProps<SetupFormModel>)=>{
                     <div style={{flex:1}}>
                         <div className="row">
                             <div className="col-md-12">
-                                <Quantom_Input label="Search Category" />
+                                <Quantom_Input label={categoryCaption} />
                             </div>
                         </div>
                     </div>

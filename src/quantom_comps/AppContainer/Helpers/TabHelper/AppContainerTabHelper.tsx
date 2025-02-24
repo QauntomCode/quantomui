@@ -155,7 +155,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       
       var appType= GetAPPType();
     
-      if(appType=== APP_TYPE.SIMPLE_POS || appType===APP_TYPE.EGG_ERP){
+      if(appType=== APP_TYPE.SIMPLE_POS || appType===APP_TYPE.EGG_ERP || appType=== APP_TYPE.DENTAL_APP){
         
         return tabs;
       }
@@ -270,7 +270,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <QuantomErrorDialog />
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
-        fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType) ?(<></>):(
+        fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType ||APP_TYPE.DENTAL_APP) ?(<></>):(
         <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
         )
       }
@@ -776,7 +776,7 @@ export const HideLoadingDialog=()=>{
 }
 
 
-export enum APP_TYPE{SIMPLE_POS,ERP,EGG_ERP}
+export enum APP_TYPE{SIMPLE_POS,ERP,EGG_ERP,DENTAL_APP}
 
 export const GetAPPType=():APP_TYPE=>{
   let appType=window.globalConfig.appType;
@@ -785,6 +785,9 @@ export const GetAPPType=():APP_TYPE=>{
   }
   if(appType?.toLowerCase()==="EGG_APP".toLowerCase()){
     return APP_TYPE.EGG_ERP;
+  }
+  if(appType?.toLowerCase()==="DENTAL_APP".toLowerCase()){
+    return APP_TYPE.DENTAL_APP;
   }
   
   return APP_TYPE.ERP;
