@@ -17,7 +17,7 @@ import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from "../../../../../quan
 import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
 import { Quantom_LOV, Quantom_LOV1 } from "../../../../../quantom_comps/Quantom_Lov";
-import { GetActiveItemCodeName, GetEffectePriceOfAllUnits } from "../../../../inventory/config/item/impl/InventoryitemsImpl";
+import { GetActiveItemCodeName, GetEffectedPriceOfAllUnits } from "../../../../inventory/config/item/impl/InventoryitemsImpl";
 import { SupplierGetCodeNameMethod } from "../../../Config/Supplier/customer/impl/SuppierImpl";
 import { PurchaseDeleteMethod, PurchaseGetAll, PurchaseGetOneMethod, PurchaseInsertMethod } from "../impl/PurchaseImp";
 import { HTTP_RESPONSE_TYPE, HttpResponse } from "../../../../../HTTP/QuantomHttpMethods";
@@ -292,7 +292,7 @@ export const RenderItemGrid=(props?:RenderItemGridProps)=>{
         {
            return;         
         }
-         let res= await GetEffectePriceOfAllUnits({ItemCode:lineObj?.ItemCode,VendorCode:props?.vendorCode,Form:props?.fromName});
+         let res= await GetEffectedPriceOfAllUnits({ItemCode:lineObj?.ItemCode,VendorCode:props?.vendorCode,Form:props?.fromName});
          if(res && (res?.length??0)>0)
          {
             let price= res?.[0]?.Price??0;

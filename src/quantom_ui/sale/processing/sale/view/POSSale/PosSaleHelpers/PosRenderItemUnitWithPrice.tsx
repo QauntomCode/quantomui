@@ -3,16 +3,14 @@
 
 import { Dialog, DialogContent, DialogTitle, Paper, useTheme } from "@mui/material";
 import { CommonInvDetailModel, InventoryAction } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel"
-import { GetEffectePriceOfAllUnits } from "../../../../../../inventory/config/item/impl/InventoryitemsImpl";
+import { GetEffectedPriceOfAllUnits } from "../../../../../../inventory/config/item/impl/InventoryitemsImpl";
 import { InventoryItemPriceListDetailModel } from "../../../../../../inventory/config/PriceList/Model/InventoryItemPriceListModelDetail";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../../quantom_comps/base_comps";
 import { IconByName } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { useQuantomFonts } from "../../../../../../../redux/store";
 import { FocusOnControlByControlId, isNullOrEmpty, safeParseToNumber } from "../../../../../../../CommonMethods";
 import { useEffect, useState } from "react";
-import { POSActionButton } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
 import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
-import { BorderBottom } from "@mui/icons-material";
 
 export interface UnitRenderProps{
    lineObj?:CommonInvDetailModel
@@ -22,21 +20,33 @@ export interface UnitRenderProps{
    vendorCode?:string;
    fromName?:InventoryAction;
 }
-export const POSRenderItemUnitsWithPirce=(props?:UnitRenderProps)=>{
+export const POSRenderItemUnitsWithPrice=(props?:UnitRenderProps)=>{
      const[unitsPrice,setUnitPrice]=useState<InventoryItemPriceListDetailModel[]>([]);
      const[selectedUnit,setSelectedUnit]=useState<CommonInvDetailModel>()
      useEffect(()=>{
         handlePrice();
      },[props?.lineObj?.ItemCode])
+
+     useEffect(()=>{
+        if(unitsPrice.length===1){
+            //alert('Selected Units Price is'+unitsPrice?.[0].Price)
+            let unit:any={...selectedUnit,ItemCode:props?.lineObj?.ItemCode}
+             unit.Qty=1;
+            props?.OnSelect?.(unit,unit);
+            
+        }
+     },[unitsPrice])
      
     const handlePrice=async()=>{
         if(isNullOrEmpty(props?.lineObj?.ItemCode))
         {
            return;         
         }
-         let res= await GetEffectePriceOfAllUnits({ItemCode:props?.lineObj?.ItemCode,VendorCode:props?.vendorCode,Form:props?.fromName});
+         let res= await GetEffectedPriceOfAllUnits({ItemCode:props?.lineObj?.ItemCode,VendorCode:props?.vendorCode,Form:props?.fromName});
          setUnitPrice([...res??[]]);
-         setSelectedUnit(res?.[0])
+         setSelectedUnit(res?.[0]);
+
+        
          
     }
 
@@ -64,7 +74,7 @@ export const POSRenderItemUnitsWithPirce=(props?:UnitRenderProps)=>{
                                         <div style={{display:'flex',flex:1}}>
                                              <IconByName iconName="Straighten" color={theme?.palette?.primary?.main} /> 
                                             <div style={{marginLeft:'4px',fontSize:fonts.H4FontSize,fontWeight:800,color:theme.palette.text.primary}}>
-                                                {item?.UnitName}    
+                                                {item?.UnitName}  
                                             </div>
                                         </div>
                                         <div style={{display:'flex',alignItems:"center",fontSize:fonts.H3FontSize,fontWeight:800,color:theme.palette.text.primary}}>

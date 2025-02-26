@@ -8,7 +8,7 @@ import { InventoryItemsModel } from "../../../../../../inventory/config/item/mod
 import { IconByName } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { useQuantomFonts } from "../../../../../../../redux/store";
 import { useEffect, useState } from "react";
-import { POSRenderItemUnitsWithPirce } from "./PosRenderItemUnitWithPrice";
+import { POSRenderItemUnitsWithPrice } from "./PosRenderItemUnitWithPrice";
 import { CommonInvDetailModel } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 
 export interface POSItemsRendererViewProps{
@@ -91,8 +91,9 @@ export interface POSItemsRendererViewProps{
   
      return(
      <> 
-          <POSRenderItemUnitsWithPirce OnSelect={(price,item)=>{
-              props?.onItemSelection?.(price)
+          <POSRenderItemUnitsWithPrice OnSelect={(price,item)=>{
+              props?.onItemSelection?.(price);
+              setSelectedItem({});
               //setSelectedItem({...selectedItem,TransUnitCode:price?.UnitCode,TransUnitName:item?.UnitName,Price:price?.Price})
             //   setShowQtySelector(true);
               setShowUnit(false);
@@ -110,18 +111,18 @@ export interface POSItemsRendererViewProps{
                       <POSActionButton1 onClick={props?.onCartClick} backgroundColor={theme?.palette?.secondary?.main} isIconOnly iconName="ShoppingCartCheckout" iconColor={theme?.palette?.secondary?.contrastText} label="Search"/>
                       <POSActionButton1 onClick={props?.onCancelClick} backgroundColor={theme?.palette?.error?.main} isIconOnly iconName="CancelPresentationOutlined" iconColor={theme?.palette?.error?.contrastText} label="Search"/>
                    </Quantom_Grid>
-                   <Quantom_Grid container spacing={.5} padding={'2px'}>
+                   <Quantom_Grid size={{xs:12}} container spacing={.5} padding={'2px'}>
                    
                   {items?.map((item,index)=>{
                       if(index>99){
                           return(<></>)
                       }
                      return(
-                         <Quantom_Grid onClick={()=>{
+                         <Quantom_Grid container  onClick={()=>{
                             setSelectedItem({ItemCode:item?.ItemCode,ItemName:item?.ItemName});
                             setShowUnit(true);
                           // alert('this is my Report')
-                         }} component={Paper}   size={{xs:12,sm:12,md:12,lg:12,xl:6,...props?.size}} sx={{borderBottom:`1px solid ${theme?.palette.primary.main}`}}>
+                         }} component={Paper}   size={{xs:12,sm:12,md:12,lg:12,xl:12,...props?.size}} sx={{borderBottom:`1px solid ${theme?.palette.primary.main}`}}>
                              <div onClick={()=>{}} 
                                  style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize, display:'flex',alignItems:'center' }}>
                                   <div style={{marginLeft:'8px'}}>

@@ -28,6 +28,7 @@ import { INVENTORY_PERFORMED_ACTION } from "../../../../../inventory/CommonComp/
 import { SalePaymentViewRender } from "./PosSaleHelpers/SalePaymentViewRender";
 import { POSCustomerComp } from "./PosSaleHelpers/POSCustomerCompProps";
 import { useTheme as breakPointTheme } from "styled-components";
+import { RenderAllCategoriesRestaurantHelper } from "../ResturantSale/Helpers/RenderAllCategoriesRestaurantHelper";
 pdfMake.vfs = (pdfFonts as any)?.pdfMake?.vfs;
 
 
@@ -80,13 +81,13 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
     const[openSoldItemsDialog,setOpenSoldItemsDialog]=useState(false)
     const[showPaymentView,setShowPaymentview]=useState(false)
 
-    const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
-    const disAmount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
-     console.warn('discount amount is'+disAmount)
-     console.warn('Extra discount is'+props?.state?.Sale?.ExtraDiscount)
+    // const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
+    // const disAmount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
+    //  console.warn('discount amount is'+disAmount)
+    //  console.warn('Extra discount is'+props?.state?.Sale?.ExtraDiscount)
 
-    const netAmount= safeParseToNumber(grossAmount??0)-safeParseToNumber(disAmount??0);
-    const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
+    // const netAmount= safeParseToNumber(grossAmount??0)-safeParseToNumber(disAmount??0);
+    // const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
 
     const billNo= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SELECTED_BILL_NO_HELPER_DATA_KEY)));
     useEffect(()=>{
@@ -129,18 +130,25 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
                     <POSCustomerComp 
                         onChange={(sel)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:sel?.Code,CustName:sel?.Name}})}}
                         selectedCustomer={{Code:props?.state?.Sale?.CustCode,Name:props?.state?.Sale?.CustName}} />
-
-                    <PosItemsRenderer 
-                            onCartClick={()=>{setOpenSoldItemsDialog(true)}} 
-                            onCancelClick={()=>{
-                                props?.setState?.({Sale:{BillDate:new Date()}})
-                            }}
-                            onItemSelection={
-                                    (item)=>{
-                                            handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)
-                                        }
-                                } 
-                            ItemLoadType='ALL_ITEMS' />
+                    
+                    <Quantom_Grid container size={{xs:12}}>
+                    <Quantom_Grid component={Paper}  size={{xs:4}}>
+                       <RenderAllCategoriesRestaurantHelper UniqueId={props?.UniqueId??""}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid size={{xs:8}}>
+                        <PosItemsRenderer 
+                                onCartClick={()=>{setOpenSoldItemsDialog(true)}} 
+                                onCancelClick={()=>{
+                                    props?.setState?.({Sale:{BillDate:new Date()}})
+                                }}
+                                onItemSelection={
+                                        (item)=>{
+                                                handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)
+                                            }
+                                    } 
+                                ItemLoadType='ALL_ITEMS' />
+                        </Quantom_Grid>
+                    </Quantom_Grid>
                 </div>
                 <div className="col-lg-5">
                     <SoldItemsRenderer onListClick={handleListclick} onPaymentClik={handlePaymentClick} baseProps={props}/>

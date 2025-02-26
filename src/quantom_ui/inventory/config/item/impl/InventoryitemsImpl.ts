@@ -126,7 +126,7 @@ interface PriceQuery extends MethodQuery {
 const INVENTORY_ITEM_ALL_UNIT_PRICE_QUERY_URL =
   "Inventory/ItemPriceList/GetPriceOfAllUnits/SalePurchaseBoth";
 
-export const GetEffectePriceOfAllUnits = async (
+export const GetEffectedPriceOfAllUnits = async (
   query?: MethodQuery
 ): Promise<InventoryItemPriceListDetailModel[]> => {
   let formName = "SALE";
