@@ -579,7 +579,7 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
         PreBalance:safeParseToNumber(preBalance?.toFixed()),
         NetTotal:safeParseToNumber(netTotal?.toFixed()),
         TotalQty:safeParseToNumber(totalQty?.toFixed()),
-        Received:safeParseToNumber(received?.toFixed()),
+        Received:safeParseToNumber(received??0?.toFixed()),
         RemBalance:safeParseToNumber(remBalance?.toFixed()),
         AdvanceTax:data?.Sale?.TaxInfo?.INVOICE_EXLUSIVE_TAX_AMOUNT??0
     }

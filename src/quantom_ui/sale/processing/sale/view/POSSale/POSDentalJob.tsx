@@ -137,6 +137,7 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
                     </Quantom_Grid>
                     <Quantom_Grid size={{xs:8}}>
                         <PosItemsRenderer 
+                                uniqueId={props?.UniqueId}
                                 onCartClick={()=>{setOpenSoldItemsDialog(true)}} 
                                 onCancelClick={()=>{
                                     props?.setState?.({Sale:{BillDate:new Date()}})

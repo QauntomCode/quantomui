@@ -98,6 +98,7 @@ export const RenderAllCategoriesRestaurantHelper=(props?:SaleCompHelperProps)=>{
                     return(
                         <Quantom_Grid display='flex' alignItems='center'  pt={.5} pb={.5} pl={1} component={Paper} size={{xs:12}}
                            onClick={()=>{
+                            //  alert('selected category is'+item?.Code)
                              store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:_RESTAURANT_SALE_SELECTED_CATEGORY_KEY,Data:item?.Code}}));
                              setSelected(item)
                            }} 

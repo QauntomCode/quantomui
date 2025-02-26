@@ -6,10 +6,12 @@ import { Quantom_Grid, Quantom_Input } from "../../../../../../../quantom_comps/
 import { GetItemsByCategory } from "../../../../../../inventory/config/item/impl/InventoryitemsImpl";
 import { InventoryItemsModel } from "../../../../../../inventory/config/item/model/InventoryItemsModel";
 import { IconByName } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
-import { useQuantomFonts } from "../../../../../../../redux/store";
+import { get_helperData_by_key, useQuantomFonts } from "../../../../../../../redux/store";
 import { useEffect, useState } from "react";
 import { POSRenderItemUnitsWithPrice } from "./PosRenderItemUnitWithPrice";
 import { CommonInvDetailModel } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
+import { useSelector } from "react-redux";
+import { _RESTAURANT_SALE_SELECTED_CATEGORY_KEY } from "../../ResturantSale/RestaurantSaleView";
 
 export interface POSItemsRendererViewProps{
     uniqueId?:string;
@@ -38,21 +40,26 @@ export interface POSItemsRendererViewProps{
       const [itemSearch,setItemSearch]=useState('');
       const[selectedItem,setSelectedItem]= useState<CommonInvDetailModel>();
       const[showUnit,setShowUnit]=useState(false);
+      const selectedCategory= useSelector((state?:any)=>(get_helperData_by_key(state,props?.uniqueId??"",_RESTAURANT_SALE_SELECTED_CATEGORY_KEY)))as string;
+
+    //   useEffect(()=>{
+    //         alert(selectedCategory)
+    //   },[selectedCategory])
     //   const[showQtySelector,setShowQtySelector]=useState(false);
       
 
   
        useEffect(()=>{
-         if(props?.selectedCat && props?.ItemLoadType==='CATEGORY_WISE'){
+        //  if(props?.selectedCat && props?.ItemLoadType==='CATEGORY_WISE'){
              handleLoadItems()
-         }
-       },[props?.selectedCat])
+        //  }
+       },[selectedCategory])
   
-       useEffect(()=>{
-          if(props?.ItemLoadType==='ALL_ITEMS'){
-              handleLoadItems();
-          }
-       },[])
+    //    useEffect(()=>{
+    //       if(props?.ItemLoadType==='ALL_ITEMS'){
+    //           handleLoadItems();
+    //       }
+    //    },[])
   
   
         useEffect(()=>{
@@ -78,13 +85,13 @@ export interface POSItemsRendererViewProps{
   
        const handleLoadItems=async()=>{
             let res:InventoryItemsModel[]=[];
-            if(props?.ItemLoadType==='CATEGORY_WISE')
-            {
-              res=  await GetItemsByCategory(props?.selectedCat??"0");
-            }
-            else{
-              res = await GetItemsByCategory("")
-            }
+            // if(props?.ItemLoadType==='CATEGORY_WISE')
+            // {
+              res=  await GetItemsByCategory(selectedCategory??"");
+            // }
+            // else{
+            //   res = await GetItemsByCategory("")
+            // }
             setItems([...res])
             setAllItems([...res])
        }

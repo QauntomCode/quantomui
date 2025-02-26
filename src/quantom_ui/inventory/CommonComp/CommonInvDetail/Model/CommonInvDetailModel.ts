@@ -75,6 +75,8 @@ export interface CommonInvDetailModel {
   PackSize?: string;
   PackRate?: number;
   TaxLine?: TaxLineDTOModel | null;
+  ServiceStatus?: string;
+  ServiceDate?: Date;
 }
 
 export class TaxLineDTOModel {

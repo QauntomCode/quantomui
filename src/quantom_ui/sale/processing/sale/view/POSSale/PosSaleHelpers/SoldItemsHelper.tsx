@@ -5,7 +5,7 @@ import { CommonInvDetailModel } from "../../../../../../inventory/CommonComp/Com
 import { get_helperData_by_key, useQuantomFonts } from "../../../../../../../redux/store";
 import { Quantom_Grid } from "../../../../../../../quantom_comps/base_comps";
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
-import { IconByName, MenuComponentProps } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { APP_TYPE, GetAPPType, IconByName, MenuComponentProps } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { ShowSingleSelectedItemDialog } from "./ShowSingleSelectedItemDialog";
 import { VmSale } from "../../../model/VmSaleModel";
 import { QuantomSize } from "./PosItemRenders";
@@ -17,6 +17,7 @@ import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContaine
 import { POSActionButton } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
 import { totalmem } from "os";
 import { SalePrintAableTotalValue, SalePrintNumbers } from "../POSSaleView1";
+import dayjs from "dayjs";
 
 interface SoldItemsRendererProps{
     baseProps?:MenuComponentProps<VmSale>
@@ -88,6 +89,7 @@ interface SoldItemsRendererProps{
     }
     const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
 
+    const appType=GetAPPType();
 
     return(
         <Quantom_Grid container size={{xs:12}} spacing={1}>
@@ -148,7 +150,34 @@ interface SoldItemsRendererProps{
                                     </Quantom_Grid>
                                 </Quantom_Grid>
 
+                                 {
+                                    appType===APP_TYPE.DENTAL_APP?(
+                                        <Quantom_Grid container  sx={{display:"flex",  fontFamily:fonts.HeaderFont,  fontWeight:600,
+                                            fontSize:fonts.H4FontSize, }} size={{xs:12}} pl={2} borderBottom={`1px solid ${theme.palette.secondary.main}`}>
+                                             <div style={{ 
+                                                        flex:1,
+                                                        display:'flex', 
+                                                        alignItems:'center', 
+                                                      
+                                                       }}>
+                                                    <IconByName iconName="Schedule" fontSize="18px" color={theme?.palette?.primary?.main}/>
+                                                     {dayjs(new Date()).format('DD MMM YYYY')}
+                                             </div>
+                                             <div style={{display:'flex'}}>
+                                                <button style={{borderTopLeftRadius:'5px',borderBottomLeftRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
+                                                            backgroundColor:item?.ServiceStatus?.toUpperCase()!=="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
+                                                            color:item?.ServiceStatus?.toUpperCase()!=="COMPLETED"?theme.palette.primary.contrastText:undefined,
+                                                    }}>Pending</button>
+                                                <button style={{borderTopRightRadius:'5px',borderBottomRightRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
+                                                            backgroundColor:item?.ServiceStatus?.toUpperCase()==="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
+                                                            color:item?.ServiceStatus?.toUpperCase()==="COMPLETED"?theme.palette.primary.contrastText:undefined,}}>Completed</button>
+                                             </div>
 
+
+                                            
+                                        </Quantom_Grid>)
+                                        :(<></>)
+                                 }    
                                 <Quantom_Grid container sx={{p:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
                                     <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                                         <IconButton onClick={()=>props?.onDeleteclick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >

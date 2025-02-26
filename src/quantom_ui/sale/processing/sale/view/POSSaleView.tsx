@@ -544,6 +544,9 @@ export const handleAddItem=async(locid:string,props?:MenuComponentProps<VmSale>,
     var oldItems= props?.state?.SaleDetails??[];
     var taxDetail= props?.state?.TaxDetail;
     const wItem={...workingItem};
+    if(action=== INVENTORY_PERFORMED_ACTION.EDIT){
+        wItem.IsHandled=true;
+    }
     let res= 
     await AddOrRemoveExtendedMethod(oldItems,wItem,InventoryAction.Sale,action,{
         VendorCode:props?.state?.Sale?.CustCode,
