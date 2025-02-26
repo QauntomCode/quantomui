@@ -10,7 +10,7 @@ import { Quantom_Grid } from '../base_comps';
 import ItemsIcon from '@mui/icons-material/LocalMallOutlined';
 import CategoryICon from '@mui/icons-material/DynamicFormOutlined';
 import { open_new_menu } from '../../redux/reduxSlice';
-import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_MENU_CODE, POS_SALE_FORM_WITH_EMPTY_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_DENTAL_JOB_INFO_WITH_DETAIL, POS_SALE_FORM_MENU_CODE, POS_SALE_FORM_WITH_EMPTY_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE } from '../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import SaleIcon from '@mui/icons-material/BusAlertOutlined';
 import CustomerReceiptIcon from '@mui/icons-material/AddCardOutlined';
@@ -90,24 +90,27 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
             <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
 
             <Quantom_Grid onClick={()=>{
-                openNewMenu(POS_CUSTOMER_FORM_MENU_CODE,'Customer Setup')
+                openNewMenu(POS_CUSTOMER_FORM_MENU_CODE,appType===APP_TYPE.DENTAL_APP?"Patient Setup": 'Customer Setup')
              }} container component={Paper} size={{md:2,sm:12,xs:12,lg:2,xl:2}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
                 <>
                 <PeopleOutlineOutlinedIcon color='primary' sx={{fontSize:'60px'}}></PeopleOutlineOutlinedIcon>
                 </>
-                   Customer Setup
+                   {appType==APP_TYPE.DENTAL_APP?"Patient Info":"Customer Setup"}
              </Quantom_Grid>
              <Quantom_Grid onClick={()=>{
                let menuCode=POS_SALE_FORM_MENU_CODE;
                if(appType === APP_TYPE.EGG_ERP){
                   menuCode=POS_SALE_FORM_WITH_EMPTY_MENU_CODE;
                }
-               openNewMenu(menuCode,'Sale');
+               if(appType === APP_TYPE.DENTAL_APP){
+                  menuCode=POS_SALE_FORM_DENTAL_JOB_INFO_WITH_DETAIL;
+               }
+               openNewMenu(menuCode,appType===APP_TYPE.DENTAL_APP?"Job Detail": 'Sale');
              }} item component={Paper} size={{md:4,sm:12,xs:12,lg:4,xl:4}} sx={{height:'100px', ...flexStyle,borderBottom:border}}>
                 <>
                   <SaleIcon color='primary' sx={{fontSize:'60px'}}></SaleIcon>
                 </>
-                Sale
+                {appType===APP_TYPE.DENTAL_APP? "Job Info":"Sale"}
              </Quantom_Grid>
 
             

@@ -573,14 +573,14 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
     var remBalance = (netTotal)- received;
 
     let obj:SalePrintNumbers= {
-        TotalGrossAmount:totalAmount,
-        TotalDiscount:discount,
-        Scheme:scheme,
-        PreBalance:preBalance,
-        NetTotal:netTotal,
-        TotalQty:totalQty,
-        Received:received,
-        RemBalance:remBalance,
+        TotalGrossAmount:safeParseToNumber(totalAmount?.toFixed()),
+        TotalDiscount:safeParseToNumber(discount?.toFixed()),
+        Scheme:safeParseToNumber(scheme.toFixed()),
+        PreBalance:safeParseToNumber(preBalance?.toFixed()),
+        NetTotal:safeParseToNumber(netTotal?.toFixed()),
+        TotalQty:safeParseToNumber(totalQty?.toFixed()),
+        Received:safeParseToNumber(received?.toFixed()),
+        RemBalance:safeParseToNumber(remBalance?.toFixed()),
         AdvanceTax:data?.Sale?.TaxInfo?.INVOICE_EXLUSIVE_TAX_AMOUNT??0
     }
 

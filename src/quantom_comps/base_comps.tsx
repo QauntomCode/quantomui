@@ -210,11 +210,12 @@ export const Quantom_Input1=(props: {
     
     <OutlinedInput
           
-          id={props?.id}
+          id={props?.id || `input-${Math.random()}`} // Random ID
           fullWidth
           multiline={props?.multiline}
           maxRows={props?.maxRows}
           disabled={props?.disabled}
+          name={props?.name || `input-${Math.random()}`} // Random Name
           type={props?.type}
           sx={{
                 borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
@@ -250,8 +251,9 @@ export const Quantom_Input1=(props: {
       }
 
           label={props.label}
+          autoComplete="new-password" 
           // id="outlined-size-small"
-          autoComplete='off'
+          // autoComplete='off'
           size= {props?.size?? "small"}
           value={getValue()}
           onChange={props?.onChange}

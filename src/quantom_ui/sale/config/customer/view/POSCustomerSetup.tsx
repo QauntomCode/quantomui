@@ -2,9 +2,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useSelector } from "react-redux";
-import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { APP_TYPE, GetAPPType, HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { VmCustomerModel } from "../model/VmCustomerModel";
-import store, { full_component_state, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
+import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
 import { POS_INVENTORY_ITEM_VIEW_TYPE, QuantomSwitch } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
 import { useEffect, useState } from "react";
 import { useTheme } from '@mui/material/styles';
@@ -13,10 +13,10 @@ import { Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_c
 import { Paper } from "@mui/material";
 import { isNullOrEmpty } from "../../../../../CommonMethods";
 import { HTTP_RESPONSE_TYPE } from "../../../../../HTTP/QuantomHttpMethods";
-import { CustomerDeleteMethod, CustomerGetOneMethod, CustomerSaveMethod, CustomersGetCodeNameMethod } from "../impl/CustomerImpl";
-import { CommonCodeName } from "../../../../../database/db";
+import { CustomerDeleteMethod, CustomerGetOneMethod, CustomerSaveMethod,  GetAllCustomers } from "../impl/CustomerImpl";
 import { POSToolBarComp } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
+import { CustomerModel } from "../model/CustomerModel";
 
 
 export const POSCustomerSetup=(props?:MenuComponentProps<VmCustomerModel>)=>{
@@ -49,9 +49,9 @@ export const POSCustomerSetup=(props?:MenuComponentProps<VmCustomerModel>)=>{
 
 export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
 
-    const[allCustomers,setAllCustomers]=useState<CommonCodeName[]>([]);
-    const[customers,setCustomers]=useState<CommonCodeName[]>([]);
-
+    const[allCustomers,setAllCustomers]=useState<CustomerModel[]>([]);
+    const[customers,setCustomers]=useState<CustomerModel[]>([]);
+    const appType= GetAPPType();
     const[search,setSearch]=useState('');
     
     useEffect(()=>{
@@ -64,7 +64,7 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
 
     const handleGetAllCustomers=async()=>{
      
-     let res = await CustomersGetCodeNameMethod();
+     let res = await GetAllCustomers();
     //  if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
         setAllCustomers([...res??[]]);
     
@@ -76,23 +76,22 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
     
     const ApplyFilter=()=>{
 
-        var filtered:CommonCodeName[]=[];
+        var filtered:CustomerModel[]=[];
         let count= 0;
         const lowSearch=search?.toLocaleLowerCase();
         for(const record of allCustomers){
           if(count>99){
             break;
           }
-          if(record?.Name?.toLowerCase()?.includes?.(lowSearch) || record?.Code?.toLocaleLowerCase()?.includes(lowSearch))
+          if(record?.CustName?.toLowerCase()?.includes?.(lowSearch) 
+            || record?.CustCode?.toLocaleLowerCase()?.includes(lowSearch)
+            || record?.CellNo?.toLocaleLowerCase()?.includes(lowSearch))
           {
             filtered.push({...record})
             count++;
           }
         } 
         setCustomers([...filtered??[]])
-        //   let custs= allCustomers?.filter(x=>x.Name?.toLocaleLowerCase()===search.toLocaleLowerCase() || x?.Code?.toLocaleLowerCase()===search?.toLocaleLowerCase());
-        //   var topCusts= [...custs?.slice(0,100)??[]];
-        //   setCustomers(topCusts)
     }
     const fonts= useQuantomFonts();
     const theme= useTheme();
@@ -108,7 +107,7 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
                             }} label="Add New" iconName="AddBoxOutlined"/>
                     </div>
                     <div style={{flex:1}}>
-                        <Quantom_Input label="Search Customers" value={search} onChange={((e)=>{setSearch(e.target.value)})} />
+                        <Quantom_Input label={appType===APP_TYPE.DENTAL_APP? "Search Patient":"Search Customers"} value={search} onChange={((e)=>{setSearch(e.target.value)})} />
                     </div>
                 </div>
                
@@ -121,7 +120,7 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
                             <Quantom_Grid component={Paper} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}}`}} item size={{xs:12,sm:6,md:4,lg:3,xl:2}}>
                             <div onClick={()=>{
                                 store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'FORM'}})))
-                                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_CUSTOMER_CODE',Data:item?.Code}})))
+                                store.dispatch((add_helper_data_single_key({UniqueId:props?.UniqueId??"",data:{keyNo:'SELECTED_CUSTOMER_CODE',Data:item?.CustCode}})))
                                 props?.setState?.({});
 
                             }} style={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'5px', display:'flex',flexDirection:'column' }}>
@@ -129,13 +128,19 @@ export const List=(props?:MenuComponentProps<VmCustomerModel>)=>{
                                     
                                     <IconByName color={theme?.palette?.primary?.main} iconName="BallotOutlined" fontSize="20px"/>
                                     <div style={{marginLeft:'5px',fontWeight:650}}>
-                                        {item?.Code}
+                                        {item?.CustCode}
                                     </div>
                                 </div>
                                 <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
                                   <IconByName color={theme?.palette?.primary?.main} iconName="AccountBoxOutlined" fontSize="20px"/>
                                     <div style={{marginLeft:'5px'}}>
-                                        {item?.Name}
+                                        {item?.CustName}
+                                    </div>
+                                </div>
+                                <div  style={{flex:1,fontSize:'14px',display:'flex',alignItems:'center'}}>
+                                  <IconByName color={theme?.palette?.primary?.main} iconName="PhoneAndroid" fontSize="20px"/>
+                                    <div style={{marginLeft:'5px'}}>
+                                        {item?.CellNo}
                                     </div>
                                 </div>
                             </div>
@@ -223,6 +228,11 @@ const Form=(props?:MenuComponentProps<VmCustomerModel>)=>{
          <div className="row g-0" style={{marginTop:'8px'}}>
             <div className="col-md-8  offset-md-2">
                 <Quantom_Input label="Name" value={props?.state?.customer?.CustName} onChange={(e)=>{props?.setState?.({...props?.state,customer:{...props?.state?.customer,CustName:e.target.value}})}}/>
+            </div>
+         </div>
+         <div className="row g-0" style={{marginTop:'8px'}}>
+            <div className="col-md-8  offset-md-2">
+                <Quantom_Input label="Cell No" value={props?.state?.customer?.CellNo} onChange={(e)=>{props?.setState?.({...props?.state,customer:{...props?.state?.customer,CellNo:e.target.value}})}}/>
             </div>
          </div>
 
