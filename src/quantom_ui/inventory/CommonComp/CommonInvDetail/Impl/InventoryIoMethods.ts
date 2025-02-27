@@ -2,6 +2,7 @@ import {
   HTTP_RESPONSE_TYPE,
   QuantomPOST,
 } from "../../../../../HTTP/QuantomHttpMethods";
+import { SaleJobServices } from "../../../../sale/processing/sale/model/helperModel/SaleJobServices";
 import { InventoryIOTaxDTOModel } from "../../../../tax/CommonModels/InventoryIOTaxDTOModel";
 import { InvoiceMasterValuesModel } from "../../../../tax/CommonModels/InvoiceMasterValuesModel";
 import {
@@ -41,13 +42,15 @@ export const AddOrRemoveExtendedMethod = async (
   action?: INVENTORY_PERFORMED_ACTION,
   billInfo?: CommonInvDetailActionQueryBillInfo,
   taxDetail?: InventoryIOTaxDTOModel[],
-  masterValues?: InvoiceMasterValuesModel
+  masterValues?: InvoiceMasterValuesModel,
+  jobs?:SaleJobServices[]
 ): Promise<CommonInvDetailActionQueryResponse | undefined> => {
   let q: CommonInvDetailActionQueryModel = {
     OldItems: {
       InventoryList: oldItems,
       InventoryIOTaxList: taxDetail,
       InvoiceMasterValues: masterValues,
+      JobServices:jobs
     },
     WorkingItem: workingItem,
     PERFORMED_ACTION: action,

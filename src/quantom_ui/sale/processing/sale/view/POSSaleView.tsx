@@ -32,6 +32,7 @@ import { POSActionButton } from "../../../../../quantom_comps/AppContainer/POSHe
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 import { SoldItemsRenderer } from "./POSSale/PosSaleHelpers/SoldItemsHelper";
 import { PosItemsRenderer } from "./POSSale/PosSaleHelpers/PosItemRenders";
+import { SaleJobServices } from "../model/helperModel/SaleJobServices";
 
 
 const POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY="POS_INVENTORY_ITEMS_CATEGORY_VALUE_KEY"
@@ -173,7 +174,7 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
                                 }} categories={categories} />
                             </div>
                             <div className="col-md-9" style={{backgroundColor:theme?.palette?.background.paper}}>
-                                <PosItemsRenderer onItemSelection={(item)=>{handleAddItem(locid??"",props,{ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:4}} />
+                                <PosItemsRenderer onItemSelection={(item)=>{handleAddItem(props?.state?.SaleServices??[],locid??"",props,{ItemCode:item?.ItemCode,UnitCode:item?.UnitCode,Qty:1},INVENTORY_PERFORMED_ACTION.NEW)}} selectedCat={catCode} size={{md:6,lg:6,xl:4}} />
                             </div>
                         </div>
                         <div style={{bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',position:'sticky'}}>
@@ -220,8 +221,8 @@ export const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
                 <div className="col-md-5" style={{height:'100vh',display:'flex',flexDirection:'column',flexGrow:1}}>
                     <div style={{overflowY: 'auto',flexGrow: 1}}>
                             <SoldItemsRenderer baseProps={props} onEditItem={(item)=>{
-                            handleAddItem(locid??"",props,item,INVENTORY_PERFORMED_ACTION.EDIT);
-                            }} onDeleteItem={(item)=>{handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.DELETE)}}/>
+                            handleAddItem(props?.state?.SaleServices??[],locid??"",props,item,INVENTORY_PERFORMED_ACTION.EDIT);
+                            }} onDeleteItem={(item)=>{handleAddItem(props?.state?.SaleServices??[],locid,props,item,INVENTORY_PERFORMED_ACTION.DELETE)}}/>
                     </div>
 
                     <div style={{position: 'sticky',bottom: 0,color: 'white',textAlign: 'center',fontSize: '16px',marginTop:'30px'}}>
@@ -537,7 +538,7 @@ export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"
 export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_DATA_KEY"
 
 
-export const handleAddItem=async(locid:string,props?:MenuComponentProps<VmSale>,workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
+export const handleAddItem=async(services:SaleJobServices[],locId:string,props?:MenuComponentProps<VmSale>,workingItem?:CommonInvDetailModel,action?:INVENTORY_PERFORMED_ACTION)=>{
       
     // alert(workingItem?.ItemCode);
     // return  ;
@@ -551,21 +552,25 @@ export const handleAddItem=async(locid:string,props?:MenuComponentProps<VmSale>,
     await AddOrRemoveExtendedMethod(oldItems,wItem,InventoryAction.Sale,action,{
         VendorCode:props?.state?.Sale?.CustCode,
         BillDate:new Date(),
-        LocId:locid,
+        LocId:locId,
     },taxDetail,{
         BpCode:props?.state?.Sale?.CustCode,
         BpType:"CUSTOMER",
         TaxForm:"SALE",
         EffectedDate:new Date(),
         WillBypassTaxCaluclations:true,
-    })
+    },services)
 
     if(!isNullOrEmpty(res?.Message)){
         ShowQuantomError({MessageHeader:"Error !", MessageBody:res?.Message})
     }
     else{
    
-        props?.setState?.({...props?.state,SaleDetails:[...res?.InventoryDTO?.InventoryList??[]],TaxDetail:[...res?.InventoryDTO?.InventoryIOTaxList??[]]})
+        props?.setState?.({...props?.state,
+                SaleDetails:[...res?.InventoryDTO?.InventoryList??[]],
+                TaxDetail:[...res?.InventoryDTO?.InventoryIOTaxList??[]],
+                SaleServices:[...res?.InventoryDTO?.JobServices??[]]
+            })
     }
 
 }

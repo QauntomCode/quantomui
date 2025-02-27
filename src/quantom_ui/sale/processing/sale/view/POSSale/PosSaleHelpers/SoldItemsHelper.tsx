@@ -9,13 +9,10 @@ import { APP_TYPE, GetAPPType, IconByName, MenuComponentProps } from "../../../.
 import { ShowSingleSelectedItemDialog } from "./ShowSingleSelectedItemDialog";
 import { VmSale } from "../../../model/VmSaleModel";
 import { QuantomSize } from "./PosItemRenders";
-import { CommonInvDetailComp } from "../../../../../../inventory/CommonComp/CommonInvDetail/Comp/CommonInvDetailComp";
 import { handleAddItem, POS_SALE_LOCID_KEY } from "../../POSSaleView";
 import { useSelector } from "react-redux";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
 import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
-import { POSActionButton } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
-import { totalmem } from "os";
 import { SalePrintAableTotalValue, SalePrintNumbers } from "../POSSaleView1";
 import dayjs from "dayjs";
 
@@ -24,7 +21,7 @@ interface SoldItemsRendererProps{
     itemGridSize?:QuantomSize;
     onDeleteItem?:(workingItem?:CommonInvDetailModel)=>void;
     onEditItem?:(workingItem?:CommonInvDetailModel)=>void;
-    onPaymentClik?:()=>void;
+    onPaymentClick?:()=>void;
     onListClick?:()=>void;
   
   }
@@ -32,29 +29,29 @@ interface SoldItemsRendererProps{
   export const SoldItemsRenderer=(props?: SoldItemsRendererProps)=>{
   
       const [showDialog,setShowDialog]=useState(false);
-      const[selecteditem,setSelectedItem]=useState<CommonInvDetailModel>();
-      const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+      const[selectedItem,setSelectedItem]=useState<CommonInvDetailModel>();
+      const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
       
     const handleEditItem=(item?:CommonInvDetailModel)=>{
         setSelectedItem(item);
         setShowDialog(true);
     }
-    const hadnleDeleteItem=(item?:CommonInvDetailModel)=>{
-        handleAddItem(locid,props?.baseProps,item,INVENTORY_PERFORMED_ACTION.DELETE)
+    const handleDeleteItem=(item?:CommonInvDetailModel)=>{
+        handleAddItem(props?.baseProps?.state?.SaleServices??[],locId,props?.baseProps,item,INVENTORY_PERFORMED_ACTION.DELETE)
     }
       return(
           <>
-          <ShowSingleSelectedItemDialog item={selecteditem} open={showDialog} onClose={(type,item)=>{
+          <ShowSingleSelectedItemDialog item={selectedItem} open={showDialog} onClose={(type,item)=>{
               setShowDialog(false);
               if(type==='APPLIED'){
                   props?.onEditItem?.(item);
-                  handleAddItem(locid,props?.baseProps,item,INVENTORY_PERFORMED_ACTION.EDIT)
+                  handleAddItem(props?.baseProps?.state?.SaleServices??[],locId,props?.baseProps,item,INVENTORY_PERFORMED_ACTION.EDIT)
               }
           }}></ShowSingleSelectedItemDialog>
          
 
-            <SoldItemCardView onPaymentClick={props?.onPaymentClik} onListClick={props?.onListClick} onDeleteclick={hadnleDeleteItem} onEditClick={handleEditItem} baseProps={props} showDialog={showDialog} setShowDialog={(val)=>{setShowDialog(val??false)}}
-                selectedItem={selecteditem} setSelectedItem={(item)=>{setSelectedItem(item)}}/>
+            <SoldItemCardView onPaymentClick={props?.onPaymentClick} onListClick={props?.onListClick} onDeleteClick={handleDeleteItem} onEditClick={handleEditItem} baseProps={props} showDialog={showDialog} setShowDialog={(val)=>{setShowDialog(val??false)}}
+                selectedItem={selectedItem} setSelectedItem={(item)=>{setSelectedItem(item)}}/>
           </>
       )
   }
@@ -66,7 +63,7 @@ interface SoldItemsRendererProps{
      selectedItem?:CommonInvDetailModel
      setSelectedItem?:(val?:CommonInvDetailModel)=>void;
      onEditClick?:(item?:CommonInvDetailModel)=>void;
-     onDeleteclick?:(item?:CommonInvDetailModel)=>void;
+     onDeleteClick?:(item?:CommonInvDetailModel)=>void;
      onPaymentClick?:()=>void;
      onListClick?:()=>void;
    }
@@ -80,17 +77,37 @@ interface SoldItemsRendererProps{
     const soldItems= props?.baseProps?.baseProps?.state?.SaleDetails;
 
     useEffect(()=>{
-        handleTotalvalue();
+        handleTotalValue();
     },[props?.baseProps?.baseProps?.state])
 
-    const handleTotalvalue=async()=>{
+    const handleTotalValue=async()=>{
         let res = await SalePrintAableTotalValue(props?.baseProps?.baseProps?.state)
         setTotals(res);
     }
-    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+    const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
 
     const appType=GetAPPType();
 
+    const getStatus=(itemCode?:string):'COMPLETED'|'PENDING'=>{
+          var selected= props?.baseProps?.baseProps?.state?.SaleServices?.find(x=>x.ItemCode===itemCode);
+          if(selected)
+          {
+              return selected?.Status?.toUpperCase()==='COMPLETED'?'COMPLETED':'PENDING';
+          }
+          return 'PENDING'
+    }
+    const changeStatus=(itemCode?:string,status?:'COMPLETED'|'PENDING')=>{
+      let services=[...props?.baseProps?.baseProps?.state?.SaleServices??[]];
+      let selected= services?.find(x=>x.ItemCode===itemCode);
+      if(selected== null){
+         services.push({ItemCode:itemCode,Status:status})
+      }
+      else{
+         let index= services.indexOf(selected);
+          services[index]={...services[index],Status:status};
+      }
+      props?.baseProps?.baseProps?.setState?.({...props?.baseProps?.baseProps?.state,SaleServices:[...services]})
+    }
     return(
         <Quantom_Grid container size={{xs:12}} spacing={1}>
             <Quantom_Grid pt={1} pb={1} component={Paper} sx={{backgroundColor:theme?.palette?.primary?.main}} container size={{xs:12}}>
@@ -164,13 +181,17 @@ interface SoldItemsRendererProps{
                                                      {dayjs(new Date()).format('DD MMM YYYY')}
                                              </div>
                                              <div style={{display:'flex'}}>
-                                                <button style={{borderTopLeftRadius:'5px',borderBottomLeftRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
-                                                            backgroundColor:item?.ServiceStatus?.toUpperCase()!=="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
-                                                            color:item?.ServiceStatus?.toUpperCase()!=="COMPLETED"?theme.palette.primary.contrastText:undefined,
+                                                <button onClick={()=>{
+                                                    changeStatus(item?.ItemCode,'PENDING')
+                                                }} style={{borderTopLeftRadius:'5px',borderBottomLeftRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
+                                                            backgroundColor:getStatus(item.ItemCode)!=="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
+                                                            color:getStatus(item.ItemCode)!=="COMPLETED"?theme.palette.primary.contrastText:undefined,
                                                     }}>Pending</button>
-                                                <button style={{borderTopRightRadius:'5px',borderBottomRightRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
-                                                            backgroundColor:item?.ServiceStatus?.toUpperCase()==="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
-                                                            color:item?.ServiceStatus?.toUpperCase()==="COMPLETED"?theme.palette.primary.contrastText:undefined,}}>Completed</button>
+                                                <button onClick={()=>{
+                                                    changeStatus(item?.ItemCode,'COMPLETED')
+                                                }} style={{borderTopRightRadius:'5px',borderBottomRightRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
+                                                            backgroundColor:getStatus(item.ItemCode)==="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
+                                                            color:getStatus(item.ItemCode)==="COMPLETED"?theme.palette.primary.contrastText:undefined,}}>Completed</button>
                                              </div>
 
 
@@ -180,7 +201,7 @@ interface SoldItemsRendererProps{
                                  }    
                                 <Quantom_Grid container sx={{p:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
                                     <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
-                                        <IconButton onClick={()=>props?.onDeleteclick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
+                                        <IconButton onClick={()=>props?.onDeleteClick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
                                             <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="DeleteOutlineOutlined"/>
                                         </IconButton>
                                     </Quantom_Grid>

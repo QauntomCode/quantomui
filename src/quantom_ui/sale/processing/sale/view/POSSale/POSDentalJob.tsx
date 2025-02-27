@@ -144,7 +144,7 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
                                 }}
                                 onItemSelection={
                                         (item)=>{
-                                                handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)
+                                                handleAddItem(props?.state?.SaleServices??[],locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)
                                             }
                                     } 
                                 ItemLoadType='ALL_ITEMS' />
@@ -152,12 +152,12 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
                     </Quantom_Grid>
                 </div>
                 <div className="col-lg-5">
-                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClik={handlePaymentClick} baseProps={props}/>
+                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClick={handlePaymentClick} baseProps={props}/>
                 </div>
 
 
                 <QuantomDialog heading="Selected Items " onClosePress={()=>{setOpenSoldItemsDialog(false)}} open={openSoldItemsDialog}>
-                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClik={handlePaymentClick} baseProps={props}/>
+                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClick={handlePaymentClick} baseProps={props}/>
                 </QuantomDialog>
 
                 <QuantomDialog  heading="Enter Payment" onClosePress={()=>{setShowPaymentview(false)}} open={showPaymentView}>

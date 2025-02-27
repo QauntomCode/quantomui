@@ -2,9 +2,8 @@
 import { CommonInvDetailModel } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { useEffect, useState } from "react";
 import { safeParseToNumber } from "../../../../../../../CommonMethods";
-import { Dialog, DialogContent, useTheme } from "@mui/material";
+import {  useTheme } from "@mui/material";
 import { Quantom_Input } from "../../../../../../../quantom_comps/base_comps";
-import { POSActionButton } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton";
 import { QuantomDialog } from "../../POSSaleView";
 import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
@@ -23,7 +22,6 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
     useEffect(()=>{
         setQty(props?.item?.TransQty??0);
         setRate(props?.item?.TransPrice??0);
-        //setQty(props?.item?.Qty??0);
     },[props?.item?.TransQty,props?.item?.TransPrice])
 
     useEffect(()=>{
@@ -34,7 +32,6 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
      <QuantomDialog heading="Change Item" onClosePress={()=>{props?.onClose?.('CANCEL')}} open={props?.open??false}>
         
             <div className="row g-1">
-                 
                  <div className="col-md-12 mt-2">
                     <Quantom_Input size='medium' label="Item Name" value={props?.item?.ItemName}/>
                  </div>

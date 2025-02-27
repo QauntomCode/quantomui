@@ -76,7 +76,7 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
 
 
  const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
-    const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
+    const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
     const[openSoldItemsDialog,setOpenSoldItemsDialog]=useState(false)
     const[showPaymentView,setShowPaymentview]=useState(false)
 
@@ -137,18 +137,18 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
                             }}
                             onItemSelection={
                                     (item)=>{
-                                            handleAddItem(locid,props,item,INVENTORY_PERFORMED_ACTION.NEW)
+                                            handleAddItem(props?.state?.SaleServices??[],locId,props,item,INVENTORY_PERFORMED_ACTION.NEW)
                                         }
                                 } 
                             ItemLoadType='ALL_ITEMS' />
                 </div>
                 <div className="col-lg-5">
-                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClik={handlePaymentClick} baseProps={props}/>
+                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClick={handlePaymentClick} baseProps={props}/>
                 </div>
 
 
                 <QuantomDialog heading="Selected Items " onClosePress={()=>{setOpenSoldItemsDialog(false)}} open={openSoldItemsDialog}>
-                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClik={handlePaymentClick} baseProps={props}/>
+                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClick={handlePaymentClick} baseProps={props}/>
                 </QuantomDialog>
 
                 <QuantomDialog  heading="Enter Payment" onClosePress={()=>{setShowPaymentview(false)}} open={showPaymentView}>
