@@ -1,6 +1,7 @@
 import { VMDocumentModel } from "../../../../config/DocumentHandling/model/VMDocumentMode";
 import { CommonInvDetailModel } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { InventoryIOTaxDTOModel } from "../../../../tax/CommonModels/InventoryIOTaxDTOModel";
+import { SaleJobServices } from "./helperModel/SaleJobServices";
 import { SalesNomineeModel } from "./helperModel/SaleNomineeModel";
 import { SaleOperationsModel } from "./helperModel/SaleOperationsModel";
 import { SalePaymentTermsModel } from "./helperModel/SalePaymentTermsModel";
@@ -20,4 +21,6 @@ export interface VmSale {
     Document?: VMDocumentModel;
     DirectExpenses?: VMDirectExpensesModel;
     PosProperties?: SalePOSPropertiesModel;
+    SaleServices?:SaleJobServices[];
+
 }
