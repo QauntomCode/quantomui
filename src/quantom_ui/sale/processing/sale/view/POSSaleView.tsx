@@ -512,7 +512,14 @@ export const QuantomDialog=(props?:QuantomDialogProps)=>{
     const fonts= useQuantomFonts();
     const theme= useTheme();
     return(
-        <Dialog fullWidth open={props?.open??false}>
+        <Dialog
+            PaperProps={{
+                sx: {
+                width: "calc(100vh - 10px)", // Set dynamic width
+                maxWidth: "none", // Prevent Material UI from restricting width
+                },
+            }}
+              open={props?.open??false}>
             <DialogTitle sx={{fonFamily:fonts?.HeaderFont,fontSize:fonts.H3FontSize,fontWeight:"bold",borderBottom:`1px solid ${theme?.palette?.text?.primary}`}}>
                 <div style={{display:'flex'}}>
                     <div style={{flex:1}}>
@@ -524,8 +531,8 @@ export const QuantomDialog=(props?:QuantomDialogProps)=>{
                     
                 </div>
             </DialogTitle>
-          <DialogContent>
-            <div style={{marginBottom:'10px',marginTop:'10px'}}>
+          <DialogContent >
+            <div style={{marginBottom:'10px',marginTop:'10px',overflow:'auto'}}>
                 {props?.children}
             </div>
           </DialogContent>

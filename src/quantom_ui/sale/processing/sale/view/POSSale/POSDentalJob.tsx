@@ -79,7 +79,7 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
  const POSBillView=(props?:MenuComponentProps<VmSale>)=>{
     const locid= useSelector((state?:any)=>(get_helperData_by_key(state,props?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
     const[openSoldItemsDialog,setOpenSoldItemsDialog]=useState(false)
-    const[showPaymentView,setShowPaymentview]=useState(false)
+    const[showPaymentView,setShowPaymentView]=useState(false)
 
     // const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
     // const disAmount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
@@ -115,10 +115,10 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
     
 
     const handlePaymentClick=()=>{
-        setShowPaymentview(true);setOpenSoldItemsDialog(false)
+        setShowPaymentView(true);setOpenSoldItemsDialog(false)
     }
-    const handleListclick=()=>{
-        setShowPaymentview(false);setOpenSoldItemsDialog(false)
+    const handleListClick=()=>{
+        setShowPaymentView(false);setOpenSoldItemsDialog(false)
         store.dispatch(add_helper_data_single_key({UniqueId:props?.UniqueId,data:{keyNo:POS_INVENTORY_ITEM_VIEW_TYPE,Data:'LIST'}}))
     }
     return(
@@ -152,17 +152,17 @@ export const POSDentalJob=(props?:MenuComponentProps<VmSale>)=>{
                     </Quantom_Grid>
                 </div>
                 <div className="col-lg-5">
-                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClick={handlePaymentClick} baseProps={props}/>
+                    <SoldItemsRenderer onListClick={handleListClick} onPaymentClick={handlePaymentClick} baseProps={props}/>
                 </div>
 
 
                 <QuantomDialog heading="Selected Items " onClosePress={()=>{setOpenSoldItemsDialog(false)}} open={openSoldItemsDialog}>
-                    <SoldItemsRenderer onListClick={handleListclick} onPaymentClick={handlePaymentClick} baseProps={props}/>
+                    <SoldItemsRenderer onListClick={handleListClick} onPaymentClick={handlePaymentClick} baseProps={props}/>
                 </QuantomDialog>
 
-                <QuantomDialog  heading="Enter Payment" onClosePress={()=>{setShowPaymentview(false)}} open={showPaymentView}>
+                <QuantomDialog  heading="Enter Payment" onClosePress={()=>{setShowPaymentView(false)}} open={showPaymentView}>
                     <SalePaymentViewRender onclose={(tpe)=>{
-                        setShowPaymentview(false);
+                        setShowPaymentView(false);
                         if(tpe==='SAVE'){
                             props?.setState?.({Sale:{BillDate:new Date()}})
                         }

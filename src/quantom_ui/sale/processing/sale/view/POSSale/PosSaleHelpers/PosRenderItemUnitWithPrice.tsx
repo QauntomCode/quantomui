@@ -44,7 +44,7 @@ export const POSRenderItemUnitsWithPrice=(props?:UnitRenderProps)=>{
         }
          let res= await GetEffectedPriceOfAllUnits({ItemCode:props?.lineObj?.ItemCode,VendorCode:props?.vendorCode,Form:props?.fromName});
          setUnitPrice([...res??[]]);
-         setSelectedUnit(res?.[0]);
+         setSelectedUnit({...res?.[0],Qty:1});
 
         
          
