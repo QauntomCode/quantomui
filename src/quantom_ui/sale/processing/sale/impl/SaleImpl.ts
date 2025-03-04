@@ -9,7 +9,12 @@ import {
 import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
 import { SaleModel } from "../model/SaleModel";
 import { VmSale } from "../model/VmSaleModel";
-import { HideLoadingDialog, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import {
+  HideLoadingDialog,
+  ShowLoadingDialog,
+} from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { CustomerAppointments } from "../model/helperModel/CustomerAppointments";
+import { AppointmentReportQuery } from "../model/Queries/AppointmentReportQuery";
 
 const SALE_INSERT_URL = "Sale/Sale/Insert";
 const SALE_UPDATE_URL = "Sale/Sale/update";
@@ -17,6 +22,8 @@ const SALE_DELETE_URL = "Sale/Sale/delete";
 const SALE_GET_ALL_URL = "Sale/Sale/getAllV1";
 const SALE_GET_ONE_URL = "Sale/Sale/getOne";
 const PRINT_SALE_SLIP_URL = "Sale/Sale/PrintSaleReport";
+const GET_SALE_CUSTOMER_APPOINTMENTS_URL =
+  "Sale/Customer/SaleGetCustomerAppointments";
 
 export const InsertSale = async (
   sale?: VmSale
@@ -84,16 +91,35 @@ export interface SaleGetAllQuery {
   LocId?: string;
 }
 
-
-export const SalePrintData=async(billNo?:string):Promise<VmSale>=>{
+export const SalePrintData = async (billNo?: string): Promise<VmSale> => {
   try {
-      ShowLoadingDialog();
-      let res =await QuantomGET<VmSale>(PRINT_SALE_SLIP_URL+`?BillNo=${billNo}`,true);
-      HideLoadingDialog();
-      return res.Response??{};
+    ShowLoadingDialog();
+    let res = await QuantomGET<VmSale>(
+      PRINT_SALE_SLIP_URL + `?BillNo=${billNo}`,
+      true
+    );
+    HideLoadingDialog();
+    return res.Response ?? {};
+  } catch {
+    HideLoadingDialog();
+    return {};
   }
-  catch{
-     HideLoadingDialog();
-     return{}
+};
+
+export const GetCustomerAppointments = async (
+  query?: AppointmentReportQuery
+): Promise<CustomerAppointments[]> => {
+  try {
+    ShowLoadingDialog();
+    let res = await QuantomPOST<CustomerAppointments[]>(
+      GET_SALE_CUSTOMER_APPOINTMENTS_URL,
+      true,
+      query
+    );
+    HideLoadingDialog();
+    return res.Response ?? [];
+  } catch {
+    HideLoadingDialog();
+    return [];
   }
-}
+};

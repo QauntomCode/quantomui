@@ -39,17 +39,17 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
 
             <div className="row g-1 mt-1">
                  <div className="col-md-12">
-                     <Quantom_Input label="Qty" value={qty} onChange={(e)=>{setQty(safeParseToNumber(e.target.value))}}/>
+                     <Quantom_Input label="Qty" value={formatNumber(qty)} onChange={(e)=>{setQty(safeParseToNumber(e.target.value))}}/>
                  </div>
             </div>
             <div className="row g-1 mt-1">
                 <div className="col-md-12">
-                    <Quantom_Input label="Rate" value={rate} onChange={(e)=>{setRate(safeParseToNumber(e.target.value))}}/>
+                    <Quantom_Input label="Rate" value={formatNumber(rate)} onChange={(e)=>{setRate(safeParseToNumber(e.target.value))}}/>
                 </div>
             </div>
             <div className="row g-12 mt-1">
                 <div className="col-md-12">
-                    <Quantom_Input label="Amount" value={amount}/>
+                    <Quantom_Input label="Amount" value={formatNumber(amount)}/>
                 </div>
             </div>
 
@@ -69,3 +69,13 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
     )
 }
 
+
+
+const formatNumber = (value?:any) => {
+    if (isNaN(value) || value === null || value === undefined || value === '') {
+      return 0;
+    }
+  
+    const num = parseFloat(value);
+    return Number.isInteger(num) ? num : parseFloat(num.toFixed(2));
+  };

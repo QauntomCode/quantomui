@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-pascal-case */
 import { useTheme } from "@mui/material";
-import { MenuComponentProps } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { APP_TYPE, GetAPPType, MenuComponentProps } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { useSelector } from "react-redux";
 import { POS_SALE_LOCID_KEY, SalePrintAableTotalValue, SalePrintNumbers } from "../POSSaleView1";
 import { useEffect, useState } from "react";
@@ -12,6 +12,9 @@ import { InsertSale } from "../../../impl/SaleImpl";
 import { safeParseToNumber } from "../../../../../../../CommonMethods";
 import { VmSale } from "../../../model/VmSaleModel";
 import { POSCustomerComp } from "./POSCustomerCompProps";
+import { QuantomSwitch } from "../../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
+import { QUANTOM_Date } from "../../../../../../../quantom_comps/BaseComps/Quantom_Date";
+import dayjs from "dayjs";
 
 export interface SalePaymentViewRenderProps{
     baseProps?:MenuComponentProps<VmSale>
@@ -32,6 +35,7 @@ export const SalePaymentViewRender=(props?:SalePaymentViewRenderProps)=>{
         console.log('total values are',res)
         setTotals(res);
     }
+    const type= GetAPPType();
     return(
         <>
         <Quantom_Grid container size={{xs:12}}>
@@ -40,6 +44,31 @@ export const SalePaymentViewRender=(props?:SalePaymentViewRenderProps)=>{
                         selectedCustomer={{Code:props?.baseProps?.state?.Sale?.CustCode,Name:props?.baseProps?.state?.Sale?.CustName}} />
 
         </Quantom_Grid>
+        {
+            type===APP_TYPE.DENTAL_APP?( 
+                <>
+                    <Quantom_Grid  container size={{xs:12}}>
+                        <QuantomSwitch
+                             onChange={(a)=>{props?.baseProps?.setState?.({...props?.baseProps?.state,IsHaveAppointment:a})}}
+                             label="Next Appointment" value={props?.baseProps?.state?.IsHaveAppointment}/>
+                    </Quantom_Grid>
+                    {
+                        (props?.baseProps?.state?.IsHaveAppointment)?(
+                        <>
+                            <Quantom_Grid size={{xs:12}}>
+                                <QUANTOM_Date 
+                                            value={dayjs((props?.baseProps?.state?.Sale_CustomerAppointments?.[0]?.AppointmentDate) ?? new Date())} 
+                                            label="Appointment Date" 
+                                            onChange={
+                                                (date)=>{props?.baseProps?.setState?.({...props?.baseProps?.state,Sale_CustomerAppointments:[{AppointmentDate:date?.toDate()}]
+                                })}} />
+                            </Quantom_Grid>
+                        </>):(<></>)
+                    }
+                </>
+             ):(<></>)
+        }
+       
          <Quantom_Grid container size={{xs:12}} mt={2}>
                <Quantom_Input label="Total Amount" disabled value={totals?.TotalGrossAmount} />
          </Quantom_Grid>

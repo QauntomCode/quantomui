@@ -37,7 +37,7 @@ import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item
 import { SaleView } from '../../../../quantom_ui/sale/processing/sale/view/SaleView';
 import { RestaurantSaleView } from '../../../../quantom_ui/sale/processing/sale/view/ResturantSale/RestaurantSaleView';
 import { POSMainScreen } from '../../POSMainScreen';
-import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_PURCHASE_REPORT, POS_INVENTORY_SALE_REPORT, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_DENTAL_JOB_INFO_WITH_DETAIL, POS_SALE_FORM_MENU_CODE, POS_SALE_FORM_WITH_EMPTY_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
+import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_APPOINTMENTS_MENU_CODE, POS_CUSTOMER_FORM_MENU_CODE, POS_INVENTORY_ITEM_MENU_CODE, POS_INVENTORY_PURCHASE_REPORT, POS_INVENTORY_SALE_REPORT, POS_INVENTORY_STOCK_REPORT_MEN_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_MENU_CODE, POS_PAYMENT_CUSTOMER_RECEIPT_REPORT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_MENU_CODE, POS_PAYMENT_SUPPLIER_PAYMENT_REPORT_MENU_CODE, POS_PURCHASE_FORM_MENU_CODE, POS_SALE_FORM_DENTAL_JOB_INFO_WITH_DETAIL, POS_SALE_FORM_MENU_CODE, POS_SALE_FORM_WITH_EMPTY_MENU_CODE, POS_SOFTWARE_REPORTS_MENU_CODE, POS_SUPPLIER_FORM_MENU_CODE, POSInventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/POS/POSInventoryIitemsView';
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
@@ -57,6 +57,7 @@ import { POSSaleReportView } from '../../../../quantom_ui/sale/reports/SaleRepor
 import { POSPurchaseReportView } from '../../../../quantom_ui/Purchase/reports/Purchase/view/POSPurchaseReportView';
 import { POSSaleViewWithEmpty } from '../../../../quantom_ui/sale/processing/sale/view/POSSale/POSSaleViewWithEmpty';
 import { POSDentalJob } from '../../../../quantom_ui/sale/processing/sale/view/POSSale/POSDentalJob';
+import { CustomerAppointmentReports } from '../../../../quantom_ui/sale/reports/Appointments/CustomerAppointmentReports';
 
 
 
@@ -1004,6 +1005,11 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCode:POS_INVENTORY_PURCHASE_REPORT,
     MenuCaption:'Purchase Report',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSPurchaseReportView{...props}/>)
+  },
+  {
+    MenuCode:POS_CUSTOMER_APPOINTMENTS_MENU_CODE,
+    MenuCaption:'Appointments',
+    GetComponent:(props?:MenuComponentProps<any>)=>(<CustomerAppointmentReports{...props}/>)
   },
 
 ]
