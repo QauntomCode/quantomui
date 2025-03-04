@@ -110,6 +110,7 @@ export const GetCustomerAppointments = async (
   query?: AppointmentReportQuery
 ): Promise<CustomerAppointments[]> => {
   try {
+   
     ShowLoadingDialog();
     let res = await QuantomPOST<CustomerAppointments[]>(
       GET_SALE_CUSTOMER_APPOINTMENTS_URL,
@@ -117,7 +118,16 @@ export const GetCustomerAppointments = async (
       query
     );
     HideLoadingDialog();
-    return res.Response ?? [];
+    console.log('response of appointments is',res)
+    if(res.ResStatus===HTTP_RESPONSE_TYPE.SUCCESS){
+      return res.Response ?? [];   
+    }
+    else{
+      ShowQuantomError({MessageBody:res?.ErrorMessage,MessageHeader:"Error!"})
+
+      return[]
+    }
+    
   } catch {
     HideLoadingDialog();
     return [];
