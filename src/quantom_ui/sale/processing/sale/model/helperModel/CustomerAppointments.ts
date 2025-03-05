@@ -7,4 +7,6 @@ export interface CustomerAppointments {
   Status?: string;
   TransDate?: Date;
   AppointmentDate?: Date;
+  CustName?: string;
+  CellNo?: string;
 }
