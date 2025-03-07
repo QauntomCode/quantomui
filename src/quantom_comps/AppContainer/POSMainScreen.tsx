@@ -209,23 +209,29 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
           
       
 
-         <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >
+        
 
-                     
-         <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
+       {
+         (appType===APP_TYPE.DENTAL_APP)?(<>
+          <Quantom_Grid container sx={{color:theme?.palette?.primary?.contrastText, ...fontStyle,marginTop:'25px'}} spacing={.5} >             
+               <Quantom_Grid  item size={{sm:0,xs:0,md:3,lg:3,xl:3}}></Quantom_Grid>
 
-            <Quantom_Grid onClick={()=>{
-               openNewMenu(POS_CUSTOMER_APPOINTMENTS_MENU_CODE,'Appointments')
-            }} container component={Paper} size={{md:8,sm:12,xs:12,lg:6,xl:6}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
-               <>
-               <AppointmentIcons color='primary' sx={{fontSize:'60px'}}></AppointmentIcons>
-               </>
-                  Appointments
+                  <Quantom_Grid onClick={()=>{
+                     openNewMenu(POS_CUSTOMER_APPOINTMENTS_MENU_CODE,'Appointments')
+                  }} container component={Paper} size={{md:8,sm:12,xs:12,lg:6,xl:6}} sx={{height:'100px',...flexStyle,borderBottom:border,}}>
+                     <>
+                     <AppointmentIcons color='primary' sx={{fontSize:'60px'}}></AppointmentIcons>
+                     </>
+                        Appointments
+                  </Quantom_Grid>
+
+                  
+
             </Quantom_Grid>
+         </>):(<></>)
+       }
 
-            
-
-         </Quantom_Grid>
+        
             
      </>
   )
