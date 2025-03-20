@@ -196,7 +196,7 @@ export const Quantom_Input1=(props: {
 
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
-    <FormControl   fullWidth variant="outlined">
+    <FormControl  sx={{backgroundColor:'white'}}  fullWidth variant="outlined">
     {props?.willHideLabel?(<></>):(
       <InputLabel shrink sx={{ 
         // fontSize: '20px',
