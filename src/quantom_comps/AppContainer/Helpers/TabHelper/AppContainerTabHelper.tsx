@@ -264,6 +264,15 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
     setDefaultTabs([...getDefaultTabs(props?.UniqueId,fullState?.compSettings?.WillHideUserLog)])
   },[fullState?.compSettings?.WillHideUserLog])
 
+
+  const willShowToolbar=()=>{
+
+   if(fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType ||APP_TYPE.DENTAL_APP)){
+    return false;
+   }
+   return true;
+  }
+
   return(
     <div  >
 
@@ -272,10 +281,12 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <QuantomErrorDialog />
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
-        fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType ||APP_TYPE.DENTAL_APP) ?(<></>):(
+         willShowToolbar()?(<></>):(
         <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
         )
       }
+        
+
       <div style={{paddingLeft:'10px',paddingRight:'10px'}}>
       {
         fullState?.FormState==='LIST'?listComp:selectedComponent
@@ -416,7 +427,7 @@ export const ToolBarButton=(props?:ToolBarButtonProps)=>{
               marginTop:'3px',
               marginBottom:'3px',
               width:'78px',border:`1px solid black`,
-              backgroundColor:theme.palette.secondary.light,
+              backgroundColor:theme.palette.primary.main,
               alignItems:'center',
                display:'flex',
               cursor:'pointer',
@@ -424,9 +435,9 @@ export const ToolBarButton=(props?:ToolBarButtonProps)=>{
 
               }}>
                <div style={{display:'flex',marginLeft:'5px'}}>
-                <IconByName iconName={props?.iconName??""} fontSize='16px' color={theme.palette.secondary.contrastText} />
+                <IconByName iconName={props?.iconName??""} fontSize='16px' color={theme.palette.primary.contrastText} />
               </div>
-            <div style={{display:'flex',flex:1,justifyContent:'center',alignItems:'center'}}>
+            <div style={{display:'flex',flex:1,justifyContent:'center',alignItems:'center',color:theme.palette.primary.contrastText,letterSpacing:1.5}}>
               {props?.Label} 
             </div>
     </Box>
@@ -538,11 +549,11 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
     
   }
   return(
-  <Quantom_Grid component={Paper} container sx={{display:'flex',backgroundColor:theme.palette?.secondary?.light,paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
+  <Quantom_Grid component={Paper} container sx={{display:'flex',/*backgroundColor:theme.palette?.secondary?.light,*/paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
           <Quantom_Grid container={Paper} sx={{marginRight:'4px'}}>
              <input type='text' style={{borderRadius:'5px',border:`.5px solid ${theme.palette.secondary.main}`}}></input>
           </Quantom_Grid>
-              <Quantom_Grid container={Paper} sx={{backgroundColor:theme.palette.secondary.main,paddingLeft:'4px',paddingRight:'2px',
+              <Quantom_Grid container={Paper} sx={{/*backgroundColor:theme.palette.secondary.main,*/paddingLeft:'4px',paddingRight:'2px',
                 color:theme?.palette?.secondary.contrastText
               }}>
               <ToolBarButton iconName='InsertDriveFileTwoTone' Label='New' onClick={()=>{
@@ -792,6 +803,9 @@ export const GetAPPType=():APP_TYPE=>{
     return APP_TYPE.DENTAL_APP;
   }
   
+
+  console.log('app type is erp')
+
   return APP_TYPE.ERP;
 }
 

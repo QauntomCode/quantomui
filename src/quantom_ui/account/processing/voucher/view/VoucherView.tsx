@@ -19,6 +19,7 @@ import { VoucherList } from './VoucherList'
 import { useTheme } from '@mui/material/styles'
 import { ListCompButton } from '../../../report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
+import { BorderBottom } from '@mui/icons-material'
 
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
@@ -249,14 +250,18 @@ export const GroupContainer=(props?:GroupContainerProps)=>{
     <Box 
         fullWidth 
         component={Paper}  
-        sx={{border:`.5px solid ${theme?.palette?.primary?.main}`,paddingBottom:'8px',marginTop:'15px' }}>
-            <Box sx={{backgroundColor:theme?.palette?.primary?.main,borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,padding:'2px 10px',fontFamily:fonts?.HeaderFont,
-               fontSize:'12px',fontWeight:'bold',letterSpacing:1.2,color:theme.palette.primary.contrastText,borderTopLeftRadius:'5px',borderTopRightRadius:'5px'}}>
+        sx={{borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,paddingBottom:'8px',marginTop:'15px' }}>
+            <Box sx={{/*backgroundColor:theme?.palette?.primary?.main,*/borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,padding:'2px 10px',fontFamily:fonts?.HeaderFont,
+               fontSize:'12px',fontWeight:'bold',letterSpacing:1.2,color:theme.palette.text.primary,borderTopLeftRadius:'5px',borderTopRightRadius:'5px'}}>
                 {props?.Label}
             </Box>
             <Box sx={{paddingLeft:'8px',paddingRight:'8px',height:props?.height??undefined,overflowY: props?.height?'scroll':undefined,}}>
               {
-                props?.children
+                <div style={{marginTop:'8px'}}>
+                  {
+                    props?.children
+                  }
+                </div>
               }
             </Box>
 
