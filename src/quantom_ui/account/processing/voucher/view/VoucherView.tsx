@@ -250,8 +250,8 @@ export const GroupContainer=(props?:GroupContainerProps)=>{
     <Box 
         fullWidth 
         component={Paper}  
-        sx={{borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,paddingBottom:'8px',marginTop:'15px' }}>
-            <Box sx={{/*backgroundColor:theme?.palette?.primary?.main,*/borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,padding:'2px 10px',fontFamily:fonts?.HeaderFont,
+        sx={{borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,paddingBottom:'8px',marginTop:'15px',backgroundColor:theme?.palette?.background?.paper }}>
+            <Box sx={{borderBottom:`.5px solid ${theme?.palette?.primary?.main}`,padding:'2px 10px',fontFamily:fonts?.HeaderFont,
                fontSize:'12px',fontWeight:'bold',letterSpacing:1.2,color:theme.palette.text.primary,borderTopLeftRadius:'5px',borderTopRightRadius:'5px'}}>
                 {props?.Label}
             </Box>

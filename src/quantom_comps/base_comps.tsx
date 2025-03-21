@@ -196,7 +196,7 @@ export const Quantom_Input1=(props: {
 
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
-    <FormControl  sx={{backgroundColor:'white'}}  fullWidth variant="outlined">
+    <FormControl sx={{backgroundColor:theme.palette.background.default}}   fullWidth variant="outlined">
     {props?.willHideLabel?(<></>):(
       <InputLabel shrink sx={{ 
         // fontSize: '20px',
@@ -218,7 +218,7 @@ export const Quantom_Input1=(props: {
           name={props?.name || `input-${Math.random()}`} // Random Name
           type={props?.type}
           sx={{
-                borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
+                // borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
                 fontFamily:font.HeaderFont,
                 fontSize:'14px',
                 // fontWeight:'700',       
@@ -255,7 +255,7 @@ export const Quantom_Input1=(props: {
           // id="outlined-size-small"
           // autoComplete='off'
           size= {props?.size?? "small"}
-          value={getValue()}
+          value={getValue()??""}
           onChange={props?.onChange}
           inputRef={props?.inputRef}
           onKeyDown={handleKeyDown}

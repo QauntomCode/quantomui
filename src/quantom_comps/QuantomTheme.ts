@@ -50,6 +50,7 @@ const QuantomTheme = createTheme({
   },
 });
 
+export const bg_color = "#EDF1F7";
 export const QuantomLightTheme = createTheme({
   palette: {
     primary: {
@@ -64,8 +65,8 @@ export const QuantomLightTheme = createTheme({
       light: "#05D890",
     },
     background: {
-      default: "#FFFFFF", //changed
-      paper: "#EDF1F7", // changed
+      default: bg_color, //, //changed
+      paper: "#FFFFFF", // changed
     },
     text: {
       primary: "#222B45",

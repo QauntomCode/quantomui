@@ -423,11 +423,11 @@ export const ToolBarButton=(props?:ToolBarButtonProps)=>{
       style={{
               fontFamily:font.HeaderFont,fontWeight:600,
               fontSize:'12px',marginRight:'2px',borderRadius:'4px',
-              lineHeight:'20px',
+              lineHeight:'25px',
               marginTop:'3px',
               marginBottom:'3px',
-              width:'78px',border:`1px solid black`,
-              backgroundColor:theme.palette.primary.main,
+              width:'85px',border:`1px solid black`,
+              backgroundColor:theme.palette.background.default,
               alignItems:'center',
                display:'flex',
               cursor:'pointer',
@@ -435,9 +435,9 @@ export const ToolBarButton=(props?:ToolBarButtonProps)=>{
 
               }}>
                <div style={{display:'flex',marginLeft:'5px'}}>
-                <IconByName iconName={props?.iconName??""} fontSize='16px' color={theme.palette.primary.contrastText} />
+                <IconByName iconName={props?.iconName??""} fontSize='16px' color={theme.palette.text.primary} />
               </div>
-            <div style={{display:'flex',flex:1,justifyContent:'center',alignItems:'center',color:theme.palette.primary.contrastText,letterSpacing:1.5}}>
+            <div style={{display:'flex',flex:1,justifyContent:'center',alignItems:'center',color:theme.palette.text.primary,letterSpacing:1.5}}>
               {props?.Label} 
             </div>
     </Box>
@@ -549,7 +549,7 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
     
   }
   return(
-  <Quantom_Grid component={Paper} container sx={{display:'flex',/*backgroundColor:theme.palette?.secondary?.light,*/paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
+  <Quantom_Grid component={Paper} container sx={{display:'flex',paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
           <Quantom_Grid container={Paper} sx={{marginRight:'4px'}}>
              <input type='text' style={{borderRadius:'5px',border:`.5px solid ${theme.palette.secondary.main}`}}></input>
           </Quantom_Grid>
