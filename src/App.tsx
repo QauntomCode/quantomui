@@ -17,7 +17,8 @@ import { LoginComp } from './Config/Login/Views/LoginComp';
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import "./style/ag_grid_style.css"
-import { AppContainerTabHelper } from './quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
+import { AppContainerTabHelper, generateGUID, MenuComponentRenderer, MenuContainerProps } from './quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper';
+import { SubAccountView } from './quantom_ui/account/config/subAccount/view/SubAccountView';
 // import { AppContainer } from './quantom_comps/AppContainer';
 
 function App() {
@@ -72,6 +73,32 @@ function App() {
 }
 
 
+
+interface DirectRenderComponentProps{
+  MenuCode?:string
+}
+export const DirectRenderComponent=<T,>(props?:DirectRenderComponentProps)=>{
+  const[state,setState]=React.useState<MenuContainerProps<T>>();
+  
+  React.useEffect(()=>{
+    const fillInitialValues=async()=>{
+      let guid= state?.UniqueId;
+      if(!state?.UniqueId)
+      {
+        guid= await generateGUID();
+      }
+      setState({...state,MenuCode:props?.MenuCode,UniqueId:guid})
+    }
+
+    fillInitialValues();
+  },[props?.MenuCode])
+  return(
+  <>
+    <MenuComponentRenderer {...state}/>
+  </>)
+}
+
+
 const router= createBrowserRouter([
   {
     path:"/",
@@ -85,8 +112,16 @@ const router= createBrowserRouter([
     path:'/POS',
     element:(<AppContainerTabHelper/>)
 
+  },
+  {
+    path:'/SubAccount',
+    element:(<DirectRenderComponent MenuCode='001-002'/>)
+
   }
+
 ])
+
+
 interface sale{
   billNo?:string
 }

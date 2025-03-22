@@ -87,15 +87,8 @@ export interface MenuContainerProps<T>{
     state?:T;
     fullState?:QuantomFormState<T>;
     setState?:(state?:T)=>void;
-    // setSaveMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
-    // setDeleteMethod?:(method?:(payLoad:T)=>Promise<HttpResponse<T>>)=>void;
-    // setGetOneMethod?:(method?:(keyNo?:string)=>Promise<HttpResponse<T>>)=>void;
-    // setBasicKeys?:(method?:()=>BasicKeysProps)=>void;
-    // setCompSettings?:(settings?:ComponentSettings)=>void;
     setListComponent?:(comp?:ReactNode)=>void;
     setPrimaryKeyNo?:(keyNo?:string)=>void;
-    // setInitOnLocationChange?:(method?:(loc?:LocationModel)=>void)=>void;
-    // setAfterResetMethod?:(method?:(loc?:LocationModel)=>void)=>void;
     errorToast?:(message?:string)=>void;
     AddComponentTabs?:(tabs?:ComponentTabProps[])=>void;
 }
@@ -111,6 +104,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
 
   React.useEffect(()=>{
     if(props?.UniqueId){
+    
       set_initial_state(props?.UniqueId)
     }
   },[props?.UniqueId]);
@@ -261,7 +255,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   const appType= GetAPPType();
   const [defaultTabs,setDefaultTabs]=React.useState<BasicTabProps[]>([]);
   React.useEffect(()=>{
-    setDefaultTabs([...getDefaultTabs(props?.UniqueId,fullState?.compSettings?.WillHideUserLog)])
+    //setDefaultTabs([...getDefaultTabs(props?.UniqueId,fullState?.compSettings?.WillHideUserLog)])
   },[fullState?.compSettings?.WillHideUserLog])
 
 

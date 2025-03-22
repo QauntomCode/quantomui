@@ -3,7 +3,7 @@
 import React from 'react'
 import { SubAccountModel } from '../model/SubAccountModel'
 import { BasicKeysProps, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
-import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
+import { Quantom_LOV, Quantom_LOV1 } from '../../../../../quantom_comps/Quantom_Lov'
 import { GetAllMainAccounts } from '../../mainAccount/impl/MainAccountImpl'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
@@ -45,10 +45,16 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
     <>
      <GroupContainer Label='Sub Account Detail'>
         <Quantom_Grid item size={{xs:12}}>
-          <Quantom_LOV onChange={(selected)=>{
-                  props?.setState?.({...props?.state,mainAccount:{Code:selected?.Code,Name:selected?.Name},MainCode:selected?.Code})
-                  console.log('state of sub account is ',props?.state)
-          }} selected={{Code:props?.state?.mainAccount?.Code,Name:props?.state?.mainAccount?.Name}} FillDtaMethod={handleMainAccounts} label='Main Account'></Quantom_LOV>
+          {/* <Quantom_LOV1 onChange={(selected) => {
+            props?.setState?.({ ...props?.state, mainAccount: { Code: selected?.Code, Name: selected?.Name }, MainCode: selected?.Code })
+            console.log('state of sub account is ', props?.state)
+          } } selected={{ Code: props?.state?.mainAccount?.Code, Name: props?.state?.mainAccount?.Name }} FillDtaMethod={handleMainAccounts} 
+          label='Main Account' uniqueKeyNo={props?.UniqueId?""}></Quantom_LOV> */}
+
+          <Quantom_LOV1 keyNo='MAIN_ACCOUNT' label='Main Account' FillDtaMethod={handleMainAccounts} onChange={(acc)=>{props?.setState?.({...props?.state,MainCode:acc?.Code,mainAccount:{
+            Code:acc?.Code,
+            Name:acc?.Name
+          }})}}  uniqueKeyNo={props?.UniqueId??""}/>
         </Quantom_Grid>
         <Quantom_Grid container spacing={.5}>
           <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
