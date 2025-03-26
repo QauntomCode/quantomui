@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { useSelector } from 'react-redux';
 import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu, get_helperData_by_key } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
@@ -18,7 +18,7 @@ import SaveButtonIcon from '@mui/icons-material/SaveOutlined';
 import SearchButtonIcon from '@mui/icons-material/FindInPageOutlined';
 import CancelButtonIcon from '@mui/icons-material/DoNotDisturbOutlined';
 import { QuantomColors } from '../../../QuantomTheme';
-import { HTTP_RESPONSE_TYPE, HttpResponse } from '../../../../HTTP/QuantomHttpMethods';
+import { getToken, HTTP_RESPONSE_TYPE, HttpResponse } from '../../../../HTTP/QuantomHttpMethods';
 import { SubSubAccountView } from '../../../../quantom_ui/account/config/subSubAccount/view/SubSubAccountView';
 import { RegisterAccountView } from '../../../../quantom_ui/account/config/registerAccount/view/RegisterAccountView';
 import { OpeningBalanceView } from '../../../../quantom_ui/account/processing/openingBalance/view/OpeningBalanceView';
@@ -307,17 +307,22 @@ interface UserLocationsModalProps<T>{
 export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
     const locs= useSelector((state:any)=> get_current_user_locations(state));
     const font= useQuantomFonts();
+    const [isLocationLoad,setIsLocationLoaded]=useState(false);
     const fState=useSelector((state:any)=>full_component_state(state,props?.basProps?.UniqueId??""));
     React.useEffect(()=>{
          async function method() {
-          if(!locs || (locs?.length??0)<1){
+          //let token= await getToken();
+          //alert(token);
+          //alert(fState?.compSettings?.willShowLocations)
+          if(fState?.compSettings?.willShowLocations && (!locs || (locs?.length??0)<1)){
+            //alert('called')
             let cLocs=await GetLocationsByUserId();
-            console.warn('user locations from http are',cLocs)
-            store?.dispatch(set_user_locations(cLocs));
+             console.warn('user locations from http are',cLocs)
+              store?.dispatch(set_user_locations(cLocs));
            }
          }
          method();
-    },[locs])
+    },[/*locs*/])
 
 
     React.useEffect(()=>{

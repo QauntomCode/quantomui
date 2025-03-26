@@ -156,7 +156,7 @@ export const QuantomPOST = async <T>(
   }
 };
 
-const getToken = async (): Promise<string> => {
+export const getToken = async (): Promise<string> => {
   let res = (await window.localStorage.getItem(TOKEN_KEY_LOCAL_STORAGE)) ?? "";
   return Promise.resolve(res);
 };
