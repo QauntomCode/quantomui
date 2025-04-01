@@ -18,7 +18,7 @@ import { FilterEntities, QuantomFilterOldModel } from "../../../../../QuantomRep
 import { GetLedgerData } from "../impl/LedgerImpl";
 import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView";
 import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
-import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerImpl";
+import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 import { LedgerComponentState, LedgerFilterHeaderComp } from "./LedgerView";
 import { useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 

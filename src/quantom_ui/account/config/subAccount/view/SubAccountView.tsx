@@ -51,7 +51,7 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
           } } selected={{ Code: props?.state?.mainAccount?.Code, Name: props?.state?.mainAccount?.Name }} FillDtaMethod={handleMainAccounts} 
           label='Main Account' uniqueKeyNo={props?.UniqueId?""}></Quantom_LOV> */}
 
-          <Quantom_LOV1 keyNo='MAIN_ACCOUNT' label='Main Account' FillDtaMethod={handleMainAccounts} onChange={(acc)=>{props?.setState?.({...props?.state,MainCode:acc?.Code,mainAccount:{
+          <Quantom_LOV1 keyNo='MAIN_ACCOUNT' selected={{Code:props?.state?.MainCode,Name:props?.state?.mainAccount?.Name}} label='Main Account' FillDtaMethod={handleMainAccounts} onChange={(acc)=>{props?.setState?.({...props?.state,MainCode:acc?.Code,mainAccount:{
             Code:acc?.Code,
             Name:acc?.Name
           }})}}  uniqueKeyNo={props?.UniqueId??""}/>
