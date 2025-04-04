@@ -10,6 +10,7 @@ import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../q
 import { SubAccountDelete, SubAccountGetOne, SubAccountInsert } from '../impl/subAccountImpl'
 import { SubAccountList } from './SubAccountList'
 import { GroupContainer } from '../../../processing/voucher/view/VoucherView'
+import { get_current_user_locations_with_out_selector } from '../../../../../redux/store'
 
 export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
 
@@ -51,10 +52,17 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
           } } selected={{ Code: props?.state?.mainAccount?.Code, Name: props?.state?.mainAccount?.Name }} FillDtaMethod={handleMainAccounts} 
           label='Main Account' uniqueKeyNo={props?.UniqueId?""}></Quantom_LOV> */}
 
-          <Quantom_LOV1 keyNo='MAIN_ACCOUNT' label='Main Account' FillDtaMethod={handleMainAccounts} onChange={(acc)=>{props?.setState?.({...props?.state,MainCode:acc?.Code,mainAccount:{
+          {/* <Quantom_LOV1 keyNo='MAIN_ACCOUNT' label='Main Account' FillDtaMethod={handleMainAccounts} onChange={(acc)=>{props?.setState?.({...props?.state,MainCode:acc?.Code,mainAccount:{
             Code:acc?.Code,
             Name:acc?.Name
-          }})}}  uniqueKeyNo={props?.UniqueId??""}/>
+          }})}}  uniqueKeyNo={props?.UniqueId??""}/> */}
+
+          <Quantom_LOV1 selected={{Code:props?.state?.MainCode,Name:props?.state?.mainAccount?.Name}} 
+                        onChange={(sel)=>(props?.setState?.({...props?.state,MainCode:sel?.Code,mainAccount:{Code:sel?.Code,Name:sel?.Name}}))} 
+                        label="Main Account"
+                        uniqueKeyNo={props?.UniqueId??""} 
+                        FillDtaMethod={handleMainAccounts}
+                        keyNo="MAIN_ACCOUNT_DATA"/>
         </Quantom_Grid>
         <Quantom_Grid container spacing={.5}>
           <Quantom_Grid item size={{xs:4,md:3,lg:2}}>

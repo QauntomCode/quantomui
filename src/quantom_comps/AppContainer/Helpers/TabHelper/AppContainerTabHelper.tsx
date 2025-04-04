@@ -678,7 +678,6 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
           }
           if(methods?.settings)
           {
-            // alert(methods?.settings?.WillHideUserLog)
             store.dispatch(set_component_settings({stateKey:methods?.uniqueKey,settings:{...methods?.settings}}))
           }
           if(methods?.AfterResetMethod){
@@ -688,7 +687,11 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
           if(methods?.InitOnLocationChange){
             store?.dispatch(set_location_init_method({stateKey:methods.uniqueKey,method:methods.InitOnLocationChange}))
           }
-          store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
+
+          // let routeType= GetRoutType();
+          // if(routeType==='WITH_TAB'){
+            store?.dispatch((change_first_call({stateKey:methods?.uniqueKey,calledSuccessfully:true})))
+          // }
     }
   }, 400);
 
@@ -806,6 +809,11 @@ export const GetAPPType=():APP_TYPE=>{
   console.log('app type is erp')
 
   return APP_TYPE.ERP;
+}
+
+export const GetRoutType=():'WITH_ROUTE'|'WITH_TAB'=>{
+  return window?.globalConfig?.RouteType?.toUpperCase()==="WITH_ROUTE" ?'WITH_ROUTE':'WITH_TAB';
+
 }
 
 
@@ -1063,3 +1071,16 @@ const listStyle = {
   borderColor: 'divider',
   backgroundColor: 'background.paper',
 };
+
+
+export const SHORT_CUT_KEYS = [
+  { ctrl: true, key: "s" }, // Save
+  { ctrl: true, key: "d" }, // Delete
+  { ctrl: true, key: "c" }, // Copy
+  { ctrl: true, key: "f" }, // Copy
+  { ctrl: true, key: "x" }, // Copy
+  { ctrl: true, key: "n" }, // Copy
+
+
+
+];

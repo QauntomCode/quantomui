@@ -9,6 +9,7 @@ import store, { full_component_state, get_helperData_by_key, useQuantomFonts } f
 import { BorderBottom, LocationDisabled } from '@mui/icons-material';
 import { add_helper_data_single_key } from '../redux/reduxSlice';
 import { useSelector } from 'react-redux';
+import { isNullOrEmpty } from '../CommonMethods';
 
 
 
@@ -381,10 +382,11 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   const FilterData=async(limit:number,queryId?:number)=>{
    
     let tValus=[...allValues];
-    if(search==='')
+    if(isNullOrEmpty(search))
     {
       let nVals= tValus?.splice(0,limit);
       setValues([...nVals])
+      return;
     }
     let res:any[]= [];
     let upperSearch= search?.toUpperCase();

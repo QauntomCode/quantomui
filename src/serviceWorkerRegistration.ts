@@ -1,5 +1,11 @@
 
 export function register() {
+
+  let isPApp= isProgressiveApp()
+  if(!isPApp){
+     //alert("not progressive app")
+    return;
+  }
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
@@ -12,4 +18,12 @@ export function register() {
         });
     });
   }
+}
+
+
+export const isProgressiveApp=()=>{
+  if(window?.globalConfig?.IsNotProgressiveApp){
+     return false;
+  }
+  return true;
 }

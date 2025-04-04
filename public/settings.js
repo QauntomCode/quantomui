@@ -3,6 +3,7 @@ window.globalConfig = {
     apiUrl:"http://localhost:44345/api/",
     appName: "Business One Erp",
     // appType:""//"DENTAL_APP"//"EGG_APP"//"POS"
-    appType:"ERP"//"DENTAL_APP"//"EGG_APP"//"POS"
-
+    appType:"ERP",//"DENTAL_APP"//"EGG_APP"//"POS"
+    RouteType:'WITH_ROUTE',
+    IsNotProgressiveApp:true,
   };

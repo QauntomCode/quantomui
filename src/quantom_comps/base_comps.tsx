@@ -9,7 +9,7 @@ import { Variant } from '@testing-library/react';
 import React from 'react';
 import { useQuantomFonts } from '../redux/store';
 import SearchIcon from '@mui/icons-material/Search';
-import { IconByName } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
+import { IconByName, SHORT_CUT_KEYS } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
 import { ListCompButton } from '../quantom_ui/account/report/Ledger/view/LedgerView';
 
 
@@ -172,6 +172,15 @@ export const Quantom_Input1=(props: {
 
   const handleKeyDown = (event:any) => {
     
+    const isShortcut = SHORT_CUT_KEYS.some(
+      (shortcut) => shortcut.ctrl === event?.ctrlKey && shortcut.key === event?.key.toLowerCase()
+    );
+
+    if (isShortcut) {
+      event?.preventDefault();
+      console.log(`Shortcut Ctrl + ${event?.key.toUpperCase()} triggered`);
+    }
+
       if (event.keyCode === 13 && !props?.willHandleTabOnEnter) {
        const focusableElements:any = Array.from(document.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])'));
         const currentIndex = focusableElements.indexOf(event.target);
@@ -185,8 +194,10 @@ export const Quantom_Input1=(props: {
     
 
     else{
-      // alert(event.key)
+
+      //event?.preventDefault();
       props?.onKeyDown?.(event);
+    
     }
   };
 

@@ -4,6 +4,8 @@ declare global {
       apiUrl: string;
       appName: string;
       appType?: string;
+      RouteType?:'WITH_ROUTE'|'WITH_TAB',
+      IsNotProgressiveApp?:boolean,
     };
   }
 }
