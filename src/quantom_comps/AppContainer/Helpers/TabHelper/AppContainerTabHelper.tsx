@@ -259,11 +259,16 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
   },[fullState?.compSettings?.WillHideUserLog])
 
 
-  const willShowToolbar=()=>{
+  const WillHideToolbar=()=>{
 
-   if(fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType ||APP_TYPE.DENTAL_APP)){
-    return false;
-   }
+    console.log('app type is ',appType)
+    if(appType===APP_TYPE.ERP && !fullState?.compSettings?.wWillHideToolbar){
+      return false;
+    }
+
+  //  if(fullState?.compSettings?.wWillHideToolbar || (appType===APP_TYPE.SIMPLE_POS || APP_TYPE.EGG_ERP===appType ||APP_TYPE.DENTAL_APP)){
+  //   return false;
+  //  }
    return true;
   }
 
@@ -275,7 +280,7 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <QuantomErrorDialog />
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
-         willShowToolbar()?(<></>):(
+         WillHideToolbar()?(<></>):(
         <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
         )
       }
@@ -314,15 +319,15 @@ export const UserLocationsModalComp=<T,>(props?:UserLocationsModalProps<T>)=>{
           //let token= await getToken();
           //alert(token);
           //alert(fState?.compSettings?.willShowLocations)
-          if(fState?.compSettings?.willShowLocations && (!locs || (locs?.length??0)<1)){
-            //alert('called')
+          if(fState?.compSettings?.willShowLocations){
+            // alert('called')
             let cLocs=await GetLocationsByUserId();
              console.warn('user locations from http are',cLocs)
               store?.dispatch(set_user_locations(cLocs));
            }
          }
          method();
-    },[/*locs*/])
+    },[fState?.compSettings?.willShowLocations])
 
 
     React.useEffect(()=>{
@@ -456,32 +461,33 @@ export interface MenuComponentProps<T> extends MenuContainerProps<T>{
 
 
 
-export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
+// export const AllMenuRenderer=(props?:MenuComponentProps<any>)=>{
  
-  return(
-    <>
-       <Quantom_Grid container spacing={1.5} display={'flex'}>
-           {/* {AllCompMenus?.map((item,index)=>{
-               return(
-                  <Quantom_Grid item xs={4} sx={{fontWeight:'bold',fontSize:'12px'}} >
-                    <Paper onClick={async()=>{
-                       let res= await generateGUID();
-                       console.warn('this is my response of ',res)
-                       store.dispatch(open_new_menu({
-                        MenuCode:item.MenuCode,
-                        MenuCaption:item.MenuCaption,
-                        UniqueKeyNo:res,
-                      }));
-                    }} sx={{padding:'10px 0px',flex:1 ,display:"flex", justifyContent:'center'}}>
-                      {item?.MenuCaption}
-                    </Paper>
-                  </Quantom_Grid>
-               )
-           })} */}
-       </Quantom_Grid>
-    </>
-  )
-}
+//   return(
+//     <>
+//        <Quantom_Grid container spacing={1.5} display={'flex'}>
+//         <div>Hello</div>
+//            {/* {AllCompMenus?.map((item,index)=>{
+//                return(
+//                   <Quantom_Grid item xs={4} sx={{fontWeight:'bold',fontSize:'12px'}} >
+//                     <Paper onClick={async()=>{
+//                        let res= await generateGUID();
+//                        console.warn('this is my response of ',res)
+//                        store.dispatch(open_new_menu({
+//                         MenuCode:item.MenuCode,
+//                         MenuCaption:item.MenuCaption,
+//                         UniqueKeyNo:res,
+//                       }));
+//                     }} sx={{padding:'10px 0px',flex:1 ,display:"flex", justifyContent:'center'}}>
+//                       {item?.MenuCaption}
+//                     </Paper>
+//                   </Quantom_Grid>
+//                )
+//            })} */}
+//        </Quantom_Grid>
+//     </>
+//   )
+// }
 
 
 
@@ -1027,11 +1033,11 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
 
 ]
 export const  AllCompMenus:MenuInfoModel<any>[]=[
-  {
-    MenuCode:"001",
-    MenuCaption:"Menus",
-    GetComponent:(props?:MenuComponentProps<unknown>)=>(<AllMenuRenderer {...props}/>)
-  },
+  // {
+  //   MenuCode:"001",
+  //   MenuCaption:"Menus",
+  //   GetComponent:(props?:MenuComponentProps<unknown>)=>(<AllMenuRenderer {...props}/>)
+  // },
   {
     MenuCode:"TEST_REPORT",
     MenuCaption:"All Reports",
