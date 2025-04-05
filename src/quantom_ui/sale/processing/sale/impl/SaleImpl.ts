@@ -43,6 +43,16 @@ export const DeleteSale = async (
   return res;
 };
 
+
+export const SaleGetOne1 = async (billNo?: string): Promise<HttpResponse<VmSale>> => {
+  let res = await QuantomGET<VmSale>(
+    SALE_GET_ONE_URL + `?Code=${billNo}`,
+    true
+  );
+  
+  return res;
+};
+
 export const SaleGetOne = async (billNo?: string): Promise<VmSale> => {
   let res = await QuantomGET<VmSale>(
     SALE_GET_ONE_URL + `?Code=${billNo}`,

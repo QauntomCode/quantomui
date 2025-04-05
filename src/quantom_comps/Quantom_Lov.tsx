@@ -314,6 +314,7 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   // },[])
 
   React.useEffect(()=>{
+
     //  alert('fill refresh method value is'+ props?.RefreshFillDtaMethod)
       // if(props?.RefreshFillDtaMethod && (props?.RefreshFillDtaMethod??0)>0){
          loadAllValues();
@@ -330,7 +331,8 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   const handleLoadInitialData=async()=>{
     // alert('method called')
     let vals= await props?.FillDtaMethod?.();
-    console.warn('all values are',vals)
+    // console.warn('all values are',vals)
+    // alert('unique key no is'+props?.uniqueKeyNo+"KeyNo is"+props?.keyNo)
     store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueKeyNo,data:{keyNo:props?.keyNo,Data:vals}})))
   }
 
@@ -382,6 +384,7 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   const FilterData=async(limit:number,queryId?:number)=>{
    
     let tValus=[...allValues];
+    console.log('total values are ',tValus)
     if(isNullOrEmpty(search))
     {
       let nVals= tValus?.splice(0,limit);
@@ -480,7 +483,7 @@ return (
         label={props?.label} 
         rightIcons={[
           {IconName:'NoteAddTwoTone',OnClick:()=>{alert('add button pressed')}},
-          {IconName:'RestorePageTwoTone',OnClick:()=>{loadAllValues()}},
+          {IconName:'RestorePageTwoTone',OnClick:()=>{handleLoadInitialData()}},
           {IconName:'DriveFileMoveTwoTone',OnClick:()=>{alert('drive button pressed')}}
         ]}
       
