@@ -5,7 +5,7 @@ import { VmSale } from "../../model/VmSaleModel";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../../redux/store";
 import { POS_INVENTORY_ITEM_VIEW_TYPE } from "../../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { add_helper_data_single_key } from "../../../../../../redux/reduxSlice";
 import { Button, Paper, useTheme } from "@mui/material";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
@@ -585,5 +585,43 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
     }
 
     return Promise.resolve(obj);
+  }
+
+
+
+  export interface SaleAmountTotalModel{
+     grossAmount?:number;
+     lineDiscount?:number;
+     invoiceDiscount?:number;
+     totalDiscount?:number;
+     netAmount?:number;
+     balance?:number;
+  }
+
+  export const useSaleAmountTotals=(props?:MenuComponentProps<VmSale>):SaleAmountTotalModel|undefined=>{
+    
+    // const[totals,setTotals]=useState<SaleAmountTotalModel>()
+   return useMemo(()=>{
+        const grossAmount= props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)),0)??0
+        const linediscount= safeParseToNumber((props?.state?.SaleDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))
+        const totalDiscount= linediscount+ safeParseToNumber((props?.state?.Sale?.ExtraDiscount??0))
+        console.warn('discount amount is'+totalDiscount)
+        console.warn('Extra discount is'+props?.state?.Sale?.ExtraDiscount)
+
+        const netAmount= safeParseToNumber(grossAmount??0)-safeParseToNumber(totalDiscount??0);
+        const balance= (netAmount-(props?.state?.Sale?.TotalReceived??0))
+
+        return{
+            grossAmount:grossAmount,
+            lineDiscount:linediscount,
+            invoiceDiscount:props?.state?.Sale?.ExtraDiscount,
+            totalDiscount:totalDiscount,
+            netAmount:netAmount,
+            balance:balance
+        }
+        //setTotals({grossAmount:grossAmount,disAmount:disAmount,netAmount:netAmount,balance:balance})
+
+    },[props?.state])
+
   }
 

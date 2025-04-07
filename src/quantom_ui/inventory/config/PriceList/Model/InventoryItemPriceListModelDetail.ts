@@ -28,6 +28,7 @@ export interface InventoryItemPriceListDetailModel {
   IsPriceUnit?: boolean;
   PriceCameFrom?: string;
   ReletivePrice?: ReleventPricesDetailModel[];
+  PrimaryUnits?: number;
 }
 
 export interface ReleventPricesDetailModel {

@@ -58,11 +58,11 @@ function App() {
   return (
     <>
     <React.StrictMode>
-    <div style={{minHeight:window?.innerHeight,backgroundColor:bg_color}}>
-      <ThemeProvider theme={QuantomLightTheme}>
-         <RouterProvider router={router}/>
-      </ThemeProvider>
-    </div>
+      <div style={{minHeight:window?.innerHeight,backgroundColor:bg_color}}>
+        <ThemeProvider theme={QuantomLightTheme}>
+          <RouterProvider router={router}/>
+        </ThemeProvider>
+      </div>
     </React.StrictMode>
     
     </>

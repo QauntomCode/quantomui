@@ -77,6 +77,8 @@ export interface CommonInvDetailModel {
   TaxLine?: TaxLineDTOModel | null;
   ServiceStatus?: string;
   ServiceDate?: Date;
+  IsDiscountPercentChanged?: boolean;
+  ShoulChangeLineTotals?: boolean;
 }
 
 export class TaxLineDTOModel {

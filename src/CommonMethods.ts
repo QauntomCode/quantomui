@@ -10,6 +10,27 @@ export const safeParseToNumber = (value: any): number => {
   const parsed = parseFloat(value);
   return isNaN(parsed) || parsed === 0 ? 0 : parsed;
 };
+
+export const safePreviewNumber = (value: any): number => {
+  const parsed = parseFloat(value);
+  let number = isNaN(parsed) || parsed === 0 ? 0 : parsed;
+  let rounded = Number(number.toFixed(2)); // 3.14
+  return rounded;
+};
+
+export const get_percent_of_obtain_am = (obtAm?: number, total?: number) => {
+  if (!total || !obtAm) return 0; // avoid division by zero
+  return (obtAm / total) * 100;
+};
+
+export const get_obtain_am_of_percent = (percent?: number, total?: number) => {
+  if (!total || !percent) return 0;
+  let amount = (percent * total) / 100;
+  return amount;
+  //(value.DisPer * (value.Amount-value.Scheme)) / 100
+  // return Math.round((amount / total) * 100 * 100) / 100;
+};
+
 export function isNullOrEmpty(value: string | null | undefined): boolean {
   return value === null || value === undefined || value.trim() === "";
 }

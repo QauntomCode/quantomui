@@ -1,4 +1,4 @@
-import { BorderBottom, Height, Margin, Padding } from '@mui/icons-material';
+import { BorderBottom, Height, Label, Margin, Padding } from '@mui/icons-material';
 import { Box, Button, ButtonProps, FilledInput, FormControl, Grid2, InputAdornment, InputLabel, OutlinedInput, TextField, TextFieldProps, useTheme } from '@mui/material';
 // import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
@@ -204,12 +204,12 @@ export const Quantom_Input1=(props: {
 
   const theme= useTheme();
   const font= useQuantomFonts();
-
+  const inputId = props?.id || `input-${Math.random()}`;
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
-    <FormControl sx={{backgroundColor:theme.palette.background.default}}   fullWidth variant="outlined">
+    <FormControl  sx={{backgroundColor:theme.palette.background.default}}   fullWidth variant="outlined">
     {props?.willHideLabel?(<></>):(
-      <InputLabel shrink sx={{ 
+      <InputLabel htmlFor={inputId}  shrink sx={{ 
         // fontSize: '20px',
                 fontWeight:'bold',
                 letterSpacing:1.2,
@@ -221,8 +221,9 @@ export const Quantom_Input1=(props: {
     
     <OutlinedInput
           
-          id={props?.id || `input-${Math.random()}`} // Random ID
+          id={inputId} // Random ID
           fullWidth
+          label={props?.label}
           multiline={props?.multiline}
           maxRows={props?.maxRows}
           disabled={props?.disabled}
@@ -261,7 +262,6 @@ export const Quantom_Input1=(props: {
         }
       }
 
-          label={props.label}
           autoComplete="new-password" 
           // id="outlined-size-small"
           // autoComplete='off'

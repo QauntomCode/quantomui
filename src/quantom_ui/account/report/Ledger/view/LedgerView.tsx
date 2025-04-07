@@ -18,7 +18,7 @@ import { FilterEntities, QuantomFilterOldModel } from "../../../../../QuantomRep
 import { GetLedgerData } from "../impl/LedgerImpl";
 import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView";
 import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
-import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerImpl";
+import { getLedgerDetail } from "../../detailLedger/impl/DetailLedgerimpl";
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 import { FilterHandler } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 
