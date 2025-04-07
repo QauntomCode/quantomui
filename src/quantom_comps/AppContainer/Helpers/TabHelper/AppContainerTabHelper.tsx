@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode, useState } from 'react'
 import { useSelector } from 'react-redux';
-import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu, get_helperData_by_key } from '../../../../redux/store';
+import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu, get_helperData_by_key, getCurrentLocationWithStore } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, Grid, List, ListItem, ListItemText, Paper, Slide, Snackbar, useTheme } from '@mui/material';
 import { add_helper_data_single_key, change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
@@ -41,7 +41,7 @@ import { POS_ACCOUNT_REPORT_LEDGER, POS_CATEGORY_FORM_MENU_CODE, POS_CUSTOMER_AP
 import { POS_SetupFormView } from '../../../../quantom_ui/inventory/config/Category/POSSetupForm';
 import { POSCustomerSetup } from '../../../../quantom_ui/sale/config/customer/view/POSCustomerSetup';
 import { POSSaleView } from '../../../../quantom_ui/sale/processing/sale/view/POSSaleView';
-import { QuantomErrorDialog } from './QuantomError';
+import { QuantomErrorDialog, ShowQuantomError } from './QuantomError';
 import { POSSupplierView } from '../../../../quantom_ui/Purchase/Config/Supplier/customer/view/POSSupplierView';
 import { POSPurchaseView } from '../../../../quantom_ui/Purchase/Processing/Purchase/view/POSPurchaseView';
 import { POSCustomerReceiptView } from '../../../../quantom_ui/payments/customerReceipts/view/POSCustomerReceiptView';
@@ -517,6 +517,7 @@ interface QuantomToolBarCompProps<T>{
 export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const state = useSelector((state:any)=>full_component_state<T>(state,props?.baseProps?.UniqueId||""));
   const fullState= useSelector((state?:any)=>full_component_state<T>(state,props?.baseProps?.UniqueId||""))
+  const formLocation= UserGetSelectedLocation(props?.baseProps)
   React.useEffect(()=>{
       // alert('call save method'+props?.CallSaveMethod)
       if(props?.CallSaveMethod){
@@ -538,24 +539,38 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
     }
   }
 
-  const handleSaveMethod=()=>{
+  const handleSaveMethod=async()=>{
     console.warn('state is',state?.QuantomFormCoreState)
-    //  return;
-    // alert('this is SAVE  method')
-
-    state?.SaveMethod?.(state?.QuantomFormCoreState)?.then((x)=>{
-      if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-        let res:any= x?.Response??{};
-          props?.baseProps?.setState?.({...res})
-          props?.showToast?.('Saved Successfully')
-          
-      }
-      else{
-         props?.baseProps?.errorToast?.(x?.ErrorMessage)
-        console.error('some thing invalid happen')
-      }
-    });
     
+    try {
+
+      ShowLoadingDialog();
+
+      
+
+      var loc= await getCurrentLocationWithStore(props?.baseProps?.UniqueId);
+      let ctx:FormContextModel={
+        Location:loc
+      }
+      state?.SaveMethod?.(state?.QuantomFormCoreState,ctx)?.then((x)=>{
+        if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
+          let res:any= x?.Response??{};
+            props?.baseProps?.setState?.({...res})
+            HideLoadingDialog();
+            props?.showToast?.('Saved Successfully')
+            
+        }
+        else{
+          //props?.baseProps?.errorToast?.(x?.ErrorMessage)
+          ShowQuantomError({MessageBody:x?.ErrorMessage,MessageHeader:"Error"})
+          HideLoadingDialog();
+          console.error('some thing invalid happen')
+        }
+      });
+    }
+    catch{
+      HideLoadingDialog();
+    }
   }
   return(
   <Quantom_Grid component={Paper} container sx={{display:'flex',paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
@@ -650,11 +665,14 @@ const QUANTOM_Toast=(props?:QUANTOM_ToastProps)=>{
 }
 
 
+export interface FormContextModel{
+   Location?:LocationModel
+}
 
 export interface FormMethodsProps<T>{
-    SaveMethod?:(payLoad:T)=>Promise<HttpResponse<T>>;
-    DeleteMethod?:(payLoad:T)=>Promise<HttpResponse<T>>;
-    GetOneMethod?:(keyNo?:string)=>Promise<HttpResponse<T>>;
+    SaveMethod?:(payLoad:T,helpingContext?:FormContextModel)=>Promise<HttpResponse<T>>;
+    DeleteMethod?:(payLoad:T,context?:FormContextModel)=>Promise<HttpResponse<T>>;
+    GetOneMethod?:(keyNo?:string,mode?:FormContextModel)=>Promise<HttpResponse<T>>;
     SetBasicKeys?:()=>BasicKeysProps;
     InitOnLocationChange?:(loc?:LocationModel)=>void;
     AfterResetMethod?:(loc?:LocationModel)=>void;
