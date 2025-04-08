@@ -15,7 +15,7 @@ import { RenderItemGrid, RenderItemsGridV1 } from "../../../../Purchase/Processi
 import { InventoryAction } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel"
 import { useSaleAmountTotals } from "./POSSale/POSSaleView1"
 import { Button, Paper, useTheme } from "@mui/material"
-import store, { get_helperData_by_key, getCurrentLocationWithStore, useQuantomFonts } from "../../../../../redux/store"
+import store, { get_form_state_without_selector, get_helperData_by_key, getCurrentLocationWithStore, useQuantomFonts } from "../../../../../redux/store"
 import { isNullOrEmpty, safeParseToNumber, safePreviewNumber } from "../../../../../CommonMethods"
 import dayjs from "dayjs"
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1"
@@ -59,6 +59,12 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
                     nP={...nP,Sale:{...nP.Sale,BillDate:new Date()}}
                  }
                 return InsertSale(nP)
+             },
+             overRideSetStateAfterSave:async(payload,ctx)=>{
+                // let s= get_form_state_without_selector(props?.UniqueId) as VmSale 
+                let s= await get_form_state_without_selector(props?.UniqueId) as VmSale
+                console.log('after save data is',payload)
+                props?.setState?.({...s,Sale:{...s?.Sale,BillNo:payload?.Sale?.BillNo}})
              },
              DeleteMethod:(payload)=>DeleteSale(payload),
              GetOneMethod:(payload)=>SaleGetOne1(payload),

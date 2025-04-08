@@ -34,6 +34,7 @@ export interface QuantomFormState<T> {
   KeyValues?: (t?: T) => KeyValues;
   Location?: LocationModel;
   SaveMethod?: (payload?: T,context?:FormContextModel) => Promise<HttpResponse<T>>;
+  overRideSaveSetState?: (payload?: T,context?:FormContextModel) => void;
   init?: () => void;
   DeleteMethod?: (payload?: T,context?:FormContextModel) => Promise<HttpResponse<T>>;
   GetOneMethod?: (keyNo?: string,context?:FormContextModel) => Promise<HttpResponse<T>>;
@@ -94,6 +95,10 @@ export interface SetFirstCallPayload {
 }
 export interface StateMethodPayloadType<T> {
   method?: (payLoad: T) => Promise<HttpResponse<T>>;
+  stateKey?: string;
+}
+export interface OverRiderAfterSaveState<T> {
+  method?: (payLoad: T) => void;
   stateKey?: string;
 }
 
@@ -177,6 +182,21 @@ export const formsSlice = createSlice({
       const updatedFormsState = state.FormsState?.map((formState) =>
         formState.stateKey === action.payload.stateKey
           ? { ...formState, SaveMethod: action?.payload?.method }
+          : formState
+      );
+      return {
+        ...state,
+        FormsState: updatedFormsState,
+      };
+    },
+
+    override_setState_after_save: (
+      state,
+      action: PayloadAction<OverRiderAfterSaveState<any>>
+    ) => {
+      const updatedFormsState = state.FormsState?.map((formState) =>
+        formState.stateKey === action.payload.stateKey
+          ? { ...formState, overRideSaveSetState: action?.payload?.method }
           : formState
       );
       return {
@@ -560,6 +580,7 @@ export const {
   set_selected_menu_index,
   add_helper_data,
   add_helper_data_single_key,
+  override_setState_after_save
   // set_state_with_immmer,
 } = formsSlice.actions;
 

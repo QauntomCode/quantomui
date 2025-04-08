@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import store, { get_open_menus, set_initial_state, set_form_state, form_state_selector, useQuantomFonts, full_component_state, get_component_settings, get_current_user_locations, get_component_selected_locations, get_selected_menu_index, remove_menu, get_helperData_by_key, getCurrentLocationWithStore } from '../../../../redux/store';
 import BasicTabs, { BasicTabProps } from './BasicTabs';
 import { Alert, Box, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, Grid, List, ListItem, ListItemText, Paper, Slide, Snackbar, useTheme } from '@mui/material';
-import { add_helper_data_single_key, change_first_call, change_form_state, ComponentSettings, open_new_menu, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
+import { add_helper_data_single_key, change_first_call, change_form_state, ComponentSettings, open_new_menu, override_setState_after_save, QuantomFormState, set_after_reset_method, set_basic_keys_method, set_component_record_key, set_component_selected_locations, set_component_settings, set_delete_method, set_get_one_method,set_location_init_method, set_save_method, set_selected_menu_index, set_user_locations } from '../../../../redux/reduxSlice';
 // import { SaleComponent } from '../../../../quantom_ui/sale/views/processing/SaleComponent';
 import { QuantomReportView } from '../../../../QuantomReport/Views/QuantomReportView';
 import { MainAccountView } from '../../../../quantom_ui/account/config/mainAccount/view/MainAccountView';
@@ -569,7 +569,12 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
       state?.SaveMethod?.(state?.QuantomFormCoreState,ctx)?.then((x)=>{
         if(x?.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
           let res:any= x?.Response??{};
-            props?.baseProps?.setState?.({...res})
+            if(state?.overRideSaveSetState){
+              state?.overRideSaveSetState?.(res,ctx)
+            }
+            else{            
+              props?.baseProps?.setState?.({...res})
+            }
             HideLoadingDialog();
             props?.showToast?.('Saved Successfully')
             
@@ -700,6 +705,7 @@ export interface FormContextModel{
 
 export interface FormMethodsProps<T>{
     SaveMethod?:(payLoad:T,helpingContext?:FormContextModel)=>Promise<HttpResponse<T>>;
+    overRideSetStateAfterSave?:(payLoad:T,helpingContext?:FormContextModel)=>void;
     DeleteMethod?:(payLoad:T,context?:FormContextModel)=>Promise<HttpResponse<T>>;
     GetOneMethod?:(keyNo?:string,mode?:FormContextModel)=>Promise<HttpResponse<T>>;
     SetBasicKeys?:()=>BasicKeysProps;
@@ -722,6 +728,10 @@ export const setFormBasicKeys=<T,>(methods?:FormMethodsProps<T>)=>{
           if(methods?.SaveMethod)
           {
             store.dispatch(set_save_method({stateKey:methods?.uniqueKey,method:methods?.SaveMethod}))
+          }
+          if(methods?.overRideSetStateAfterSave)
+          {
+            store.dispatch(override_setState_after_save({stateKey:methods?.uniqueKey,method:methods?.overRideSetStateAfterSave}))
           }
           if(methods?.DeleteMethod){
             store.dispatch(set_delete_method({stateKey:methods?.uniqueKey,method:methods?.DeleteMethod}))
