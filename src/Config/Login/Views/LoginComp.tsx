@@ -72,7 +72,7 @@ export const LoginComp = () => {
           <Box pt={2} pb={2} display='flex' justifyContent='center'  component={Paper} sx={{backgroundColor:theme.palette.primary.main,color:theme.palette.primary.contrastText,fotFamily:fonts.HeaderFont,
             fontWeight:800,fontSize:'25px'
           }}>
-             Lgin form
+             Login form
           </Box>
             
         </div>

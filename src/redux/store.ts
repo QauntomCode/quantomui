@@ -125,7 +125,13 @@ export const get_helperData_by_key = (
   return state?.formsState?.HelperData?.find(
     (x) => x.UniqueId === uniqueId
   )?.data?.find((y) => y.keyNo === keyNo)?.Data;
-};
+};  //FORM_CURRENT_LOCATION_SELECTED
+
+export const getCurrentLocationWithStore=(uqId?:string):Promise<LocationModel>=>{
+  let loc=  store?.getState()?.formsState?.HelperData?.find((x)=>x.UniqueId===uqId)?.data?.find?.(x=>x.keyNo==='FORM_CURRENT_LOCATION_SELECTED')?.Data as LocationModel
+  return Promise.resolve(loc)
+}
+
 
 export const useQuantomFonts = (state?: RootState): FontSettings => {
   // console.log('state is ',state)

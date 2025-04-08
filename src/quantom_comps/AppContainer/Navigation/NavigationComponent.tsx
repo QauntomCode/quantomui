@@ -215,6 +215,18 @@ export const MainModulesList:Modules[]=[
     ModuleName:'Sale',
     SortNumber:1,
     IsOpen:false
+  },
+  {
+    ModuleCode:'007',
+    ModuleName:'Purchase',
+    SortNumber:1,
+    IsOpen:false
+  },
+  {
+    ModuleCode:'013',
+    ModuleName:'Payments',
+    SortNumber:1,
+    IsOpen:false
   }
 ]
 
@@ -265,6 +277,24 @@ export const subModulesList:SubModule[]=[
     SubModuleCode:'02',
     SubModuleName:'Processing',
     ModuleCode:'005',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'01',
+    SubModuleName:'Config',
+    ModuleCode:'007',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'02',
+    SubModuleName:'Processing',
+    ModuleCode:'007',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'02',
+    SubModuleName:'Processing',
+    ModuleCode:'013',
     SortNumber:1
   },
 ]
@@ -380,7 +410,29 @@ export const mainMenusList:QuantomMenu[]=[
     ModuleCode:'005',
     SubModuleCode:'02',
     SortNumber:0
+  },
+  {
+    MenuCode:'007-003',
+    MenuName:'Purchase',
+    ModuleCode:'007',
+    SubModuleCode:'02',
+    SortNumber:0
+  },
+  {
+    MenuCode:'013-003',
+    MenuName:'Supplier Payments',
+    ModuleCode:'013',
+    SubModuleCode:'02',
+    SortNumber:0
+  },
+  {
+    MenuCode:'013-004',
+    MenuName:'Customer Receipts',
+    ModuleCode:'013',
+    SubModuleCode:'02',
+    SortNumber:0
   }
+
 ]
 
 

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppContainerModel } from "../quantom_comps/AppContainer/Model/AppContainerModel";
 import { AppContainerMenus } from "../quantom_comps/AppContainer/Model/AppContainerModelMenus";
-import { BasicKeysProps } from "../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
+import { BasicKeysProps, FormContextModel } from "../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { HttpResponse } from "../HTTP/QuantomHttpMethods";
 import { LocationModel } from "../quantom_ui/Settings/Location/Model/LocationModel";
 import produce from "immer";
@@ -33,10 +33,10 @@ export interface QuantomFormState<T> {
   QuantomFormCoreState?: T;
   KeyValues?: (t?: T) => KeyValues;
   Location?: LocationModel;
-  SaveMethod?: (payload?: T) => Promise<HttpResponse<T>>;
+  SaveMethod?: (payload?: T,context?:FormContextModel) => Promise<HttpResponse<T>>;
   init?: () => void;
-  DeleteMethod?: (payload?: T) => Promise<HttpResponse<T>>;
-  GetOneMethod?: (keyNo?: string) => Promise<HttpResponse<T>>;
+  DeleteMethod?: (payload?: T,context?:FormContextModel) => Promise<HttpResponse<T>>;
+  GetOneMethod?: (keyNo?: string,context?:FormContextModel) => Promise<HttpResponse<T>>;
   LocationInitMethod?: (location?: LocationModel) => void;
   SetBasicKeysMethod?: () => BasicKeysProps;
   AfterReset?: (location?: LocationModel) => void;
