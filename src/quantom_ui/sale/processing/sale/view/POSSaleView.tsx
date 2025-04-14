@@ -505,8 +505,11 @@ export const POSSaleBillList=(props?:POSSaleBillsProps)=>{
  interface QuantomDialogProps{
     open:boolean;
     children?:ReactNode;
+    headerExtension?:ReactNode;
+
     heading?:string;
     onClosePress?:()=>void;
+
 }
 export const QuantomDialog=(props?:QuantomDialogProps)=>{
     const fonts= useQuantomFonts();
@@ -521,19 +524,26 @@ export const QuantomDialog=(props?:QuantomDialogProps)=>{
             }}
               open={props?.open??false}>
             <DialogTitle sx={{fonFamily:fonts?.HeaderFont,fontSize:fonts.H3FontSize,fontWeight:"bold",borderBottom:`1px solid ${theme?.palette?.text?.primary}`}}>
+                
+                    <div style={{display:'flex'}}>
+                        <div style={{flex:1}}>
+                            {props?.heading}
+                        </div>
+                        <div onClick={props?.onClosePress}>
+                            <IconByName iconName="CancelPresentation"/>
+                        </div>
+                        
+                    </div>
+                
                 <div style={{display:'flex'}}>
-                    <div style={{flex:1}}>
-                        {props?.heading}
-                    </div>
-                    <div onClick={props?.onClosePress}>
-                        <IconByName iconName="CancelPresentation"/>
-                    </div>
-                    
+                    {props?.headerExtension}
                 </div>
+                    {/* {props?.children?.[0]} */}
+                {/* </Quantom_Grid> */}
             </DialogTitle>
           <DialogContent >
             <div style={{marginBottom:'10px',marginTop:'10px',overflow:'auto'}}>
-                {props?.children}
+            {props?.children}
             </div>
           </DialogContent>
         </Dialog>

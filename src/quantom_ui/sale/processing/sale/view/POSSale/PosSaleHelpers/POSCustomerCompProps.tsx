@@ -21,6 +21,7 @@ export interface POSCustomerCompProps{
    const fonts = useQuantomFonts();
    const[open,setOpen]=useState(false);
    const [custDetail,setCustDetail]=useState<CustomerModel>()
+   const[search,setSearch]=useState('')
    useEffect(()=>{
          handleSetSelectedCustomer();
    },[props?.selectedCustomer?.Code])
@@ -80,8 +81,10 @@ export interface POSCustomerCompProps{
                 {custDetail?.Balance??0}
            </Quantom_Grid>
            
-           <QuantomDialog open={open}  onClosePress={()=>{setOpen(false)}} heading="Select Customer" >
-               <CustomerListComp onSelect={(cust)=>{
+           <QuantomDialog headerExtension={<>
+              <Quantom_Input label='Search' value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
+            </>} open={open}  onClosePress={()=>{setOpen(false)}} heading="Select Customer">
+               <CustomerListComp search={search} onSelect={(cust)=>{
                    props?.onChange?.({Code:cust?.CustCode,Name:cust?.CustName})
                    setOpen(false);
                }}/>
@@ -94,18 +97,20 @@ export interface POSCustomerCompProps{
 
  export interface CustomerListCompPorps{
     onSelect?:(selected?:CustomerModel)=>void
+    search?:string;
  }
  export const  CustomerListComp=(props?:CustomerListCompPorps)=>{
    const [customers,setCustComers]=useState<CustomerModel[]>([]);
-   const[search,setSearch]=useState<string>();
+   
 
    useEffect(()=>{
        handleCustomers();
-   },[search])
+   },[props?.search])
 
    
    const handleCustomers=async()=>{
-       let res= await LocalDbFilterCustomers(search);
+       let res= await LocalDbFilterCustomers(props?.search);
+    //    alert('called ')
        console.log('get all customers',res)
        setCustComers([...res])
    }
@@ -114,9 +119,7 @@ export interface POSCustomerCompProps{
    return(
 
        <Quantom_Grid size={{xs:12}} container spacing={.5} component={Paper}>
-           <Quantom_Grid container size={{xs:12}}>
-              <Quantom_Input label="Search" value={search} onChange={(e)=>{setSearch(e?.target?.value)}}/>
-           </Quantom_Grid>
+           
            {/* <Quantom_Grid item> Item Code</Quantom_Grid> */}
            {
                customers?.map((item,index)=>{
