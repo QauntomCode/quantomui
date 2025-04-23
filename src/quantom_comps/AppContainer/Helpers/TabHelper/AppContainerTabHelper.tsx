@@ -61,7 +61,7 @@ import { AddHPD, CustomerAppointmentReports } from '../../../../quantom_ui/sale/
 import { PurchaseViewErp } from '../../../../quantom_ui/Purchase/Processing/Purchase/view/PurchaseViewErp';
 import { SupplierPaymentsErp } from '../../../../quantom_ui/payments/supplierPayments/view/SupplierPaymentsErp';
 import { CustomerReceiptViewErp } from '../../../../quantom_ui/payments/customerReceipts/view/CustomerReceiptViewErp';
-import { ActivityLog } from '../../../../quantom_ui/management/reports/activityLog/views/ActivityLogView';
+import ActivityLogView from '../../../../quantom_ui/Management/reports/activityLog/views/ActivityLogView'
 
 
 
@@ -1146,7 +1146,7 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"012-011",
     MenuCaption:"Activity Log",
-    GetComponent:(props?:MenuComponentProps<any>)=>(<ActivityLog {...props}/>)
+    GetComponent:(props?:MenuComponentProps<any>)=>(<ActivityLogView {...props}/>)
   },
   ...AccountMenus,
   ...InventoryMenus,
