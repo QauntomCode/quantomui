@@ -1,5 +1,6 @@
 const DB_NAME = "OFFLINE_DB";
 export const CUSTOMER_STORE="CUSTOMER_STORE";
+export const ACTION_NAVIGATION_STORE="ACTION_NAVIGATION_STORE"
 
 export const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -9,6 +10,9 @@ export const openDB = (): Promise<IDBDatabase> => {
       const db = request.result;
       if (!db.objectStoreNames.contains(CUSTOMER_STORE)) {
         db.createObjectStore(CUSTOMER_STORE, { keyPath: "CustCode" });
+      }
+      if (!db.objectStoreNames.contains(ACTION_NAVIGATION_STORE)) {
+        db.createObjectStore(ACTION_NAVIGATION_STORE, { keyPath: "MenuCode" });
       }
     };
 

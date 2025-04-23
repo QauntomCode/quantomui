@@ -1,4 +1,5 @@
 import { HTTP_RESPONSE_TYPE, HttpResponse, QuantomGET, QuantomPOST } from "../../../HTTP/QuantomHttpMethods";
+import { SetNavigationIntoDB } from "../../../quantom_ui/Management/Common/NavigationModels/NavigationMethods";
 import { TOKEN_KEY_LOCAL_STORAGE } from "../../config_keys";
 import { CompanyModel } from "../../User/model/CompanyModel";
 import { UserModel } from "../../User/model/user";
@@ -13,7 +14,10 @@ export const UserLoginMethod=async(user?:UserModel):Promise<HttpResponse<LoginRe
 
      let res= await QuantomPOST<LoginResponse>(LOGIN_URL,true,user,'LOADING');
      if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-        window.localStorage.setItem(TOKEN_KEY_LOCAL_STORAGE,res?.Response?.Token??"")
+        window.localStorage.setItem(TOKEN_KEY_LOCAL_STORAGE,res?.Response?.Token??"");
+        setTimeout(() => {
+         SetNavigationIntoDB();
+        }, (1000));
      }
      return res;
 }
