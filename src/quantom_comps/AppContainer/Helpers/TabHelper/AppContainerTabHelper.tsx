@@ -596,10 +596,10 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const[showDeleteDialog,setShowDeleteDialog]=useState(false);
   return(
     <>
-  <Quantom_Grid component={Paper} container sx={{display:'flex',paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
-          <Quantom_Grid container={Paper} sx={{marginRight:'4px'}}>
+  <Quantom_Grid  container sx={{display:'flex',paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
+          {/* <Quantom_Grid container={Paper} sx={{marginRight:'4px'}}>
              <input type='text' style={{borderRadius:'5px',border:`.5px solid ${theme.palette.secondary.main}`}}></input>
-          </Quantom_Grid>
+          </Quantom_Grid> */}
               <Quantom_Grid container={Paper} sx={{/*backgroundColor:theme.palette.secondary.main,*/paddingLeft:'4px',paddingRight:'2px',
                 color:theme?.palette?.secondary.contrastText
               }}>
