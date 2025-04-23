@@ -227,6 +227,12 @@ export const MainModulesList:Modules[]=[
     ModuleName:'Payments',
     SortNumber:1,
     IsOpen:false
+  },
+  {
+    ModuleCode:'012',
+    ModuleName:'Management',
+    SortNumber:1,
+    IsOpen:false
   }
 ]
 
@@ -295,6 +301,12 @@ export const subModulesList:SubModule[]=[
     SubModuleCode:'02',
     SubModuleName:'Processing',
     ModuleCode:'013',
+    SortNumber:1
+  },
+  {
+    SubModuleCode:'03',
+    SubModuleName:'Reports',
+    ModuleCode:'012',
     SortNumber:1
   },
 ]
@@ -431,6 +443,13 @@ export const mainMenusList:QuantomMenu[]=[
     ModuleCode:'013',
     SubModuleCode:'02',
     SortNumber:0
+  },
+  {
+    MenuCode:'012-011',
+    MenuName:'Activity Log',
+    ModuleCode:'012',
+    SubModuleCode:'03',
+    SortNumber:1
   }
 
 ]

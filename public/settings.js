@@ -1,6 +1,6 @@
 window.globalConfig = {
 
-    apiUrl:"http://localhost:44345/api/", /*"http://localhost:44345/api/",*///"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",
+    apiUrl:"https://localhost:44342/api/", /*"http://localhost:44345/api/",*///"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",
     //apiUrl:"https://localhost:44342/api/",
 
     //apiUrl:"http://localhost:44345/api/", /*"http://localhost:44345/api/",*///"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",
