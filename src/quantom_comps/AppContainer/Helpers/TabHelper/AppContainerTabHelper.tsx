@@ -61,7 +61,7 @@ import { AddHPD, CustomerAppointmentReports } from '../../../../quantom_ui/sale/
 import { PurchaseViewErp } from '../../../../quantom_ui/Purchase/Processing/Purchase/view/PurchaseViewErp';
 import { SupplierPaymentsErp } from '../../../../quantom_ui/payments/supplierPayments/view/SupplierPaymentsErp';
 import { CustomerReceiptViewErp } from '../../../../quantom_ui/payments/customerReceipts/view/CustomerReceiptViewErp';
-import ActivityLogView from '../../../../quantom_ui/Management/reports/activityLog/views/ActivityLogView'
+import ActivityLogView from '../../../../quantom_ui/management/reports/activityLog/views/ActivityLogView'
 
 
 

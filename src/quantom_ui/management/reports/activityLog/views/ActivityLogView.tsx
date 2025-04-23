@@ -4,16 +4,18 @@ import React, { useEffect, useState } from "react"
 import { IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { Quantom_Grid } from "../../../../../quantom_comps/base_comps"
 import { Box, Paper, useTheme } from "@mui/material"
-import { BorderBottom, Height } from "@mui/icons-material"
-import { DbGetAllNavigation, DBGetSingleNavigationAction } from "../../../../../IndexedDb/Initialization/Operation/NavigationActionDb"
+import {  DBGetSingleNavigationAction } from "../../../../../IndexedDb/Initialization/Operation/NavigationActionDb"
 import { AddHPD, useGetHelperData } from "../../../../sale/reports/Appointments/CustomerAppointmentReports"
 import { QuantomDialog } from "../../../../sale/processing/sale/view/POSSaleView"
-import { NavigationActionInfo } from "../../../Common/NavigationModels/NavigationActionInfo"
 import BasicTabs, { BasicTabProps } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/BasicTabs"
-import { FilterEntities, FilterEntityQuery, QuantoFilterDetail, QuantomFilter } from "../../../Common/QuantomFilter/QuantomFilter"
+import { FilterEntities, FilterEntityQuery, QuantoFilterDetail, QuantomFilter } from "../../../Common/QuantomFilter/QuantomFilter";
+import {NavigationActionInfo } from "../../../Common/NavigationModels/NavigationAction";
+
 import { CommonCodeName } from "../../../../../database/db"
-import { get_helperData_by_key, GetHPD_WithOutStore } from "../../../../../redux/store"
+import {  GetHPD_WithOutStore, useQuantomFonts } from "../../../../../redux/store"
 import { QuantomPOST } from "../../../../../HTTP/QuantomHttpMethods"
+import { QuantomSwitch } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView"
+// import { NavigationActionInfo } from "../../../Common/NavigationModels/NavigationAction"
 
 
 
@@ -166,10 +168,20 @@ export interface SingleFilterCompProps extends QuantomFilterProps{
 export const SingleFilterDataComp=(props?:SingleFilterCompProps)=>{
 
     useEffect(()=>{
-
         handleLoadFilterKeys();
     },[props?.baseProps?.fullState?.MenuCode])
-    const currentFilterKeys= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_ALL_FILTER_OBJECT_DATA_KEY)?.FilterDetail?.find(x=>x.FitlerType===props?.filterType)?.Keys??[]
+    const currentFilterKeys= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_ALL_FILTER_OBJECT_DATA_KEY)
+                            ?.FilterDetail?.find(x=>x.FitlerType===props?.filterType)?.Keys??[];
+
+
+    const filterData= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_ALL_FILTER_OBJECT_DATA_KEY)?.FilterDetail;
+    
+    useEffect(()=>{
+        console.log('current filter keys are',filterData);
+        console.log('current filter keys type is',props?.filterType);
+
+    },[filterData])
+
     const applied_filter= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY)
 
     //const currentFilter=filter?.FilterDetail?.find(x=>x.FitlerType===props?.filterType);
@@ -178,9 +190,11 @@ export const SingleFilterDataComp=(props?:SingleFilterCompProps)=>{
          let filter= await GetHPD_WithOutStore<QuantomFilter>(props?.baseProps?.UniqueId,QUANTOM_ALL_FILTER_OBJECT_DATA_KEY);
          let currentFilter= filter?.FilterDetail?.find(x=>x.FitlerType===props?.filterType);
          if(!currentFilter){
+            // alert('let keys this is')
             let keys= await getKeys();
             let obj:QuantoFilterDetail={FitlerType:props?.filterType,Keys:[...keys]}
-            let nFilter={...filter,FilterDetail:[...filter?.FilterDetail??[],{obj}]}
+            let nFilter={...filter,FilterDetail:[...filter?.FilterDetail??[],{...obj}]}
+            // if()
 
             AddHPD(props?.baseProps,QUANTOM_ALL_FILTER_OBJECT_DATA_KEY,nFilter);
          }
@@ -203,12 +217,34 @@ export const SingleFilterDataComp=(props?:SingleFilterCompProps)=>{
         
     }
 
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
     return(
         <div>
+             
             {
                 currentFilterKeys?.map((item,index)=>{
+                    const checked= applied_filter?.FilterDetail?.find(x=>x.FitlerType===props?.filterType)
+                                        ?.Keys?.some(x=>x.Code===item?.Code)
                     return(
-                        item?.Name
+
+                        <Quantom_Grid pl={1} fontSize={fonts.H4FontSize}  fontWeight='bold' mt={.75} component={Paper} borderBottom={`1px solid ${theme?.palette?.primary?.main}`}  container size={{xs:12}}>
+                            <div style={{display:'flex',alignItems:'center'}}>
+                                <QuantomSwitch onChange={(val)=>{
+                                   if(val){
+                                     let appFilterDetail=applied_filter?.FilterDetail?.find(x=>x.FitlerType===props?.filterType);
+                                     if(!appFilterDetail){
+                                        appFilterDetail={FitlerType:props?.filterType,Keys:[]}
+                                     }
+                                      appFilterDetail={...appFilterDetail,Keys:[...appFilterDetail?.Keys??[],{...item}]}
+
+                                       AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FilterDetail:[...applied_filter?.FilterDetail??[],{...appFilterDetail}]})
+                                   }
+
+                                }} value={checked} label=""/>
+                                {item?.Name}
+                            </div>
+                        </Quantom_Grid>
                     )
                 })
             }

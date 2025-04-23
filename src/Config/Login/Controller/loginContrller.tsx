@@ -1,5 +1,5 @@
 import { HTTP_RESPONSE_TYPE, HttpResponse, QuantomGET, QuantomPOST } from "../../../HTTP/QuantomHttpMethods";
-import { SetNavigationIntoDB } from "../../../quantom_ui/Management/Common/NavigationModels/NavigationMethods";
+import { SetNavigationIntoDB } from "../../../quantom_ui/management/Common/NavigationModels/NavigationMethods";
 import { TOKEN_KEY_LOCAL_STORAGE } from "../../config_keys";
 import { CompanyModel } from "../../User/model/CompanyModel";
 import { UserModel } from "../../User/model/user";
@@ -17,7 +17,7 @@ export const UserLoginMethod=async(user?:UserModel):Promise<HttpResponse<LoginRe
         window.localStorage.setItem(TOKEN_KEY_LOCAL_STORAGE,res?.Response?.Token??"");
         setTimeout(() => {
          SetNavigationIntoDB();
-        }, (1000));
+        }, (5000));
      }
      return res;
 }
