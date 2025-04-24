@@ -4,7 +4,7 @@ export const ACTION_NAVIGATION_STORE="ACTION_NAVIGATION_STORE"
 
 export const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, 2);
 
     request.onupgradeneeded = (event) => {
       const db = request.result;

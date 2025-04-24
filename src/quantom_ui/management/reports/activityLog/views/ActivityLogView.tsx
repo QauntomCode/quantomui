@@ -83,7 +83,8 @@ export const QuantomReportBase=(props?:QuantomFilterProps)=>{
 export const ReportFilter=(props?:QuantomFilterProps)=>{
 
 
-  
+    const applied_filter= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY);
+    
 
     const theme= useTheme();
 
@@ -113,12 +114,100 @@ export const ReportFilter=(props?:QuantomFilterProps)=>{
             </Quantom_Grid>
          </Quantom_Grid>
 
-         <Quantom_Grid container component={Paper}>
-            <Box component={Paper} sx={{height:'250px'}}></Box>
+         <Quantom_Grid  container >
+            
+            {
+                applied_filter?.FilterDetail?.map((item,index)=>{
+                    return(
+                        <Quantom_Grid size={{xs:12}} mt={.5}  container>
+                            <RenderAppliedFilter baseProps={props?.baseProps} filterType={item?.FitlerType}/>
+                        </Quantom_Grid>
+                    )
+                })
+            }
+            
          </Quantom_Grid>
 
          <QuantomReportFilterDialog {...props}/>
         </>
+    )
+}
+
+
+
+export const RemoveSelectedItem=(filterType?:FilterEntities,det?:QuantoFilterDetail,item?:CommonCodeName):QuantoFilterDetail=>{
+    if(det?.FitlerType===filterType){
+          let keys= det?.Keys?.filter(x=>x.Code!==item?.Code);
+          det={...det,Keys:[...keys??[]]}
+
+          return det;
+    }
+    else{
+     return det??{};
+    }
+}
+
+export interface SingleFilterCompProps extends QuantomFilterProps{
+    filterType?:FilterEntities
+  }
+
+  export interface renderAppliedFilterProps{
+    baseProps?:MenuComponentProps<any>
+    filterType?:FilterEntities
+  }
+export const RenderAppliedFilter=(props?:renderAppliedFilterProps)=>{
+ 
+     const [isExpanded,setIsExpanded]= useState(false);
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+    const filterName= FilterEntities[props?.filterType?? FilterEntities.LOCS]
+    return(
+        <Quantom_Grid component={Paper} pt={1} pb={1} pl={1} size={{xs:12}} sx={{borderBottom:`1px solid ${theme.palette.primary}`,fontFamily:fonts.HeaderFont,fontWeight:'bold',fontSize:fonts.H3FontSize}}>
+            <Quantom_Grid size={{xs:12}} sx={{display:'flex',alignItems:'center'}}>
+              <div style={{flex:1}}>
+                {filterName}
+              </div>
+              <div onClick={()=>{setIsExpanded(!isExpanded)}} style={{marginRight:'10px'}}>
+                <IconByName color={theme.palette.primary?.main} iconName= {isExpanded ?"IndeterminateCheckBoxOutlined":"LocalHospitalOutlined"}/>
+              </div>
+            </Quantom_Grid>
+            <Quantom_Grid>
+                {isExpanded?(<RenderAppliedFilterDetail {...props}></RenderAppliedFilterDetail>):(<></>)}
+            </Quantom_Grid>
+        </Quantom_Grid>
+    )
+}
+
+export const RenderAppliedFilterDetail=(props?:renderAppliedFilterProps)=>{
+   
+    const all_applied_filters= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY);
+    const applied_filter= all_applied_filters?.FilterDetail?.find(x=>x.FitlerType===props?.filterType);
+    const fonts= useQuantomFonts();
+    const theme= useTheme();
+    return(
+         <Quantom_Grid mt={1.5} container size={{xs:12}} sx={{fontFamily:fonts.RegularFont,fontSize:fonts.H4FontSize}}>
+             {
+                applied_filter?.Keys?.map((item,index)=>{
+                    return (
+                        <Quantom_Grid mr={1} size={{xs:12}} sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,display:'flex'}} >
+                            <div style={{flex:1}}>
+                                {item?.Name}
+                            </div>
+                            <div onClick={()=>{
+                                   let nDetail= all_applied_filters?.FilterDetail?.map((det,index)=>{
+                                    return RemoveSelectedItem(props?.filterType,det,item);
+                                });
+
+                                AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FilterDetail:[...nDetail??[]]})
+                            }}>
+                                <IconByName iconName="CancelOutlined" fontSize="15px" color={theme.palette.error.main}/>
+                            </div>
+                            
+                        </Quantom_Grid>
+                    )
+                })
+             }
+         </Quantom_Grid>
     )
 }
 
@@ -149,7 +238,10 @@ export const QuantomReportFilterDialog=(props?:QuantomFilterProps)=>{
     // const bTabs:BasicTabProps[]=[{Caption:"First Tab",Component:<SingleFilterDataComp {...props}/>}]
     return (
         <>
-          <QuantomDialog onClosePress={()=>{AddHPD<boolean>(props?.baseProps,SHOW_FILTER_DIALOG_KEY,false)}} heading="Filter Detail" open={showFilterDialog}>
+          <QuantomDialog onClosePress={()=>{AddHPD<boolean>(props?.baseProps,SHOW_FILTER_DIALOG_KEY,false)}} heading="Filter Detail" open={showFilterDialog}
+             headerExtension={<>Testing</>}
+            >
+            
              {/* Report Filter */}
 
              <Quantom_Grid container>
@@ -162,9 +254,10 @@ export const QuantomReportFilterDialog=(props?:QuantomFilterProps)=>{
     )
 }
 
-export interface SingleFilterCompProps extends QuantomFilterProps{
-  filterType?:FilterEntities
-}
+
+
+
+
 export const SingleFilterDataComp=(props?:SingleFilterCompProps)=>{
 
     useEffect(()=>{
@@ -217,6 +310,7 @@ export const SingleFilterDataComp=(props?:SingleFilterCompProps)=>{
         
     }
 
+    
     const theme= useTheme();
     const fonts= useQuantomFonts();
     return(
@@ -232,16 +326,57 @@ export const SingleFilterDataComp=(props?:SingleFilterCompProps)=>{
                             <div style={{display:'flex',alignItems:'center'}}>
                                 <QuantomSwitch onChange={(val)=>{
                                    if(val){
-                                     let appFilterDetail=applied_filter?.FilterDetail?.find(x=>x.FitlerType===props?.filterType);
-                                     if(!appFilterDetail){
-                                        appFilterDetail={FitlerType:props?.filterType,Keys:[]}
-                                     }
-                                      appFilterDetail={...appFilterDetail,Keys:[...appFilterDetail?.Keys??[],{...item}]}
 
-                                       AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FilterDetail:[...applied_filter?.FilterDetail??[],{...appFilterDetail}]})
+                                    let nKeys=
+                                       applied_filter?.FilterDetail?.map((obj,index)=>{
+                                          if(obj.FitlerType===props?.filterType){
+                                            return {...obj,Keys:[...obj?.Keys??[],{...item}]} ;
+                                          }
+
+                                          return obj;
+                                       })??[]
+
+
+                                       if(!nKeys ||nKeys.length<1 || !nKeys?.some?.(x=>x.FitlerType===props?.filterType)){
+                                         nKeys=[...nKeys,{FitlerType:props?.filterType,Keys:[{...item}]}]
+                                       }
+                                    
+
+                                       console.log('nkeys are',nKeys);
+                                       console.log('nkeys selected item is',item)
+
+                                       AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FilterDetail:[...nKeys??[]]})
                                    }
 
-                                }} value={checked} label=""/>
+                                   if(!val){
+                                    let appFilterDetail=applied_filter?.FilterDetail?.find(x=>x.FitlerType===props?.filterType);
+                                     if(appFilterDetail){
+                                        //  alert('remove seleced detail called');
+                                        appFilterDetail={FitlerType:props?.filterType,Keys:[]}
+                                          
+                                        let nDetail= applied_filter?.FilterDetail?.map((det,index)=>{
+                                            return RemoveSelectedItem(props?.filterType,det,item);
+                                        });
+
+                                        console.log('new detail is',nDetail)
+
+                                        AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FilterDetail:[...nDetail??[]]})
+
+                                    }
+                                }
+
+
+                                    //     let newDetail=
+                                    //     applied_filter?.FilterDetail?.map((obj,d)=>{
+                                    //         return (obj?.FitlerType!==props?.filterType)?obj:RemoveItemFilter(obj)
+                                        
+                                    //  }
+                                //    }
+
+
+
+                                }}
+                                 value={checked} label=""/>
                                 {item?.Name}
                             </div>
                         </Quantom_Grid>
