@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { useEffect, useState } from "react"
-import { IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
+import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { Quantom_Grid } from "../../../../../quantom_comps/base_comps"
 import { Box, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material"
 import {  DBGetSingleNavigationAction } from "../../../../../IndexedDb/Initialization/Operation/NavigationActionDb"
@@ -119,16 +119,17 @@ const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
     const theme= useTheme();
     const fonts= useQuantomFonts();
     const [showDetail,setShowDetail]= useState(false);
+    const firstLineTextStyle={marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,fontWeight:700}
     return(
         <>
-        <Quantom_Grid container pt={1} pl={1} pr={1} mb={.5}  sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}} size={{xs:12}} component={Paper}>
+        <Quantom_Grid container pt={1} pl={1} pr={1} mb={1}  sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}} size={{xs:12}} component={Paper}>
             <Quantom_Grid  pb={.5} container sx={{borderBottom:`1px solid ${theme?.palette?.text?.disabled}`}} size={{xs:12}}>
                 <Quantom_Grid size={{xs:2}}>
                     <div style={{display:'flex',alignItems:'center'}}>
                         <div>
                             <IconByName iconName="AccountCircleOutlined" fontSize="20px"  />
                         </div>
-                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{props?.UserName}</div>
+                        <div style={{...firstLineTextStyle}}>{props?.UserName}</div>
                     </div>
                 </Quantom_Grid>
                 <Quantom_Grid size={{xs:2}}>
@@ -136,7 +137,7 @@ const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
                         <div>
                             <IconByName iconName="DynamicFormOutlined" fontSize="20px"  />
                         </div>
-                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{props?.TransState}</div>
+                        <div style={{...firstLineTextStyle}}>{props?.TransState}</div>
                     </div>
                 </Quantom_Grid>
                 <Quantom_Grid size={{xs:2}}>
@@ -144,7 +145,7 @@ const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
                         <div>
                             <IconByName iconName="EventNoteOutlined" fontSize="20px"  />
                         </div>
-                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{dayjs(props?.TransTime).format("DD/MMM/YYYY")}</div>
+                        <div style={{...firstLineTextStyle}}>{dayjs(props?.TransTime).format("DD/MMM/YYYY")}</div>
                     </div>
                 </Quantom_Grid>
 
@@ -153,7 +154,7 @@ const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
                         <div>
                             <IconByName iconName="AccessTimeOutlined" fontSize="20px"  />
                         </div>
-                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{dayjs(props?.TransTime).format("hh:mm:ss")}</div>
+                        <div style={{...firstLineTextStyle}}>{dayjs(props?.TransTime).format("hh:mm:ss")}</div>
                     </div>
                 </Quantom_Grid>
 
@@ -162,7 +163,7 @@ const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
                         <div>
                             <IconByName iconName="DesktopWindowsOutlined" fontSize="20px"  />
                         </div>
-                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{props?.FormName}</div>
+                        <div style={{...firstLineTextStyle}}>{props?.FormName}</div>
                     </div>
                 </Quantom_Grid>
             </Quantom_Grid>
@@ -170,7 +171,7 @@ const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
                 <Quantom_Grid size={{xs:2}}>
                     <div style={{display:'flex',alignItems:'center'}}>
                         <div onClick={()=>{setShowDetail(!showDetail)}}>
-                            <IconByName iconName={showDetail?'IndeterminateCheckBoxOutlined':'AddBoxOutlined'}  fontSize="30px"  />
+                            <IconByName iconName={showDetail?'IndeterminateCheckBoxOutlined':'AddBoxOutlined'}  fontSize="20px"  />
                         </div>
                         <div>
                             <IconByName color={theme.palette.text.disabled} iconName="ReceiptOutlined" fontSize="20px"  />
@@ -266,7 +267,7 @@ const QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY="QUANTOM_APPLIED_FILTER_OBJECT_DATA
 
 interface QuantomFilterProps{
     baseProps?:MenuComponentProps<any>
-    OnLoadData?:(filter?:QuantomFilter)=>void;
+    OnLoadData?:(filter?:QuantomFilter)=>Promise<void>;
     
 }
 
@@ -332,8 +333,14 @@ export const ReportFilter=(props?:QuantomFilterProps)=>{
                 </Box>
             </Quantom_Grid>
             <Quantom_Grid size={{xs:4}}>
-                <Box onClick={()=>{
-                    props?.OnLoadData?.(applied_filter)
+                <Box onClick={async()=>{
+                    try{
+                      ShowLoadingDialog();
+                     await props?.OnLoadData?.(applied_filter)
+                    }
+                    finally{
+                        HideLoadingDialog();
+                    }
                 }} fullWidth component={Paper}>
                     <div style={{flex:1,justifyContent:'center',alignItems:'center',display:'flex'}}>
                         <IconByName color={theme?.palette?.primary?.main} iconName="FolderOpenOutlined" fontSize="40px"/>
