@@ -14,7 +14,7 @@ export const DbInsertNavigationAction = async (nav?: NavigationActionInfo) => {
 
 export const DBGetSingleNavigationAction = async (
   menuCode: string
-): Promise<NavigationActionInfo[]> => {
+): Promise<NavigationActionInfo> => {
   const db = await openDB();
   // alert(menuCode)
   return new Promise((resolve, reject) => {

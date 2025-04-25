@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { IconByName, MenuComponentProps, setFormBasicKeys } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { Quantom_Grid } from "../../../../../quantom_comps/base_comps"
-import { Box, Paper, useTheme } from "@mui/material"
+import { Box, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material"
 import {  DBGetSingleNavigationAction } from "../../../../../IndexedDb/Initialization/Operation/NavigationActionDb"
 import { AddHPD, useGetHelperData } from "../../../../sale/reports/Appointments/CustomerAppointmentReports"
 import { QuantomDialog } from "../../../../sale/processing/sale/view/POSSaleView"
@@ -13,15 +13,26 @@ import {NavigationActionInfo } from "../../../Common/NavigationModels/Navigation
 
 import { CommonCodeName } from "../../../../../database/db"
 import {  GetHPD_WithOutStore, useQuantomFonts } from "../../../../../redux/store"
-import { QuantomPOST } from "../../../../../HTTP/QuantomHttpMethods"
+import { HTTP_RESPONSE_TYPE, HttpResponse, QuantomPOST } from "../../../../../HTTP/QuantomHttpMethods"
 import { QuantomSwitch } from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView"
-// import { NavigationActionInfo } from "../../../Common/NavigationModels/NavigationAction"
+import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Date"
+import dayjs from "dayjs"
+import { Quantom_LOV1 } from "../../../../../quantom_comps/Quantom_Lov"
+import { QuantomBasiSelect } from "../../../../Purchase/Processing/Purchase/view/POSPurchaseView"
+import { GetUserActivityLog } from "../impl/ActivityLogImpl"
+import { ACCOUNT_VOUCHER_INSERT_URL } from "../../../../account/account_urls"
+import { Config_TransLogDTO } from "../model/TransLog"
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 
 
-
+const ACTIVITY_LOG_REPORT_DATA="ACTIVITY_LOG_REPORT_DATA"
+const colWid={plusSign:.5,userName:1,action:1,formName:1.5,date:1,time:1,transNo:1.5,bpName:3.5,remarks:3,amount:1,reviewStatus:1.5}
 
 const ActivityLogView=(props?:MenuComponentProps<any>)=>{
+    const fonts= useQuantomFonts();
+    const theme= useTheme();
     React.useEffect(()=>{
         setFormBasicKeys<any>({
            settings:{willShowLocations:false,WillHideUserLog:true,wWillHideToolbar:true},
@@ -29,20 +40,219 @@ const ActivityLogView=(props?:MenuComponentProps<any>)=>{
            baseProps:props??{}
         })
       },[props])
+
+      let data= useGetHelperData<Config_TransLogDTO[]>(props,ACTIVITY_LOG_REPORT_DATA);
+      const headerStyle={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:500,letterSpacing:1.2}
+      const bodyStyle={fontFamily:fonts.RegularFont,fontSize:fonts.H4FontSize,}
+
+    
     return(
         <>
-         <Quantom_Grid container spacing={.5}>
-            <Quantom_Grid  size={{xs:3,md:4,lg:2.5,xl:2.5,}}>
-                <QuantomReportBase baseProps={props} />
+         <Quantom_Grid mt={1.5} container spacing={1}>
+            <Quantom_Grid  size={{xs:3}}>
+                <QuantomReportBase OnLoadData={async(filter)=>{
+                    let res= await GetUserActivityLog(filter);
+                    AddHPD(props,ACTIVITY_LOG_REPORT_DATA,res?.Response??[]);
+                }} baseProps={props} />
                 {/* <ReportFilter baseProps={props}/> */}
             </Quantom_Grid>
-            <Quantom_Grid size={{xs:9,md:8,lg:8.5,}}>Second</Quantom_Grid>
+            <Quantom_Grid   size={{xs:9}}>
+
+                {
+                    data?.map((item,index)=>{
+                        return(
+                            <RenderActivityLogSingleRecord {...item}/>
+                        )
+                    })
+                }
+
+                {/* <Quantom_Grid component={Paper}  size={{xs:12}}>
+                    <div style={{display:'flex',width:'100%'}}>
+                        <div style={{...headerStyle,flex:colWid.plusSign}}></div>
+                          <div style={{...headerStyle,flex:colWid.userName}}>UserName</div>
+                          
+                          <div style={{...headerStyle,flex:colWid.action}}>Action</div>
+                          <div style={{...headerStyle,flex:colWid.formName}}>FormName</div>
+                          <div style={{...headerStyle,flex:colWid.date}}>Date</div>
+                          <div style={{...headerStyle,flex:colWid.time}}>Time</div>
+                          <div style={{...headerStyle,flex:colWid.transNo}}>TransNo</div>
+                          <div style={{...headerStyle,flex:colWid.bpName}}>BP Name</div>
+                          <div style={{...headerStyle,flex:colWid.remarks}}>Remarks</div>
+                          <div style={{...headerStyle,flex:colWid.amount}}>Amount</div>
+                          <div style={{...headerStyle,flex:colWid.reviewStatus}}>Review Status</div>
+                    </div>
+                </Quantom_Grid>
+                <Divider/>
+                <Quantom_Grid container size={{xs:12}}>
+                  {
+                    data?.map((item,index)=>{
+                        return(
+                            <Quantom_Grid   size={{xs:12}}>
+                                <div style={{display:'flex',width:'100%',borderBottom:`1px solid ${theme?.palette?.text?.primary}`}}>
+                                    <div style={{...bodyStyle,flex:colWid.plusSign}}></div>
+                                    <div style={{...bodyStyle,flex:colWid.userName}}>{item?.UserName}</div>
+                                    <div style={{...bodyStyle,flex:colWid.action}}>{item?.TransState}</div>
+                                    <div style={{...bodyStyle,flex:colWid.formName}}>{item?.FormName}</div>
+                                    <div style={{...bodyStyle,flex:colWid.date}}>{dayjs(item?.TransTime)?.format('DD/MMM/YYYY')}</div>
+                                    <div style={{...bodyStyle,flex:colWid.time}}>{dayjs(item?.TransTime)?.format('HH:MM:ss')}</div>
+                                    <div style={{...bodyStyle,flex:colWid.transNo}}>{item?.TransNo}</div>
+                                    <div style={{...bodyStyle,flex:colWid.bpName}}>{item?.BpName}</div>
+                                    <div style={{...bodyStyle,flex:colWid.remarks}}>{item?.Remarks}</div>
+                                    <div style={{...bodyStyle,flex:colWid.amount}}>{item?.Amount}</div>
+                                    <div style={{...bodyStyle,flex:colWid.reviewStatus}}>{item?.LogReviewStatus}</div>
+                                </div>
+                             </Quantom_Grid>
+                        )
+                    })
+                  }
+                </Quantom_Grid> */}
+               
+            </Quantom_Grid>
          </Quantom_Grid>
 
         </>
     )
 }
 
+
+const RenderActivityLogSingleRecord=(props?:Config_TransLogDTO)=>{
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+    const [showDetail,setShowDetail]= useState(false);
+    return(
+        <>
+        <Quantom_Grid container pt={1} pl={1} pr={1} mb={.5}  sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}} size={{xs:12}} component={Paper}>
+            <Quantom_Grid  pb={.5} container sx={{borderBottom:`1px solid ${theme?.palette?.text?.disabled}`}} size={{xs:12}}>
+                <Quantom_Grid size={{xs:2}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName iconName="AccountCircleOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{props?.UserName}</div>
+                    </div>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:2}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName iconName="DynamicFormOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{props?.TransState}</div>
+                    </div>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:2}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName iconName="EventNoteOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{dayjs(props?.TransTime).format("DD/MMM/YYYY")}</div>
+                    </div>
+                </Quantom_Grid>
+
+                <Quantom_Grid size={{xs:2}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName iconName="AccessTimeOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{dayjs(props?.TransTime).format("hh:mm:ss")}</div>
+                    </div>
+                </Quantom_Grid>
+
+                <Quantom_Grid size={{xs:4}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName iconName="DesktopWindowsOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize}}>{props?.FormName}</div>
+                    </div>
+                </Quantom_Grid>
+            </Quantom_Grid>
+            <Quantom_Grid sx={{borderBottom:`1px solid ${theme?.palette?.text?.disabled}`}}  ml={3} mr={3}  container size={{xs:12}}>
+                <Quantom_Grid size={{xs:2}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div onClick={()=>{setShowDetail(!showDetail)}}>
+                            <IconByName iconName={showDetail?'IndeterminateCheckBoxOutlined':'AddBoxOutlined'}  fontSize="30px"  />
+                        </div>
+                        <div>
+                            <IconByName color={theme.palette.text.disabled} iconName="ReceiptOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,color:theme.palette.text.disabled}}>{props?.TransNo}</div>
+                    </div>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:4}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName color={theme.palette.text.disabled} iconName="FolderSharedOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,color:theme.palette.text.disabled}}>{props?.BpName}</div>
+                    </div>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:3}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName color={theme.palette.text.disabled} iconName="NewspaperOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,color:theme.palette.text.disabled}}>{props?.Remarks}</div>
+                    </div>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:1}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName color={theme.palette.text.disabled} iconName="LocalAtmOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,color:theme.palette.text.disabled}}>{props?.Amount}</div>
+                    </div>
+                </Quantom_Grid>
+                <Quantom_Grid size={{xs:2}}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <div>
+                            <IconByName color={theme.palette.text.disabled} iconName="LabelImportantOutlined" fontSize="20px"  />
+                        </div>
+                        <div style={{marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,color:theme.palette.text.disabled}}>{props?.LogReviewStatus}</div>
+                    </div>
+                </Quantom_Grid>
+            </Quantom_Grid>
+
+            {
+               showDetail&& props?.InventoryDetail?(
+                <Quantom_Grid mt={1} size={{xs:12}} container pl={6} pr={6}>
+                     <Quantom_Grid mb={1.5} sx={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,letterSpacing:1.5,fontWeight:600,
+                        borderBottom:`3px solid ${theme?.palette?.text?.disabled}`
+                     }} container size={{xs:12}}>
+                         <Quantom_Grid  size={{xs:3}}>Item Name</Quantom_Grid>
+                         <Quantom_Grid size={{xs:1.5}}>Unit Name</Quantom_Grid>
+                         <Quantom_Grid size={{xs:1}}>Qty</Quantom_Grid>
+                         <Quantom_Grid size={{xs:1}}>Price</Quantom_Grid>
+                         <Quantom_Grid size={{xs:1}}>Dis</Quantom_Grid>
+                         <Quantom_Grid size={{xs:2}}>Amount</Quantom_Grid>
+                         <Quantom_Grid size={{xs:1}}>PackSize</Quantom_Grid>
+                         <Quantom_Grid size={{xs:1}}>PriceUnit</Quantom_Grid>
+                     </Quantom_Grid>
+                     {
+                        props?.InventoryDetail?.map((item,index)=>{
+                            return(
+                            <Quantom_Grid sx={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,letterSpacing:1.5,
+                                borderBottom:`.5px solid ${theme?.palette?.text?.disabled}`
+                            }} container size={{xs:12}}>
+                                <Quantom_Grid  size={{xs:3}}>{item?.ItemName}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:1.5}}>{item?.UnitName}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:1}}>{item?.Qty}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:1}}>{item?.Price}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:1}}>{item?.DisAmount}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:2}}>{item?.Amount}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:1}}>={item?.PackSize}</Quantom_Grid>
+                                <Quantom_Grid size={{xs:1}}>{item?.PriceUnitRate}</Quantom_Grid>
+                            </Quantom_Grid>
+                            )
+                        })
+                     }
+                </Quantom_Grid>
+               ):(<></>)
+            }
+            
+        </Quantom_Grid>
+        </>
+    )
+}
 
 export default ActivityLogView
 
@@ -56,6 +266,8 @@ const QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY="QUANTOM_APPLIED_FILTER_OBJECT_DATA
 
 interface QuantomFilterProps{
     baseProps?:MenuComponentProps<any>
+    OnLoadData?:(filter?:QuantomFilter)=>void;
+    
 }
 
 
@@ -69,7 +281,8 @@ export const QuantomReportBase=(props?:QuantomFilterProps)=>{
 
 
     const handleLoadNavigationAction=async()=>{
-      let res= await  DBGetSingleNavigationAction(props?.baseProps?.MenuCode??"")
+      let res= await  DBGetSingleNavigationAction(props?.baseProps?.MenuCode??"");
+
       AddHPD<any>(props?.baseProps,NAVIGATION_KEY,res);
     }
 
@@ -84,7 +297,27 @@ export const ReportFilter=(props?:QuantomFilterProps)=>{
 
 
     const applied_filter= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY);
+    const reportTemplates= useGetHelperData<NavigationActionInfo>(props?.baseProps,NAVIGATION_KEY)?.EnabledFilters?.ReportTemplatList
+    ?.map((item,index)=>{
+        let obj:CommonCodeName={Code:item,Name:item};
+        return obj  ;
+    });
+
+    useEffect(()=>{
+        if(!applied_filter?.SelectedReportTemplate){
+            AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,SelectedReportTemplate:reportTemplates?.[0]?.Code})
+        }
+    },[applied_filter?.SelectedReportTemplate ,reportTemplates])
+
     
+
+
+    // const GetReportTemplates=():Promise<CommonCodeName[]>=>{
+
+    //     let obj:CommonCodeName[]= [{Code:"Code",Name:"Code"}]
+
+    //     return Promise.resolve(obj);
+    // }
 
     const theme= useTheme();
 
@@ -99,7 +332,9 @@ export const ReportFilter=(props?:QuantomFilterProps)=>{
                 </Box>
             </Quantom_Grid>
             <Quantom_Grid size={{xs:4}}>
-                <Box fullWidth component={Paper}>
+                <Box onClick={()=>{
+                    props?.OnLoadData?.(applied_filter)
+                }} fullWidth component={Paper}>
                     <div style={{flex:1,justifyContent:'center',alignItems:'center',display:'flex'}}>
                         <IconByName color={theme?.palette?.primary?.main} iconName="FolderOpenOutlined" fontSize="40px"/>
                     </div>
@@ -113,6 +348,15 @@ export const ReportFilter=(props?:QuantomFilterProps)=>{
                 </Box>
             </Quantom_Grid>
          </Quantom_Grid>
+
+        <Quantom_Grid size={{xs:12}} mt={1} container component={Paper}>
+            <QuantomBasiSelect editValue={applied_filter?.SelectedReportTemplate} onChange={(obj)=>{
+                AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,SelectedReportTemplate:obj?.Code})
+            }} list={reportTemplates}  label="Template"/>
+          {/* <Quantom_LOV1 uniqueKeyNo={props?.baseProps?.UniqueId??""} label="Templates" FillDtaMethod={GetReportTemplates}/> */}
+        </Quantom_Grid>
+
+        <RenderDateFilter {...props}/>
 
          <Quantom_Grid  container >
             
@@ -239,7 +483,7 @@ export const QuantomReportFilterDialog=(props?:QuantomFilterProps)=>{
     return (
         <>
           <QuantomDialog onClosePress={()=>{AddHPD<boolean>(props?.baseProps,SHOW_FILTER_DIALOG_KEY,false)}} heading="Filter Detail" open={showFilterDialog}
-             headerExtension={<>Testing</>}
+             //headerExtension={<><RenderDateFilter {...props}/></>}
             >
             
              {/* Report Filter */}
@@ -255,6 +499,43 @@ export const QuantomReportFilterDialog=(props?:QuantomFilterProps)=>{
 }
 
 
+export const RenderDateFilter=(props?:QuantomFilterProps)=>{
+
+    const isDateEnabled= useGetHelperData<NavigationActionInfo>(props?.baseProps,NAVIGATION_KEY)?.EnabledFilters?.WillEnableFormDate??false;
+    const applied_filter= useGetHelperData<QuantomFilter>(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY);
+
+    React.useEffect(()=>{
+        if(!applied_filter?.FromDate){
+            AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FromDate:new Date()})
+        }
+    },[applied_filter?.FromDate])
+
+    React.useEffect(()=>{
+        if(!applied_filter?.ToDate){
+            AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,ToDate:new Date()})
+        }
+    },[applied_filter?.ToDate])
+
+    return(
+        <>
+            {isDateEnabled?(
+                <Quantom_Grid mt={1} spacing={1} container size={{xs:12}}>
+                    <Quantom_Grid size={{xs:6}}>
+                        <QUANTOM_Date label='From Date' value={dayjs(applied_filter?.FromDate)} onChange={(date)=>{
+                            AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,FromDate:date?.toDate()})
+                        }}/>
+                    </Quantom_Grid>
+                    <Quantom_Grid size={{xs:6}}>
+                        <QUANTOM_Date label='To Date' value={dayjs(applied_filter?.ToDate)} onChange={(date)=>{
+                                AddHPD(props?.baseProps,QUANTOM_APPLIED_FILTER_OBJECT_DATA_KEY,{...applied_filter,ToDate:date?.toDate()})
+                            }}/>
+                    </Quantom_Grid>
+                </Quantom_Grid>
+            ):(<></>)}
+        </>
+        
+    )
+}
 
 
 

@@ -1044,7 +1044,7 @@ export interface BasicSelectProps{
     };
   
     return (
-      <Box  mt={ props?.Labelhidden?'4px':undefined} >
+      <Box sx={{width:'100%'}}  mt={ props?.Labelhidden?'4px':undefined} >
         <FormControl size="small" fullWidth>
           {props?.Labelhidden?(<></>): <InputLabel id="demo-simple-select-label">{props?.label}</InputLabel>}
           <Select
