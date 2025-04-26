@@ -20,7 +20,7 @@ import { QUANTOM_Table } from "../../../config/mainAccount/view/MainAccountView"
 import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
 import { getLedgerDetail } from "../../detailLedger/Implementation/DetailLedgerImpl";
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
-import { FilterHandler } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
+import { FilterHandler, useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 
 
 
@@ -79,6 +79,8 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
         let bl= props?.state?.ledgerData?.at(-1)?.Balance??0;
         setBalance(bl)
     },[props?.state])
+
+    const isMObile= useIsMobile();
     const handleLedger=async()=> {
 
         try{
@@ -111,7 +113,7 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
     return(
         <>
                
-                    <Quantom_Grid display='flex' size={{xs:12}}  container spacing={1}>
+                    <Quantom_Grid mb={1.5} pt={.5} mt={1} pb={.5}  display='flex'  size={{xs:12}} sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}}  container spacing={1}>
                         <Quantom_Grid container flex={1}>
                         <FilterHandler OkAndAplyFilter={()=>handleLedger()}>
                                 <Quantom_Grid size={{md:2.5}}>
@@ -123,7 +125,7 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
                                                     onChange={(date)=>{props?.setState?.({...props?.state,filters:{...props?.state?.filters,ToDate:dayjs(date).toDate()}})}}/>
                                 </Quantom_Grid>
                                 <Quantom_Grid item size={{md:3.5}}>
-                                    <RegisterAccountLOV selected={props?.state?.glAccount??{}} 
+                                    <RegisterAccountLOV uniqueId={props?.UniqueId??""} selected={props?.state?.glAccount??{}} 
                                                     onChange={(selected)=>{
                                                         props?.setState?.({...props?.state,glAccount:(selected),filters:{
                                                             ...props?.state?.filters,
@@ -153,21 +155,25 @@ export const LedgerFilterHeaderComp=(props?:MenuComponentProps<LedgerComponentSt
                         </Quantom_Grid>
                     </Quantom_Grid>
 
-                    <Quantom_Grid mt={1} mb={1} display='flex' sx={{backgroundColor:theme?.palette?.primary?.main}} component={Paper} container size={{xs:12}}>
-                           <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center'}}>    
-                                <div>
-                                    <IconByName color={theme.palette.primary.contrastText} fontSize="50px" iconName="MenuBookOutlined"/>
-                                </div>
-                                <div style={{fontFamily:fonts?.HeaderFont,fontSize:'25px',fontWeight:500,color:theme.palette.primary.contrastText}}>
-                                    {
-                                        props?.state?.glAccount?.Name
-                                    }
-                                </div>
-                          </div>
-                          <div style={{marginRight:'10px',display:'flex',alignItems:'center',fontFamily:fonts?.HeaderFont,fontSize:'25px',fontWeight:900,color:theme.palette.primary.contrastText}}>
-                               {balance}                              
-                          </div>
-                    </Quantom_Grid>
+                    {
+                        isMObile?(<Quantom_Grid mt={1} mb={1} display='flex' sx={{backgroundColor:theme?.palette?.primary?.main}} component={Paper} container size={{xs:12}}>
+                            <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center'}}>    
+                                 <div>
+                                     <IconByName color={theme.palette.primary.contrastText} fontSize="50px" iconName="MenuBookOutlined"/>
+                                 </div>
+                                 <div style={{fontFamily:fonts?.HeaderFont,fontSize:'25px',fontWeight:500,color:theme.palette.primary.contrastText}}>
+                                     {
+                                         props?.state?.glAccount?.Name
+                                     }
+                                 </div>
+                           </div>
+                           <div style={{marginRight:'10px',display:'flex',alignItems:'center',fontFamily:fonts?.HeaderFont,fontSize:'25px',fontWeight:900,color:theme.palette.primary.contrastText}}>
+                                {balance}                              
+                           </div>
+                     </Quantom_Grid>)
+                     :(<></>)
+                    }
+                    
                     </>
                 
         )

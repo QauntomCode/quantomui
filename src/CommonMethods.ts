@@ -43,6 +43,14 @@ export function safeParseToRequestDate(value: Date): string {
   return val;
 }
 
+export function IsValidDate(value?: Date): boolean {
+  let val = dayjs(value).isValid();
+  // let val= dayjs(value).format("ddd MMM DD YYYY HH:mm:ss [GMT] Z")
+  // let cleanedDateString = val.replace(/\s{2,}/g, " ");
+  // alert(cleanedDateString)
+  return val;
+}
+
 export function getValueByPropertyName(obj: any, propertyPath: string): any {
   if (!obj || !propertyPath) return undefined;
 
