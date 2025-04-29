@@ -61,7 +61,7 @@ import { AddHPD, CustomerAppointmentReports } from '../../../../quantom_ui/sale/
 import { PurchaseViewErp } from '../../../../quantom_ui/Purchase/Processing/Purchase/view/PurchaseViewErp';
 import { SupplierPaymentsErp } from '../../../../quantom_ui/payments/supplierPayments/view/SupplierPaymentsErp';
 import { CustomerReceiptViewErp } from '../../../../quantom_ui/payments/customerReceipts/view/CustomerReceiptViewErp';
-
+import { EmployeeProfileView } from '../../../../quantom_ui/payroll/config/Emloyee/Views/EmployeeProfileView';
 
 
 export const AppContainerTabHelper = () => {
@@ -1011,6 +1011,14 @@ export const PaymentMenus:MenuInfoModel<any>[]=[
   },
 ]
 
+export const PayrollMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:"014-001",
+    MenuCaption:"Employee Profile",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<EmployeeProfileView {...props}/>)
+  },
+]
+
 export const POS_MENUS:MenuInfoModel<any>[]=[
   {
     MenuCode:'POS_MAIN_SCREEN',
@@ -1147,7 +1155,8 @@ export const  AllCompMenus:MenuInfoModel<any>[]=[
   ...SaleMenus,
   ...POS_MENUS,
   ...PurchaseMenus,
-  ...PaymentMenus
+  ...PaymentMenus,
+  ...PayrollMenus
 ]
 
 
