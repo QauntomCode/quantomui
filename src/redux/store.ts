@@ -132,6 +132,11 @@ export const getCurrentLocationWithStore=(uqId?:string):Promise<LocationModel>=>
   return Promise.resolve(loc)
 }
 
+export const GetHPD_WithOutStore=<T,>(uqId?:string,keyNo?:string):Promise<T>=>{
+  let loc=  store?.getState()?.formsState?.HelperData?.find((x)=>x.UniqueId===uqId)?.data?.find?.(x=>x.keyNo===keyNo)?.Data as T
+  return Promise.resolve(loc)
+}
+
 
 export const useQuantomFonts = (state?: RootState): FontSettings => {
   // console.log('state is ',state)

@@ -229,8 +229,13 @@ export const MainModulesList:Modules[]=[
     IsOpen:false
   },
   {
+
     ModuleCode:'014',
     ModuleName:'Payroll',
+  },
+  {
+    ModuleCode:'012',
+    ModuleName:'Management',
     SortNumber:1,
     IsOpen:false
   }
@@ -304,10 +309,18 @@ export const subModulesList:SubModule[]=[
     SortNumber:1
   },
 
+
   {
     SubModuleCode:'01',
     SubModuleName:'Config',
     ModuleCode:'014',
+  },
+
+  {
+    SubModuleCode:'03',
+    SubModuleName:'Reports',
+    ModuleCode:'012',
+
     SortNumber:1
   },
 ]
@@ -446,11 +459,21 @@ export const mainMenusList:QuantomMenu[]=[
     SortNumber:0
   },
   {
+
     MenuCode:'014-001',
     MenuName:'Employee Profile',
     ModuleCode:'014',
     SubModuleCode:'01',
     SortNumber:0
+  },
+
+  {
+    MenuCode:'012-011',
+    MenuName:'Activity Log',
+    ModuleCode:'012',
+    SubModuleCode:'03',
+    SortNumber:1
+
   }
 
 ]

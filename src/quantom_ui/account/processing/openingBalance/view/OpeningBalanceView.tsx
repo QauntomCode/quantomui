@@ -3,7 +3,7 @@
 import React from 'react'
 import {  OpeningBalanceModel } from '../model/OpeningBalanceModel'
 import { MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
-import { Quantom_LOV, Quantom_LOV_PROPS } from '../../../../../quantom_comps/Quantom_Lov'
+import { Quantom_LOV, Quantom_LOV1, Quantom_LOV_PROPS } from '../../../../../quantom_comps/Quantom_Lov'
 import { CommonCodeName } from '../../../../../database/db'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 import { OpeningBalanceList } from './OpeningBalanceList'
@@ -102,22 +102,25 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
  selected?:CommonCodeName;
  onChange?:(sel?:CommonCodeName)=>void;  
  ref?: React.Ref<any>;
+ uniqueId?:string;
+ KeyNo?:string;
+ 
 }
 export const RegisterAccountLOV=(props?:RegisterAccountLOVProps)=>{
    React.useEffect(()=>{
       if(props?.ref){
-        alert('ref is')
+        // alert('ref is')
       }
    },[]) 
-  const handleRegisterAccount=async()=>{
-      let res= await RegisterAccountGetCodeName();
-      return Promise.resolve(res);
-   }
+  // const handleRegisterAccount=async()=>{
+  //     let res= await RegisterAccountGetCodeName();
+  //     return Promise.resolve(res);
+  //  }
    return(
-      <Quantom_LOV onChange={props?.onChange} 
+      <Quantom_LOV1 keyNo={props?.KeyNo??"GL_ACCOUNT_KEY_DETAIL"} uniqueKeyNo={props?.uniqueId??""} onChange={props?.onChange} 
          ref={props?.ref}
          selected={props?.selected} 
-         FillDtaMethod={handleRegisterAccount} label='GL Account' />
+         FillDtaMethod={RegisterAccountGetCodeName} label='GL Account' />
    )
 }
 
