@@ -14,9 +14,9 @@ import {
   EmployeeDelete,
   EmployeeGetOne,
   EmployeeGetAll,
-} from "../Impl/employeesImpl";
+} from "../Imp/employeesImpl";
 import { EmployeeModel, VmEmployee,EmployeeLocation } from "../model/EmployeeModel";
-import { DepartmentsGetAll } from "../../department/Impl/Department";
+import { DepartmentsGetAll } from "../../department/Imp/Department";
 import { DesignationGetAll } from "../../designation/Impl/Designations";
 import {
   RegisterAccountGetAll,

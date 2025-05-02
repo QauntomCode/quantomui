@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import store, { full_component_state } from '../../../../../redux/store'
 import { set_list_data } from '../../../../../redux/reduxSlice'
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
-import { EmployeeGetAll } from '../Impl/employeesImpl'
+import { EmployeeGetAll } from '../Imp/employeesImpl'
 import { HeaderHeight } from '../../../../../CommonMethods'
 import { Box } from '@mui/material'
 

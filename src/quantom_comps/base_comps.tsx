@@ -207,14 +207,14 @@ export const Quantom_Input1=(props: {
   const inputId = props?.id || `input-${Math.random()}`;
   return(
     <Box fullWidth component={ props?.willDisablePaper? undefined:Paper} sx={{ mt:.5,width:'100%'}}>
-    <FormControl  sx={{backgroundColor:theme.palette.background.default}}   fullWidth variant="outlined">
+    <FormControl  sx={{backgroundColor:theme.palette.background.paper}}   fullWidth variant="outlined">
     {props?.willHideLabel?(<></>):(
       <InputLabel htmlFor={inputId}  shrink sx={{ 
-        // fontSize: '20px',
+        //  fontSize: '20px',
                 fontWeight:'bold',
                 letterSpacing:1.2,
                 fontFamily:font.HeaderFont,
-                color:theme?.palette?.text.primary,
+                color:theme?.palette.text.primary,
                 opacity:0.6
                 }}>{props?.label}</InputLabel>
     )}
@@ -237,7 +237,7 @@ export const Quantom_Input1=(props: {
                 // fontSize: '11px', // Change this value to adjust the input font size
                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   // borderColor: 'red', // Change border color on focus
-                  borderColor:theme?.palette?.primary?.light,
+                 // borderColor:theme?.palette?.primary?.main,
                   // color:'black'
                 },
           // marginTop:'10px','& .MuiInputLabel-root': {

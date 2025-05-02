@@ -289,6 +289,7 @@ export interface Quantom_LOV_V1Props {
   ref?: React.Ref<any>;
   id?:string  ;
   willHideLabel?:boolean;
+  size?:'medium'|'small'
 }
 export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   
@@ -466,6 +467,7 @@ return (
   <>
   <Box display='flex'>
    <Quantom_Input1 
+        size={props?.size}
         value={props?.selected?.Name} 
         fullWidth
         willHideLabel={props?.willHideLabel}
