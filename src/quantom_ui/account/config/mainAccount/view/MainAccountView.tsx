@@ -1,17 +1,29 @@
 /* eslint-disable react/jsx-pascal-case */
 import React from 'react'
 import { MainAccountModel } from '../model/MainAccountModel'
-import { IconByName, MenuComponentProps } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { IconByName, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { GetAllMainAccounts } from '../impl/MainAccountImpl';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, ModuleRegistry,ClientSideRowModelModule } from 'ag-grid-community'
 import { Quantom_Grid } from '../../../../../quantom_comps/base_comps';
-import { Paper } from '@mui/material';
+import { Container, Paper, useTheme } from '@mui/material';
 // import ViewButtonIcon from '@mui/icons-material/VisibilityTwoTone';
 import dayjs from 'dayjs';
+import { GroupContainer } from '../../../processing/voucher/view/VoucherView';
+import { useQuantomFonts } from '../../../../../redux/store';
 
 export const MainAccountView = (props?:MenuComponentProps<MainAccountModel>) => {
+  React.useEffect(()=>{
+    setFormBasicKeys<MainAccountModel>({
+        uniqueKey:props?.UniqueId??"",
+        settings:{wWillHideToolbar:true},
+        baseProps:props??{}
+    })
+},[props])
+
     const[accounts,setAccounts]=React.useState<MainAccountModel[]>([])
+     const theme= useTheme();
+     const fonts= useQuantomFonts();
     React.useEffect(()=>{
          handleGetAllMAccounts();
     },[]);
@@ -27,7 +39,25 @@ export const MainAccountView = (props?:MenuComponentProps<MainAccountModel>) => 
   return (
       
     <>
-      <QUANTOM_Table height='400px' columns={[{field:"Code",width:350},{field:'Name'}]} data={accounts}/>
+        <Quantom_Grid container mt={1} spacing={1}  size={{xs:12,md:6,lg:3}}>
+           {accounts?.map((item,index)=>{
+               return(
+                <Quantom_Grid   p={.5} component={Paper} borderBottom={`1px solid ${theme?.palette?.primary?.main}` } size={{xs:12}}
+                             sx={{fontFamily:fonts.HeaderFont,}}>
+                        <div style={{display:'flex'}}>
+                          <IconByName iconName='Tag' color={theme.palette.text.disabled}/>
+                           <div style={{marginLeft:'2px',fontWeight:1000,color:theme?.palette?.text.disabled,letterSpacing:1.5}}>{item.Code}</div>
+                        </div>
+                        <div style={{display:'flex'}}>
+                          <IconByName iconName='AccountTreeOutlined' color={theme.palette.text.disabled}/>
+                           <div style={{marginLeft:'2px',letterSpacing:1.5,fontWeight:500}}>{item.Name}</div>
+                        </div>
+                </Quantom_Grid>
+               )
+           })}
+        </Quantom_Grid>
+       
+      {/* <QUANTOM_Table height='400px' columns={[{field:"Code",width:350},{field:'Name'}]} data={accounts}/> */}
     </>
   )
 }

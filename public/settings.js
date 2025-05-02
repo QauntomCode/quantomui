@@ -1,14 +1,15 @@
 window.globalConfig = {
 
-//<<<<<<< HEAD
+
     apiUrl:"http://demo.b-shaheerinternational.com/api/", 
     /*"http://localhost:44345/api/",*
     ///"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",
-//=======
+
   apiUrl:"http://demo.b-shaheerinternational.com/api/", 
     // apiUrl:"https://localhost:44342/api/", 
     //apiUrl:"http://localhost:44345/api/",//"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",
-//>>>>>>> e7b31f5325c692f8de5ab70153255a4ac4b47740
+
+
     //apiUrl:"https://localhost:44342/api/",
 
     //apiUrl:"http://localhost:44345/api/", /*"http://localhost:44345/api/",*///"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",

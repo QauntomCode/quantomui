@@ -11,6 +11,7 @@ import { SubAccountDelete, SubAccountGetOne, SubAccountInsert } from '../impl/su
 import { SubAccountList } from './SubAccountList'
 import { GroupContainer } from '../../../processing/voucher/view/VoucherView'
 import { get_current_user_locations_with_out_selector } from '../../../../../redux/store'
+import { Grid2 } from '@mui/material'
 
 export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
 
@@ -44,14 +45,14 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
     
   return (
     <>
-     <GroupContainer Label='Sub Account Detail'>
-        <Quantom_Grid item size={{xs:12}}>
+     
+        <Quantom_Grid mt={1} container size={{xs:12}}>
           {/* <Quantom_LOV1 onChange={(selected) => {
             props?.setState?.({ ...props?.state, mainAccount: { Code: selected?.Code, Name: selected?.Name }, MainCode: selected?.Code })
             console.log('state of sub account is ', props?.state)
           } } selected={{ Code: props?.state?.mainAccount?.Code, Name: props?.state?.mainAccount?.Name }} FillDtaMethod={handleMainAccounts} 
           label='Main Account' uniqueKeyNo={props?.UniqueId?""}></Quantom_LOV> */}
-
+            <Quantom_Grid size={{xs:12,sm:12,md:8,lg:4}}>
 
           <Quantom_LOV1 selected={{Code:props?.state?.MainCode,Name:props?.state?.mainAccount?.Name}} 
                         onChange={(sel)=>(props?.setState?.({...props?.state,MainCode:sel?.Code,mainAccount:{Code:sel?.Code,Name:sel?.Name}}))} 
@@ -59,16 +60,18 @@ export const SubAccountView = (props?:MenuComponentProps<SubAccountModel>) => {
                         uniqueKeyNo={props?.UniqueId??""} 
                         FillDtaMethod={handleMainAccounts}
                         keyNo="MAIN_ACCOUNT_DATA"/>
-        </Quantom_Grid>
-        <Quantom_Grid container spacing={.5}>
-          <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
-              <Quantom_Input disabled label='Code' value={props?.state?.Code} />
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
-              <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
           </Quantom_Grid>
         </Quantom_Grid>
-      </GroupContainer>
+        <Quantom_Grid mt={1} container spacing={.5}>
+          <Quantom_Grid item size={{xs:4,md:3,lg:1.5}}>
+              <Quantom_Input size='medium' disabled label='Code' value={props?.state?.Code} />
+          </Quantom_Grid>
+          <Quantom_Grid item size={{xs:8,md:5,lg:2.5}}>
+              <Quantom_Input size='medium' label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
+          </Quantom_Grid>
+        </Quantom_Grid>
+      
+    
     </>
   )
 }
