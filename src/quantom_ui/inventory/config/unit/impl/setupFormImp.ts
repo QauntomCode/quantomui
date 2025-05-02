@@ -98,6 +98,11 @@ const get_type_by_menu_code = (
       Type: "Category",
       Capation: "Price Group",
     };
+  } else if(menuCode==="014-001"){
+    obj={
+      Type:"Designation",
+      Caption:"Designation"
+    }
   }
 
   return Promise.resolve(obj);
