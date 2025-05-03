@@ -49,8 +49,8 @@ export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
                         <IconByName fontSize='15px' iconName='LooksOneOutlined' color={theme.palette.text.disabled}/>
                           <div style={{marginLeft:'2px',fontSize:fonts.H4FontSize}}>{item?.mainAccount?.Name}</div>
                       </div>
-                      <div style={{display:'flex',flex:'1',alignItems:'center',marginTop:'3px'}}>
-                      
+                      <div style={{display:'flex',flex:'.75',alignItems:'center',marginTop:'3px'}}>
+                            <QuantomListViewButton onClick={()=>{props?.setPrimaryKeyNo?.(item?.Code)}}/>
                       </div>
 
                     </div>
@@ -70,14 +70,14 @@ export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
 }
 
 export interface QuantomListViewProps{
-   onClick:()=>void;
+   onClick?:()=>void;
 }
 
 export const QuantomListViewButton=(props?:QuantomListViewProps)=>{
   const theme= useTheme();
   const fonts= useQuantomFonts();
   return(
-    <Box component={Paper} onClick={()=>{
+    <Box pr={1} display='flex' alignItems='center' justifyContent='center' component={Paper} onClick={()=>{
         props?.onClick?.();
      }} style={{
                       height:'100%',width:'100%',
@@ -87,7 +87,9 @@ export const QuantomListViewButton=(props?:QuantomListViewProps)=>{
                       color:theme?.palette?.secondary?.contrastText,
                       marginRight:'10px'
                       }}>
-         View 
+        <div style={{display:'flex',flex:1,justifyContent:'center',alignItems:'center'}}>
+         View
+         </div> 
          <IconByName color={theme?.palette?.secondary?.contrastText} iconName="EastOutlined"/>
      </Box>
   )
