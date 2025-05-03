@@ -65,6 +65,7 @@ import { CustomerReceiptViewErp } from '../../../../quantom_ui/payments/customer
 import { EmployeeProfileView } from '../../../../quantom_ui/payroll/config/Emloyee/Views/EmployeeProfileView';
 
 import ActivityLogView from '../../../../quantom_ui/management/reports/activityLog/views/ActivityLogView'
+import { DesignationView } from '../../../../quantom_ui/payroll/config/designation/Views/DesignationView';
 
 
 
@@ -1018,6 +1019,11 @@ export const PaymentMenus:MenuInfoModel<any>[]=[
 export const PayrollMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:"014-001",
+    MenuCaption:"Designation",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<DesignationView {...props}/>)
+  },
+  {
+    MenuCode:"014-002",
     MenuCaption:"Employee Profile",
     GetComponent:(props?:MenuComponentProps<any>)=>(<EmployeeProfileView {...props}/>)
   },

@@ -16,8 +16,8 @@ const  EMPLOYEE_FORM_GET_ALL_URL="Payroll/Employee/getAll";
 
 export const EmployeeInsert =async(model?:VmEmployee):Promise<HttpResponse<VmEmployee>> =>
     {
-        let nmodel:VmEmployee={...model,employee:{...model?.employee,department:undefined,designation:undefined}}
- let res =await QuantomPOST<VmEmployee>(EMPLOYEE_FORM_INSERT_URL,true,model);
+let nmodel:VmEmployee={...model,employee:{...model?.employee,department:undefined,designation:undefined,registerAccount:undefined}}
+ let res =await QuantomPOST<VmEmployee>(EMPLOYEE_FORM_INSERT_URL,true,nmodel);
  return res;
 }
 
