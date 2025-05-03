@@ -8,4 +8,5 @@ export interface RegisterAccountModel {
   SubSubCode?: string;
   SortNumber?: number;
   subSubAccount?: SubSubAccountModel; // Assuming SubAccount is another TypeScript class or interface
+  Balance?:number;
 }
