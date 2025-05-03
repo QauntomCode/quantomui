@@ -30,7 +30,7 @@ import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/v
 import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/LedgerView'
 import * as Icons from '@mui/icons-material';
 import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLedger/view/LedgerDetailView';
-import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
+import DashboardLayoutBasic, { ErpMenuScreenComps } from '../../Navigation/NavigationComponent';
 import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
 import { InventoryUnitView } from '../../../../quantom_ui/inventory/config/unit/view/InventoryUnitView';
 import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/Inventory_ItemsView';
@@ -906,8 +906,13 @@ export const GetRoutType=():'WITH_ROUTE'|'WITH_TAB'=>{
 
 
 
-
+export const   menu_screen_menu_code="000_000_000_0000"
 export const InventoryMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:menu_screen_menu_code,
+    MenuCaption:"All Menus",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<ErpMenuScreenComps {...props}/>)
+  },
   {
     MenuCode:"003-001",
     MenuCaption:"Inventory Unit",
