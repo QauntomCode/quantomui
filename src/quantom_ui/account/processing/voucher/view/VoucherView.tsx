@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { ReactNode } from 'react'
-import {  MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import {  IconByName, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
 import { QUANTOM_Date } from '../../../../../quantom_comps/BaseComps/Quantom_Date'
@@ -19,7 +19,6 @@ import { VoucherList } from './VoucherList'
 import { useTheme } from '@mui/material/styles'
 import { ListCompButton } from '../../../report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
-import { BorderBottom } from '@mui/icons-material'
 
 
 export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
@@ -61,7 +60,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
      
   return (
     <>
-     <GroupContainer Label='Voucher Master Info'>
+     {/* <GroupContainer Label='Voucher Master Info'> */}
       <Quantom_Grid container  spacing={.5}>
         <Quantom_Grid item size={{xs:12,sm:6,md:3,lg:2,xl:1.5}}>
           <Quantom_Input label="VCode" value={props?.state?.voucher?.VCode} disabled/>
@@ -80,7 +79,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
           </Quantom_Grid>
       </Quantom_Grid>
       
-        <Quantom_Grid container  spacing={.5}>
+        <Quantom_Grid container mt={1}  spacing={.5}>
           <Quantom_Grid item size={{xs:12,sm:12,md:3,lg:2,xl:1.5}}>
               <Quantom_Input label="RefNo" value={props?.state?.voucher?.VRefNo} 
                       onChange={(val)=>props?.setState?.({...props?.state,voucher:{...props?.state?.voucher,VRefNo:val.target?.value}})}/>
@@ -92,7 +91,7 @@ export const VoucherView = (props?:MenuComponentProps<VMVoucherModel>) => {
          
           </Quantom_Grid>
         </Quantom_Grid>
-        </GroupContainer>
+        {/* </GroupContainer> */}
        
     </>
   )
@@ -116,7 +115,7 @@ export const VoucherDetailTabComp=(props:MenuComponentProps<VMVoucherModel>)=>{
 
   return(
     <>
-    <GroupContainer Label='Voucher Detail Line'>
+    {/* <GroupContainer Label='Voucher Detail Line'> */}
           
     <Quantom_Grid container fullWidth  xs={12}  spacing={.5}>
       <Quantom_Grid item size={{md:lineSize.GL_ACCOUNT_SIZE}} >
@@ -160,11 +159,11 @@ export const VoucherDetailTabComp=(props:MenuComponentProps<VMVoucherModel>)=>{
         return(<RenderVoucherDetail key={index} detail={item} basePorps={props}/>)
       })
     }
-  </GroupContainer>
+  {/* </GroupContainer> */}
   
     
-       <Quantom_Grid container display='flex' justifyContent='flex-end'>
-        <GroupContainer Label='Voucher Summary'>
+       <Quantom_Grid mt={1.5} container display='flex' justifyContent='flex-end'>
+        {/* <GroupContainer Label='Voucher Summary'> */}
           <Quantom_Grid container  xs={12} spacing={.5}>
           <Quantom_Grid item xs={6} >
               <Quantom_Input value={totalDebit} label='Total Debit' disabled/>
@@ -174,7 +173,7 @@ export const VoucherDetailTabComp=(props:MenuComponentProps<VMVoucherModel>)=>{
               <Quantom_Input value={totalCredit} label='Total Credit' disabled/>
           </Quantom_Grid>
           </Quantom_Grid>
-        </GroupContainer>
+        {/* </GroupContainer> */}
       </Quantom_Grid>
 
       </>
@@ -190,18 +189,20 @@ interface VoucherDetailProps{
 export const RenderVoucherDetail=(props?:VoucherDetailProps)=>{
   const font= useQuantomFonts();
   const style={
-    fontFamily:font.RegularFont,fontWeight:500,fontSize:'10px'
+    fontFamily:font.HeaderFont,fontSize:'10px'
   }
+
   return(
     <>
-      <Quantom_Grid container xs={12} sx={{marginTop:'4px'}} component={Paper}  alignItems='center' spacing={.5}>
+      <Quantom_Grid pt={.5} pb={.5} container xs={12} sx={{marginTop:'4px'}} component={Paper}  alignItems='center' spacing={.5}>
         <Quantom_Grid item size={{xs:lineSize.GL_ACCOUNT_SIZE}} xs={lineSize.GL_ACCOUNT_SIZE} sx={style} justifyContent='center' alignItems='center' display='flex'>
             <Box onClick={()=>{
                let d= [...props?.basePorps?.state?.details??[]];
                d.splice(props?.index??-1,1);
                props?.basePorps?.setState?.({...props?.basePorps?.state,details:d});
             }}>
-              <DeleteOutlineRoundedIcon fontSize='small' />
+              <IconByName iconName='DeleteOutlined' fontSize='16px'/>
+              {/* <DeleteOutlineRoundedIcon fontSize='small' sx={{fontSize:'12px'}} /> */}
             </Box>
             <Box style={{flex:1}}>
           {props?.detail?.registerAccount?.Name}
