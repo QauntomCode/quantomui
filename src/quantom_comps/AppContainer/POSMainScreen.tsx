@@ -45,10 +45,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
     const fontStyle={fontFamily:fonts.HeaderFont,fontSize:'20px',fontWeight:'bold'}
     const flexStyle={flex:5,display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}
 
-    const openNewMenu=async(menuCode?:string,caption?:string)=>{
-      let guid=await generateGUID();
-      store.dispatch(open_new_menu({MenuCode:menuCode,MenuCaption:caption,UniqueKeyNo:guid}))
-    }
+   
 
     const ItemMenuCaption=appType===APP_TYPE.DENTAL_APP?"Services" :"Item Setup"
     const categoryCaption=appType===APP_TYPE.DENTAL_APP?"Service Types" :"Category"
@@ -242,3 +239,7 @@ export const POSMainScreen = (props?:MenuComponentProps<model>) => {
 
 
 
+export const openNewMenu=async(menuCode?:string,caption?:string)=>{
+   let guid=await generateGUID();
+   store.dispatch(open_new_menu({MenuCode:menuCode,MenuCaption:caption,UniqueKeyNo:guid}))
+ }

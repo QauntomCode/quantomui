@@ -43,8 +43,8 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
     
   return (
     <>
-      <GroupContainer Label='Opening Balance Detail'>
-       <Quantom_Grid container spacing={0.5}>
+      {/* <GroupContainer Label='Opening Balance Detail'> */}
+       <Quantom_Grid mt={1.5} container spacing={0.5}>
           <Quantom_Grid  item size={{xs:12,md:4,lg:3,xl:1.5}} >
             <Quantom_Input  disabled label='OP Code' value={props?.state?.OpCode} />
           </Quantom_Grid>
@@ -55,22 +55,22 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
                 }} />
           </Quantom_Grid>
         </Quantom_Grid>
-        <Quantom_Grid  container   >
+        <Quantom_Grid mt={1} container   >
           <Quantom_Grid item size={{xs:12, md:8, lg:6, xl:3}}>
-          <LocationSelectorLOV onChange={(loc)=>{ 
+          <LocationSelectorLOV UniqueId={props?.UniqueId??""} onChange={(loc)=>{ 
                props?.setState?.({...props?.state,LocCode:loc?.Code,location:{LocId:loc?.Code,LocName:loc?.Name}})
           }} selected={{Code:props?.state?.LocCode,Name:props?.state?.location?.LocName}}/> 
           </Quantom_Grid>
         </Quantom_Grid>
-        <Quantom_Grid  container>
+        <Quantom_Grid mt={1} container>
           <Quantom_Grid item size={{xs:12, md:8, lg:6, xl:3}}>
-          <RegisterAccountLOV onChange={(sel)=>{
+          <RegisterAccountLOV uniqueId={props?.UniqueId??""} onChange={(sel)=>{
               props?.setState?.({...props?.state,Code:sel?.Code,registerAccount:{Code:sel?.Code,Name:sel?.Name}})}
               } 
               selected={{Code:props?.state?.Code,Name:props?.state?.registerAccount?.Name}}/> 
               </Quantom_Grid>
         </Quantom_Grid>
-        <Quantom_Grid container spacing={0.5}>
+        <Quantom_Grid mt={1} container spacing={0.5}>
           <Quantom_Grid  item  size={{xs:12,md:4,lg:3,xl:1.5}}>
             <Quantom_Input   label='Debit' value={props?.state?.Debit} 
                   onChange={(e)=>{props?.setState?.({...props?.state,Debit:safeParseToNumber(e?.target?.value),Credit:0})}}/>
@@ -82,7 +82,7 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
         </Quantom_Grid>
       
         
-        <Quantom_Grid  container>
+        <Quantom_Grid mt={1}  container>
         <Quantom_Grid item size={{xs:12, md:8, lg:6, xl:3}}>
           <Quantom_Input label='Remarks' value={props?.state?.Remarks} onChange={(e)=>{
              props?.setState?.({...props?.state,Remarks:e?.target?.value}) 
@@ -90,7 +90,7 @@ export const OpeningBalanceView = (props?:MenuComponentProps<OpeningBalanceModel
           }/>
           </Quantom_Grid>
         </Quantom_Grid>
-        </GroupContainer>
+        {/* </GroupContainer> */}
       {/* </Quantom_Grid> */}
     </>
   )
@@ -125,16 +125,20 @@ export const RegisterAccountLOV=(props?:RegisterAccountLOVProps)=>{
 }
 
 
+export interface LocationLovProps extends Quantom_LOV_PROPS{
+    UniqueId:string;
+    KeyNo?:string;
 
- export const LocationSelectorLOV=(props?:Quantom_LOV_PROPS)=>{
+}
+ export const LocationSelectorLOV=(props?:LocationLovProps)=>{
     const handleRegisterAccount=async()=>{
        let res= await GetLocationsByUserId();
        let locs= res?.map(x=>{ return {Code:x.LocId,Name:x.LocName}});
        return Promise.resolve(locs);
     }
     return(
-       <Quantom_LOV selectedIndex={0} onChange={props?.onChange} 
-          selected={props?.selected} 
-          FillDtaMethod={handleRegisterAccount} label='Location' />
+       <Quantom_LOV1 selectedIndex={0} onChange={props?.onChange}
+      selected={props?.selected}
+      FillDtaMethod={handleRegisterAccount} label='Location' uniqueKeyNo={props?.UniqueId??""} keyNo={props?.KeyNo??'LOCATION_COMBO_BOX'} />
     )
  }

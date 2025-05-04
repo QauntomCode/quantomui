@@ -30,7 +30,7 @@ import { VoucherView } from '../../../../quantom_ui/account/processing/voucher/v
 import {LedgerView} from  '../../../../quantom_ui/account/report/Ledger/view/LedgerView'
 import * as Icons from '@mui/icons-material';
 import { LedgerDetailView } from '../../../../quantom_ui/account/report/detailLedger/view/LedgerDetailView';
-import DashboardLayoutBasic from '../../Navigation/NavigationComponent';
+import DashboardLayoutBasic, { ErpMenuScreenComps } from '../../Navigation/NavigationComponent';
 import { UserLogView } from '../../../../Config/QuatomViews/UserViews/UserLogView';
 import { InventoryUnitView } from '../../../../quantom_ui/inventory/config/unit/view/InventoryUnitView';
 import { InventoryItemsView } from '../../../../quantom_ui/inventory/config/item/views/Inventory_ItemsView';
@@ -66,6 +66,7 @@ import { EmployeeProfileView } from '../../../../quantom_ui/payroll/config/Emloy
 
 import ActivityLogView from '../../../../quantom_ui/management/reports/activityLog/views/ActivityLogView'
 import { DesignationView } from '../../../../quantom_ui/payroll/config/designation/Views/DesignationView';
+import { POSActionButton } from '../../POSHelpers/POSActionButton';
 
 
 
@@ -607,34 +608,43 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
               <Quantom_Grid container={Paper} sx={{/*backgroundColor:theme.palette.secondary.main,*/paddingLeft:'4px',paddingRight:'2px',
                 color:theme?.palette?.secondary.contrastText
               }}>
-              <ToolBarButton iconName='InsertDriveFileTwoTone' Label='New' onClick={()=>{
+              <POSActionButton iconName='FeedOutlined' onClick={()=>{ResetState()}} label='New'></POSActionButton>
+              {/* <ToolBarButton iconName='InsertDriveFileTwoTone' Label='New' onClick={()=>{
                 ResetState();
               }}>
+                
                 <NewButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}></NewButtonIcon>
               </ToolBarButton>
               
               <ToolBarButton iconName='SaveTwoTone' Label='Save' onClick={handleSaveMethod}>
-              </ToolBarButton>
+              </ToolBarButton> */}
+              <POSActionButton iconName='SaveOutlined' onClick={handleSaveMethod} label='Save'></POSActionButton>
 
               
-              <ToolBarButton onClick={()=>{
+              {/* <ToolBarButton onClick={()=>{
                 ResetState();
               }} iconName='CancelPresentationTwoTone' Label='Cancel'>
                 <CancelButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}}/>
-              </ToolBarButton>
-              <ToolBarButton onClick={()=>{
+              </ToolBarButton> */}
+              <POSActionButton iconName='CancelPresentationOutlined' onClick={ResetState} label='Cancel'></POSActionButton>
+              <POSActionButton iconName='DeleteOutlineOutlined' onClick={()=>{setShowDeleteDialog(true)}} label='Delete'></POSActionButton>
+              {/* <ToolBarButton onClick={()=>{
                 setShowDeleteDialog(true)
               }} iconName='DeleteTwoTone' Label='Delete'>
                 <DeleteButtonIcon fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
-              </ToolBarButton>
-              <ToolBarButton onClick={()=>{
+              </ToolBarButton> */}
+              {/* <ToolBarButton onClick={()=>{
                   store?.dispatch(change_form_state({stateKey:props?.baseProps?.UniqueId??"",FormState:state?.FormState==='LIST'?'FORM':'LIST'}))
               }} 
               Label={state?.FormState==='LIST'?'Form':'LIST'}
               iconName={state?.FormState==='LIST'?'DesktopWindowsTwoTone':'DvrTwoTone'}
               >
                 <SearchButtonIcon  fontSize='medium' sx={{color:QuantomColors.SelectedElementTextColor}} />
-              </ToolBarButton>
+              </ToolBarButton> */}
+
+              <POSActionButton iconName={state?.FormState==='LIST'?'BallotOutlined':'DesktopWindowsOutlined'} onClick={()=>{
+                store?.dispatch(change_form_state({stateKey:props?.baseProps?.UniqueId??"",FormState:state?.FormState==='LIST'?'FORM':'LIST'}))
+              }} label={state?.FormState==='LIST'?'FROM':'LIST'}></POSActionButton>
           </Quantom_Grid>
        </Quantom_Grid>
          <QuantomConfirmationDialog open={showDeleteDialog} 
@@ -906,8 +916,13 @@ export const GetRoutType=():'WITH_ROUTE'|'WITH_TAB'=>{
 
 
 
-
+export const   menu_screen_menu_code="000_000_000_0000"
 export const InventoryMenus:MenuInfoModel<any>[]=[
+  {
+    MenuCode:menu_screen_menu_code,
+    MenuCaption:"All Menus",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<ErpMenuScreenComps {...props}/>)
+  },
   {
     MenuCode:"003-001",
     MenuCaption:"Inventory Unit",

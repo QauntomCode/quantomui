@@ -7,14 +7,15 @@ import LayersIcon from '@mui/icons-material/Layers';
 // import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
 // import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 // import { useDemoRouter } from '@toolpad/core/internal';
-import { AppContainerTabHelper, generateGUID, IconByName } from '../Helpers/TabHelper/AppContainerTabHelper';
+import { AppContainerTabHelper, generateGUID, IconByName, MenuComponentProps, setFormBasicKeys } from '../Helpers/TabHelper/AppContainerTabHelper';
 import QuantomTheme from '../../QuantomTheme';
 import { Quantom_Grid } from '../../base_comps';
-import React from 'react';
-import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, useTheme } from '@mui/material';
-import { BorderBottom, ExpandLess, ExpandMore, Height, StarBorder } from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, selectClasses, useTheme } from '@mui/material';
+import { BorderBottom, ExpandLess, ExpandMore, Height, SellSharp, StarBorder } from '@mui/icons-material';
 import store, { useQuantomFonts } from '../../../redux/store';
 import { open_new_menu } from '../../../redux/reduxSlice';
+import { openNewMenu } from '../POSMainScreen';
 
 
 
@@ -33,7 +34,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
   return (
 
         <>
-          <div style={{display:'flex'}}>
+          {/* <div style={{display:'flex'}}>
              <div style={{width:'200px',height:'calc(100vh)',borderRight:`1px solid ${theme.palette.secondary.main}`,borderLeft:`.5px solid ${theme.palette.secondary.main}`}}>
               <Box style={{width:'100%',height:'100%'}}>
                   <Box component={Paper} display='flex' justifyContent='center' alignItems='center' sx={{fontFamily:fonts?.HeaderFont,
@@ -47,10 +48,11 @@ export default function DashboardLayoutBasic(props: DemoProps) {
                   <NestedList />
               </Box>
              </div>
-             <div style={{flex:1}}>
+             <div style={{flex:1}}> */}
+              
                 <AppContainerTabHelper/>
-             </div>
-          </div>
+             {/* </div> */}
+          {/* </div> */}
         </>
         
         
@@ -58,10 +60,111 @@ export default function DashboardLayoutBasic(props: DemoProps) {
   );
 }
 
+export const ErpMenuScreenComps=(props?:MenuComponentProps<any>)=>{
+ React.useEffect(()=>{
+  //  alert(props?.UniqueId)
+    setFormBasicKeys<any>({
+        uniqueKey:props?.UniqueId??"",
+        settings:{wWillHideToolbar:true},
+        baseProps:props??{}
+    })
+},[props])
+const[selectedSubModule,setSelectedSubModule]= useState<SubModule>()
+
+const theme= useTheme();
+const fonts= useQuantomFonts();
+  return(
+     <Quantom_Grid mt={2} spacing={1.5}  container size={{xs:12}}> 
+        {
+          MainModulesList?.map((item,index)=>{
+            return(
+               <Quantom_Grid p={1} component={Paper}  size={{xs:12,/*sm:12,md:6,lg:6,xl:4*/}} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize}}>
+                   <Quantom_Grid alignItems='center' container sx={{borderBottom:`1px solid ${theme?.palette?.text?.disabled}`}}>
+                      <IconByName color={theme?.palette?.text?.disabled} iconName='AccountTreeOutlined'/>
+                      <div style={{fontSize:fonts.H3FontSize}}>{item?.ModuleName}</div>
+                   </Quantom_Grid>
+                    
+                  <RenderSubModuleMenu item={item} selectedSubModule={selectedSubModule} onChange={(item)=>setSelectedSubModule(item)}/>
 
 
+               </Quantom_Grid>
+            )
+          })
+        }
+     </Quantom_Grid>
+  )
+}
 
 
+export interface RenderSubModuleMenuProps{
+   item?:Modules;
+   selectedSubModule?:SubModule
+   onChange?:(sModule?:SubModule)=>void;
+}
+
+export const RenderSubModuleMenu=(props?:RenderSubModuleMenuProps)=>{
+  const theme= useTheme();
+  const [menus,setMenus]=useState<QuantomMenu[]>([]);
+  useEffect(()=>{
+      if(props?.item?.ModuleCode===props?.selectedSubModule?.ModuleCode){
+          setMenus(mainMenusList?.filter(x=>x.ModuleCode===props?.selectedSubModule?.ModuleCode && x.SubModuleCode===props?.selectedSubModule?.SubModuleCode))
+      }
+      else{
+        setMenus([])
+      }
+  },[props?.selectedSubModule])
+  
+   const GetbgColor=(item?:SubModule)=> (props?.selectedSubModule?.SubModuleCode===item?.SubModuleCode &&props?.selectedSubModule?.ModuleCode===item?.ModuleCode )
+   ?theme?.palette?.background?.default :theme?.palette?.background?.default
+
+
+   const getForeColor=(item?:SubModule)=> (props?.selectedSubModule?.SubModuleCode===item?.SubModuleCode &&props?.selectedSubModule?.ModuleCode===item?.ModuleCode )
+   ?theme?.palette?.secondary?.contrastText :theme?.palette?.text?.primary
+
+   const getIconColor=(item?:SubModule)=> (props?.selectedSubModule?.SubModuleCode===item?.SubModuleCode &&props?.selectedSubModule?.ModuleCode===item?.ModuleCode )
+   ?theme?.palette?.secondary?.contrastText :theme?.palette?.text?.disabled
+  return(
+    <>
+      <Quantom_Grid   mt={2} spacing={1.5} container size={{xs:12}} >
+                      {
+                        subModulesList?.filter?.(x=>x.ModuleCode===props?.item?.ModuleCode)?.map((item,index)=>{
+                          return(
+                            <Quantom_Grid  onClick={()=>{
+                              if(props?.selectedSubModule?.ModuleCode===item?.ModuleCode && props?.selectedSubModule?.SubModuleCode===item?.SubModuleCode){
+                                props?.onChange?.({})
+                              }
+                              else{
+                                props?.onChange?.(item);
+                              }
+                            }} alignItems='center' p={.5} component={Paper} flex={1} 
+                            sx={{ 
+                              backgroundColor:GetbgColor(item),fontWeight:600,color:getForeColor(item)}}>
+                              <IconByName color={getIconColor(item)} iconName='SettingsApplicationsOutlined'></IconByName>
+                              {item?.SubModuleName}
+                            </Quantom_Grid>
+                          )
+                        })
+                      }
+        </Quantom_Grid>
+
+        <Quantom_Grid mr={1} ml={1} spacing={2} p={1} container>
+          {
+            menus?.map((item,index)=>{
+              return(
+                 <Quantom_Grid onClick={()=>{
+                  openNewMenu(item?.MenuCode,item?.MenuName)
+                 }} display='flex' alignItems='center' justifyContent='center' pt={2} pb={2} component={Paper} size={{xs:6,md:3,lg:2,xl:1.5}} sx={{backgroundColor:theme?.palette?.background?.default}}>
+                    <IconByName fontSize='20px' color={theme?.palette?.text?.disabled} iconName={item?.IconName?(item?.IconName):'CropDinOutlined'}/>
+                    {item?.MenuName}
+                 </Quantom_Grid>
+              )
+            })
+          }
+        </Quantom_Grid>
+    
+      </>
+  )
+}
 
 
 
@@ -489,7 +592,6 @@ export const mainMenusList:QuantomMenu[]=[
     ModuleCode:'012',
     SubModuleCode:'03',
     SortNumber:1
-
   }
 
 ]
@@ -502,6 +604,7 @@ export interface QuantomMenu{
    ModuleCode?:string;
    SubModuleCode?:string;
    SortNumber?:number;
+   IconName?:string;
 }
 
 
