@@ -470,10 +470,18 @@ export const mainMenusList:QuantomMenu[]=[
   {
 
     MenuCode:'014-002',
-    MenuName:'Employee Profile',
+    MenuName:'Department',
     ModuleCode:'014',
     SubModuleCode:'01',
     SortNumber:1
+  },
+  {
+
+    MenuCode:'014-003',
+    MenuName:'Employee Profile',
+    ModuleCode:'014',
+    SubModuleCode:'01',
+    SortNumber:2
   },
   {
     MenuCode:'012-011',

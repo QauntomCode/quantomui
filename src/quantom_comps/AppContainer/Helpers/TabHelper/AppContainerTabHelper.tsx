@@ -1024,6 +1024,11 @@ export const PayrollMenus:MenuInfoModel<any>[]=[
   },
   {
     MenuCode:"014-002",
+    MenuCaption:"Department",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<DesignationView {...props}/>)
+  },
+  {
+    MenuCode:"014-003",
     MenuCaption:"Employee Profile",
     GetComponent:(props?:MenuComponentProps<any>)=>(<EmployeeProfileView {...props}/>)
   },
