@@ -102,6 +102,11 @@ const get_type_by_menu_code = (
     obj={
       Type:"Designation",
       Caption:"Designation"
+    };
+  } else if(menuCode==="014-002"){
+    obj={
+      Type:"Department",
+      Caption:"Department"
     }
   }
 
