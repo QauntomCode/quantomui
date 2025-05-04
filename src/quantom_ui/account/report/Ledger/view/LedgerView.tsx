@@ -21,6 +21,7 @@ import { DetailLedgerModel } from "../../detailLedger/model/DetailLedgerModel";
 import { getLedgerDetail } from "../../detailLedger/Implementation/DetailLedgerImpl";
 import { POSActionButton1 } from "../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 import { FilterHandler, useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
+import { RenderLedgerSingleEntry } from "../../detailLedger/view/LedgerDetailView";
 
 
 
@@ -51,7 +52,7 @@ export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
         <>
          <LedgerFilterHeaderComp {...props}/>
          <Quantom_Grid sx={{marginTop:'5px'}}>
-            <QUANTOM_Table  height={height}  columns={
+            {/* <QUANTOM_Table  height={height}  columns={
                 [
                   {field:"locName",width:120,header:'Location'},
                   {field:"VDate",width:100,header:'VDate', dataType:'date'},
@@ -62,7 +63,15 @@ export const LedgerView = (props?:MenuComponentProps<LedgerComponentState>) => {
                   {field:"Debit",width:100,header:'Debit', },
                   {field:"Credit",width:100,header:'Credit', },
                   {field:"Balance",width:150,header:'Balance', },
-                ]} data={props?.state?.ledgerData}/>
+                ]} data={props?.state?.ledgerData}/> */}
+
+                {
+                    props?.state?.ledgerData?.map((item,index)=>{
+                        return(
+                            <RenderLedgerSingleEntry item={item}/>
+                        )
+                    })
+                }
          </Quantom_Grid>
         </>
     )

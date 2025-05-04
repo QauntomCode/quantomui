@@ -125,7 +125,7 @@ export const RenderSubModuleMenu=(props?:RenderSubModuleMenuProps)=>{
    ?theme?.palette?.secondary?.contrastText :theme?.palette?.text?.disabled
   return(
     <>
-      <Quantom_Grid  ml={1.5} mr={1.5} mt={2} spacing={1.5} container size={{xs:12}} >
+      <Quantom_Grid   mt={2} spacing={1.5} container size={{xs:12}} >
                       {
                         subModulesList?.filter?.(x=>x.ModuleCode===props?.item?.ModuleCode)?.map((item,index)=>{
                           return(
@@ -136,7 +136,7 @@ export const RenderSubModuleMenu=(props?:RenderSubModuleMenuProps)=>{
                               else{
                                 props?.onChange?.(item);
                               }
-                            }} alignItems='center' p={1} component={Paper} flex={1} 
+                            }} alignItems='center' p={.5} component={Paper} flex={1} 
                             sx={{ 
                               backgroundColor:GetbgColor(item),fontWeight:600,color:getForeColor(item)}}>
                               <IconByName color={getIconColor(item)} iconName='SettingsApplicationsOutlined'></IconByName>
@@ -147,13 +147,13 @@ export const RenderSubModuleMenu=(props?:RenderSubModuleMenuProps)=>{
                       }
         </Quantom_Grid>
 
-        <Quantom_Grid mr={3} ml={3} spacing={2} p={1} container>
+        <Quantom_Grid mr={1} ml={1} spacing={2} p={1} container>
           {
             menus?.map((item,index)=>{
               return(
                  <Quantom_Grid onClick={()=>{
                   openNewMenu(item?.MenuCode,item?.MenuName)
-                 }} alignItems='center'  component={Paper} p={1} size={{xs:6,md:3,lg:2,xl:1.5}} sx={{backgroundColor:theme?.palette?.background?.default}}>
+                 }} display='flex' alignItems='center' justifyContent='center' pt={2} pb={2} component={Paper} size={{xs:6,md:3,lg:2,xl:1.5}} sx={{backgroundColor:theme?.palette?.background?.default}}>
                     <IconByName fontSize='20px' color={theme?.palette?.text?.disabled} iconName={item?.IconName?(item?.IconName):'CropDinOutlined'}/>
                     {item?.MenuName}
                  </Quantom_Grid>
