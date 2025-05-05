@@ -45,14 +45,19 @@ export const SubSubAccountList = (props?:MenuComponentProps<SubSubAccountModel>)
             return(
                 <Quantom_Grid  p={1} font component={Paper} size={{xs:12,sm:12,md:6,lg:4}} 
                     sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize,color:theme?.palette?.text?.disabled}}>
-                   <Quantom_Grid container>
-                      <div><IconByName fontSize='16px' color={theme?.palette?.text?.disabled} iconName='Tag'/></div>
+                   <Quantom_Grid borderBottom={`3px solid ${theme?.palette?.text?.disabled}`} container>
+                      <div style={{display:'flex',flex:1,alignItems:'center'}}>
+                          <IconByName fontSize='16px' color={theme?.palette?.text?.disabled} iconName='Looks3Outlined'/>
+                          {item?.Name}
+                      </div>
+                      <div style={{display:'flex',alignItems:'center'}}></div>
+                        <IconByName fontSize='16px' color={theme?.palette?.text?.disabled} iconName='Tag'/>
                       {item?.Code}
                    </Quantom_Grid>
-                   <Quantom_Grid pb={.5} borderBottom={`.5px solid ${theme?.palette?.text?.disabled}`} container sx={{color:theme?.palette?.text?.primary}}>
+                   {/* <Quantom_Grid pb={.5} borderBottom={`.5px solid ${theme?.palette?.text?.disabled}`} container sx={{color:theme?.palette?.text?.primary}}>
                       <div><IconByName fontSize='16px' color={theme?.palette?.text?.disabled} iconName='AccountTreeOutlined'/></div>
                       {item?.Name}
-                   </Quantom_Grid>
+                   </Quantom_Grid> */}
                    <Quantom_Grid mt={.5} alignItems='center' container>
                         <IconByName fontSize='15px' iconName='LooksTwoOutlined' color={theme.palette.text.disabled}/>
                         <div style={{marginLeft:'2px',fontSize:fonts.H4FontSize}}>{item?.subAccount?.Name}</div>

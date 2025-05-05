@@ -37,13 +37,16 @@ export const RegisterAccountList = (props?:MenuComponentProps<RegisterAccountMod
           return(
              <Quantom_Grid  p={1} component={Paper}  size={{xs:12,sm:12,md:6,lg:4,xl:4}} 
                           sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,color:theme.palette.text.disabled}}>
-                <Quantom_Grid  container alignItems='center'>
-                  <IconByName fontSize='16px' iconName='Tag' color={theme?.palette?.text?.disabled}></IconByName>
-                  {item?.Code}
-                </Quantom_Grid>
-                <Quantom_Grid pb={1}  container alignItems='center' sx={{color:theme.palette.text.primary,borderBottom:`.5px solid ${theme?.palette?.text?.disabled}`}}>
-                  <IconByName fontSize='16px' iconName='BallotOutlined' color={theme?.palette?.text.primary}></IconByName>
-                  {item?.Name}
+                <Quantom_Grid  display='flex' container alignItems='center' sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}}>
+                  <div style={{flex:1,display:'flex',alignItems:'center'}}>
+                      <IconByName fontSize='16px' iconName='DynamicFormOutlined' color={theme?.palette?.text.primary}></IconByName>
+                      {item?.Name}
+                  </div>
+                  <div style={{display:'flex',alignItems:'center'}}>
+                    <IconByName fontSize='16px' iconName='Tag' color={theme?.palette?.text?.disabled}></IconByName>
+                    {item?.Code}
+                  </div>
+                 
                 </Quantom_Grid>
 
                 <Quantom_Grid pt={.5}  container alignItems='center'>

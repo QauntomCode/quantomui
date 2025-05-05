@@ -46,17 +46,18 @@ export const InventoryUnitView = (props?:MenuComponentProps<SetupFormModel>) => 
     
   return (
     <>
-     <GroupContainer Label={`${formCaption} Info`}>
+     {/* <GroupContainer Label={`${formCaption} Info`}> */}
       
-      <Quantom_Grid container spacing={.5}>
-         <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
+      <Quantom_Grid mt={1} container spacing={.5}>
+         <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
             <Quantom_Input disabled label='Code' value={props?.state?.Code} />
          </Quantom_Grid>
+      </Quantom_Grid>
          <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
             <Quantom_Input label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>
          </Quantom_Grid>
-      </Quantom_Grid>
-      </GroupContainer>
+      
+      {/* </GroupContainer> */}
     </>
   )
 }

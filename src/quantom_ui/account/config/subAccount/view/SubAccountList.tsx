@@ -33,10 +33,33 @@ export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
           {
             listData?.map((item,index)=>{
               return(
-                <Quantom_Grid component={Paper} 
-                              borderBottom={`1px solid ${theme?.palette?.primary?.main}`}  p={1} 
+                <Quantom_Grid p={1.5} component={Paper} 
+                              borderBottom={`1px solid ${theme?.palette?.primary?.main}`}  
                               size={{xs:12,sm:12,md:6,lg:4,xl:3}} sx={{fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize}}>
-                    <div style={{display:'flex',alignItems:'center'}}>
+                    <Quantom_Grid alignItems='center' display='flex' container sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}}>
+                         <div style={{display:'flex',alignItems:'center',marginRight:'8px',flex:1}}>
+                            <IconByName iconName='LooksTwoOutlined' fontSize='16px' color={theme?.palette?.text?.disabled}/>
+                              <div style={{marginLeft:'3px'}}>
+                              {item?.Name}
+                              </div>
+                          </div>
+                         <div style={{alignItems:'center'}}>
+                            <IconByName iconName='Tag' fontSize='16px'  color={theme?.palette?.text?.disabled}/>
+                            {item?.Code}
+                          </div>
+                    </Quantom_Grid>
+                    <Quantom_Grid mt={.5} alignItems='center' display='flex' container >
+                         <div style={{display:'flex',alignItems:'center',marginRight:'8px',flex:1}}>
+                            <IconByName iconName='LooksOneOutlined' fontSize='16px' color={theme?.palette?.text?.disabled}/>
+                              <div style={{marginLeft:'3px'}}>
+                              {item?.mainAccount?.Name}
+                              </div>
+                          </div>
+                         <div style={{alignItems:'center',flex:1}}>
+                             <QuantomListViewButton onClick={()=>{props?.setPrimaryKeyNo?.(item?.Code)}}/>
+                          </div>
+                    </Quantom_Grid>
+                    {/* <div style={{display:'flex',alignItems:'center'}}>
                       <IconByName fontSize='15px' iconName='Tag' color={theme.palette.text.disabled}/>
                         <div style={{marginLeft:'2px',color:theme?.palette?.text.disabled,letterSpacing:1.5}}>{item?.Code}</div>
                     </div>
@@ -51,9 +74,9 @@ export const SubAccountList = (props?:MenuComponentProps<SubAccountModel>) => {
                       </div>
                       <div style={{display:'flex',flex:'.75',alignItems:'center',marginTop:'3px'}}>
                             <QuantomListViewButton onClick={()=>{props?.setPrimaryKeyNo?.(item?.Code)}}/>
-                      </div>
+                      </div> 
 
-                    </div>
+                    </div>*/}
                 </Quantom_Grid>
               )
             })
