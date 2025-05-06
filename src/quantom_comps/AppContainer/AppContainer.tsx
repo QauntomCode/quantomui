@@ -12,7 +12,10 @@ import { openNewMenu } from './POSMainScreen';
 
 export const AppContainer = () => {
   useEffect(()=>{
-    openNewMenu(menu_screen_menu_code,"Menus")
+     if(!store?.getState()?.formsState?.OpenMenus?.Menus?.find(x=>x.MenuCode===menu_screen_menu_code))
+     {
+        openNewMenu(menu_screen_menu_code,"Menus")
+     }
     //store.dispatch(open_new_menu({MenuCaption:"All Menus",MenuCode:menu_screen_menu_code}))
   },[])
     // const [menus,setMenus]=React.useState<AppContainerModel>();

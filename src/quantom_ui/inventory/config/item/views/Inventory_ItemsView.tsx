@@ -26,6 +26,7 @@ import { HTTP_RESPONSE_TYPE } from '../../../../../HTTP/QuantomHttpMethods'
 import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
 import { InventoryItemAtributeValuesModel } from '../model/AssocicateModels/InventoryItemAtributeValuesModel'
 import { InventoryItemLocationsModel } from '../model/AssocicateModels/InventoryItemLocationsModel'
+import { Paper, useTheme } from '@mui/material'
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
@@ -123,12 +124,13 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     }
 
 
+    const theme= useTheme();
   return (
     <>
     
 
       <Quantom_Grid size={{xs:12}} container spacing={.5}>
-        <Quantom_Grid item size={{xs:12,sm:12,md:5,lg:4,xl:3}}>
+        {/* <Quantom_Grid item size={{xs:12,sm:12,md:5,lg:4,xl:3}}>
             <GroupContainer height='410px' Label='Item List'>
                <div style={{display:'flex',width:'100%'}}>
                   <Quantom_Input label='Search' value={searchText} onChange={(e)=>{setSearchText(e?.target?.value)}}/>
@@ -139,84 +141,97 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                   </div>
                </div>
                <QUANTOM_Table onViewButtonClick={async(data)=>{
-                // alert(data?.Code)
                   let res= await InventoryItemsGetOne(data?.Code)
                 
                   if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
                     console.warn(res?.Response);
                    set_form_state(props?.UniqueId,{...res?.Response});
-                    // props?.setState?.(res?.Response)
                   }
                }} headerHeight={0} data={[...searchedItem]} height='390px' columns={[
                   {field:"Code",caption:"ItemCode",width:105 },
                   {field:"Name",caption:"ItemName",width:250 },
                 ]} />
-            </GroupContainer>  
+          </GroupContainer>  
         
-        </Quantom_Grid> 
- 
-      <Quantom_Grid item size={{xs:12,md:7,lg:7,xl:6}}>
-      <GroupContainer Label={`$Item Master Information `}>
-        <Quantom_Grid container spacing={.5}>
-          <Quantom_Grid item size={{xs:4,md:3,lg:2}}>
-              <Quantom_Input disabled label='Item Code' value={props?.state?.item?.ItemCode} />
+        </Quantom_Grid>  */}
+
+        <Quantom_Grid p={2} container size={{xs:12}} spacing={2}>
+          <Quantom_Grid  spacing={1}   size={{xs:12,sm:12,md:6,lg:4,xl:4}}>
+             <Quantom_Grid spacing={.5} container={{xs:12}}>
+                <Quantom_Grid item size={{xs:6,sm:6,md:4}}>
+                  <Quantom_Input disabled label='Item Code' value={props?.state?.item?.ItemCode} />
+                </Quantom_Grid>
+                <Quantom_Grid item size={{xs:12,sm:6,md:8}}>
+                    <Quantom_Input id='inventory_items_item_name' label='Item Name' value={props?.state?.item?.ItemName} 
+                        onChange={(e)=>{setItem({...props?.state?.item,ItemName:e?.target?.value})}}/>
+                </Quantom_Grid>
+             </Quantom_Grid>
+
+            
+             <Quantom_Grid mt={1} item size={{xs:12,md:12,lg:12}}>
+                <Quantom_Input label='Product' value={props?.state?.item?.ProductName} 
+                    onChange={(e)=>{setItem({...props?.state?.item,ProductName:e?.target?.value})}}/>
+                </Quantom_Grid>
+                <Quantom_Grid mt={1} item size={{xs:12,md:12,lg:12}}>
+                    <Quantom_Input label='Urdu Name' value={props?.state?.item?.UrduName} 
+                        onChange={(e)=>{setItem({...props?.state?.item,UrduName:e?.target?.value})}}/>
+                </Quantom_Grid>
+                <Quantom_Grid mt={1} item size={{xs:12,md:12,lg:12}}>
+                  <Quantom_Input label='Search Key' value={props?.state?.item?.SearchKey} 
+                    onChange={(e)=>{setItem({...props?.state?.item,SearchKey:e?.target?.value})}}/>
+                </Quantom_Grid>
           </Quantom_Grid>
-          <Quantom_Grid item size={{xs:8,md:9,lg:10}}>
-              <Quantom_Input id='inventory_items_item_name' label='Item Name' value={props?.state?.item?.ItemName} 
-                  onChange={(e)=>{setItem({...props?.state?.item,ItemName:e?.target?.value})}}/>
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-              <Quantom_Input label='Product' value={props?.state?.item?.ProductName} 
-                  onChange={(e)=>{setItem({...props?.state?.item,ProductName:e?.target?.value})}}/>
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-              <Quantom_Input label='Urdu Name' value={props?.state?.item?.UrduName} 
-                  onChange={(e)=>{setItem({...props?.state?.item,UrduName:e?.target?.value})}}/>
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-              <Quantom_Input label='Search Key' value={props?.state?.item?.SearchKey} 
-                  onChange={(e)=>{setItem({...props?.state?.item,SearchKey:e?.target?.value})}}/>
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-            <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')} 
-                              label='Item Type' 
+
+          <Quantom_Grid  size={{xs:12,sm:12,md:6,lg:4,xl:4}}>
+              
+              <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
+                <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')} 
+                                  label='Item Type' 
+                                  RefreshFillDtaMethod={refreshSetupMethod}
+                                  selected={{Code:props?.state?.item?.ItemType?.toString(),Name:props?.state?.item?.InventoryItemType?.Name}}           
+                                  onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
+                      />
+              </Quantom_Grid>
+
+              <Quantom_Grid mt={.5} container spacing={.5}>
+                  <Quantom_Grid item size={{xs:6,sm:9}}>
+                    <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('unit')} 
+                                label='Each Unit' 
+                                RefreshFillDtaMethod={refreshSetupMethod}
+                                selected={{Code:props?.state?.item?.UnitCode,Name:props?.state?.item?.UnitName}}           
+                                onChange={(obj)=>{setItem({UnitCode:obj?.Code,UnitName:obj?.Name})}}
+                    />
+                </Quantom_Grid>
+                <Quantom_Grid item size={{xs:6,sm:3}}>
+                  <Quantom_Input  label='Unit Name' value={props?.state?.item?.EachUnitName} 
+                        onChange={(e)=>{setItem({...props?.state?.item,EachUnitName:e?.target?.value})}}/>
+                </Quantom_Grid>
+              </Quantom_Grid>
+
+              <Quantom_Grid mt={.5} item size={{xs:12,md:12,lg:12}}>
+                <Quantom_LOV 
+                                FillDtaMethod={()=>getSetupDataWithSetupType('Category')} 
+                                label='Category' 
+                                RefreshFillDtaMethod={refreshSetupMethod}
+                                selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}}           
+                                onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
+                    />
+                </Quantom_Grid>
+                <Quantom_Grid mt={.5} item size={{xs:12,md:12,lg:12}}>
+                  <Quantom_LOV 
+                              FillDtaMethod={()=>getSetupDataWithSetupType('Company')} 
+                              label='Company' 
                               RefreshFillDtaMethod={refreshSetupMethod}
-                              selected={{Code:props?.state?.item?.ItemType?.toString(),Name:props?.state?.item?.InventoryItemType?.Name}}           
-                              onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
+                              selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
+                              onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}}
                   />
+                 </Quantom_Grid>
           </Quantom_Grid>
-          <Quantom_Grid container size={{xs:12}} spacing={.5}>
-              <Quantom_Grid item size={{xs:10}}>
-                <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('unit')} 
-                             label='Each Unit' 
-                             RefreshFillDtaMethod={refreshSetupMethod}
-                             selected={{Code:props?.state?.item?.UnitCode,Name:props?.state?.item?.UnitName}}           
-                             onChange={(obj)=>{setItem({UnitCode:obj?.Code,UnitName:obj?.Name})}}
-                 />
-            </Quantom_Grid>
-            <Quantom_Grid item size={{xs:2}}>
-              <Quantom_Input  label='Unit Name' value={props?.state?.item?.EachUnitName} 
-                    onChange={(e)=>{setItem({...props?.state?.item,EachUnitName:e?.target?.value})}}/>
-            </Quantom_Grid>
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-            <Quantom_LOV 
-                            FillDtaMethod={()=>getSetupDataWithSetupType('Category')} 
-                            label='Category' 
-                            RefreshFillDtaMethod={refreshSetupMethod}
-                            selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}}           
-                            onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
-                 />
-          </Quantom_Grid>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-            <Quantom_LOV 
-                            FillDtaMethod={()=>getSetupDataWithSetupType('Company')} 
-                            label='Company' 
-                            RefreshFillDtaMethod={refreshSetupMethod}
-                            selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
-                            onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}}
-                 />
-          </Quantom_Grid>
+
+        </Quantom_Grid>
+ 
+      <Quantom_Grid mt={1} item size={{xs:12,md:7,lg:7,xl:6}}>
+        {/* <Quantom_Grid container spacing={.5}>
           <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
                   <Quantom_LOV 
                                   FillDtaMethod={()=>getSetupDataWithSetupType('PriceGroup')} 
@@ -241,8 +256,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                   onChange={(obj)=>{setItem({DefUnitCodeForPrice:obj?.Code,defUnitNameForPrice:obj?.Name})}}
                       />
             </Quantom_Grid>
-        </Quantom_Grid>
-        </GroupContainer>
+        </Quantom_Grid> */}
       </Quantom_Grid>
 
       
@@ -390,7 +404,7 @@ React.useEffect(()=>{
 
   return(
     <GroupContainer height='300px' Label='Unit Of Conversion' >
-       <Quantom_Grid container spacing={.5} >
+       <Quantom_Grid mt={2} container spacing={.5} >
           <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
               <Quantom_Input disabled label='From Unit' value={state?.item?.UnitName}/>
           </Quantom_Grid>
