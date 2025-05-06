@@ -16,6 +16,8 @@ import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContaine
 import { SalePrintAableTotalValue, SalePrintNumbers } from "../POSSaleView1";
 import dayjs from "dayjs";
 
+
+
 interface SoldItemsRendererProps{
     baseProps?:MenuComponentProps<VmSale>
     itemGridSize?:QuantomSize;
@@ -72,7 +74,7 @@ interface SoldItemsRendererProps{
     const [totals,setTotals]=useState<SalePrintNumbers>()
     const fonts= useQuantomFonts();
     const theme= useTheme();
-    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1,pl:2};
+    
     const bodyFont={fontFamily:fonts.HeaderFont,fontSize:'12px'};
     const soldItems= props?.baseProps?.baseProps?.state?.SaleDetails;
 
@@ -85,17 +87,18 @@ interface SoldItemsRendererProps{
         setTotals(res);
     }
     const locId= useSelector((state?:any)=>(get_helperData_by_key(state,props?.baseProps?.baseProps?.UniqueId??"",POS_SALE_LOCID_KEY))) as string;
-
+    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1,pl:2};
     const appType=GetAPPType();
 
     const getStatus=(itemCode?:string):'COMPLETED'|'PENDING'=>{
-          var selected= props?.baseProps?.baseProps?.state?.SaleServices?.find(x=>x.ItemCode===itemCode);
-          if(selected)
-          {
-              return selected?.Status?.toUpperCase()==='COMPLETED'?'COMPLETED':'PENDING';
-          }
-          return 'PENDING'
-    }
+        var selected= props?.baseProps?.baseProps?.state?.SaleServices?.find(x=>x.ItemCode===itemCode);
+        if(selected)
+        {
+            return selected?.Status?.toUpperCase()==='COMPLETED'?'COMPLETED':'PENDING';
+        }
+        return 'PENDING'
+  }
+  
     const changeStatus=(itemCode?:string,status?:'COMPLETED'|'PENDING')=>{
       let services=[...props?.baseProps?.baseProps?.state?.SaleServices??[]];
       let selected= services?.find(x=>x.ItemCode===itemCode);
@@ -143,7 +146,34 @@ interface SoldItemsRendererProps{
             {
                 soldItems?.map((item,index)=>{
                     return(
-                        <>
+                        <RenderSingleItemInventoryIOForMobile item={item} changeStatus={changeStatus} getStatus={getStatus}  onEditClick={props?.onEditClick} onDeleteClick={props?.onDeleteClick}/>
+                    )
+                })
+            }
+        </Quantom_Grid>
+    )
+   }
+
+
+   export interface RenderSingleItemForMobile{
+    item?:CommonInvDetailModel,
+    changeStatus?:(itemCode?:string,status?:'COMPLETED'|'PENDING')=>void;
+    getStatus?:(itemCode?:string)=>string;
+    onEditClick?:(item?:CommonInvDetailModel)=>void;
+    onDeleteClick?:(item?:CommonInvDetailModel)=>void;
+    isReport?:boolean;
+   }
+
+   export const RenderSingleItemInventoryIOForMobile=({item,changeStatus,getStatus,onEditClick,onDeleteClick,isReport}:RenderSingleItemForMobile)=>{
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+    const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1,pl:2};
+    const appType= GetAPPType();
+
+
+    
+    return(
+        <>
                             <Quantom_Grid mt={.5} borderBottom={`1px solid ${theme?.palette?.primary?.main}`} container component={Paper} size={{xs:12,md:12,lg:12,xl:6}} >
                                 
                                 <Quantom_Grid container borderBottom={`1px solid black`} display='flex'  alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
@@ -155,7 +185,7 @@ interface SoldItemsRendererProps{
                                 <Quantom_Grid container sx={{pl:2}} size={{xs:12}} borderBottom='1px solid black'>
                                     <Quantom_Grid size={{xs:5}} alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                                         <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="WidgetsOutlined"/>
-                                        {item?.TransUnitName}
+                                        {isReport?(item?.UnitName):item?.TransUnitName}
                                     </Quantom_Grid>
                                     <Quantom_Grid size={{xs:3}} alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                                         <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="ShoppingCartOutlined"/>
@@ -182,16 +212,16 @@ interface SoldItemsRendererProps{
                                              </div>
                                              <div style={{display:'flex'}}>
                                                 <button onClick={()=>{
-                                                    changeStatus(item?.ItemCode,'PENDING')
+                                                    changeStatus?.(item?.ItemCode,'PENDING')
                                                 }} style={{borderTopLeftRadius:'5px',borderBottomLeftRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
-                                                            backgroundColor:getStatus(item.ItemCode)!=="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
-                                                            color:getStatus(item.ItemCode)!=="COMPLETED"?theme.palette.primary.contrastText:undefined,
+                                                            backgroundColor:getStatus?.(item?.ItemCode)!=="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
+                                                            color:getStatus?.(item?.ItemCode)!=="COMPLETED"?theme.palette.primary.contrastText:undefined,
                                                     }}>Pending</button>
                                                 <button onClick={()=>{
-                                                    changeStatus(item?.ItemCode,'COMPLETED')
+                                                    changeStatus?.(item?.ItemCode,'COMPLETED')
                                                 }} style={{borderTopRightRadius:'5px',borderBottomRightRadius:'5px',border:`1px solid ${theme?.palette?.primary?.main}`,
-                                                            backgroundColor:getStatus(item.ItemCode)==="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
-                                                            color:getStatus(item.ItemCode)==="COMPLETED"?theme.palette.primary.contrastText:undefined,}}>Completed</button>
+                                                            backgroundColor:getStatus?.(item?.ItemCode)==="COMPLETED"?theme.palette.primary.main:theme.palette.text.disabled,
+                                                            color:getStatus?.(item?.ItemCode)==="COMPLETED"?theme.palette.primary.contrastText:undefined,}}>Completed</button>
                                              </div>
 
 
@@ -199,21 +229,31 @@ interface SoldItemsRendererProps{
                                         </Quantom_Grid>)
                                         :(<></>)
                                  }    
-                                <Quantom_Grid container sx={{p:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
-                                    <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
-                                        <IconButton onClick={()=>props?.onDeleteClick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
-                                            <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="DeleteOutlineOutlined"/>
-                                        </IconButton>
-                                    </Quantom_Grid>
-                                    <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize,ml:.5}}>
-                                        <IconButton onClick={()=>props?.onEditClick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
-                                                <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="EditCalendarOutlined"/>
-                                        </IconButton>
-                                    </Quantom_Grid>
 
-                                    <Quantom_Grid display="flex" flex={1} justifyContent='end' sx={{fontFamily:fonts.HeaderFont,fontWeight:800,fontSize:'25px',ml:.5}}>
-                                        {item?.Amount?.toFixed(0)}
-                                    </Quantom_Grid>
+
+                                <Quantom_Grid container sx={{p:1,pl:2}} size={{xs:12}} borderBottom='1px solid black'>
+
+                                    {
+                                        !isReport?(<>
+                                         <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
+                                            <IconButton onClick={()=>onDeleteClick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
+                                                <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="DeleteOutlineOutlined"/>
+                                            </IconButton>
+                                            </Quantom_Grid>
+                                            <Quantom_Grid alignItems='center' sx={{fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize,ml:.5}}>
+                                                <IconButton onClick={()=>onEditClick?.(item)} style={{padding:'5px',paddingLeft:'20px',paddingRight:'20px',backgroundColor:theme?.palette?.secondary?.main,borderRadius:'5px'}} >
+                                                        <IconByName  fontSize="20px" color={theme?.palette?.secondary?.contrastText} iconName="EditCalendarOutlined"/>
+                                                </IconButton>
+                                            </Quantom_Grid>
+                                        </>):(
+                                            <Quantom_Grid display="flex" flex={1} justifyContent='end' sx={{fontFamily:fonts.HeaderFont,fontWeight:800,fontSize:'25px',ml:.5}}>
+                                                {item?.Amount?.toFixed(0)}
+                                            </Quantom_Grid>
+                                        )
+                                    }
+                                   
+
+                                    
                                    
                                 </Quantom_Grid>
 
@@ -221,10 +261,6 @@ interface SoldItemsRendererProps{
 
                             </Quantom_Grid>
                         </>
-                    )
-                })
-            }
-        </Quantom_Grid>
     )
    }
 

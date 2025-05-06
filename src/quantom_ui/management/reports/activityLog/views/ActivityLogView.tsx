@@ -24,6 +24,8 @@ import { ACCOUNT_VOUCHER_INSERT_URL } from "../../../../account/account_urls"
 import { Config_TransLogDTO } from "../model/TransLog"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { FilterHandler, useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty"
+import { RenderSingleItemInventoryIOForMobile } from "../../../../sale/processing/sale/view/POSSale/PosSaleHelpers/SoldItemsHelper"
 
 
 
@@ -44,24 +46,31 @@ const ActivityLogView=(props?:MenuComponentProps<any>)=>{
       let data= useGetHelperData<Config_TransLogDTO[]>(props,ACTIVITY_LOG_REPORT_DATA);
       const headerStyle={fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,fontWeight:500,letterSpacing:1.2}
       const bodyStyle={fontFamily:fonts.RegularFont,fontSize:fonts.H4FontSize,}
-
+      const [filterDialogStauts,setFiltetDialogStatus]=useState<boolean>();
+      const isMobile= useIsMobile()
     
     return(
         <>
          <Quantom_Grid mt={1.5} container spacing={1}>
-            <Quantom_Grid  size={{xs:3}}>
-                <QuantomReportBase OnLoadData={async(filter)=>{
-                    let res= await GetUserActivityLog(filter);
-                    AddHPD(props,ACTIVITY_LOG_REPORT_DATA,res?.Response??[]);
-                }} baseProps={props} />
-                {/* <ReportFilter baseProps={props}/> */}
-            </Quantom_Grid>
-            <Quantom_Grid   size={{xs:9}}>
+            <FilterHandler dialogStatus={filterDialogStauts} getCurrentStatus={(st)=>setFiltetDialogStatus(st)} hideOkButton>
+                <Quantom_Grid  size={{xs:12,sm:12,md:3}}>
+                    <QuantomReportBase OnLoadData={async(filter)=>{
+                         setFiltetDialogStatus(false);
+                        let res= await GetUserActivityLog(filter);
+                        AddHPD(props,ACTIVITY_LOG_REPORT_DATA,res?.Response??[]);
+                    }} baseProps={props} />
+                    {/* <ReportFilter baseProps={props}/> */}
+                </Quantom_Grid>
+            </FilterHandler>
+            <Quantom_Grid   size={{xs:12,sm:12,md:9}}>
 
                 {
                     data?.map((item,index)=>{
                         return(
-                            <RenderActivityLogSingleRecord {...item}/>
+                            !isMobile?(<RenderActivityLogSingleRecord {...item}/>):(<Quantom_Grid container spacing={1}>
+                              <RenderActivityLogSingleRecordMObile {...item}/>
+                            </Quantom_Grid>)
+                            
                         )
                     })
                 }
@@ -110,6 +119,81 @@ const ActivityLogView=(props?:MenuComponentProps<any>)=>{
             </Quantom_Grid>
          </Quantom_Grid>
 
+        </>
+    )
+}
+
+
+
+const RenderActivityLogSingleRecordMObile=(props?:Config_TransLogDTO)=>{
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+    const [showDetail,setShowDetail]= useState(false);
+    const firstLineTextStyle={marginLeft:'5px',fontFamily:fonts?.HeaderFont,letterSpacing:1.5,fontSize:fonts.H4FontSize,fontWeight:700}
+    const [isExpanded,setIsExpanded]=useState(false)
+    return(
+        <>
+        <Quantom_Grid container p={1}  mb={1}
+                sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize,color:theme?.palette?.text?.disabled}} size={{xs:12,sm:12,md:6,lg:4,xl:3}} component={Paper}>
+              <Quantom_Grid display='flex' size={{xs:12}} sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}}>
+                <div style={{flex:1,display:'flex',alignItems:'center'}}>
+                    <IconByName iconName="LaptopWindows" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {props?.FormName}
+                </div>
+                <div style={{display:'flex',alignItems:'center'}}>
+                <IconByName iconName="DateRange" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                {dayjs(props?.TransTime)?.format('DD/MMM/YY-hh:mm')}
+                </div>
+              </Quantom_Grid>
+
+
+
+              <Quantom_Grid display='flex' mt={.5} size={{xs:12}} sx={{borderBottom:`1px dashed ${theme?.palette?.text?.disabled}`}}>
+                <div style={{flex:1,display:'flex',alignItems:'center'}}>
+                    <IconByName iconName="AccountCircleOutlined" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {props?.UserName}
+                </div>
+                <div style={{display:'flex',alignItems:'center',flex:1}}>
+                     <IconByName iconName="DynamicFormOutlined" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {props?.TransState}
+                </div>
+                <div style={{display:'flex',alignItems:'center'}}>
+                     <IconByName iconName="Tag" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {props?.TransNo}
+                </div>
+              </Quantom_Grid>
+
+
+              <Quantom_Grid display='flex' mt={.5}  size={{xs:12}} sx={{}}>
+
+              <div onClick={()=>{setIsExpanded(!isExpanded)}} style={{display:'flex',alignItems:'center'}}>
+                     <IconByName iconName= {isExpanded?"IndeterminateCheckBoxOutlined":"LocalHospitalOutlined"} fontSize="20px" color={theme?.palette?.text?.primary}/>
+                </div>
+
+                <div style={{flex:1,display:'flex',alignItems:'center',marginLeft:'5px'}}>
+                    <IconByName iconName="AbcOutlined" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {props?.BpName}
+                </div>
+                
+                <div style={{display:'flex',alignItems:'center'}}>
+                     <IconByName iconName="AccountBalanceWalletOutlined" fontSize="16px" color={theme?.palette?.text?.primary}/>
+                    {props?.Amount}
+                </div>
+              </Quantom_Grid>
+
+                {
+                    isExpanded?(<>
+                        {
+                            props?.InventoryDetail?.map((item,index)=>{
+                                return(
+                                    <RenderSingleItemInventoryIOForMobile item={item} isReport/>
+                                )
+                            })
+                        }
+                    </>):(<></>)
+                }
+            
+        </Quantom_Grid>
         </>
     )
 }

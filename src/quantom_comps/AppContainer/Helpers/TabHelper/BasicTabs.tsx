@@ -2,7 +2,7 @@ import { Box, colors, IconButton, Paper, Tab, Tabs } from "@mui/material";
 import * as React from "react";
 import { a11yProps, CustomTabPanel } from "./TabPanelprops";
 import CloseIcon from "@mui/icons-material/Close";
-import store, { get_selected_menu_index, remove_menu } from "../../../../redux/store";
+import store, { get_selected_menu_index, remove_menu, useQuantomFonts } from "../../../../redux/store";
 
 import { useTheme } from "@mui/material/styles";
 import { QuantomColors } from "../../../QuantomTheme";
@@ -21,9 +21,9 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
     // set_selected_menu_index(newValue)
   };
 
-  const tabHeight="20px"
+    const tabHeight="40px"
   const th= useTheme();
-
+  const fonts= useQuantomFonts();
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -34,7 +34,12 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
           variant="scrollable"
           scrollButtons="auto"
           allowScrollButtonsMobile
-          sx={{ minHeight: tabHeight }}
+          //  sx={{ minHeight: tabHeight, // Overall tabs height
+          //   '& .MuiTab-root': {
+          //     minHeight: tabHeight,
+          //     paddingTop: 0,
+          //     paddingBottom: 0,
+          //   }, }}
         >
           {props?.tabs?.map((item, index) => {
             function handleTabClose(index: number): void {
@@ -45,72 +50,52 @@ export default function BasicTabs(props?: BasicTabPropsInfo) {
             }
 
             return (
-              <Box
-                key={index}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  position: "relative",
-                  minHeight: tabHeight,
-                }}
-                onClick={()=>{props?.onTabClick?.(index)}}
-                
-                onMouseEnter={() => setHoveredTab(index)}
-                onMouseLeave={() => setHoveredTab(-1)}
-              >
-                <Tab
-                  label={item?.Caption}
-                  {...a11yProps}
+              <Tab
+              key={index}
+              label={
+                <Box
                   sx={{
-                    borderLeft: "1px solid black",
-                    borderTop: "1px solid black",
-                    borderBottom: "1px solid black",
-                    // backgroundColor:th?.palette?.primary?.main,
-                    minHeight: tabHeight,
-                    borderRight: /*index+1===props?.tabs?.length*/ true
-                      ? "1px solid black"
-                      : undefined,
-                    // borderLeftWidth:'.5px',
-                    borderTopLeftRadius: "20px",
-                    transform: "none",
-                    fontWeight: "bold",
-                    fontSize: "12px",
-                    // paddingTop:'2px',
-                    // padding: "2px 4px",
-                    paddingRight:'30px',
-                    paddingLeft:'30px',
-                    Opacity:1,
-                    fontFamily: "Oswald",
-                    letterSpacing: 1.2,
-                    paddingTop: '2px',
-                    paddingBottom: '2px',
-                    backgroundColor:index===(props?.selectedTabIndex)?th.palette?.secondary?.main:th?.palette?.primary.main,
-                    color:'white',
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    // minHeight:tabHeight
                   }}
-                ></Tab>
-                {hoveredTab === index && (
-                  props?.willShowRemoveButton? (<IconButton
-                    size="small"
-                     onClick={(e) => {
-                      e.preventDefault();
-                      handleTabClose(index);
-
-                     }}
-                    sx={{
-                      position: "absolute",
-                      right: 2,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      fontWeight:'bold',
-                      // color:'darkred',
-                      // backgroundColor:'red'
-                    }}
-                  >
-                    <CloseIcon fontSize="small"   />
-                  </IconButton>
-                  ):(<></>)
-                )}
-              </Box>
+                  onMouseEnter={() => setHoveredTab(index)}
+                  onMouseLeave={() => setHoveredTab(-1)}
+                >
+                  {item?.Caption}
+                  {hoveredTab === index && props?.willShowRemoveButton && index !== 0 && (
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevents triggering tab change
+                        handleTabClose(index);
+                      }}
+                      sx={{
+                        padding: 0,
+                        ml: 0.5,
+                      }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </Box>
+              }
+              {...a11yProps(index)}
+              onClick={() => props?.onTabClick?.(index)}
+              sx={{
+                border: "1px solid black",
+                fontSize: "12px",
+                // fontWeight: "bold",
+                fontFamily: fonts?.HeaderFont,
+                letterSpacing: 1,
+                backgroundColor: index === props?.selectedTabIndex
+                  ? th.palette?.secondary?.main
+                  : th?.palette?.primary.main,
+                color: th?.palette?.primary?.contrastText,
+                minWidth: 100, // Optional: ensures some responsive behavior
+              }}
+            />
             );
           })}
           {/* <Tab label="Item One" {...a11yProps(0)} />

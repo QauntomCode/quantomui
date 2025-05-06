@@ -170,6 +170,9 @@ export const POSSaleViewWithEmpty=(props?:MenuComponentProps<VmSale>)=>{
 export interface FilterHandlerPorps{
    children?:ReactNode
    OkAndAplyFilter?:()=>void;
+   hideOkButton?:boolean;
+   getCurrentStatus?:(status?:boolean)=>void;
+   dialogStatus?:boolean;
 }
 
 export const FilterHandler=(props?:FilterHandlerPorps)=>{
@@ -177,6 +180,16 @@ export const FilterHandler=(props?:FilterHandlerPorps)=>{
     const theme= useTheme();
     const[showDialog,setShowDialog]=useState(false);
     const isMobile = useIsMobile();
+
+    useEffect(()=>{
+       props?.getCurrentStatus?.(showDialog)
+    },[showDialog])
+
+    useEffect(()=>{
+        if(!props?.dialogStatus)
+         setShowDialog(false)
+     },[props?.dialogStatus])
+
     // alert('is Mobile'+isMobile)
     
     return (
@@ -192,14 +205,19 @@ export const FilterHandler=(props?:FilterHandlerPorps)=>{
                 <>
                     {props?.children}
                 </>
-                <Quantom_Grid  display='flex' justifyContent='center' mt={2}>
-                    <POSActionButton1 backgroundColor={theme.palette.secondary.main} iconName="CheckCircleOutlined" textColor={theme.palette.secondary.contrastText} 
-                    iconColor={theme?.palette?.primary?.main} label="Ok" onClick={()=>{
-                            setShowDialog(false);
-                            props?.OkAndAplyFilter?.()
-                           
-                        }} />
-                </Quantom_Grid>
+                {
+                    props?.hideOkButton?(<></>):(
+                        <Quantom_Grid  display='flex' justifyContent='center' mt={2}>
+                            <POSActionButton1 backgroundColor={theme.palette.secondary.main} iconName="CheckCircleOutlined" textColor={theme.palette.secondary.contrastText} 
+                            iconColor={theme?.palette?.primary?.main} label="Ok" onClick={()=>{
+                                    setShowDialog(false);
+                                    props?.OkAndAplyFilter?.()
+                                
+                                }} />
+                        </Quantom_Grid>
+                    )
+                }
+               
             </QuantomDialog>
         </>
     )

@@ -13,6 +13,7 @@ import { Box, Paper, useTheme } from "@mui/material";
 import { isNullOrEmpty, IsValidDate, safeParseToRequestDate } from "../../../../../CommonMethods";
 import { DetailLedgerModel } from "../model/DetailLedgerModel";
 import { useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
+import { RenderSingleItemInventoryIOForMobile } from "../../../../sale/processing/sale/view/POSSale/PosSaleHelpers/SoldItemsHelper";
 
 
 
@@ -37,6 +38,8 @@ export const LedgerDetailView = (props?:MenuComponentProps<LedgerComponentState>
             },500)
        }
     },[])
+
+    const isMobile= useIsMobile();
    
     return(
         <>
@@ -45,7 +48,7 @@ export const LedgerDetailView = (props?:MenuComponentProps<LedgerComponentState>
                 
                 props?.state?.ledgerDetail?.map((item,index)=>{
                     return(
-                        <RenderLedgerSingleEntry item={item}/>
+                       <RenderLedgerSingleEntry item={item}/> 
                     )
                 })
             }
@@ -64,9 +67,21 @@ interface RenderLedgerSingleEntryProps{
 }
 
 export const RenderLedgerSingleEntry=({item}:RenderLedgerSingleEntryProps)=>{
+    const isMobile= useIsMobile();
+
+    return(
+        isMobile?(<>
+               <RenderLedgerSingleEntryForMobile item={item}/> 
+        </>):(<RenderLedgerSingleEntry item={item}/>)
+        
+    )
+}
+
+export const RenderLedgerSingleEntryForPc=({item}:RenderLedgerSingleEntryProps)=>{
     const theme= useTheme();
     const fonts= useQuantomFonts();
     const [open,setOpen]= useState(false);
+    const isMobile= useIsMobile();
     return(
         <Quantom_Grid  pl={2} pr={2} mt={.5} size={{xs:12}} 
                             sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize}} container component={Paper}>
@@ -156,8 +171,14 @@ export const RenderLedgerSingleEntry=({item}:RenderLedgerSingleEntryProps)=>{
                 </Quantom_Grid>
             </Quantom_Grid>
             {open && item?.InvoiceDetail?(
-                
-                     <Quantom_Grid mt={4} mb={4} size={{xs:12}} container pl={6} pr={6}>
+           
+
+           
+                    <>
+                        {
+                            !isMobile?(<>
+
+                                    <Quantom_Grid mt={4} mb={4} size={{xs:12}} container pl={6} pr={6}>
                                          <Quantom_Grid mb={.3} sx={{fontFamily:fonts.HeaderFont,fontSize:'11px',letterSpacing:1.5,fontWeight:600,
                                             borderBottom:`3px solid ${theme?.palette?.text?.disabled}`
                                          }} container size={{xs:12}}>
@@ -189,6 +210,157 @@ export const RenderLedgerSingleEntry=({item}:RenderLedgerSingleEntryProps)=>{
                                             })
                                          }
                                     </Quantom_Grid>
+                            </>):(<>
+
+                                    {item?.InvoiceDetail?.map((item,index)=>{
+                                        return(
+                                        <RenderSingleItemInventoryIOForMobile isReport item={item} />
+                                        )
+                                    })}
+                            </>)
+                        }
+                    </>
+
+                     
+                
+            ):(<></>)}
+            
+        </Quantom_Grid>
+    )
+}
+
+
+
+
+export const RenderLedgerSingleEntryForMobile=({item}:RenderLedgerSingleEntryProps)=>{
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+    const [open,setOpen]= useState(false);
+    const isMobile= useIsMobile();
+    return(
+        <Quantom_Grid sx={{fontFamily:fonts?.HeaderFont,fontSize:'12px',color:theme?.palette?.text?.disabled,borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}  p={1} mt={.5} size={{xs:12}} 
+                             container component={Paper}>
+            
+
+            <Quantom_Grid container display='flex' alignItems='center' size={{xs:12,}}>
+                  <div style={{marginRight:'2px'}}><IconByName fontSize="20px" iconName={"LocationOnOutlined"}/></div>
+                  <div style={{fontSize:'17px',fontWeight:600}}>{item?.locName}</div>
+            </Quantom_Grid>
+
+            <Quantom_Grid mt={.5} display='flex' size={{xs:12}} sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}}>
+                <div style={{flex:1,display:'flex',alignItems:'center'}}>
+                    <IconByName iconName="LaptopWindows" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {item?.FormName}
+                </div>
+                <div style={{display:'flex',alignItems:'center'}}>
+                <IconByName iconName="DateRange" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                {dayjs(item?.VDate)?.format('DD/MMM/YYYY')}
+                </div>
+              </Quantom_Grid>
+
+
+              <Quantom_Grid mt={.5} display='flex' size={{xs:12}} sx={{borderBottom:`.5px dashed ${theme?.palette?.text?.disabled}`}}>
+                <div style={{display:'flex',flex:1,alignItems:'center'}}>
+                    <IconByName iconName="Tag" fontSize="16px" color={theme?.palette?.text?.disabled}/>
+                    {item?.TransNo}
+                </div>
+                <div style={{display:'flex',alignItems:'center'}}>
+                    {
+                        (!item?.VCode || (!item?.Debit && !item?.Credit))?(<></>):(
+                            <div style={{width:'100',display:'flex',alignItems:"center"}}>
+                                <div><IconByName fontSize="18px" iconName= {item.Debit?"AddOutlined":"RemoveOutlined"}/></div>
+                                <div style={{flex:1,color:item?.Debit?theme?.palette?.success?.dark:theme?.palette?.error?.main}}>{(item?.Debit??0>0)?item.Debit:item.Credit}</div>
+                            </div>
+                        )
+                    }
+                </div>
+              </Quantom_Grid>
+
+              <Quantom_Grid mt={.5} display='flex' size={{xs:12}} sx={{borderBottom:`.5px dashed ${theme?.palette?.text?.disabled}`}}>
+                <div style={{display:'flex',flex:1,alignItems:'center'}}>
+                    {/* <IconByName iconName="AbcOutlined" fontSize="16px" color={theme?.palette?.text?.disabled}/> */}
+                    {item?.Remarks}
+                </div>
+              </Quantom_Grid>
+
+                
+                <Quantom_Grid mt={.5} display='flex' justifyContent='right' pr={1} fontWeight={600} sx={{fontSize:'12px',letterSpacing:1.3}} size={{xs:12}}>
+
+                   {item?.InvoiceDetail?(<>
+                    <div onClick={()=>{setOpen(!open)}} style={{display:'flex',alignItems:'center'}}>
+                         <IconByName iconName= {open?"IndeterminateCheckBoxOutlined":"LocalHospitalOutlined"} fontSize="20px" color={theme?.palette?.text?.primary}/>
+                    </div>
+                   </>):(<></>)}
+                   
+
+                    <div style={{display:'flex',flex:1,justifyContent:'end'}}>
+                            {
+                            item?.Balance?(
+                                <div style={{width:'100',display:'flex',alignItems:"cebter"}}>
+                                    <div ><IconByName fontSize="18px" color={theme?.palette?.text?.disabled} iconName="AccountBalanceWalletOutlined"/></div>
+                                    <div style={{flex:1,marginLeft:'4px',color:theme?.palette?.text?.primary}}>{item?.Balance}</div>
+                                </div>
+                            ):(<></>)
+                            }
+                    </div>
+            </Quantom_Grid>
+            {open && item?.InvoiceDetail?(
+           
+
+           
+                    <>
+                        {
+                            !isMobile?(<>
+
+                                    <Quantom_Grid mt={4} mb={4} size={{xs:12}} container pl={6} pr={6}>
+                                         <Quantom_Grid mb={.3} sx={{fontFamily:fonts.HeaderFont,fontSize:'11px',letterSpacing:1.5,fontWeight:600,
+                                            borderBottom:`3px solid ${theme?.palette?.text?.disabled}`
+                                         }} container size={{xs:12}}>
+                                             <Quantom_Grid  size={{xs:3}}>Item Name</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:1.5}}>Unit Name</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:1}}>Qty</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:1}}>Price</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:1}}>Dis</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:2}}>Amount</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:1}}>PackSize</Quantom_Grid>
+                                             <Quantom_Grid size={{xs:1}}>PriceUnit</Quantom_Grid>
+                                         </Quantom_Grid>
+                                         {
+                                            item?.InvoiceDetail?.map((item,index)=>{
+                                                return(
+                                                <Quantom_Grid sx={{fontFamily:fonts.HeaderFont,fontSize:'11px',letterSpacing:1.5,
+                                                    borderBottom:`.5px solid ${theme?.palette?.text?.disabled}`
+                                                }} container size={{xs:12}}>
+                                                    <Quantom_Grid  size={{xs:3}}>{item?.ItemName}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:1.5}}>{item?.UnitName}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:1}}>{item?.Qty}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:1}}>{item?.Price}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:1}}>{item?.DisAmount}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:2}}>{item?.Amount}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:1}}>={item?.PackSize}</Quantom_Grid>
+                                                    <Quantom_Grid size={{xs:1}}>{item?.PriceUnitRate}</Quantom_Grid>
+                                                </Quantom_Grid>
+                                                )
+                                            })
+                                         }
+                                    </Quantom_Grid>
+                            </>):(<>
+
+                                <Quantom_Grid p={2}>
+
+                                    {item?.InvoiceDetail?.map((item,index)=>{
+                                        return(
+                                           
+                                                <RenderSingleItemInventoryIOForMobile isReport item={item} />
+                                           
+                                        )
+                                    })}
+                                     </Quantom_Grid>
+                            </>)
+                        }
+                    </>
+
+                     
                 
             ):(<></>)}
             
