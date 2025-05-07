@@ -52,3 +52,8 @@
 body{
   overflow: auto !important;
 }
+html, body {
+  overscroll-behavior-y: contain; /* Prevent vertical refresh */
+  overscroll-behavior: none;      /* Fully prevent overscroll */
+  touch-action: pan-x pan-y;      /* Still allow scrolling */
+}
