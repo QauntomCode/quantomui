@@ -806,9 +806,13 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                         }
                     }}/>
 
-            <Quantom_Grid container size={12}>
+            <Quantom_Grid spacing={.5} container size={12}>
                 <Quantom_Grid size={'grow'}>
-                    <Quantom_Grid container component={Paper} size={12} sx={{fontSize:'0.75rem',fontWeight:'bold'}}>
+                    <Quantom_Grid  container component={Paper} size={12} pt={1} pl={.5} pr={.5} pb={1} 
+                            sx={{fontSize:fonts?.H4FontSize,fontFamily:fonts.HeaderFont,
+                                backgroundColor:theme?.palette?.primary?.main,color:theme?.palette?.primary?.contrastText,
+                                fontWeight:600
+                                }}>
                         <Quantom_Grid id="ITEM_CONTROL_ID" border={border} size={gridSizes.item}>Item Info</Quantom_Grid>
                         <Quantom_Grid border={border} size={gridSizes.unit}>Unit</Quantom_Grid>
                         <Quantom_Grid border={border} size={gridSizes.qty}>Qty</Quantom_Grid>
@@ -819,7 +823,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                         <Quantom_Grid border={border} size={gridSizes.priceUnit}>Price Unit</Quantom_Grid>
                         <Quantom_Grid border={border} size={gridSizes.priceUnitRate}>Unit Rate</Quantom_Grid>      
                     </Quantom_Grid>
-                    <Quantom_Grid container component={Paper} size={12} sx={{fontSize:'0.75rem',fontWeight:'bold'}}>
+                    <Quantom_Grid mb={.5} container  size={12} sx={{fontSize:'0.75rem',fontWeight:'bold'}}>
                         <Quantom_Grid border={border} size={gridSizes.item}>
                             <Quantom_LOV1 willHideLabel id={ITEM_CONTROL_ID} uniqueKeyNo={props?.baseProps?.UniqueId??""}  selected={{Code:lineObj?.ItemCode,Name:lineObj?.ItemName}} 
                                             onChange={(item)=>{
@@ -894,12 +898,12 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
             </Quantom_Grid>
 
                <Quantom_Grid container size={12}>
-                <Quantom_Grid size={"grow"}>
+                <Quantom_Grid size={"grow"} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
                  
                {
                 props?.items?.map((item,index)=>{
                     return(
-                        <Quantom_Grid display='flex'  fontWeight={600} component={Paper} borderBottom={`1px solid ${theme.palette.primary.main}`} fontSize=".68rem" container size={12}>
+                        <Quantom_Grid borderRadius='0px' pt={.5} pb={.5} display='flex'  fontWeight={400} component={Paper} borderBottom={`1px solid ${theme.palette.primary.main}`}  container size={12}>
                             <Quantom_Grid  border={border}  size={gridSizes.item} >
                                 <Quantom_Grid container size={12}>
                                     <Quantom_Grid onClick={()=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}>
@@ -1044,8 +1048,8 @@ export interface BasicSelectProps{
     };
   
     return (
-      <Box sx={{width:'100%'}}  mt={ props?.Labelhidden?'4px':undefined} >
-        <FormControl size="small" fullWidth>
+       <Box  sx={{width:'100%'}}  mt={ props?.Labelhidden?'4px':undefined} >
+        <FormControl  component={Paper} size="small" fullWidth>
           {props?.Labelhidden?(<></>): <InputLabel id="demo-simple-select-label">{props?.label}</InputLabel>}
           <Select
             labelId="demo-simple-select-label"

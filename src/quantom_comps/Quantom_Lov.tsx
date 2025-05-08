@@ -654,7 +654,7 @@ export const QuantomLovMobileV1=(props?:QuantomLovMobileProps)=>{
                              iconColor={theme?.palette?.primary?.main}/>
                      </div>
                  </div>
-                 <div style={{fontFamily:fonts?.HeaderFont,fontSize:'20px',fontWeight:700}}>
+                 <div style={{display:'flex',justifyContent:'center',textAlign:'center' ,fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize}}>
                      {props?.selectedValue?.Name}
                  </div>
              </div>
