@@ -129,7 +129,7 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
                     </Quantom_Grid>
 
                  </Quantom_Grid>
-                 <Quantom_Grid size={3}>
+                 <Quantom_Grid size={{xs:12,ms:12,md:3}}>
                     <Quantom_Grid container display='flex' flexDirection='column' component={Paper} sx={{height:'calc(100vh - 40px)',
                                         fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                         

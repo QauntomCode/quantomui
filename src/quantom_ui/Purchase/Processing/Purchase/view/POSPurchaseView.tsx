@@ -29,6 +29,7 @@ import React from "react";
 import { CommonCodeName } from "../../../../../database/db";
 import { InventoryItemPriceListDetailModel } from "../../../../inventory/config/PriceList/Model/InventoryItemPriceListModelDetail";
 import { IconButton } from "material-ui";
+import { useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 
 
 
@@ -603,7 +604,7 @@ interface POSBillListProps{
 
 const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     const [lineObj,setLineObj]=useState<CommonInvDetailModel>()
-    const [selectedItemForChange,setselectedItemForChange]=useState<CommonInvDetailModel>();
+    const [selectedItemForChange,setSelectedItemForChange]=useState<CommonInvDetailModel>();
     const [showItemChangeDialog,setShowItemChangeDialog]=useState(false);
     const [itemUnitsInfo,setItemUnitsInfo]=useState<InventoryItemPriceListDetailModel[]>([])
     const [unitControlList,setUnitControlList]= useState<CommonCodeName[]>([])
@@ -673,16 +674,10 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     const handlePriceUnitPrice=()=>{
         let rate= itemUnitsInfo?.find?.(x=>x.UnitCode===lineObj?.PriceUnitCode)?.Price??0;
         setPriceUnitPrice(rate)
-        //setLineObj({...lineObj,PriceUnitRate:rate})
     }
     const handleUnitPrice=()=>{
-        // alert('price change called')
-        
-        
             let price= itemUnitsInfo?.find(x=>x.UnitCode===lineObj?.UnitCode)?.Price;    
             setLineObj({...lineObj,Price:price??0})
-        
-        
     }
 
     const handleUnits=async()=>{
@@ -720,9 +715,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
             ShowQuantomError({MessageHeader:"Error !", MessageBody:res?.Message})
         }
         else{
-       
             props?.onChange?.(res?.InventoryDTO?.InventoryList);
-            //props?.setState?.({...props?.state,purchaseDetails:[...res?.InventoryDTO?.InventoryList??[]]})
         }
     
     }
@@ -738,10 +731,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
         for(let un of itemUnitsInfo){
             units.push?.({Code:un.UnitCode,Name:un?.UnitName})
         }
-        // itemUnitsInfo?.map((ite,index)=>{
-        //     let obj:CommonCodeName= {Code:ite.UnitCode,Name:ite.UnitName}
-        //     return obj;
-        // })
+        
         setUnitControlList([...units]);
 
         setPriceUnitControlList([...units])
@@ -749,7 +739,6 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
         if(units && units.length>0){
             let defUnit= units?.[0];
             let priceUnit= itemUnitsInfo?.find(x=>x.IsPriceUnit)
-            // alert('price unit is'+priceUnit?.UnitCode)
             setLineObj({...lineObj,UnitCode:defUnit?.Code,UnitName:defUnit?.Name,PriceUnitCode:priceUnit?.UnitCode??defUnit?.Code,PriceUnitName:priceUnit?.UnitName??defUnit.Name})
         }
     }
@@ -911,8 +900,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                     </Quantom_Grid>
                                     <Quantom_Grid 
                                             onClick={()=>{
-                                                    // alert('clicked')
-                                                    setselectedItemForChange(item);
+                                                    setSelectedItemForChange(item);
                                                     setShowItemChangeDialog(true);
                                                 }}>
                                         <IconByName fontSize="16px" iconName="EditLocationAltOutlined"/>
@@ -941,78 +929,23 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                 <div style={{width:addButtonWidth+"px",border:border}}></div>
              </Quantom_Grid>
              </Quantom_Grid>
-            {/* <div >
-                <div className="row g-0 " style={{color:'white',height:'calc(100vh - 255px)',overflowY:'auto'}}>
-                    <Paper>
-                    <ShowSingleSelectedItemDialog item={selectedItemForChange} open={showItemChangeDialog} onClose={(type,item)=>{
-                        
-                        setShowItemChangeDialog(false)
-                        if(type==='APPLIED'){
-                            handleAddItem(item,INVENTORY_PERFORMED_ACTION.EDIT);
-                        }
-                    }}/>
-                    <TableContainer>
-                        <Table  size="small" aria-label="a dense table" >
-                            <TableBody>
-                                {
-                                    props?.items?.map((item,index)=>{
-                                        return(
-                                            <TableRow component={Paper}  sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`}}>
-                                                <div style={{display:'flex'}}>
-
-                                                    <div className="row" style={{flexGrow:1}}>
-                                                        <TableCell className="col-md-7" style={{...headerStyle}}>
-                                                            <div className="row">
-                                                            
-                                                                <div className="col-md-5 ">
-                                                                    <div style={{display:'flex',alignItems:'center'}}>
-                                                                        <div className="col-md-1">{item?.CustomSortNo}</div>
-                                                                        <div onClick={()=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}> 
-                                                                            <IconByName color={theme?.palette?.primary.main} iconName="DeleteOutlined" />
-                                                                        </div>
-                                                                        <div onClick={()=>{
-                                                                            setselectedItemForChange(item);
-                                                                            setShowItemChangeDialog(true);
-                                                                        }}>
-                                                                            <IconByName color={theme?.palette?.primary.main} iconName="EditCalendarOutlined"/>
-                                                                        </div>
-                                                                        <div style={{flex:1,marginLeft:'5px'}}> {item?.ItemCode} </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="col-md-7">{item?.ItemName}</div>
-                                                            </div>
-                                                        </TableCell>
-                                                        <TableCell className="col-md-1" style={{...headerStyle}}>
-                                                            {item?.Qty}
-                                                        </TableCell>
-                                                        <TableCell className="col-md-2" style={{...headerStyle}}>
-                                                            {item?.Price}
-                                                        </TableCell>
-                                                        <TableCell className="col-md-2" style={{...headerStyle}}>
-                                                            {item?.Amount}
-                                                        </TableCell>
-                                                    </div>
-                                                    <div style={{width:'70px'}}></div>
-                                                </div>
-                                                
-                                                
-
-                                                   
-                                            </TableRow>
-                                        )
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    </Paper>
-                </div>
-            </div> */}
         </>
     )
 }
 
-export const RenderItemsGridV1= RenderItemGrid_Erp;
+export const RenderItemsGridV1= (props?:RenderItemGridProps)=>{
+    const isMobile= useIsMobile();
+    
+    return(<>
+         {
+            isMobile?(<>
+                App
+            </>):(<><RenderItemGrid_Erp {...props}/></>)
+         }
+        {/* {isMobile?(<RenderItemGrid_Erp {...props}/>):(<>Enter Information</>)} */}
+        {/* <>Enter Information</> */}
+    </>)
+} ;
 
 
 
@@ -1027,18 +960,17 @@ export interface BasicSelectProps{
 }
 
  function BasicSelect(props?:BasicSelectProps) {
-    // const [age, setAge] = React.useState('');
     const[selected,setSelected]= useState('')
         
     useEffect(()=>{
         setSelected(props?.editValue??"")
     },[props?.list,props?.editValue])
 
-    useEffect(()=>{
-        console.log('Box Control Log , all units are',props?.list)
-        console.log('Box Control Log , Selected Unit Is',props?.editValue);
+    // useEffect(()=>{
+    //     console.log('Box Control Log , all units are',props?.list)
+    //     console.log('Box Control Log , Selected Unit Is',props?.editValue);
 
-    },[props?.list,props?.editValue])
+    // },[props?.list,props?.editValue])
 
     const handleChange = (event: SelectChangeEvent) => {
         // alert(event.target.value)
@@ -1065,9 +997,6 @@ export interface BasicSelectProps{
                     )
                 })
             }
-            {/* <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem> */}
           </Select>
         </FormControl>
       </Box>
