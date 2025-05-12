@@ -935,19 +935,32 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
 
 export const RenderItemsGridV1= (props?:RenderItemGridProps)=>{
     const isMobile= useIsMobile();
-    
+   
     return(<>
          {
             isMobile?(<>
-                App
+               <RenderItemsGridInMobile {...props}/>
             </>):(<><RenderItemGrid_Erp {...props}/></>)
          }
-        {/* {isMobile?(<RenderItemGrid_Erp {...props}/>):(<>Enter Information</>)} */}
-        {/* <>Enter Information</> */}
     </>)
 } ;
 
 
+
+export const RenderItemsGridInMobile=(props?:RenderItemGridProps)=>{
+
+    const fonts= useQuantomFonts();
+    const theme= useTheme();
+
+    return(
+         <Quantom_Grid  p={1} component={Paper} container size={{xs:12}} sx={{textAlign:'center'}}>
+                    <div style={{width:'100%',height:'100%' , display:'flex',alignItems:'center',justifyContent:'center' ,textAlign:'center',fontFamily:fonts?.HeaderFont,fontSize:fonts?.H3FontSize,fontWeight:'500'}}>
+                       <IconByName fontSize="17px" iconName="AddBoxOutlined"/>
+                      Add Items
+                    </div>
+          </Quantom_Grid>
+    )
+}
 
 
 
