@@ -67,6 +67,7 @@ import { EmployeeProfileView } from '../../../../quantom_ui/payroll/config/Emloy
 import ActivityLogView from '../../../../quantom_ui/management/reports/activityLog/views/ActivityLogView'
 import { DesignationView } from '../../../../quantom_ui/payroll/config/designation/Views/DesignationView';
 import { POSActionButton } from '../../POSHelpers/POSActionButton';
+import { StockIssueView } from '../../../../quantom_ui/inventory/Processing/StockIssue/Views/StockIssueView';
 
 
 
@@ -917,6 +918,7 @@ export const GetRoutType=():'WITH_ROUTE'|'WITH_TAB'=>{
 
 
 export const   menu_screen_menu_code="000_000_000_0000"
+//Inventory Menuc
 export const InventoryMenus:MenuInfoModel<any>[]=[
   {
     MenuCode:menu_screen_menu_code,
@@ -948,7 +950,14 @@ export const InventoryMenus:MenuInfoModel<any>[]=[
     MenuCaption:"Inventory Items",
     GetComponent:(props?:MenuComponentProps<any>)=>(<InventoryItemsView {...props}/>)
   },
+  {
+    MenuCode:"003-005",
+    MenuCaption:"Stock Issue",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<StockIssueView {...props}/>)
+  },
+  
 ]
+//Inventory Menu End
 
 export const AccountMenus:MenuInfoModel<any>[]=[
   {

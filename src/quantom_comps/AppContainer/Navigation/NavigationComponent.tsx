@@ -491,6 +491,7 @@ export const mainMenusList:QuantomMenu[]=[
     SubModuleCode:'03',
     SortNumber:1
   },
+  //Inventory Setup 
   {
     MenuCode:'003-001',
     MenuName:'Unit',
@@ -526,6 +527,17 @@ export const mainMenusList:QuantomMenu[]=[
     SubModuleCode:'01',
     SortNumber:0
   },
+  //end Inventory Setup
+  //Inventory Processing 
+  {
+    MenuCode:'003-005',
+    MenuName:'Stock Issue',
+    ModuleCode:'003',
+    SubModuleCode:'02',
+    SortNumber:1
+  },
+  //End Inventory Processing
+
   {
     MenuCode:'005-007',
     MenuName:'Sale',
