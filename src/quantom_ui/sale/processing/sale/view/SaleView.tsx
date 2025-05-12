@@ -92,21 +92,21 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
 
     return(
         <>
-            <Quantom_Grid container size={12}>
-                 <Quantom_Grid size={9}>
+            <Quantom_Grid container size={12} spacing={1.5}>
+                 <Quantom_Grid size={{xs:12,sm:12,md:9}}>
                     <GroupContainer Label="Master Information">
                         <Quantom_Grid spacing={.5} size={{xs:12}} container>
-                            <Quantom_Grid  size={{xs:6,md:6,lg:4}}>
+                            <Quantom_Grid  size={{xs:12,sm:12,md:5,lg:5}}>
                                 <Quantom_Input value={props?.state?.Sale?.BillNo} label="Bill No"/>
                             </Quantom_Grid>
-                            <Quantom_Grid  size={{xs:6,md:6,lg:4}}>
+                            <Quantom_Grid  size={{xs:12,sm:12,md:5,lg:5}}>
                                 <QUANTOM_Date value={dayjs(props?.state?.Sale?.BillDate)}  onChange={(date)=>{
                                     props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,BillDate:date?.toDate()}})
                                 }} label="Bill Date"/>
                             </Quantom_Grid>
                         </Quantom_Grid>
                         <Quantom_Grid mt={.5} size={{xs:12}} container>
-                            <Quantom_Grid  size={{xs:12,md:12,lg:8}}>
+                            <Quantom_Grid  size={{xs:12,md:10}}>
                                 <CustomerCombo baseProps={props} 
                                             OnChange={(cust)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:cust?.Code,CustName:cust?.Name}})}} 
                                             Customer={{Code:props?.state?.Sale?.CustCode,Name:props?.state?.Sale?.CustName}}/>
@@ -114,22 +114,22 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
                         </Quantom_Grid>
 
                         <Quantom_Grid mt={.5} size={{xs:12}} container>
-                            <Quantom_Grid  size={{xs:12,md:12,lg:8}}>
+                            <Quantom_Grid  size={{xs:12,md:10}}>
                                 <Quantom_Input onChange={(s)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,Remarks:s?.target?.value}})}} value={props?.state?.Sale?.Remarks} label="Remarks"/>
                             </Quantom_Grid>
                         </Quantom_Grid>
                     </GroupContainer>
 
 
-                    <GroupContainer>
+                    <Quantom_Grid mt={1.5} container size={{xs:12}}>
                         <RenderItemsGridV1 items={props?.state?.SaleDetails} vendorType="SUPPLIER" locId={location?.LocId} fromName={InventoryAction.Sale} formNameString="SALE"
                                                     vendorCode={props?.state?.Sale?.CustCode} onChange={(items)=>{
                                     props?.setState?.({...props?.state,SaleDetails:[...items??[]]})
                                 }} baseProps={props}/>
-                    </GroupContainer>
+                    </Quantom_Grid>
 
                  </Quantom_Grid>
-                 <Quantom_Grid size={3}>
+                 <Quantom_Grid size={{xs:12,ms:12,md:3}}>
                     <Quantom_Grid container display='flex' flexDirection='column' component={Paper} sx={{height:'calc(100vh - 40px)',
                                         fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                         

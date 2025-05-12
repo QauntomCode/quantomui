@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React, { useImperativeHandle, useRef } from 'react'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from './base_comps'
 import {  Box, Dialog, DialogContent,DialogTitle,Grid, Paper, useTheme } from '@mui/material'
 import { IconByName } from './AppContainer/Helpers/TabHelper/AppContainerTabHelper';
@@ -10,6 +10,9 @@ import { BorderBottom, LocationDisabled } from '@mui/icons-material';
 import { add_helper_data_single_key } from '../redux/reduxSlice';
 import { useSelector } from 'react-redux';
 import { isNullOrEmpty } from '../CommonMethods';
+import { useIsMobile } from '../quantom_ui/sale/processing/sale/view/POSSale/POSSaleViewWithEmpty';
+import { POSActionButton1 } from './AppContainer/POSHelpers/POSActionButton1';
+import { QuantomDialog } from '../quantom_ui/sale/processing/sale/view/POSSaleView';
 
 
 
@@ -166,7 +169,7 @@ export const Quantom_LOV = (props?:Quantom_LOV_PROPS) => {
 
    React.useEffect(()=>{
       const rect= inputRef?.current?.getBoundingClientRect();
-      setPosition({ top: rect.bottom, left: rect.left });
+      setPosition({ top: rect?.bottom, left: rect?.left });
    },[open])
 
   return (
@@ -310,16 +313,11 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   const fullState= useSelector((state?:any)=>(full_component_state(state,props?.uniqueKeyNo??"")));
   useImperativeHandle(props?.ref, () => inputRef.current);
 
-  // React.useEffect(()=>{
-  //   loadAllValues();
-  // },[])
+  const isMobile= useIsMobile();
+
 
   React.useEffect(()=>{
-
-    //  alert('fill refresh method value is'+ props?.RefreshFillDtaMethod)
-      // if(props?.RefreshFillDtaMethod && (props?.RefreshFillDtaMethod??0)>0){
          loadAllValues();
-      // }
   },[props?.FillDtaMethod,allValues])
 
   React.useEffect(()=>{
@@ -328,6 +326,12 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
       handleLoadInitialData();
     }
   },[fullState?.IsFirstUseEffectCall])
+
+  useEffect(()=>{
+       if(isMobile && (!allValues || allValues?.length<1) && !fullState?.IsFirstUseEffectCall){
+        handleLoadInitialData();
+       }
+  },[isMobile && fullState?.IsFirstUseEffectCall])
 
   const handleLoadInitialData=async()=>{
     // alert('method called')
@@ -460,122 +464,295 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
 
  React.useEffect(()=>{
     const rect= inputRef?.current?.getBoundingClientRect();
-    setPosition({ top: rect.bottom, left: rect.left });
+    setPosition({ top: rect?.bottom, left: rect?.left });
  },[open])
 
 return (
-  <>
-  <Box display='flex'>
-   <Quantom_Input1 
-        size={props?.size}
-        value={props?.selected?.Name} 
-        fullWidth
-        willHideLabel={props?.willHideLabel}
-        id={props?.id??""}
-        inputRef={inputRef}
-        onChange={(e)=>{
-            // const sText=e?.target?.value;
-            var oldText= props?.selected?.Name;
-            let result=  e?.target?.value?.substring(oldText?.length??0);
-            // console.log('result is',result);
-            // let text= sText?.[(sText?.length??0)-1];
-            setSearch(result)
-          //setSearch(e.target.value)
-        }} 
-        label={props?.label} 
-        rightIcons={[
-          {IconName:'NoteAddTwoTone',OnClick:()=>{alert('add button pressed')}},
-          {IconName:'RestorePageTwoTone',OnClick:()=>{handleLoadInitialData()}},
-          {IconName:'DriveFileMoveTwoTone',OnClick:()=>{alert('drive button pressed')}}
-        ]}
-      
-    />
-       {/* <ListCompButton iconName='NoteAddTwoTone'/>
-       <ListCompButton iconName='RestorePageTwoTone'/>
-       <ListCompButton iconName='DriveFileMoveTwoTone'/> */}
-
-   
-   </Box>
-
-
-
-    <Dialog 
-      fullWidth
-      open={open}
-      PaperProps={{
-        style: {
-          position: "absolute",
-          top: position.top,
-          left: position.left,
-          margin: 0,
-        },
-      }}
-      >
-        <DialogTitle sx={{padding:0,display:'flex'}}>
-           <div style={{flex:1}}></div>
-           <div style={{flex:0,paddingRight:'25px'}} onClick={()=>{
-                setOpen(false)
-           }}>
-              <IconByName color={theme.palette.error.main} iconName='CancelPresentation' ></IconByName>
-           </div>
-
-        </DialogTitle>
-        <DialogContent>
-       
-        <Quantom_Input 
-           label='Search' 
-           inputRef={searchRef} 
-           value={search} 
-           willHandleTabOnEnter={true}
-           onChange={(event)=>{
-             
-             setSearch(event?.target?.value)
-            }
-          }
-           onKeyDown={(e)=>{
-              if(e.key==='ArrowDown'){
-                handleGridFocusedIndex('down',0);
-              }
-              if(e.key==='Enter'){
-                let item:CommonCodeName={};
-                if(values && values.length>0)
-                {
-                  item=values?.[0];
-                  handleSelection(item)
+    !isMobile?(
+      <>
+      <Box display='flex'>
+       <Quantom_Input1 
+            size={props?.size}
+            value={props?.selected?.Name} 
+            fullWidth
+            willHideLabel={props?.willHideLabel}
+            id={props?.id??""}
+            inputRef={inputRef}
+            onChange={(e)=>{
+                var oldText= props?.selected?.Name;
+                let result=  e?.target?.value?.substring(oldText?.length??0);
+                setSearch(result)
+            }} 
+            label={props?.label} 
+            rightIcons={[
+              {IconName:'NoteAddTwoTone',OnClick:()=>{alert('add button pressed')}},
+              {IconName:'RestorePageTwoTone',OnClick:()=>{handleLoadInitialData()}},
+              {IconName:'DriveFileMoveTwoTone',OnClick:()=>{alert('drive button pressed')}}
+            ]}
+          
+        />   
+       </Box>
+    
+        <Dialog 
+          fullWidth
+          open={open}
+          PaperProps={{
+            style: {
+              position: "absolute",
+              top: position?.top,
+              left: position?.left,
+              margin: 0,
+            },
+          }}
+          >
+            <DialogTitle sx={{padding:0,display:'flex'}}>
+               <div style={{flex:1}}></div>
+               <div style={{flex:0,paddingRight:'25px'}} onClick={()=>{
+                    setOpen(false)
+               }}>
+                  <IconByName color={theme.palette.error.main} iconName='CancelPresentation' ></IconByName>
+               </div>
+    
+            </DialogTitle>
+            <DialogContent>
+           
+            <Quantom_Input 
+               label='Search' 
+               inputRef={searchRef} 
+               value={search} 
+               willHandleTabOnEnter={true}
+               onChange={(event)=>{
+                 
+                 setSearch(event?.target?.value)
                 }
               }
-              if(e.key==='Escape'){
-                 setOpen(false)
-              }             
-           }} />
-          {  values?.map((item,index)=>{
-            return(
-              <div 
-                    onKeyDown={(e)=>{
-                      handleKeyEvent(e,item)
-                    }}
-                    
-                    style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none'}} 
-                    key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
-                    onClick={()=>{ setFocusedIndex(index);handleSelection(item) }}
-                    onDoubleClick={()=>{handleSelection(item) }
-              } tabIndex={-1} >
-                  <Quantom_Grid  container component={Paper} spacing={1} 
-                    sx={{fontFamily:fonts.HeaderFont,fontSize:'14px',marginBottom:'2px',paddingTop:'4px',paddingBottom:'4px',borderBottom:`1px solid ${theme.palette.primary.main}`
-                  }}>
-                      <Quantom_Grid item sx={{fontWeight:'bold',width:'120px'}}  siz={{md:3}}>{item.Code}</Quantom_Grid>
-                      <Quantom_Grid item  siz={{md:9}}>{item.Name}</Quantom_Grid>
-                  </Quantom_Grid>
-              </div>
-            )
-          })
-            
-          }
-        </DialogContent>
-
-    </Dialog>
-  </>
+               onKeyDown={(e)=>{
+                  if(e.key==='ArrowDown'){
+                    handleGridFocusedIndex('down',0);
+                  }
+                  if(e.key==='Enter'){
+                    let item:CommonCodeName={};
+                    if(values && values.length>0)
+                    {
+                      item=values?.[0];
+                      handleSelection(item)
+                    }
+                  }
+                  if(e.key==='Escape'){
+                     setOpen(false)
+                  }             
+               }} />
+              {  values?.map((item,index)=>{
+                return(
+                  <div 
+                        onKeyDown={(e)=>{
+                          handleKeyEvent(e,item)
+                        }}
+                        
+                        style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none'}} 
+                        key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
+                        onClick={()=>{ setFocusedIndex(index);handleSelection(item) }}
+                        onDoubleClick={()=>{handleSelection(item) }
+                  } tabIndex={-1} >
+                      <Quantom_Grid  container component={Paper} spacing={1} 
+                        sx={{fontFamily:fonts.HeaderFont,fontSize:'14px',marginBottom:'2px',paddingTop:'4px',paddingBottom:'4px',borderBottom:`1px solid ${theme.palette.primary.main}`
+                      }}>
+                          <Quantom_Grid item sx={{fontWeight:'bold',width:'120px'}}  siz={{md:3}}>{item.Code}</Quantom_Grid>
+                          <Quantom_Grid item  siz={{md:9}}>{item.Name}</Quantom_Grid>
+                      </Quantom_Grid>
+                  </div>
+                )
+              })
+                
+              }
+            </DialogContent>
+    
+        </Dialog>
+      </>
+    ):(
+    <Quantom_Grid container mt={1} mb={1}>
+       <QuantomLovMobileV1 label={props?.label} selectedValue={props?.selected} onChange={(selected)=>{props?.onChange?.({...selected})}} 
+        RenderAbleValues={values} search={search} onSearchChange={(s)=>{setSearch(s??"")}}/>
+    </Quantom_Grid>)
+  
+ 
 )
 
 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export interface QuantomLovMobileProps{
+  selectedValue?:CommonCodeName;
+  onChange?:(selected?:CommonCodeName)=>void
+  RenderAbleValues?:CommonCodeName[];
+  search?:string;
+  onSearchChange?:(text?:string)=>void;
+  label?:string;
+
+}
+export const QuantomLovMobileV1=(props?:QuantomLovMobileProps)=>{
+ const theme= useTheme();
+ const fonts = useQuantomFonts();
+ const[open,setOpen]=useState(false);
+//  const [custDetail,setCustDetail]=useState<CommonCodeName[]>()
+//  const[search,setSearch]=useState('')
+//  useEffect(()=>{
+//        handleSetSelectedCustomer();
+//  },[props?.selectedCustomer?.Code])
+
+//  const handleSetSelectedCustomer=async()=>{
+//      let res= await CustomerGetOneMethod(props?.selectedCustomer?.Code??"")
+//      setCustDetail(res?.Response?.customer)
+//  }
+  
+ return(
+     <Quantom_Grid pl={1} sx={{backgroundColor:theme?.palette?.primary?.main,paddingTop:'8px',paddingBottom:'8px',color:theme?.palette?.primary?.contrastText}} display='flex' container component={Paper} size={{xs:12}} >
+         <Quantom_Grid size={{xs:12,sm:12,md:12,lg:9}}>
+             <div style={{display:'flex',flexDirection:'column',alignItems:'center',flex:1,justifyContent:'center'}}>
+                 <div style={{display:'flex',flexDirection:'row'}}>
+                      {/* <div>
+                         <POSActionButton1 onClick={async()=>{
+                             try{
+                                 ShowLoadingDialog();
+                                 let res= await GetAllCustomers();
+                                 for(let cust of res){
+                                     LocalDbInsertCustomer(cust)
+                                 }
+                                 HideLoadingDialog();
+                                 console.log('get all customers',res)
+                             }
+                             catch{
+                                 HideLoadingDialog();
+                             }
+                                 //setCustComers([...res])
+                             }
+                         } textColor={theme?.palette?.secondary?.contrastText} backgroundColor={theme?.palette?.secondary?.main} label="Refresh" iconName="OnDeviceTraining" iconColor={theme?.palette?.primary?.main}/>
+                     </div> */}
+                     <div >
+                         <POSActionButton1 
+                             onClick={()=>{setOpen(true)}}
+                             textColor={theme?.palette?.secondary?.contrastText} 
+                             backgroundColor={theme?.palette?.secondary?.main} 
+                             label="Select" 
+                             iconName="AccountBoxOutlined" 
+                             iconColor={theme?.palette?.primary?.main}/>
+                     </div>
+                 </div>
+                 <div style={{display:'flex',justifyContent:'center',textAlign:'center' ,fontFamily:fonts?.HeaderFont,fontSize:fonts.H4FontSize}}>
+                     {props?.selectedValue?.Name}
+                 </div>
+             </div>
+         </Quantom_Grid>
+         {/* <Quantom_Grid size={{xs:12,sm:12,md:12,lg:3}} style={{alignItems:'center',
+             display:'flex',fontWeight:700,fontFamily:fonts.HeaderFont,fontSize:'30px',justifyContent:'center',}}>
+             <IconByName iconName="CurrencyBitcoinSharp" color={theme?.palette?.secondary?.main} fontSize="35px"></IconByName>
+              {custDetail?.Balance??0}
+         </Quantom_Grid> */}
+         
+         <QuantomDialog headerExtension={<>
+            <Quantom_Input label='Search' value={props?.search} onChange={(e)=>{props?.onSearchChange?.(e.target.value)}}/>
+          </>} open={open}  onClosePress={()=>{setOpen(false)}} heading={props?.label??""}>
+             <CustomerListComp search={props?.search} renderAbleValue={props?.RenderAbleValues} onSelect={(cust)=>{
+                 props?.onChange?.({Code:cust?.Code,Name:cust?.Name})
+                 setOpen(false);
+             }}/>
+         </QuantomDialog>
+
+         {/* Selected Customer */}
+      </Quantom_Grid>
+ )
+}
+
+export interface CustomerListCompPorps{
+  onSelect?:(selected?:CommonCodeName)=>void
+  search?:string;
+  renderAbleValue?:CommonCodeName[]
+}
+export const  CustomerListComp=(props?:CustomerListCompPorps)=>{
+//  const [val,setCustComers]=useState<CustomerModel[]>([]);
+ 
+
+//  useEffect(()=>{
+//      handleCustomers();
+//  },[props?.search])
+
+ 
+//  const handleCustomers=async()=>{
+//      let res= await LocalDbFilterCustomers(props?.search);
+//   //    alert('called ')
+//      console.log('get all customers',res)
+//      setCustComers([...res])
+//  }
+ const theme= useTheme();
+ const fonts= useQuantomFonts();
+ return(
+
+     <Quantom_Grid size={{xs:12}} container spacing={.5} component={Paper}>
+         
+         {/* <Quantom_Grid item> Item Code</Quantom_Grid> */}
+         {
+             props?.renderAbleValue?.map((item,index)=>{
+                
+                 return index>200?(<></>):(
+                  
+                     <Quantom_Grid 
+                        onClick={()=>{
+                          props?.onSelect?.(item)
+                        }}
+                         sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'4px'}} 
+                         size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
+                         <div style={{display:'flex',alignItems:'center'}}>
+                             <IconByName color={theme?.palette?.primary?.main} fontSize="30px" iconName="PermIdentityOutlined"/>
+                             <div style={{marginLeft:'5px'}}>
+                                 <div style={{fontWeight:'bold',display:'flex'}}>
+                                     <div style={{alignItems:'center',flex:1}}>
+                                         <IconByName fontSize="15px" iconName="Tag"/>
+                                         {item?.Code}
+                                     </div>
+                                 </div>
+                                 <div>{item?.Name}</div>
+                                 {/* {item?.CellNo?
+                                 (<>
+                                     <div style={{alignItems:'center',flex:1}}>
+                                         <IconByName fontSize="15px" iconName="PhoneAndroidOutlined"/>
+                                         {item?.CellNo}
+                                     </div>
+                                 </>):(<></>)} */}
+                                 
+                                 {/* <div>{item?}</div> */}
+                             </div>
+                         </div>
+                         {/* <div style={{display:'flex'}}>
+                            <div style={{flex:1}}></div>
+                            <div style={{flex:1}}>
+                                <button style={{display:'flex',justifyContent:'center',alignItems:'center',fontWeight:'bold',color:theme?.palette?.text?.secondary,backgroundColor:theme?.palette?.secondary?.main,fontFamily:fonts.HeaderFont,width:'100%',border:`.5px solid ${theme?.palette?.primary?.main}`,borderRadius:'5px'}}>
+                                    <div style={{marginRight:'10px'}}>
+                                         <IconByName iconName="FactCheckOutlined"/>
+                                    </div>
+                                    Select
+                                </button>
+                            </div>
+                         </div> */}
+                     </Quantom_Grid>
+                 )
+             })
+         }
+     </Quantom_Grid>
+ )
 }

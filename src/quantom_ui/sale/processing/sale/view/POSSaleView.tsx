@@ -520,6 +520,7 @@ export const QuantomDialog=(props?:QuantomDialogProps)=>{
                 sx: {
                 width: "calc(100vh - 10px)", // Set dynamic width
                 maxWidth: "none", // Prevent Material UI from restricting width
+                height:"calc(100vh - 10px)",
                 },
             }}
               open={props?.open??false}>
