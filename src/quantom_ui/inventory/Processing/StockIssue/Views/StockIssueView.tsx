@@ -24,6 +24,7 @@ import { Console } from "console"
 import { LocationModel } from "../../../../Settings/Location/Model/LocationModel"
 import { VMPurchaseModel } from "../../../../Purchase/Processing/Purchase/model/VMPurchaseModel"
 import { QuantomFormState } from "../../../../../redux/reduxSlice"
+import { StockIssueViewList } from "./StockIssueListView"
 
 export const StockIssueView=(props?:MenuComponentProps<VmStockIssueReceive>)=>{
 
@@ -37,13 +38,20 @@ export const StockIssueView=(props?:MenuComponentProps<VmStockIssueReceive>)=>{
 
     useEffect(()=>{
         if(!props?.state?.stockIssue?.LocId && !isNullOrEmpty(location?.LocId)){
-            props?.setState?.({...props?.state,stockIssue:{...props?.state?.stockIssue,LocId:location?.LocId}})
+            props?.setState?.({...props?.state,stockIssue:{...props?.state?.stockIssue,LocId:location?.LocId,FromLocCode:location?.LocId}})
             console.log("Location");
         }
         
-    },[props?.state?.stockIssue?.LocId])
+    },[location])
 
-    
+  React.useEffect(()=>{
+            setTimeout(() => {
+              props?.setListComponent?.((<StockIssueViewList baseProps={props} uniqueId={props?.UniqueId}/>))
+            }, 500);
+          },[])
+  
+   
+
     React.useEffect(()=>{
           setFormBasicKeys<VmStockIssueReceive>({
              SaveMethod:async(payload,ctx)=>{
@@ -105,17 +113,17 @@ export const StockIssueView=(props?:MenuComponentProps<VmStockIssueReceive>)=>{
                  }
              }
 
-             const mappedProps: MenuComponentProps<VMPurchaseModel> = {
-                ...props,
-                state: IssueDetailToVMPurchase(props?.state!),
-                MenuCode:props?.MenuCode,
-                UniqueId:props?.UniqueId,
-                fullState: undefined,
-                AddComponentTabs: undefined,
-                errorToast:undefined,
-                setListComponent:undefined,
-                setPrimaryKeyNo:props?.setPrimaryKeyNo,
-                };
+            //  const mappedProps: MenuComponentProps<VMPurchaseModel> = {
+            //     ...props,
+            //     state: IssueDetailToVMPurchase(props?.state!),
+            //     MenuCode:props?.MenuCode,
+            //     UniqueId:props?.UniqueId,
+            //     fullState: undefined,
+            //     AddComponentTabs: undefined,
+            //     errorToast:undefined,
+            //     setListComponent:undefined,
+            //     setPrimaryKeyNo:props?.setPrimaryKeyNo,
+            //     };
          
 
     return(
@@ -151,7 +159,7 @@ export const StockIssueView=(props?:MenuComponentProps<VmStockIssueReceive>)=>{
                                             stockIssue: {
                                               ...props?.state?.stockIssue!,
                                               ToLocCode: des?.Code,
-                                              //ToLocName:des?.Name,
+                                              ToLocName:des?.Name,
                                             },
                                           });
                                         }}
@@ -175,7 +183,7 @@ export const StockIssueView=(props?:MenuComponentProps<VmStockIssueReceive>)=>{
                         <RenderItemsGridV1 items={props?.state?.stockIssueDetails} vendorType="SUPPLIER" locId={location?.LocId} fromName={InventoryAction.Sale} formNameString="SALE"
                          vendorCode={props?.state?.stockIssue?.Code} onChange={(items)=>{
                          props?.setState?.({...props?.state,stockIssueDetails:[...items??[]]})
-                        }} baseProps={mappedProps}/>
+                        }} baseProps={props}/>
                     </GroupContainer>
 
                  </Quantom_Grid>

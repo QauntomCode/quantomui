@@ -266,7 +266,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
 
 export interface RenderItemGridProps{
-    baseProps?:MenuComponentProps<VMPurchaseModel>
+    baseProps?:MenuComponentProps<any>
     fromName?:InventoryAction;
     vendorCode?:string;
     vendorType?:string;
