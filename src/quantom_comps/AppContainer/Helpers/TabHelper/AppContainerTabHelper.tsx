@@ -302,7 +302,9 @@ export const MenuComponentRenderer=<T,>(props?:MenuContainerProps<T>)=>{
       <UserLocationsModalComp  basProps={{...nProps}}/>
       {
          WillHideToolbar()?(<></>):(
-        <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
+          <>
+            <QuantomToolBarComp CallSaveMethod={saveMethodCallNumber} showToast={(message)=>{setAlertProps({number:(alertProps?.number??0)+1,message:message,severity:'success'})}} baseProps={{...nProps}}/>
+          </>
         )
       }
         
@@ -602,7 +604,7 @@ export const QuantomToolBarComp=<T,>(props?:QuantomToolBarCompProps<T>)=>{
   const[showDeleteDialog,setShowDeleteDialog]=useState(false);
   return(
     <>
-  <Quantom_Grid  container sx={{display:'flex',paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px'}}>
+  <Quantom_Grid ml={1} mr={1} pb={.5} mb={1} container sx={{display:'flex',paddingLeft:'10px',paddingTop:'8px',paddingBottom:'8px',borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}}>
           {/* <Quantom_Grid container={Paper} sx={{marginRight:'4px'}}>
              <input type='text' style={{borderRadius:'5px',border:`.5px solid ${theme.palette.secondary.main}`}}></input>
           </Quantom_Grid> */}

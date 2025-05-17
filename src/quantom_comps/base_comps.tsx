@@ -226,6 +226,7 @@ export const Quantom_Input1=(props: {
           label={props?.label}
           multiline={props?.multiline}
           maxRows={props?.maxRows}
+          rows={props?.rows}
           disabled={props?.disabled}
           name={props?.name || `input-${Math.random()}`} // Random Name
           type={props?.type}
