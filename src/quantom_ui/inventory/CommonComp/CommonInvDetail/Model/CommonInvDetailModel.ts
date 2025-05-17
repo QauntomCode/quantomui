@@ -22,6 +22,7 @@ export enum InventoryAction {
   Claim,
   StockAdjustment,
   ITEMS_REFINE,
+  STOCK_ISSUE,
   
 }
 

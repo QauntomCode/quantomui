@@ -180,7 +180,7 @@ export const StockIssueView=(props?:MenuComponentProps<VmStockIssueReceive>)=>{
 
 
                     <GroupContainer>
-                        <RenderItemsGridV1 items={props?.state?.stockIssueDetails} vendorType="SUPPLIER" locId={location?.LocId} fromName={InventoryAction.Sale} formNameString="SALE"
+                        <RenderItemsGridV1 items={props?.state?.stockIssueDetails} vendorType="SUPPLIER" locId={location?.LocId} fromName={InventoryAction.STOCK_ISSUE} formNameString="SALE"
                          vendorCode={props?.state?.stockIssue?.Code} onChange={(items)=>{
                          props?.setState?.({...props?.state,stockIssueDetails:[...items??[]]})
                         }} baseProps={props}/>

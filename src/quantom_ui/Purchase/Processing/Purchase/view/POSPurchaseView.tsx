@@ -12,7 +12,7 @@ import { INVENTORY_PERFORMED_ACTION } from "../../../../inventory/CommonComp/Com
 import { AddOrRemoveExtendedMethod } from "../../../../inventory/CommonComp/CommonInvDetail/Impl/InventoryIoMethods";
 import { FocusOnControlByControlId, get_obtain_am_of_percent, get_percent_of_obtain_am, isNullOrEmpty, safeParseToNumber, safePreviewNumber } from "../../../../../CommonMethods";
 import { ShowQuantomError } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/QuantomError";
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, useTheme } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, Menu, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, useTheme } from "@mui/material";
 import { Quantom_Grid, Quantom_Input, Quantom_Input1 } from "../../../../../quantom_comps/base_comps";
 import { QUANTOM_Date } from "../../../../../quantom_comps/BaseComps/Quantom_Date";
 import dayjs from "dayjs";
@@ -28,7 +28,6 @@ import { ShowSingleSelectedItemDialog } from "../../../../sale/processing/sale/v
 import React from "react";
 import { CommonCodeName } from "../../../../../database/db";
 import { InventoryItemPriceListDetailModel } from "../../../../inventory/config/PriceList/Model/InventoryItemPriceListModelDetail";
-import { IconButton } from "material-ui";
 import { useIsMobile } from "../../../../sale/processing/sale/view/POSSale/POSSaleViewWithEmpty";
 import { POSRenderItemUnitsWithPrice } from "../../../../sale/processing/sale/view/POSSale/PosSaleHelpers/PosRenderItemUnitWithPrice";
 import { RenderSingleItemInventoryIOForMobile } from "../../../../sale/processing/sale/view/POSSale/PosSaleHelpers/SoldItemsHelper";
@@ -277,6 +276,7 @@ export interface RenderItemGridProps{
     onChange?:(vals?:CommonInvDetailModel[])=>void;
     locId?:string;
     height?:string;
+    willShowPriceUnit?:boolean;
 
 }
 
@@ -613,7 +613,12 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     const [priceUnitControlList,setPriceUnitControlList]= useState<CommonCodeName[]>([])
     const[showUnit,setShowUnit]=useState(false);
     const[priceUnitPrice,setPriceUnitPrice]=useState(0);
-    
+
+
+    const willHideRate=props?.fromName===InventoryAction.STOCK_ISSUE;
+    const willHideDisAm= props?.fromName===InventoryAction.STOCK_ISSUE;
+    const willHideDisPer= props?.fromName===InventoryAction.STOCK_ISSUE;
+    const willHideAm= props?.fromName===InventoryAction.STOCK_ISSUE;
 
 
     const getAmount=(qty?:number,price?:number)=>{
@@ -787,6 +792,10 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     }
 
 
+       
+        const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+        
+
     const isMobile= useIsMobile();
 
     return(
@@ -812,12 +821,42 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                             <Quantom_Grid id="ITEM_CONTROL_ID" border={border} size={gridSizes.item}>Item Info</Quantom_Grid>
                             <Quantom_Grid border={border} size={gridSizes.unit}>Unit</Quantom_Grid>
                             <Quantom_Grid border={border} size={gridSizes.qty}>Qty</Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.Price}>Price</Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.disRate}>Dis%</Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.disAm}>Dis Am</Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.amount}>Amount</Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.priceUnit}>Price Unit</Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.priceUnitRate}>Unit Rate</Quantom_Grid>      
+                            {
+                                 willHideRate?(<></>):(
+                                 <>
+                                    <Quantom_Grid border={border} size={gridSizes.Price}>Price</Quantom_Grid>
+                                 </>)
+                            }
+
+                            {
+                                 willHideDisPer?(<></>):(
+                                 <>
+                                    <Quantom_Grid border={border} size={gridSizes.disRate}>Dis%</Quantom_Grid>
+                                 </>)
+                            }
+                            {
+                                 willHideDisAm?(<></>):(
+                                 <>
+                                    <Quantom_Grid border={border} size={gridSizes.disAm}>Dis Am</Quantom_Grid>
+                                 </>)
+                            }
+                            
+                             {
+                                 willHideDisAm?(<></>):(
+                                 <>
+                                    <Quantom_Grid border={border} size={gridSizes.amount}>Amount</Quantom_Grid>
+                                 </>)
+                            }
+                            
+                            
+                            
+                            {
+                                props?.willShowPriceUnit?(<>
+                                <Quantom_Grid border={border} size={gridSizes.priceUnit}>Price Unit</Quantom_Grid>
+                                <Quantom_Grid border={border} size={gridSizes.priceUnitRate}>Unit Rate</Quantom_Grid>
+                                </>):(<></>)
+                            }
+                                  
                         </Quantom_Grid>
                         <Quantom_Grid mb={.5} spacing={.1} container  size={12} sx={{fontSize:'0.75rem',fontWeight:'bold'}}>
                             <Quantom_Grid border={border} size={gridSizes.item}>
@@ -839,28 +878,51 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                     setLineObj({...lineObj,Qty:qty,ShoulChangeLineTotals:true})
                                 }}/>
                             </Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.priceUnit}>
-                                <Quantom_Input  willHideLabel  value={lineObj?.Price??0} onChange={(e)=>{
-                                    const price=safeParseToNumber(e?.target?.value);
-                                    setLineObj({...lineObj,Price:price,ShoulChangeLineTotals:true})
-                                }}/>
-                            </Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.disRate}>
-                                <Quantom_Input  willHideLabel  value={safePreviewNumber(lineObj?.DisRate)} onChange={(e)=>{
-                                    const disRate=safeParseToNumber(e?.target?.value);
-                                    setLineObj({...lineObj,DisRate:disRate,ShoulChangeLineTotals:true,IsDiscountPercentChanged:true})
-                                }}/>
-                            </Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.disAm}>
-                                <Quantom_Input  willHideLabel  value={safePreviewNumber(lineObj?.DisAmount)} onChange={(e)=>{
-                                    const disAm=safeParseToNumber(e?.target?.value);
-                                    setLineObj({...lineObj,DisAmount:disAm,ShoulChangeLineTotals:true,IsDiscountPercentChanged:false})
-                                }}/>
-                            </Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.amount}>
-                                <Quantom_Input disabled   willHideLabel value={lineObj?.Amount??0} />
-                            </Quantom_Grid>
-                            <Quantom_Grid border={border} size={gridSizes.priceUnit}>
+                            
+                            {
+                                willHideRate?(<></>):(<>
+                                    <Quantom_Grid border={border} size={gridSizes.Price}>
+                                        <Quantom_Input  willHideLabel  value={lineObj?.Price??0} onChange={(e)=>{
+                                            const price=safeParseToNumber(e?.target?.value);
+                                            setLineObj({...lineObj,Price:price,ShoulChangeLineTotals:true})
+                                        }}/>
+                                    </Quantom_Grid>
+                                </>)
+                            }
+                            {
+                                willHideDisPer?(<></>):(<>
+                                  <Quantom_Grid border={border} size={gridSizes.disRate}>
+                                        <Quantom_Input  willHideLabel  value={safePreviewNumber(lineObj?.DisRate)} onChange={(e)=>{
+                                            const disRate=safeParseToNumber(e?.target?.value);
+                                            setLineObj({...lineObj,DisRate:disRate,ShoulChangeLineTotals:true,IsDiscountPercentChanged:true})
+                                        }}/>
+                                 </Quantom_Grid>
+                                </>)
+                            }
+
+                            {
+                                willHideDisAm?(<></>):(<>
+                                   <Quantom_Grid border={border} size={gridSizes.disAm}>
+                                        <Quantom_Input  willHideLabel  value={safePreviewNumber(lineObj?.DisAmount)} onChange={(e)=>{
+                                            const disAm=safeParseToNumber(e?.target?.value);
+                                            setLineObj({...lineObj,DisAmount:disAm,ShoulChangeLineTotals:true,IsDiscountPercentChanged:false})
+                                        }}/>
+                                    </Quantom_Grid>
+                                </>)
+                            }
+
+                             {
+                                willHideAm?(<></>):(<>
+                                   <Quantom_Grid border={border} size={gridSizes.amount}>
+                                     <Quantom_Input disabled   willHideLabel value={lineObj?.Amount??0} />
+                                    </Quantom_Grid>
+                                </>)
+                            } 
+                           
+                            
+                            {props?.willShowPriceUnit?(<>
+
+                             <Quantom_Grid border={border} size={gridSizes.priceUnit}>
                                 <QuantomBasiSelect list={priceUnitControlList} label="Price Unit" onChange={(sel)=>{
                                         setLineObj({...lineObj,PriceUnitCode:sel?.Code,PriceUnitName:sel?.Name})
                                 }} editValue={lineObj?.PriceUnitCode} Labelhidden/>
@@ -870,6 +932,8 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                     setPriceUnitPrice(safeParseToNumber(e?.target?.value))
                                 }}   willHideLabel value={priceUnitPrice??0} />
                             </Quantom_Grid>
+                            </>):<></>}
+                           
                                 
                         </Quantom_Grid>
                     </Quantom_Grid>
@@ -893,48 +957,84 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                     </Quantom_Grid>
                 </Quantom_Grid>
 
-                <Quantom_Grid container size={12}>
+                <Quantom_Grid mt={1} container size={12}>
                     <Quantom_Grid size={"grow"} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
                     
                 {
-                    props?.items?.map((item,index)=>{
+                    props?.items?.map((soldItem,index)=>{
                         return(
-                            <Quantom_Grid borderRadius='0px' pt={.5} pb={.5} display='flex'  fontWeight={400} component={Paper} borderBottom={`1px solid ${theme.palette.primary.main}`}  container size={12}>
+                            <Quantom_Grid mb={.2} borderRadius='0px' pt={.5} pb={.5} display='flex'  
+                                    fontWeight={470} fontSize={fonts?.H4FontSize} fontFamily={fonts?.HeaderFont} component={Paper} borderBottom={`1px solid ${theme.palette.primary.main}`}  container size={12}>
                                 <Quantom_Grid  border={border}  size={gridSizes.item} >
                                     <Quantom_Grid container size={12}>
-                                        <Quantom_Grid onClick={()=>{handleAddItem(item,INVENTORY_PERFORMED_ACTION.DELETE)}}>
-                                            <IconByName fontSize="16px" iconName="DeleteOutline"/>
-                                        </Quantom_Grid>
-                                        <Quantom_Grid 
-                                                onClick={()=>{
-                                                        setSelectedItemForChange(item);
-                                                        setShowItemChangeDialog(true);
-                                                    }}>
-                                            <IconByName fontSize="16px" iconName="EditLocationAltOutlined"/>
-                                        </Quantom_Grid>
-                                        <Quantom_Grid pl={1}>{item?.ItemName}</Quantom_Grid>
+                                        
+                                        <Quantom_Grid pl={1}>{soldItem?.CustomSortNo}</Quantom_Grid>
+                                        <Quantom_Grid pl={1}>{soldItem?.ItemName}</Quantom_Grid>
                                     </Quantom_Grid>
                                 </Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.unit}>{item?.TransUnitName}</Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.qty}>{safePreviewNumber(item?.TransQty)}</Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.Price}>{safePreviewNumber(item?.TransPrice)}</Quantom_Grid>
+                                <Quantom_Grid  size={gridSizes.unit}>{soldItem?.TransUnitName}</Quantom_Grid>
+                                <Quantom_Grid  size={gridSizes.qty}>{safePreviewNumber(soldItem?.TransQty)}</Quantom_Grid>
+                                {
+                                    willHideRate?(<></>):(<><Quantom_Grid  size={gridSizes.Price}>{safePreviewNumber(soldItem?.TransPrice)}</Quantom_Grid></>)
+                                }
+                                {
+                                    willHideDisPer?(<></>):
+                                    (<Quantom_Grid  size={gridSizes.disRate}>{safePreviewNumber(soldItem?.DisRate)}</Quantom_Grid>)
+                                }
 
-                                <Quantom_Grid  size={gridSizes.disRate}>{safePreviewNumber(item?.DisRate)}</Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.disAm}>{safePreviewNumber(item?.DisAmount)}</Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.amount}>{safePreviewNumber(item?.Amount)}</Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.priceUnit}>{item?.PriceUnitName}</Quantom_Grid>
-                                <Quantom_Grid  size={gridSizes.priceUnitRate}>{safePreviewNumber(item?.PriceUnitRate)}</Quantom_Grid>
+                                {
+                                    willHideDisAm?(<></>):
+                                    (<Quantom_Grid  size={gridSizes.disAm}>{safePreviewNumber(soldItem?.DisAmount)}</Quantom_Grid>)
+                                }
+
+                                {
+                                    willHideAm?(<></>):
+                                    (<Quantom_Grid  size={gridSizes.amount}>{safePreviewNumber(soldItem?.Amount)}</Quantom_Grid>)
+                                }
                                 
+                                
+                                
+                                {
+                                    props?.willShowPriceUnit?(<>
+                                        <Quantom_Grid  size={gridSizes.priceUnit}>{soldItem?.PriceUnitName}</Quantom_Grid>
+                                        <Quantom_Grid  size={gridSizes.priceUnitRate}>{safePreviewNumber(soldItem?.PriceUnitRate)}</Quantom_Grid>
+                                    </>):(<></>)
+                                }
+                                
+                                
+                                <Quantom_Grid display='flex'>
+                                    <div  onClick={(e)=>{setAnchorEl(e.currentTarget)}} 
+                                        style={{width:addButtonWidth+"px",border:border,flex:1,display:'flex',alignItems:'flex-end',justifyContent:'end'}}>
+                                        {/* <IconByName color={theme?.palette?.primary?.main} iconName="MoreVert"/> */}
 
+                                        <Quantom_Grid onClick={()=>{handleAddItem(soldItem,INVENTORY_PERFORMED_ACTION.DELETE)}}>
+                                            <IconByName fontSize="20px" color={theme?.palette?.primary?.main} iconName="DeleteOutline"/>
+                                        </Quantom_Grid>
+                                        <Quantom_Grid 
+                                             pr={1}
+                                                onClick={()=>{
+                                                        setSelectedItemForChange(soldItem);
+                                                        setShowItemChangeDialog(true);
+                                                    }}>
+                                            <IconByName fontSize="20px" color={theme?.palette?.primary?.main} iconName="EditLocationAltOutlined"/>
+                                            {/* <IconByName fontSize="16px" iconName="EditLocationAltOutlined"/> */}
+                                        </Quantom_Grid>
+                                    </div>
+                                    {/* <InventoryCompItemMenus onEditClick={()=>{
+                                        alert(index)
+                                        setAnchorEl(null)
+                                        setSelectedItemForChange(soldItem);
+                                        setShowItemChangeDialog(true);
+
+                                    }} anchorEl={anchorEl} onclose={()=>{setAnchorEl(null)}} /> */}
+                                </Quantom_Grid>
 
                             </Quantom_Grid>
                         )
                     })
                 }
                 </Quantom_Grid>
-                <Quantom_Grid>
-                    <div style={{width:addButtonWidth+"px",border:border}}></div>
-                </Quantom_Grid>
+              
                 </Quantom_Grid>
             </>):(
                 <>
@@ -1101,4 +1201,59 @@ export interface BasicSelectProps{
 export const POS_SALE_LOCID_KEY="POS_SALE_LOCID_KEY"
 export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_DATA_KEY"
 
+ interface InventoryCompItemMenusProps{
+  anchorEl?:any;
+  onclose?:()=>void;
+  onEditClick?:()=>void;
+  onDeleteClick?:()=>void;
+ }
+export const InventoryCompItemMenus=(props?:InventoryCompItemMenusProps)=>{
+    const theme= useTheme();
+    const fonts= useQuantomFonts();
+     const itemStyle={borderBottom:`2px solid ${theme?.palette?.text?.disabled}`,fontSize:fonts.H3FontSize,fontFamily:fonts.HeaderFont,fontWeight:600};
+        const ITEM_HEIGHT = 48;
+        const openMenu = Boolean(props?.anchorEl);
+      
+    return(
+        <Menu
+                                                                               
+                                        MenuListProps={{
+                                        'aria-labelledby': 'long-button',
+                                        }}
+                                        anchorEl={props?.anchorEl}
+                                        open={openMenu}
+                                        onClose={props?.onclose}
+                                        slotProps={{
+                                        paper: {
+                                            style: {
+                                            maxHeight: ITEM_HEIGHT * 4.5,
+                                            width: '20ch',
+                                            },
+                                        },
+                                        }}
+                                    >
+                                        
+                                        <MenuItem sx={itemStyle} key={'EDIT'} onClick={
+                                            props?.onEditClick
+                                        //     ()=>{
 
+                                        //     setSelectedItemForChange({...soldItem});
+                                        //     setShowItemChangeDialog(true)
+                                        //     handleMenuClose();
+                                           
+                                        //     //onEditClick?.(item)
+                                        // }
+                                        }>
+                                            Edit
+                                        </MenuItem>
+                                        <MenuItem sx={itemStyle} key={'DELETE'} onClick={
+                                            props?.onDeleteClick
+                                            // handleMenuClose();
+                                            // handleAddItem(soldItem,INVENTORY_PERFORMED_ACTION.DELETE)
+                                        }>
+                                            Delete
+                                        </MenuItem>
+                                        
+                                    </Menu>
+    )
+}
