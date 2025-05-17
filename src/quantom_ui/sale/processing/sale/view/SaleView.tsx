@@ -96,17 +96,17 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
                  <Quantom_Grid size={{xs:12,sm:12,md:9}}>
                     <GroupContainer Label="Master Information">
                         <Quantom_Grid spacing={.5} size={{xs:12}} container>
-                            <Quantom_Grid  size={{xs:12,sm:12,md:5,lg:5}}>
+                            <Quantom_Grid  size={{xs:6,sm:6,md:4.5,lg:3.5,xl:3}}>
                                 <Quantom_Input value={props?.state?.Sale?.BillNo} label="Bill No"/>
                             </Quantom_Grid>
-                            <Quantom_Grid  size={{xs:12,sm:12,md:5,lg:5}}>
+                            <Quantom_Grid  size={{xs:6,sm:6,md:4.5,lg:3.5,xl:3}}>
                                 <QUANTOM_Date value={dayjs(props?.state?.Sale?.BillDate)}  onChange={(date)=>{
                                     props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,BillDate:date?.toDate()}})
                                 }} label="Bill Date"/>
                             </Quantom_Grid>
                         </Quantom_Grid>
                         <Quantom_Grid mt={.5} size={{xs:12}} container>
-                            <Quantom_Grid  size={{xs:12,md:10}}>
+                            <Quantom_Grid  size={{xs:12,md:9,lg:7,xl:6}}>
                                 <CustomerCombo baseProps={props} 
                                             OnChange={(cust)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,CustCode:cust?.Code,CustName:cust?.Name}})}} 
                                             Customer={{Code:props?.state?.Sale?.CustCode,Name:props?.state?.Sale?.CustName}}/>
@@ -114,7 +114,7 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
                         </Quantom_Grid>
 
                         <Quantom_Grid mt={.5} size={{xs:12}} container>
-                            <Quantom_Grid  size={{xs:12,md:10}}>
+                            <Quantom_Grid  size={{xs:12,md:9,lg:7,xl:6}}>
                                 <Quantom_Input onChange={(s)=>{props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,Remarks:s?.target?.value}})}} value={props?.state?.Sale?.Remarks} label="Remarks"/>
                             </Quantom_Grid>
                         </Quantom_Grid>

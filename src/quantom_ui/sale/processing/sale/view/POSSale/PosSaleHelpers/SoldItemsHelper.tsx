@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CommonInvDetailModel } from "../../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { get_helperData_by_key, useQuantomFonts } from "../../../../../../../redux/store";
 import { Quantom_Grid } from "../../../../../../../quantom_comps/base_comps";
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
+import { IconButton, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from "@mui/material";
 import { APP_TYPE, GetAPPType, IconByName, MenuComponentProps } from "../../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import { ShowSingleSelectedItemDialog } from "./ShowSingleSelectedItemDialog";
 import { VmSale } from "../../../model/VmSaleModel";
@@ -15,6 +15,8 @@ import { INVENTORY_PERFORMED_ACTION } from "../../../../../../inventory/CommonCo
 import { POSActionButton1 } from "../../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 import { SalePrintAableTotalValue, SalePrintNumbers } from "../POSSaleView1";
 import dayjs from "dayjs";
+import React from "react";
+import { BorderBottom } from "@mui/icons-material";
 
 
 
@@ -170,15 +172,62 @@ interface SoldItemsRendererProps{
     const headerFont={fontFamily:fonts.HeaderFont,fontSize:'14px',fontWeight:600,p:1,pl:2};
     const appType= GetAPPType();
 
-
+    const itemStyle={borderBottom:`2px solid ${theme?.palette?.text?.disabled}`,fontSize:fonts.H3FontSize,fontFamily:fonts.HeaderFont,fontWeight:600};
+const ITEM_HEIGHT = 48;
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+  
+  const handleMenuClose = () => {
+    // alert('pressed')
+    setAnchorEl(null);
+  };
     
     return(
         <>
                             <Quantom_Grid mt={.5} borderBottom={`1px solid ${theme?.palette?.primary?.main}`} container component={Paper} size={{xs:12,md:12,lg:12,xl:6}} >
                                 
-                                <Quantom_Grid container borderBottom={`1px solid black`} display='flex'  alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
-                                    <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="LocalMallOutlined"/>
-                                    {item?.ItemName}
+                                <Quantom_Grid  container borderBottom={`1px solid black`} display='flex'  alignItems='center'  size={{xs:12}} sx={{...headerFont}}>
+                                    <div style={{flex:1}}>
+                                        <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="LocalMallOutlined"/>
+                                        {item?.ItemName}
+                                    </div>
+                                    
+                                    <div onClick={(e)=>{setAnchorEl(e.currentTarget);}} style={{paddingLeft:'3px',paddingRight:'3px'}}>
+                                        <IconByName  fontSize="20px" color={theme?.palette?.primary?.main} iconName="MoreVert"/>
+                                    </div>
+
+                                    <Menu
+                                            id="long-menu"
+                                            MenuListProps={{
+                                            'aria-labelledby': 'long-button',
+                                            }}
+                                            anchorEl={anchorEl}
+                                            open={openMenu}
+                                            onClose={handleMenuClose}
+                                            slotProps={{
+                                            paper: {
+                                                style: {
+                                                maxHeight: ITEM_HEIGHT * 4.5,
+                                                width: '20ch',
+                                                },
+                                            },
+                                            }}
+                                        >
+                                           
+                                            <MenuItem sx={itemStyle} key={'EDIT'} onClick={()=>{
+                                                handleMenuClose();
+                                                onEditClick?.(item)
+                                            }}>
+                                                Edit
+                                            </MenuItem>
+                                            <MenuItem sx={itemStyle} key={'DELETE'} onClick={()=>{
+                                                handleMenuClose();
+                                                onDeleteClick?.(item)
+                                            }}>
+                                                Delete
+                                            </MenuItem>
+                                            
+                                        </Menu>
                                 </Quantom_Grid>
                                 
                            
@@ -246,7 +295,7 @@ interface SoldItemsRendererProps{
                                                 </IconButton>
                                             </Quantom_Grid>
                                         </>):(
-                                            <Quantom_Grid display="flex" flex={1} justifyContent='end' sx={{fontFamily:fonts.HeaderFont,fontWeight:800,fontSize:'25px',ml:.5}}>
+                                            <Quantom_Grid display="flex" flex={1} justifyContent='end' sx={{fontFamily:fonts.HeaderFont,fontWeight:800,fontSize:'18px',ml:.5}}>
                                                 {item?.Amount?.toFixed(0)}
                                             </Quantom_Grid>
                                         )

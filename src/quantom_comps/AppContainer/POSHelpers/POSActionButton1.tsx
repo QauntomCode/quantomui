@@ -9,6 +9,8 @@ import { useQuantomFonts } from "../../../redux/store";
 import { POSActionButtonProps } from "./POSActionButton";
 
 
+
+
 export const POSActionButton1=(props?:POSActionButtonProps)=>{
     const fonts= useQuantomFonts();
     const theme= useTheme();
@@ -30,13 +32,21 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
         setIconColor(theme?.palette?.primary?.main)
     },[theme])
 
+    const getWidth=()=>{
+        let width=props?.isIconOnly?'70px':'130px';
+        if(props?.width){
+            width=props?.width;
+        }
+
+        return width;
+    }
     return(
        
         <div onKeyDown={(e)=>{
             if (e.key === 'Enter') {
                 props?.onClick?.()
             }
-        }}  className="focused-element" tabIndex={0} style={{width:props?.isIconOnly?'70px':'130px',marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
+        }}  className="focused-element" tabIndex={0} style={{width:getWidth(),marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
          <Box component={Paper} sx={{backgroundColor:props?.backgroundColor??undefined,borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {

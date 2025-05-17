@@ -37,6 +37,12 @@ export const ShowSingleSelectedItemDialog=(props?:ShowSingleSelectedItemDialogPr
                  </div>
             </div>
 
+            <div className="row g-1">
+                 <div className="col-md-12 mt-2">
+                    <Quantom_Input size='medium' label="Unit Name" value={props?.item?.UnitName}/>
+                 </div>
+            </div>
+
             <div className="row g-1 mt-1">
                  <div className="col-md-12">
                      <Quantom_Input label="Qty" value={formatNumber(qty)} onChange={(e)=>{setQty(safeParseToNumber(e.target.value))}}/>

@@ -649,8 +649,9 @@ export const QuantomLovMobileV1=(props?:QuantomLovMobileProps)=>{
                              onClick={()=>{setOpen(true)}}
                              textColor={theme?.palette?.secondary?.contrastText} 
                              backgroundColor={theme?.palette?.secondary?.main} 
-                             label="Select" 
+                             label={`Select ${props?.label}`} 
                              iconName="AccountBoxOutlined" 
+                             width='250px'
                              iconColor={theme?.palette?.primary?.main}/>
                      </div>
                  </div>
