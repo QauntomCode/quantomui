@@ -1,8 +1,8 @@
 window.globalConfig = {
 
 
-    // apiUrl:"http://demo.b-shaheerinternational.com/api/", 
-    apiUrl:"https://localhost:44342/api/", 
+    apiUrl:"http://demo.b-shaheerinternational.com/api/", 
+    //apiUrl:"https://localhost:44342/api/", 
 
     /*"http://localhost:44345/api/",*
     ///"https://localhost:44342/api/",//"https://localhost:44342/api/",//"http://localhost:44345/api/",

@@ -13,16 +13,6 @@ import { GroupContainer } from '../../../processing/voucher/view/VoucherView'
 
 export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>) => {
 
-   //  const handleSubAccounts=async():Promise<CommonCodeName[]>=>{
-   //       let res= await SubAccountGetAll();
-   //       let mAccounts=
-   //       res?.map((item,index)=>{
-   //          let obj:CommonCodeName={Code:item?.Code,Name:item?.Name};
-   //          return obj;
-   //       });
-   //       return Promise.resolve([...mAccounts]);
-   //  }
-
     React.useEffect(()=>{
       setFormBasicKeys<SubSubAccountModel>({
          SaveMethod:(payload)=>SubSubAccountInsert(payload),
@@ -46,18 +36,12 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
     <>
       
          <Quantom_Grid container mt={1.5}  spacing={.5}>
-               {/* <Quantom_Grid item  size={{md:2}}>
-                  <Quantom_Input disabled label='Main Code' value={props?.state?.subAccount?.mainAccount?.Code} />
-               </Quantom_Grid>  */}
                <Quantom_Grid item size={{xs:12,sm:12,md:8,lg:6,xl:6}}>
                   <Quantom_Input disabled label='Main Name' value={props?.state?.subAccount?.mainAccount?.Name} />
                </Quantom_Grid>
          </Quantom_Grid>
 
          <Quantom_Grid container mt={1} spacing={.5}>
-               {/* <Quantom_Grid item size={{md:2}}>
-                  <Quantom_Input disabled label='Sub Code' value={props?.state?.subAccount?.Code} />
-               </Quantom_Grid>  */}
                <Quantom_Grid item size={{xs:12,sm:12,md:8,lg:6,xl:6}}>
                      <Quantom_LOV1 onChange={async (selected) => {
                  let res = await SubAccountGetOne(selected?.Code)
@@ -69,7 +53,7 @@ export const SubSubAccountView = (props?:MenuComponentProps<SubSubAccountModel>)
          </Quantom_Grid>
          <Quantom_Grid container mt={1}  spacing={.5}>
                <Quantom_Grid item size={{xs:12,sm:12,md:3,lg:2,xl:2}}>
-                  <Quantom_Input size='medium' disabled label='Code' value={props?.state?.Code} />
+                  <Quantom_Input size='small' disabled label='Code' value={props?.state?.Code} />
                </Quantom_Grid>
                <Quantom_Grid item size={{xs:12,sm:12,md:5,lg:4,xl:4}}>
                   <Quantom_Input size='medium' label='Name' value={props?.state?.Name} onChange={(e)=>{props?.setState?.({...props?.state,Name:e?.target?.value})}}/>

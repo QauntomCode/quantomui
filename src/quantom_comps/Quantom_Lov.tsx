@@ -515,42 +515,51 @@ return (
           }}
           >
             <DialogTitle sx={{padding:0,display:'flex'}}>
-               <div style={{flex:1}}></div>
-               <div style={{flex:0,paddingRight:'25px'}} onClick={()=>{
-                    setOpen(false)
-               }}>
-                  <IconByName color={theme.palette.error.main} iconName='CancelPresentation' ></IconByName>
-               </div>
-    
+              <div style={{width:'100%'}}>
+              <Quantom_Grid pb={.5} container mt={1} mb={1} display='flex' borderBottom={`3px solid ${theme?.palette?.text?.disabled}`} size={{xs:12}}>
+                 
+                 <Quantom_Grid pl={2.5} size={{xs:12}} flex={1} mr={2}>
+                    <Quantom_Input 
+                        label='Search' 
+                        inputRef={searchRef} 
+                        value={search} 
+                        willHandleTabOnEnter={true}
+                        onChange={(event)=>{
+                          
+                          setSearch(event?.target?.value)
+                          }
+                        }
+                        onKeyDown={(e)=>{
+                            if(e.key==='ArrowDown'){
+                              handleGridFocusedIndex('down',0);
+                            }
+                            if(e.key==='Enter'){
+                              let item:CommonCodeName={};
+                              if(values && values.length>0)
+                              {
+                                item=values?.[0];
+                                handleSelection(item)
+                              }
+                            }
+                            if(e.key==='Escape'){
+                              setOpen(false)
+                            }             
+                        }} />
+                 </Quantom_Grid>
+                 <Quantom_Grid>
+                    <div style={{flex:0,paddingRight:'25px'}} onClick={()=>{
+                          setOpen(false)
+                    }}>
+                        <IconByName color={theme.palette.error.main} iconName='CancelPresentation' ></IconByName>
+                    </div>
+                 </Quantom_Grid>
+              </Quantom_Grid>
+          </div>
             </DialogTitle>
             <DialogContent>
            
-            <Quantom_Input 
-               label='Search' 
-               inputRef={searchRef} 
-               value={search} 
-               willHandleTabOnEnter={true}
-               onChange={(event)=>{
-                 
-                 setSearch(event?.target?.value)
-                }
-              }
-               onKeyDown={(e)=>{
-                  if(e.key==='ArrowDown'){
-                    handleGridFocusedIndex('down',0);
-                  }
-                  if(e.key==='Enter'){
-                    let item:CommonCodeName={};
-                    if(values && values.length>0)
-                    {
-                      item=values?.[0];
-                      handleSelection(item)
-                    }
-                  }
-                  if(e.key==='Escape'){
-                     setOpen(false)
-                  }             
-               }} />
+            
+            
               {  values?.map((item,index)=>{
                 return(
                   <div 
@@ -563,11 +572,22 @@ return (
                         onClick={()=>{ setFocusedIndex(index);handleSelection(item) }}
                         onDoubleClick={()=>{handleSelection(item) }
                   } tabIndex={-1} >
-                      <Quantom_Grid  container component={Paper} spacing={1} 
-                        sx={{fontFamily:fonts.HeaderFont,fontSize:'14px',marginBottom:'2px',paddingTop:'4px',paddingBottom:'4px',borderBottom:`1px solid ${theme.palette.primary.main}`
+                      <Quantom_Grid pl={1} pr={1} pb={.5} pt={.5} mb={.5} mt={.5} component={Paper}  container  spacing={1} 
+                        sx={{fontFamily:fonts.HeaderFont,fontSize:fonts?.H4FontSize,borderBottom:`.5px solid ${theme?.palette?.text?.disabled}`
                       }}>
-                          <Quantom_Grid item sx={{fontWeight:'bold',width:'120px'}}  siz={{md:3}}>{item.Code}</Quantom_Grid>
-                          <Quantom_Grid item  siz={{md:9}}>{item.Name}</Quantom_Grid>
+                        <Quantom_Grid size={{xs:12}} sx={{color:theme?.palette?.text?.disabled,display:'flex',alignItems:'center',
+                          borderBottom:`1px dotted ${theme?.palette?.text?.disabled}`
+                          }}>
+                          <IconByName iconName='Tag'fontSize='16px'/>
+                          {item?.Code}
+                        </Quantom_Grid>
+
+                        <Quantom_Grid size={{xs:12}} sx={{color:theme?.palette?.text?.primary,display:'flex',alignItems:'center'}}>
+                          <IconByName iconName='ArticleOutlined'fontSize='16px'/>
+                          {item?.Name}
+                        </Quantom_Grid>
+                          {/* <Quantom_Grid item sx={{width:'120px'}}  siz={{md:3}}>{item.Code}</Quantom_Grid>
+                          <Quantom_Grid item  siz={{md:9}}>{item.Name}</Quantom_Grid> */}
                       </Quantom_Grid>
                   </div>
                 )
