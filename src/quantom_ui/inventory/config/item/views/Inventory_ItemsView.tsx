@@ -1,9 +1,9 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React from 'react'
-import { ComponentTabProps, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
-import { Quantom_LOV } from '../../../../../quantom_comps/Quantom_Lov'
+import React, { useEffect, useState } from 'react'
+import { ComponentTabProps, generateGUID, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { Quantom_LOV, Quantom_LOV1 } from '../../../../../quantom_comps/Quantom_Lov'
 import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
 import { GroupContainer } from '../../../../account/processing/voucher/view/VoucherView'
@@ -27,12 +27,41 @@ import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/
 import { InventoryItemAtributeValuesModel } from '../model/AssocicateModels/InventoryItemAtributeValuesModel'
 import { InventoryItemLocationsModel } from '../model/AssocicateModels/InventoryItemLocationsModel'
 import { Paper, useTheme } from '@mui/material'
+import { QuantomBasiSelect } from '../../../../Purchase/Processing/Purchase/view/POSPurchaseView'
+import { AddHPD, useGetHelperData } from '../../../../sale/reports/Appointments/CustomerAppointmentReports'
+
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
    const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
    const [searchText,setSearchText]=React.useState('');
    const[refreshSetupMethod,setRefreshSetupMethod]=React.useState(0);
-   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
+   const [refreshGuid,setRefreshGuid]=useState('')
+   const[defaultItemType,setdefaultItemType]=useState<CommonCodeName>()
+   const setupFormData= useGetHelperData<SetupFormBulkResponseModel[]>(props,'setup_data');// useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
+  
+   useEffect(()=>{
+       if(setupFormData){
+        const method=async()=>{
+          let gid= await generateGUID();
+          setRefreshGuid(gid)
+        }
+        method();
+       }
+   },[setupFormData])
+   
+  //const defaultItemType= setupFormData?.find(x=>x?.Type?.toUpperCase()==="ItemType".toUpperCase())?.Data?.find(x=>x?.Name?.toUpperCase()==="STOCK_ITEM");
+
+    useEffect(()=>{
+      if(!props?.state?.item?.ItemType){
+        const defItemType= setupFormData?.find(x=>x?.Type?.toUpperCase()==="ItemType".toUpperCase())?.Data?.find(x=>x?.Name?.toUpperCase()==="STOCK_ITEM");
+        setdefaultItemType(defItemType)
+        if(props?.state?.item?.ItemType!==safeParseToNumber(defaultItemType?.Code)){
+          ///alert('default item type is'+defaultItemType)
+          props?.setState?.({...props?.state,item:{...props?.state?.item,ItemType:safeParseToNumber(defaultItemType?.Code),InventoryItemType:{Name:defaultItemType?.Name}}})
+        }
+      }
+     },[props?.state?.item])
+
 
 
     React.useEffect(()=>{
@@ -95,10 +124,12 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     
     const handleGetSetupItems=async()=>{
        let res= await SetupFormGetAllBulk(['Unit','Category','Company','PriceGroup','ItemType','attributes']);
-       store.dispatch(add_helper_data({UniqueId:props?.UniqueId,data:[{
-          keyNo:'setup_data',
-          Data:res
-       }]}));
+
+       AddHPD(props,'setup_data',res)
+      //  store.dispatch(add_helper_data({UniqueId:props?.UniqueId,data:[{
+      //     keyNo:'setup_data',
+      //     Data:res
+      //  }]}));
        
        setTimeout(() => {
           setRefreshSetupMethod((refreshSetupMethod??0)+1)
@@ -111,6 +142,8 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     }
 
     const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
+
+      console.log('all setup data is',setupFormData)
       let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()===type?.toLocaleLowerCase())?.Data?.map((item,index)=>{
           let obj:CommonCodeName={
             Code:item?.Code,
@@ -123,38 +156,12 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
        return  Promise.resolve(data??[]);
     }
 
-
-    const theme= useTheme();
   return (
     <>
     
 
       <Quantom_Grid size={{xs:12}} container spacing={.5}>
-        {/* <Quantom_Grid item size={{xs:12,sm:12,md:5,lg:4,xl:3}}>
-            <GroupContainer height='410px' Label='Item List'>
-               <div style={{display:'flex',width:'100%'}}>
-                  <Quantom_Input label='Search' value={searchText} onChange={(e)=>{setSearchText(e?.target?.value)}}/>
-                  <div style={{width:'60px',marginLeft:'5px'}}>
-                    <ListCompButton onClick={()=>{
-                      handleGetSearchItems()
-                    }} marginTop='4px' Label='Search'  iconName='PlagiarismTwoTone'/>
-                  </div>
-               </div>
-               <QUANTOM_Table onViewButtonClick={async(data)=>{
-                  let res= await InventoryItemsGetOne(data?.Code)
-                
-                  if(res.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS){
-                    console.warn(res?.Response);
-                   set_form_state(props?.UniqueId,{...res?.Response});
-                  }
-               }} headerHeight={0} data={[...searchedItem]} height='390px' columns={[
-                  {field:"Code",caption:"ItemCode",width:105 },
-                  {field:"Name",caption:"ItemName",width:250 },
-                ]} />
-          </GroupContainer>  
         
-        </Quantom_Grid>  */}
-
         <Quantom_Grid p={2} container size={{xs:12}} spacing={2}>
           <Quantom_Grid  spacing={1}   size={{xs:12,sm:12,md:6,lg:4,xl:4}}>
              <Quantom_Grid spacing={.5} container={{xs:12}}>
@@ -185,12 +192,24 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
           <Quantom_Grid  size={{xs:12,sm:12,md:6,lg:4,xl:4}}>
               
               <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-                <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')} 
+                {/* <QuantomBasiSelect list={itemTypes}  label='ItemType' 
+                  editValue={props?.state?.item?.ItemType?.toString()}           
+                                  onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}/> */}
+                                  
+                {/* <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')} 
                                   label='Item Type' 
                                   RefreshFillDtaMethod={refreshSetupMethod}
                                   selected={{Code:props?.state?.item?.ItemType?.toString(),Name:props?.state?.item?.InventoryItemType?.Name}}           
                                   onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
-                      />
+                      />  */}
+                <Quantom_LOV1
+                  keyNo='INVENTORY_ITEM_ITEM_TYPE'
+                  uniqueKeyNo={props?.UniqueId??""}
+                  refreshMethod={refreshGuid}
+                  label='Item Type' 
+                  FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')}
+                  onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
+                  selected={{Code:props?.state?.item?.ItemType?.toString(),Name:props?.state?.item?.InventoryItemType?.Name}}     />
               </Quantom_Grid>
 
               <Quantom_Grid mt={.5} container spacing={.5}>

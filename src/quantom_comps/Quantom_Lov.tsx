@@ -293,6 +293,7 @@ export interface Quantom_LOV_V1Props {
   id?:string  ;
   willHideLabel?:boolean;
   size?:'medium'|'small'
+  refreshMethod?:string;
 }
 export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   
@@ -315,6 +316,11 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
 
   const isMobile= useIsMobile();
 
+  useEffect(()=>{
+     if(props?.refreshMethod){
+        handleLoadInitialData();
+     }
+  },[props?.refreshMethod])
 
   React.useEffect(()=>{
          loadAllValues();
@@ -335,7 +341,10 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
 
   const handleLoadInitialData=async()=>{
     // alert('method called')
+     console.log('refresh method called');
     let vals= await props?.FillDtaMethod?.();
+    console.log('refreshed data is',values);
+    
     // console.warn('all values are',vals)
     // alert('unique key no is'+props?.uniqueKeyNo+"KeyNo is"+props?.keyNo)
     store.dispatch((add_helper_data_single_key({UniqueId:props?.uniqueKeyNo,data:{keyNo:props?.keyNo,Data:vals}})))

@@ -29,9 +29,10 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
 
     useEffect(()=>{
         if(!props?.state?.Sale?.BillDate){
+            // alert('testing')
             props?.setState?.({...props?.state,Sale:{...props?.state?.Sale,BillDate:new Date()}})
         }
-    },[props?.state?.Sale?.BillDate])
+    },[props?.state?.Sale])
 
     useEffect(()=>{
         if(!props?.state?.Sale?.LocId && !isNullOrEmpty(location?.LocId)){
