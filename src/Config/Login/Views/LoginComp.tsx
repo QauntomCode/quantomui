@@ -13,6 +13,7 @@ import { Box, FormControl, FormHelperText, Grid, Grid2, InputAdornment, Outlined
 import { FullWidth } from 'ag-grid-community/dist/types/core/components/framework/componentTypes'
 import { POSActionButton } from '../../../quantom_comps/AppContainer/POSHelpers/POSActionButton'
 import { POSActionButton1 } from '../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1'
+import { ResetSettings } from '../../../quantom_ui/Settings/Settings/SettingMethods'
 
 export const LoginComp = () => {
     const [user,setUser]=React.useState<user>({})
@@ -34,6 +35,7 @@ export const LoginComp = () => {
           HideLoadingDialog();
           if(comps.ResStatus=== HTTP_RESPONSE_TYPE.SUCCESS && (comps?.Response?.length??0)===1){
               setLogedInUserCompany(comps?.Response?.[0])
+              ResetSettings()
               if(APP_TYPE.ERP===appType){
                   navigate('/Home');
                   return;
@@ -42,12 +44,8 @@ export const LoginComp = () => {
               navigate('/POS')
 
               let uqId= await generateGUID();
-              store.dispatch(open_new_menu({MenuCode:'POS_MAIN_SCREEN',MenuCaption:'MAIN MENUS',UniqueKeyNo:uqId}))
-             // store.dispatch(open_new_menu({MenuCode:'POS_MAIN_SCREEN',MenuCaption:'MAIN MENUS',UniqueKeyNo:uqId}))
-              //useSelector((satte?:any)=>open_new_menu(state,{}))
-              // useSelector((state?:any)=> open_new_menu({
-              //     MenuCode:'POS_MAIN_SCREEN',
-              // }))
+              store.dispatch(open_new_menu({MenuCode:'POS_MAIN_SCREEN',MenuCaption:'MAIN MENUS',UniqueKeyNo:uqId}));
+              
           }
       }
       else{
