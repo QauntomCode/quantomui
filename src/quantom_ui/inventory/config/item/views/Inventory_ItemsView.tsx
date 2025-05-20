@@ -70,15 +70,15 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
           props?.setState?.({...props?.state,item:{...props?.state?.item,ItemType:safeParseToNumber(defaultItemType?.Code),InventoryItemType:{Name:defaultItemType?.Name}}})
         }
       }
-<<<<<<< HEAD
-     },[props?.state])
-=======
+// <<<<<<< HEAD
+//      },[props?.state])
+// =======
 
       if(!props?.state?.item?.UnitCode  && defEachUnit?.Code){
         props?.setState?.({...props?.state,item:{...props?.state?.item,UnitCode:defEachUnit?.Code,UnitName:defEachUnit?.Name}})
       }
      },[props?.state?.item])
->>>>>>> d8cd6ea2c88e75b1ea70e399c75d79dbe2fb786b
+// >>>>>>> d8cd6ea2c88e75b1ea70e399c75d79dbe2fb786b
 
 
 
