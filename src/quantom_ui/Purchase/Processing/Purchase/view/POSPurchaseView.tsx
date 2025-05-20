@@ -1206,6 +1206,8 @@ export const POS_SELECTED_BILL_NO_HELPER_DATA_KEY="POS_SELECTED_BILL_NO_HELPER_D
   onclose?:()=>void;
   onEditClick?:()=>void;
   onDeleteClick?:()=>void;
+//   Index?:number;
+  
  }
 export const InventoryCompItemMenus=(props?:InventoryCompItemMenusProps)=>{
     const theme= useTheme();
@@ -1233,24 +1235,10 @@ export const InventoryCompItemMenus=(props?:InventoryCompItemMenusProps)=>{
                                         }}
                                     >
                                         
-                                        <MenuItem sx={itemStyle} key={'EDIT'} onClick={
-                                            props?.onEditClick
-                                        //     ()=>{
-
-                                        //     setSelectedItemForChange({...soldItem});
-                                        //     setShowItemChangeDialog(true)
-                                        //     handleMenuClose();
-                                           
-                                        //     //onEditClick?.(item)
-                                        // }
-                                        }>
+                                        <MenuItem sx={itemStyle} key={'EDIT'} onClick={props?.onEditClick}>
                                             Edit
                                         </MenuItem>
-                                        <MenuItem sx={itemStyle} key={'DELETE'} onClick={
-                                            props?.onDeleteClick
-                                            // handleMenuClose();
-                                            // handleAddItem(soldItem,INVENTORY_PERFORMED_ACTION.DELETE)
-                                        }>
+                                        <MenuItem sx={itemStyle} key={'DELETE'} onClick={props?.onDeleteClick}>
                                             Delete
                                         </MenuItem>
                                         

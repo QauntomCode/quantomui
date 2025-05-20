@@ -1,8 +1,8 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React, { useEffect, useState } from 'react'
-import { ComponentTabProps, generateGUID, MenuComponentProps, setFormBasicKeys, UserGetSelectedLocation } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import React, { useEffect, useRef, useState } from 'react'
+import { ComponentTabProps, generateGUID, IconByName, MenuComponentProps, setFormBasicKeys, UserGetSelectedLocation } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV, Quantom_LOV1 } from '../../../../../quantom_comps/Quantom_Lov'
 import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
@@ -18,7 +18,7 @@ import {  AsyncFindByIndex, safeParseToNumber } from '../../../../../CommonMetho
 import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
 import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
 import { useSelector } from 'react-redux'
-import store, { form_state_selector, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, set_form_state } from '../../../../../redux/store'
+import store, { form_state_selector, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, set_form_state, useQuantomFonts } from '../../../../../redux/store'
 import { add_helper_data } from '../../../../../redux/reduxSlice'
 import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from '../model/AssocicateModels/Inventory_ItemUnitsModel'
 import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inventory_ItemUnitsPriorityModel'
@@ -26,8 +26,8 @@ import { HTTP_RESPONSE_TYPE } from '../../../../../HTTP/QuantomHttpMethods'
 import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
 import { InventoryItemAtributeValuesModel } from '../model/AssocicateModels/InventoryItemAtributeValuesModel'
 import { InventoryItemLocationsModel } from '../model/AssocicateModels/InventoryItemLocationsModel'
-import { Paper, useTheme } from '@mui/material'
-import { QuantomBasiSelect } from '../../../../Purchase/Processing/Purchase/view/POSPurchaseView'
+import { Paper, setRef, useTheme } from '@mui/material'
+import { InventoryCompItemMenus, QuantomBasiSelect } from '../../../../Purchase/Processing/Purchase/view/POSPurchaseView'
 import { AddHPD, useGetHelperData } from '../../../../sale/reports/Appointments/CustomerAppointmentReports'
 import { AccountSettings, useGetSetting } from '../../../../Settings/Settings/SettingMethods'
 
@@ -283,45 +283,12 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                         FillDtaMethod={()=>getSetupDataWithSetupType('Company')}
                         selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
                         onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}} />
-                  {/* <Quantom_LOV 
-                              FillDtaMethod={()=>getSetupDataWithSetupType('Company')} 
-                              label='Company' 
-                              RefreshFillDtaMethod={refreshSetupMethod}
-                              selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
-                              onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}}
-                  /> */}
                  </Quantom_Grid>
           </Quantom_Grid>
 
         </Quantom_Grid>
  
       <Quantom_Grid mt={1} item size={{xs:12,md:7,lg:7,xl:6}}>
-        {/* <Quantom_Grid container spacing={.5}>
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-                  <Quantom_LOV 
-                                  FillDtaMethod={()=>getSetupDataWithSetupType('PriceGroup')} 
-                                  label='Price Group' 
-                                  RefreshFillDtaMethod={refreshSetupMethod}
-                                  selected={{Code:props?.state?.item?.PricGroupCode,Name:props?.state?.item?.PriceGroup?.Name}}           
-                                  onChange={(obj)=>{setItem({PricGroupCode:obj?.Code,PriceGroup:{Code:obj?.Code,Name:obj?.Name}})}}
-                      />
-          </Quantom_Grid>
-          <Quantom_Grid container size={{xs:12,md:12,lg:12}}>
-              <Quantom_Grid size={{xs:4}}>
-                  <Quantom_Input label='Pack Qty'></Quantom_Input>
-              </Quantom_Grid>
-          </Quantom_Grid>
-
-          <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-            <Quantom_LOV 
-                  FillDtaMethod={()=>getSetupDataWithSetupType('unit')} 
-                  label='Price Unit' 
-                  RefreshFillDtaMethod={refreshSetupMethod}
-                  selected={{Code:props?.state?.item?.DefUnitCodeForPrice,Name:props?.state?.item?.defUnitNameForPrice}}           
-                  onChange={(obj)=>{setItem({DefUnitCodeForPrice:obj?.Code,defUnitNameForPrice:obj?.Name})}}
-                      />
-            </Quantom_Grid>
-        </Quantom_Grid> */}
       </Quantom_Grid>
 
       
@@ -394,9 +361,15 @@ export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const [calcType,setCalcType]=React.useState<CommonCodeName>({Code:'Multiply_By',Name:"Multiply_By"});
   const [refreshUnits,setRefreshUnits]=React.useState(0);
   const [itemUnit,setItemUnit]=React.useState<InventoryItemUnitsModel>({})
-  
+  const [refreshGuid,setRefreshGuid]= useState('')
   const setupFormData= useSelector((state:any)=>get_helperData_by_key(state,props?.baseProps?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
   
+  useEffect(()=>{
+    const method= async()=> {let guid= await generateGUID();setRefreshGuid(guid)}
+      if(setupFormData && setupFormData?.length>0){
+        method();
+      }
+  },[setupFormData])
   const getSetupUnits=async():Promise<CommonCodeName[]>=>{
     let data=  setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==='unit'?.toLocaleLowerCase())?.Data?.map((item,index)=>{
         let obj:CommonCodeName={
@@ -466,30 +439,52 @@ React.useEffect(()=>{
      //  alert('index is'+selectedIndex)
   }
   
+  const theme= useTheme();
+  const fonts= useQuantomFonts();
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedIndex,setSelectedIndex]=useState<number>()
 
   return(
     <GroupContainer height='300px' Label='Unit Of Conversion' >
-       <Quantom_Grid mt={2} container spacing={.5} >
-          <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
+       <Quantom_Grid container   mt={2}  spacing={.5} >
+        <Quantom_Grid container pb={.5} sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}} size={{xs:12,sm:12,md:12,lg:8,xl:6}}>
+
+
+        <Quantom_Grid  size={{xs:12,sm:12,md:2.5}}>
               <Quantom_Input disabled label='From Unit' value={state?.item?.UnitName}/>
           </Quantom_Grid>
-          <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2.5,xl:1.5}}>
-              <Quantom_LOV label='Calc_Type' FillDtaMethod={calculationType} selected={calcType} onChange={(e)=>{setCalcType({...e})}}/>
+          <Quantom_Grid  size={{xs:12,sm:12,md:3,}}>
+              {/* <Quantom_LOV1 label='Calc_Type' FillDtaMethod={calculationType} selected={calcType} onChange={(e) => { setCalcType({ ...e }) } } uniqueKeyNo={''}/> */}
+              <Quantom_LOV1
+                        keyNo='INVENTORY_ITEM_CALCULATION_COMBOBOX'
+                        mobileSelectionButtonIcon='BrandingWatermarkOutlined'
+                        uniqueKeyNo={props?.baseProps?.UniqueId??""}
+                        label='Calc_Type' 
+                        FillDtaMethod={calculationType}
+                        selected={calcType}         
+                        onChange={(e) => { setCalcType({ ...e }) } } />
           </Quantom_Grid>
 
-          <Quantom_Grid item size={{xs:6,sm:6,md:1}}>
+          <Quantom_Grid item size={{xs:12,sm:12,md:1.5}}>
               <Quantom_Input label='Qty' value={itemUnit?.CalucltionNumber??0} onChange={(e)=>{
                   setItemUnit({...itemUnit,CalucltionNumber:safeParseToNumber(e.target.value)})
               }}/>
           </Quantom_Grid>
 
-          <Quantom_Grid item size={{xs:6,sm:6,md:3,lg:2}}>
-              <Quantom_LOV label='To Unit' RefreshFillDtaMethod={refreshUnits} selected={itemUnit?.unit} FillDtaMethod={()=>getSetupUnits()} onChange={(e)=>{
-                 setItemUnit({...itemUnit,UnitCode:e?.Code,unit:{Code:e?.Code,Name:e?.Name}})
-                }}/>
+          <Quantom_Grid item size={{xs:12,sm:12,md:3.5}}>
+                      <Quantom_LOV1
+                        keyNo='INVENTORY_ITEM_UNIT_CONVERSION_UNIT_CONVERSION'
+                        mobileSelectionButtonIcon='BrandingWatermarkOutlined'
+                        refreshMethod={refreshGuid}
+                        uniqueKeyNo={props?.baseProps?.UniqueId??""}
+                        label='To Unit' 
+                        FillDtaMethod={getSetupUnits}
+                        selected={itemUnit?.unit}        
+                        onChange={(e)=>{setItemUnit({...itemUnit,UnitCode:e?.Code,unit:{Code:e?.Code,Name:e?.Name}})}} />
           </Quantom_Grid>
 
-          <Quantom_Grid item size={{xs:6,sm:6,md:1,lg:1}}>
+          <Quantom_Grid item size={{xs:12,sm:12,md:1.5}}>
               <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' onClick={()=>{
                   if(!itemUnit || !itemUnit?.unit ||  !itemUnit?.UnitCode){
                     props?.baseProps?.errorToast?.('Select To Unit')
@@ -513,16 +508,92 @@ React.useEffect(()=>{
               }}/>
           </Quantom_Grid>
 
+
+
+          
+        </Quantom_Grid>
+         
+
+
+        
+
+       
+
+
        </Quantom_Grid>
        
 
-       <QUANTOM_Table onViewButtonClick={onDeleteViewClick} viewButtonOverrideIcon='DeleteTwoTone' hideFloatingFilter headerHeight={20} data={state?.itemUnits??[]} columns={[
+       <Quantom_Grid container mt={1} size={{xs:12}}>
+          <Quantom_Grid container spacing={1} size={{xs:12,sm:12,md:12,lg:8,xl:6}}>
+             {
+                state?.itemUnits?.map((item,index)=>{
+
+                  return(
+                    <Quantom_Grid p={1} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  container size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
+                        <Quantom_Grid  size={{xs:12}} display='flex' sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
+                              <Quantom_Grid display='flex' alignItems='center' size={{xs:4}}>
+                                 <div style={{paddingRight:'5px'}}> {props?.baseProps?.state?.item?.UnitName}</div>
+                                 <IconByName iconName='ArrowRightAltOutlined' fontSize='16px' />
+                             </Quantom_Grid>
+                             <Quantom_Grid display='flex' alignItems='center' size={{xs:4}}>
+                                {/* <IconByName iconName='CalculateOutlined' fontSize='16px' /> */}
+                                 <div  style={{paddingLeft:'5px',fontSize:fonts.H4FontSize,fontWeight:700}}> 1 {(item?.CalculationType===UNIT_CALULATION_TYPE.DIVIED_BY)?'/':'X'} {item?.CalucltionNumber}</div>
+                             </Quantom_Grid>
+
+                             <Quantom_Grid display='flex' alignItems='center' size={{xs:3}} >
+                                <IconByName iconName='ArrowRightAltOutlined' fontSize='16px' />
+                                <div style={{paddingLeft:'5px'}}> {item?.unit?.Name}</div>
+                             </Quantom_Grid>
+
+                             <Quantom_Grid display='flex' justifyContent='right' alignItems='center' size={{xs:1}} >
+                                <div onClick={(e)=>{setAnchorEl(e?.currentTarget);setSelectedIndex(index)}}>
+
+                                  <IconByName color={theme?.palette?.text?.primary} iconName='MoreVertOutlined' fontSize='20px' />
+                                </div>
+
+                                <InventoryCompItemMenus  anchorEl={anchorEl} onclose={()=>{setAnchorEl(null)}} 
+                                  onDeleteClick={()=>{
+                                         const selUnit=state?.itemUnits?.[selectedIndex??-1];
+                                         let units= state?.itemUnits?.filter(x=>x.unit?.Name!==selUnit?.UnitCode && x.CalucltionNumber!==selUnit?.CalucltionNumber)??[];
+                                         console.log('new units are',units)
+                                         props?.baseProps?.setState?.({...state,itemUnits:[...units]})
+                                    setAnchorEl(null);
+                                    // alert('slected Index'+selectedIndex)
+                                  }}
+                                  onEditClick={()=>{
+                                    setAnchorEl(null);
+                                    // alert('slected Index'+selectedIndex)
+                                }}
+                                />
+                             </Quantom_Grid>
+
+                        </Quantom_Grid>
+{/* 
+                        <Quantom_Grid  size={{xs:12}} display='flex' sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
+                             <Quantom_Grid display='flex' alignItems='center' flex={1}>
+                                <IconByName iconName='ArrowRightAltOutlined' fontSize='16px' />
+                                 <div style={{paddingLeft:'5px'}}> {props?.baseProps?.state?.item?.UnitName}</div>
+                             </Quantom_Grid>
+
+                             <Quantom_Grid display='flex' alignItems='center' >
+                                <IconByName iconName='ArrowRightAltOutlined' fontSize='16px' />
+                                <div style={{paddingLeft:'5px'}}> {item?.unit?.Name}</div>
+                             </Quantom_Grid>
+                        </Quantom_Grid> */}
+                    </Quantom_Grid>
+                  )
+                })
+             }
+           </Quantom_Grid>
+        </Quantom_Grid>
+
+       {/* <QUANTOM_Table onViewButtonClick={onDeleteViewClick} viewButtonOverrideIcon='DeleteTwoTone' hideFloatingFilter headerHeight={20} data={state?.itemUnits??[]} columns={[
           {field:"PUnitName",caption:'From Unit',width:120,},  
           {field:"CalculationTypeDesc",caption:'Calc_Type',width:160},
           {field:"CalucltionNumber",caption:'Qty',width:120},
           {field:"unit.Name",caption:'To Unit',width:120},
 
-       ]} height='250px'/>
+       ]} height='250px'/> */}
 
        {/* </QUANTOM_Table> */}
     </GroupContainer>
