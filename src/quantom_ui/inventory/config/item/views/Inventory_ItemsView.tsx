@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
 import React, { useEffect, useState } from 'react'
-import { ComponentTabProps, generateGUID, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { ComponentTabProps, generateGUID, MenuComponentProps, setFormBasicKeys, UserGetSelectedLocation } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
 import { Quantom_LOV, Quantom_LOV1 } from '../../../../../quantom_comps/Quantom_Lov'
 import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
@@ -29,6 +29,7 @@ import { InventoryItemLocationsModel } from '../model/AssocicateModels/Inventory
 import { Paper, useTheme } from '@mui/material'
 import { QuantomBasiSelect } from '../../../../Purchase/Processing/Purchase/view/POSPurchaseView'
 import { AddHPD, useGetHelperData } from '../../../../sale/reports/Appointments/CustomerAppointmentReports'
+import { AccountSettings, useGetSetting } from '../../../../Settings/Settings/SettingMethods'
 
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
@@ -38,7 +39,16 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
    const [refreshGuid,setRefreshGuid]=useState('')
    const[defaultItemType,setdefaultItemType]=useState<CommonCodeName>()
    const setupFormData= useGetHelperData<SetupFormBulkResponseModel[]>(props,'setup_data');// useSelector((state:any)=>get_helperData_by_key(state,props?.UniqueId??"",'setup_data')) as SetupFormBulkResponseModel[]
-  
+   
+   const eachUnitCode=useGetSetting(AccountSettings.DEFAULT_EACH_UNIT)?.DefaultValue;
+
+   console.log('each unit code from setting is',eachUnitCode)
+
+
+   let defEachUnit= setupFormData?.find(x=>x.Type?.toLocaleLowerCase()==="unit")?.Data?.find(x=>x.Code===eachUnitCode);
+
+   console.log('default unit is',defEachUnit)
+
    useEffect(()=>{
        if(setupFormData){
         const method=async()=>{
@@ -59,6 +69,10 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
           ///alert('default item type is'+defaultItemType)
           props?.setState?.({...props?.state,item:{...props?.state?.item,ItemType:safeParseToNumber(defaultItemType?.Code),InventoryItemType:{Name:defaultItemType?.Name}}})
         }
+      }
+
+      if(!props?.state?.item?.UnitCode  && defEachUnit?.Code){
+        props?.setState?.({...props?.state,item:{...props?.state?.item,UnitCode:defEachUnit?.Code,UnitName:defEachUnit?.Name}})
       }
      },[props?.state?.item])
 
@@ -206,6 +220,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                   keyNo='INVENTORY_ITEM_ITEM_TYPE'
                   uniqueKeyNo={props?.UniqueId??""}
                   refreshMethod={refreshGuid}
+                  mobileSelectionButtonIcon='KitchenOutlined'
                   label='Item Type' 
                   FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')}
                   onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
@@ -213,37 +228,64 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
               </Quantom_Grid>
 
               <Quantom_Grid mt={.5} container spacing={.5}>
-                  <Quantom_Grid item size={{xs:6,sm:9}}>
-                    <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('unit')} 
-                                label='Each Unit' 
-                                RefreshFillDtaMethod={refreshSetupMethod}
-                                selected={{Code:props?.state?.item?.UnitCode,Name:props?.state?.item?.UnitName}}           
-                                onChange={(obj)=>{setItem({UnitCode:obj?.Code,UnitName:obj?.Name})}}
-                    />
+                  <Quantom_Grid item size={{xs:12,sm:12,md:9}}>
+
+                     <Quantom_LOV1
+                        keyNo='INVENTORY_ITEM_UNIT_MASTER_TYPE'
+                        // mobileSelectionButtonWidth='150px'
+                        mobileSelectionButtonIcon='DynamicFormOutlined'
+                        uniqueKeyNo={props?.UniqueId??""}
+                        refreshMethod={refreshGuid}
+                        label='Unit' 
+                        FillDtaMethod={()=>getSetupDataWithSetupType('Unit')}
+                        onChange={(obj)=>{setItem({UnitCode:obj?.Code,UnitName:obj?.Name})}}
+                        selected={{Code:props?.state?.item?.UnitCode,Name:props?.state?.item?.UnitName}} />
+
                 </Quantom_Grid>
-                <Quantom_Grid item size={{xs:6,sm:3}}>
+                <Quantom_Grid item size={{xs:12,sm:12,md:3}}>
                   <Quantom_Input  label='Unit Name' value={props?.state?.item?.EachUnitName} 
                         onChange={(e)=>{setItem({...props?.state?.item,EachUnitName:e?.target?.value})}}/>
                 </Quantom_Grid>
               </Quantom_Grid>
 
               <Quantom_Grid mt={.5} item size={{xs:12,md:12,lg:12}}>
-                <Quantom_LOV 
+
+                <Quantom_LOV1
+                        keyNo='INVENTORY_ITEM_CATEGORY_MASTER_TYPE'
+                        // mobileSelectionButtonWidth='150px'
+                        mobileSelectionButtonIcon='ClassOutlined'
+                        uniqueKeyNo={props?.UniqueId??""}
+                        refreshMethod={refreshGuid}
+                        label='Category' 
+                        FillDtaMethod={()=>getSetupDataWithSetupType('Category')}
+                        onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
+                        selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}} />
+                {/* <Quantom_LOV 
                                 FillDtaMethod={()=>getSetupDataWithSetupType('Category')} 
                                 label='Category' 
                                 RefreshFillDtaMethod={refreshSetupMethod}
                                 selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}}           
                                 onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
-                    />
+                    /> */}
                 </Quantom_Grid>
                 <Quantom_Grid mt={.5} item size={{xs:12,md:12,lg:12}}>
-                  <Quantom_LOV 
+                  <Quantom_LOV1
+                        keyNo='INVENTORY_ITEM_COMPANY_MASTER_TYPE'
+                        // mobileSelectionButtonWidth='150px'
+                        mobileSelectionButtonIcon='BrandingWatermarkOutlined'
+                        uniqueKeyNo={props?.UniqueId??""}
+                        refreshMethod={refreshGuid}
+                        label='Company' 
+                        FillDtaMethod={()=>getSetupDataWithSetupType('Company')}
+                        selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
+                        onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}} />
+                  {/* <Quantom_LOV 
                               FillDtaMethod={()=>getSetupDataWithSetupType('Company')} 
                               label='Company' 
                               RefreshFillDtaMethod={refreshSetupMethod}
                               selected={{Code:props?.state?.item?.CompCode,Name:props?.state?.item?.company?.Name}}           
                               onChange={(obj)=>{setItem({CompCode:obj?.Code,company:{Code:obj?.Code,Name:obj?.Name}})}}
-                  />
+                  /> */}
                  </Quantom_Grid>
           </Quantom_Grid>
 

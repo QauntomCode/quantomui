@@ -294,6 +294,9 @@ export interface Quantom_LOV_V1Props {
   willHideLabel?:boolean;
   size?:'medium'|'small'
   refreshMethod?:string;
+
+  mobileSelectionButtonWidth?:string;
+  mobileSelectionButtonIcon?:string;
 }
 export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
   
@@ -567,13 +570,14 @@ return (
                           handleKeyEvent(e,item)
                         }}
                         
-                        style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none'}} 
+                        style={{outline:focusedIndex===index?`2px solid ${theme.palette.primary.main}`:'none',}} 
                         key={item?.Code} ref={(el)=>{gridRowsRef.current[index]=el}}  
                         onClick={()=>{ setFocusedIndex(index);handleSelection(item) }}
                         onDoubleClick={()=>{handleSelection(item) }
                   } tabIndex={-1} >
-                      <Quantom_Grid pl={1} pr={1} pb={.5} pt={.5} mb={.5} mt={.5} component={Paper}  container  spacing={1} 
-                        sx={{fontFamily:fonts.HeaderFont,fontSize:fonts?.H4FontSize,borderBottom:`.5px solid ${theme?.palette?.text?.disabled}`
+                      <Quantom_Grid pl={1} pr={1} pb={.5} pt={.5} mb={1} mt={.5}  component={Paper}  container  spacing={1} 
+                        sx={{fontFamily:fonts.HeaderFont,fontSize:fonts?.H4FontSize,borderBottom:`2px solid ${theme?.palette?.text?.disabled}`,
+                            backgroundColor:theme?.palette?.background?.default,
                       }}>
                         <Quantom_Grid size={{xs:12}} sx={{color:theme?.palette?.text?.disabled,display:'flex',alignItems:'center',
                           borderBottom:`1px dotted ${theme?.palette?.text?.disabled}`
@@ -600,7 +604,10 @@ return (
       </>
     ):(
     <Quantom_Grid container mt={1} mb={1}>
-       <QuantomLovMobileV1 label={props?.label} selectedValue={props?.selected} onChange={(selected)=>{props?.onChange?.({...selected})}} 
+       <QuantomLovMobileV1 
+          width={props?.mobileSelectionButtonWidth} 
+          IconName={props?.mobileSelectionButtonIcon}
+          label={props?.label} selectedValue={props?.selected} onChange={(selected)=>{props?.onChange?.({...selected})}} 
         RenderAbleValues={values} search={search} onSearchChange={(s)=>{setSearch(s??"")}}/>
     </Quantom_Grid>)
   
@@ -633,6 +640,8 @@ export interface QuantomLovMobileProps{
   search?:string;
   onSearchChange?:(text?:string)=>void;
   label?:string;
+  width?:string ;
+  IconName?:string;
 
 }
 export const QuantomLovMobileV1=(props?:QuantomLovMobileProps)=>{
@@ -679,8 +688,8 @@ export const QuantomLovMobileV1=(props?:QuantomLovMobileProps)=>{
                              textColor={theme?.palette?.secondary?.contrastText} 
                              backgroundColor={theme?.palette?.secondary?.main} 
                              label={`Select ${props?.label}`} 
-                             iconName="AccountBoxOutlined" 
-                             width='250px'
+                             iconName={props?.IconName??"AccountBoxOutlined" } 
+                             width={props?.width??'250px'} 
                              iconColor={theme?.palette?.primary?.main}/>
                      </div>
                  </div>
@@ -698,7 +707,7 @@ export const QuantomLovMobileV1=(props?:QuantomLovMobileProps)=>{
          <QuantomDialog headerExtension={<>
             <Quantom_Input label='Search' value={props?.search} onChange={(e)=>{props?.onSearchChange?.(e.target.value)}}/>
           </>} open={open}  onClosePress={()=>{setOpen(false)}} heading={props?.label??""}>
-             <CustomerListComp search={props?.search} renderAbleValue={props?.RenderAbleValues} onSelect={(cust)=>{
+             <CustomerListComp iconName={props?.IconName} search={props?.search} renderAbleValue={props?.RenderAbleValues} onSelect={(cust)=>{
                  props?.onChange?.({Code:cust?.Code,Name:cust?.Name})
                  setOpen(false);
              }}/>
@@ -713,6 +722,7 @@ export interface CustomerListCompPorps{
   onSelect?:(selected?:CommonCodeName)=>void
   search?:string;
   renderAbleValue?:CommonCodeName[]
+  iconName?:string;
 }
 export const  CustomerListComp=(props?:CustomerListCompPorps)=>{
 //  const [val,setCustComers]=useState<CustomerModel[]>([]);
@@ -748,7 +758,7 @@ export const  CustomerListComp=(props?:CustomerListCompPorps)=>{
                          sx={{borderBottom:`1px solid ${theme?.palette?.primary?.main}`,fontFamily:fonts.HeaderFont,fontSize:fonts.H4FontSize,padding:'4px'}} 
                          size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
                          <div style={{display:'flex',alignItems:'center'}}>
-                             <IconByName color={theme?.palette?.primary?.main} fontSize="30px" iconName="PermIdentityOutlined"/>
+                             <IconByName color={theme?.palette?.primary?.main} fontSize="30px" iconName={props?.iconName??"PermIdentityOutlined"}/>
                              <div style={{marginLeft:'5px'}}>
                                  <div style={{fontWeight:'bold',display:'flex'}}>
                                      <div style={{alignItems:'center',flex:1}}>
