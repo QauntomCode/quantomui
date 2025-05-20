@@ -60,7 +60,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
           props?.setState?.({...props?.state,item:{...props?.state?.item,ItemType:safeParseToNumber(defaultItemType?.Code),InventoryItemType:{Name:defaultItemType?.Name}}})
         }
       }
-     },[props?.state?.item])
+     },[props?.state])
 
 
 
