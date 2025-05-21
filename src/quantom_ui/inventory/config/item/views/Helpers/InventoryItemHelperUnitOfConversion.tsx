@@ -7,7 +7,7 @@ import { CommonCodeName } from "../../../../../../database/db";
 import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from "../../model/AssocicateModels/Inventory_ItemUnitsModel";
 import { SetupFormBulkResponseModel } from "../../../unit/model/SetupFormBulkResponse";
 import { generateGUID, IconByName } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
-import { AsyncFindByIndex, safeParseToNumber } from "../../../../../../CommonMethods";
+import { AsyncFindByIndex, FocusOnControlByControlId, safeParseToNumber } from "../../../../../../CommonMethods";
 import { Paper, useTheme } from "@mui/material";
 import { GroupContainer } from "../../../../../account/processing/voucher/view/VoucherView";
 import { Quantom_Grid, Quantom_Input } from "../../../../../../quantom_comps/base_comps";
@@ -15,6 +15,7 @@ import { Quantom_LOV1 } from "../../../../../../quantom_comps/Quantom_Lov";
 import { ListCompButton } from "../../../../../account/report/Ledger/view/LedgerView";
 import { InventoryCompItemMenus } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
 import { ItemHelperTabs } from "../Inventory_ItemsView";
+import { POSActionButton1 } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1";
 
 export const InventoryItemHelperUnitOfConversion=(props?:ItemHelperTabs)=>{
   const state= useSelector((state:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""))
@@ -108,7 +109,7 @@ React.useEffect(()=>{
   return(
     <GroupContainer height='300px' Label='Unit Of Conversion' >
        <Quantom_Grid container   mt={2}  spacing={.5} >
-        <Quantom_Grid container pb={.5} sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}} size={{xs:12,sm:12,md:12,lg:8,xl:6}}>
+        <Quantom_Grid container pb={.5} sx={{borderBottom:`3px solid ${theme?.palette?.text?.disabled}`}} size={{xs:12,sm:12,md:12,lg:8,xl:8}}>
 
 
         <Quantom_Grid  size={{xs:12,sm:12,md:2.5}}>
@@ -117,6 +118,7 @@ React.useEffect(()=>{
           <Quantom_Grid  size={{xs:12,sm:12,md:3,}}>
               {/* <Quantom_LOV1 label='Calc_Type' FillDtaMethod={calculationType} selected={calcType} onChange={(e) => { setCalcType({ ...e }) } } uniqueKeyNo={''}/> */}
               <Quantom_LOV1
+                        id="CALCULATION_COMBO_BOX_ID"
                         keyNo='INVENTORY_ITEM_CALCULATION_COMBOBOX'
                         mobileSelectionButtonIcon='BrandingWatermarkOutlined'
                         uniqueKeyNo={props?.baseProps?.UniqueId??""}
@@ -145,7 +147,7 @@ React.useEffect(()=>{
           </Quantom_Grid>
 
           <Quantom_Grid item size={{xs:12,sm:12,md:1.5}}>
-              <ListCompButton Label='Add' iconName='AddBoxTwoTone' marginTop='4px' onClick={()=>{
+              <POSActionButton1   width="100%" iconName='AddBoxTwoTone'  onClick={()=>{
                   if(!itemUnit || !itemUnit?.unit ||  !itemUnit?.UnitCode){
                     props?.baseProps?.errorToast?.('Select To Unit')
                     return;
@@ -164,7 +166,7 @@ React.useEffect(()=>{
                   
                   setItemUnit({...itemUnit,UnitCode:'',UnitName:'',unit:{},PrimaryUnits:0,})
 
-
+                  FocusOnControlByControlId('CALCULATION_COMBO_BOX_ID')
               }}/>
           </Quantom_Grid>
 
@@ -184,7 +186,7 @@ React.useEffect(()=>{
        
 
        <Quantom_Grid container mt={1} size={{xs:12}}>
-          <Quantom_Grid container spacing={1} size={{xs:12,sm:12,md:12,lg:8,xl:6}}>
+          <Quantom_Grid container spacing={1} size={{xs:12,sm:12,md:12,lg:8,xl:8}}>
              {
                 state?.itemUnits?.map((item,index)=>{
 
@@ -192,7 +194,7 @@ React.useEffect(()=>{
                     <Quantom_Grid p={1} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  container size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
                         <Quantom_Grid  size={{xs:12}} display='flex' sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
                               <Quantom_Grid display='flex' alignItems='center' size={{xs:4}}>
-                                 <div style={{paddingRight:'5px'}}> {props?.baseProps?.state?.item?.UnitName}</div>
+                                 <div style={{paddingRight:'5px'}}> {state?.item?.UnitName}</div>
                                  <IconByName iconName='ArrowRightAltOutlined' fontSize='16px' />
                              </Quantom_Grid>
                              <Quantom_Grid display='flex' alignItems='center' size={{xs:4}}>
