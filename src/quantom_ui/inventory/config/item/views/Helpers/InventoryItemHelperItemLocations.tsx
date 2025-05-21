@@ -9,39 +9,18 @@ import { GroupContainer } from "../../../../../account/processing/voucher/view/V
 import { Quantom_Grid } from "../../../../../../quantom_comps/base_comps";
 import { LocationModel } from "../../../../../Settings/Location/Model/LocationModel";
 import { IconByName } from "../../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
-import { Paper, useTheme } from "@mui/material";
+import { Grid2, Paper, useTheme } from "@mui/material";
 import { QuantomSwitch } from "../POS/POSInventoryIitemsView";
 import { InventoryItemLocationsModel } from "../../model/AssocicateModels/InventoryItemLocationsModel";
 
 export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
   const locations= useSelector((state:any)=>get_current_user_locations(state));
   const state= useSelector((state?:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""));
-//   const[selectedLocations,setSelectedLocations]=React.useState<CommonCodeName[]>();
-  
-//   React.useEffect(()=>{
-//     let locs=
-//      locations.map((item,index)=>{
-//           let obj:CommonCodeName={
-//             Code:item?.LocId,
-//             Name:item?.LocName,
-//             Checked:false
-//           }
-//          let loc= state?.ItemLocation?.find(x=>x.LocCode===item?.LocId)
-//          if(loc && loc?.LocCode){
-//            obj.Checked=true;
-//          }
-
-//          return obj ;
-//      })
-
-//      setSelectedLocations([]);
-
-//   },[locations,state])
+  const theme= useTheme();
   return(
-      <Quantom_Grid container borderTop='10px solid red' size={{xs:12,sm:12,md:12,lg:8}}>
-         Testing
-          {/* <Quantom_Grid container > */}
-          {/* <BranchSelectionComp 
+      <Quantom_Grid p={1} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  container size={{xs:6}} component={Paper}>
+         
+          <BranchSelectionComp 
                 onChange={async(data)=>{
                     let nState= await get_form_state_without_selector<VMInventoryItemsModel>(props?.baseProps?.UniqueId);
                     let newState={...nState,ItemLocation:data?.map((item,index)=>{
@@ -54,8 +33,7 @@ export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
                 selectedBranches={state?.ItemLocation?.map((item,index)=>{
                    let loc:LocationModel={LocId:item?.LocCode,LocName:item?.Location?.LocName}  
                    return loc;
-                })}/> */}
-            {/* </Quantom_Grid> */}
+                })}/>
       </Quantom_Grid>
   )
 }
@@ -81,7 +59,7 @@ export const BranchSelectionComp=(props?:BranchSelectionCompProps)=>{
                      console.log('is checked',isChecked)
                     return(
                         <Quantom_Grid container sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}} 
-                                      display='flex' mb={.5} pl={1} pr={1} pt={.5} bp={.4} size={{xs:12}} component={Paper}>
+                                      display='flex' mb={.5} pl={1} pr={1} pt={.2} bp={.2} size={{xs:12}} component={Paper}>
                                 
                                 <Quantom_Grid display='flex' sx={{alignItems:'center'}}>
                                     <QuantomSwitch onChange={(val)=>{
