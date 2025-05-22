@@ -129,7 +129,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
     React.useEffect(()=>{
          handleGetSetupItems();
-         handleGetSearchItems();
+        //  handleGetSearchItems();
     },[])
 
     

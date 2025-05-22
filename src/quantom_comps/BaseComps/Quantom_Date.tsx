@@ -35,7 +35,7 @@ export const QUANTOM_Date =<TDate extends PickerValidDate, TEnableAccessibleFiel
   }, '& .MuiInputBase-input': {
     borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
     fontFamily:fonts.HeaderFont,
-    fontSize:'14px',
+    fontSize:fonts?.H4FontSize,
     // fontWeight:'700',       
     // fontSize: '11px', // Change this value to adjust the input font size
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {

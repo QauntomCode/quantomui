@@ -125,18 +125,29 @@ export const get_helperData_by_key = (
   return state?.formsState?.HelperData?.find(
     (x) => x.UniqueId === uniqueId
   )?.data?.find((y) => y.keyNo === keyNo)?.Data;
-};  //FORM_CURRENT_LOCATION_SELECTED
+}; //FORM_CURRENT_LOCATION_SELECTED
 
-export const getCurrentLocationWithStore=(uqId?:string):Promise<LocationModel>=>{
-  let loc=  store?.getState()?.formsState?.HelperData?.find((x)=>x.UniqueId===uqId)?.data?.find?.(x=>x.keyNo==='FORM_CURRENT_LOCATION_SELECTED')?.Data as LocationModel
-  return Promise.resolve(loc)
-}
+export const getCurrentLocationWithStore = (
+  uqId?: string
+): Promise<LocationModel> => {
+  let loc = store
+    ?.getState()
+    ?.formsState?.HelperData?.find((x) => x.UniqueId === uqId)
+    ?.data?.find?.((x) => x.keyNo === "FORM_CURRENT_LOCATION_SELECTED")
+    ?.Data as LocationModel;
+  return Promise.resolve(loc);
+};
 
-export const GetHPD_WithOutStore=<T,>(uqId?:string,keyNo?:string):Promise<T>=>{
-  let loc=  store?.getState()?.formsState?.HelperData?.find((x)=>x.UniqueId===uqId)?.data?.find?.(x=>x.keyNo===keyNo)?.Data as T
-  return Promise.resolve(loc)
-}
-
+export const GetHPD_WithOutStore = <T>(
+  uqId?: string,
+  keyNo?: string
+): Promise<T> => {
+  let loc = store
+    ?.getState()
+    ?.formsState?.HelperData?.find((x) => x.UniqueId === uqId)
+    ?.data?.find?.((x) => x.keyNo === keyNo)?.Data as T;
+  return Promise.resolve(loc);
+};
 
 export const useQuantomFonts = (state?: RootState): FontSettings => {
   // console.log('state is ',state)
@@ -147,7 +158,7 @@ export const useQuantomFonts = (state?: RootState): FontSettings => {
     H1FontSize: "20px",
     H2FontSize: "18px",
     H3FontSize: "16px",
-    H4FontSize: "13px",
+    H4FontSize: "11px",
     RegularFont: "roboto",
     HeaderFont: "kanit",
     RegularFontSize: "12px",

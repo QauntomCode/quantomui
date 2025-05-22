@@ -474,10 +474,42 @@ export const Quantom_LOV1 = (props?:Quantom_LOV_V1Props) => {
  const theme= useTheme();
  const fonts= useQuantomFonts();
 
- React.useEffect(()=>{
-    const rect= inputRef?.current?.getBoundingClientRect();
-    setPosition({ top: rect?.bottom, left: rect?.left });
- },[open])
+ const dropdownHeight = 400;
+ React.useEffect(() => {
+  if (!open || !inputRef.current) return;
+
+  const rect = inputRef.current.getBoundingClientRect();
+  // Adjust to match your dropdown height
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const spaceAbove = rect.top;
+
+  if (spaceBelow >= dropdownHeight) {
+    // Enough space below
+    setPosition({
+      top: rect.bottom,
+      left: rect.left,
+    });
+  } else if (spaceAbove >= dropdownHeight) {
+    // Not enough space below, but enough above
+    setPosition({
+      top: rect.top - dropdownHeight,
+      left: rect.left,
+    });
+  } else {
+    // Neither has enough space, prefer below but adjust height if needed
+    setPosition({
+      top: rect.bottom,
+      left: rect.left,
+    });
+    // You can set dropdown maxHeight = spaceBelow
+  }
+}, [open]);
+
+//  React.useEffect(()=>{
+//     const rect= inputRef?.current?.getBoundingClientRect();
+
+//     setPosition({ top: rect?.bottom, left: rect?.left });
+//  },[open])
 
 return (
     !isMobile?(
@@ -514,6 +546,7 @@ return (
               top: position?.top,
               left: position?.left,
               margin: 0,
+              height:`${dropdownHeight}px`
             },
           }}
           >
@@ -575,19 +608,20 @@ return (
                         onClick={()=>{ setFocusedIndex(index);handleSelection(item) }}
                         onDoubleClick={()=>{handleSelection(item) }
                   } tabIndex={-1} >
-                      <Quantom_Grid pl={1} pr={1} pb={.5} pt={.5} mb={1} mt={.5}  component={Paper}  container  spacing={1} 
-                        sx={{fontFamily:fonts.HeaderFont,fontSize:fonts?.H4FontSize,borderBottom:`2px solid ${theme?.palette?.text?.disabled}`,
+                      <Quantom_Grid pl={1} pr={1}  pt={.5} pb={.5}  mt={.5}  component={Paper}  container  spacing={1} 
+                        sx={{fontFamily:fonts.HeaderFont,fontSize:fonts?.H4FontSize,
+                            // borderBottom:`2px solid ${theme?.palette?.text?.disabled}`,
                             backgroundColor:theme?.palette?.background?.default,
                       }}>
-                        <Quantom_Grid size={{xs:12}} sx={{color:theme?.palette?.text?.disabled,display:'flex',alignItems:'center',
-                          borderBottom:`1px dotted ${theme?.palette?.text?.disabled}`
+                        <Quantom_Grid  size={{xs:4}} sx={{color:theme?.palette?.text?.disabled,display:'flex',alignItems:'center',fontSize:'10px',
+                          // borderBottom:`1px dotted ${theme?.palette?.text?.disabled}`
                           }}>
-                          <IconByName iconName='Tag'fontSize='16px'/>
+                          <IconByName iconName='Tag'fontSize='12px'/>
                           {item?.Code}
                         </Quantom_Grid>
 
-                        <Quantom_Grid size={{xs:12}} sx={{color:theme?.palette?.text?.primary,display:'flex',alignItems:'center'}}>
-                          <IconByName iconName='ArticleOutlined'fontSize='16px'/>
+                        <Quantom_Grid size={{xs:8}} sx={{color:theme?.palette?.text?.primary,display:'flex',alignItems:'center',fontSize:'11px'}}>
+                          <IconByName iconName='ArticleOutlined'fontSize='14px'/>
                           {item?.Name}
                         </Quantom_Grid>
                           {/* <Quantom_Grid item sx={{width:'120px'}}  siz={{md:3}}>{item.Code}</Quantom_Grid>

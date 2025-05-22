@@ -5,7 +5,7 @@ import { PurchaseModel, VMPurchaseModel } from "../model/VMPurchaseModel";
 import { HideLoadingDialog, IconByName, MenuComponentProps, setFormBasicKeys, ShowLoadingDialog } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper";
 import store, { full_component_state, get_helperData_by_key, useQuantomFonts } from "../../../../../redux/store";
 import { POS_INVENTORY_ITEM_VIEW_TYPE} from "../../../../inventory/config/item/views/POS/POSInventoryIitemsView";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { add_helper_data_single_key } from "../../../../../redux/reduxSlice";
 import { CommonInvDetailModel, InventoryAction } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { INVENTORY_PERFORMED_ACTION } from "../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailActionQueryModel";
@@ -88,7 +88,7 @@ export const POSPurchaseView=(props?:MenuComponentProps<VMPurchaseModel>)=>{
 
 
 
-    const grossAmount= props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+((current?.Qty??0)*(current?.Price??0)+(current?.DisAmount??0)),0)??0
+    const grossAmount= props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+((current?.TransQty??0)*(current?.TransPrice??0)),0)??0
     const disAmount= safeParseToNumber((props?.state?.purchaseDetails?.reduce((preVal,current)=>(preVal)+(current?.DisAmount??0),0)??0))+ safeParseToNumber((props?.state?.purchase?.ExtraDiscount??0))
      console.warn('discount amount is'+disAmount)
      console.warn('Extra discount is'+props?.state?.purchase?.ExtraDiscount)
@@ -619,7 +619,24 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     const willHideDisAm= props?.fromName===InventoryAction.STOCK_ISSUE;
     const willHideDisPer= props?.fromName===InventoryAction.STOCK_ISSUE;
     const willHideAm= props?.fromName===InventoryAction.STOCK_ISSUE;
+    const[spaceBelow,setSpaceBelow]= useState(250);
 
+
+    const soldItemGridRef = useRef<any>(null);
+    React.useEffect(()=>{
+        const rect = soldItemGridRef?.current?.getBoundingClientRect();
+        const below = ((window.innerHeight ?? 0) - (rect?.bottom ?? 0)) - 65;
+        setSpaceBelow(below)
+    },[soldItemGridRef,window?.innerHeight])
+
+    
+
+
+    
+    // // Adjust to match your dropdown height
+    // alert('widow height'+window.innerHeight)
+    // alert('control placed'+rect?.bottom)
+   
 
     const getAmount=(qty?:number,price?:number)=>{
          const amount= (qty??0)*(price??0)
@@ -929,7 +946,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                             </Quantom_Grid>
                             <Quantom_Grid border={border} size={gridSizes.priceUnitRate}>
                                 <Quantom_Input onChange={(e)=>{
-                                    setPriceUnitPrice(safeParseToNumber(e?.target?.value))
+                                     setPriceUnitPrice(safeParseToNumber(e?.target?.value))
                                 }}   willHideLabel value={priceUnitPrice??0} />
                             </Quantom_Grid>
                             </>):<></>}
@@ -957,14 +974,16 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                     </Quantom_Grid>
                 </Quantom_Grid>
 
-                <Quantom_Grid mt={1} container size={12}>
-                    <Quantom_Grid size={"grow"} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
+                <div ref={soldItemGridRef} style={{overflowY:'auto'}}></div>
+                <Quantom_Grid  mt={1}  container size={12}>
+                    <Quantom_Grid size={"grow"} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize,height:spaceBelow+'px',minHeight:'250px', backgroundColor:theme?.palette?.background?.paper,overflowY:'auto'}}>
                     
                 {
                     props?.items?.map((soldItem,index)=>{
                         return(
-                            <Quantom_Grid mb={.2} borderRadius='0px' pt={.5} pb={.5} display='flex'  
-                                    fontWeight={470} fontSize={fonts?.H4FontSize} fontFamily={fonts?.HeaderFont} component={Paper} borderBottom={`1px solid ${theme.palette.primary.main}`}  container size={12}>
+                            <Quantom_Grid mb={.2} pt={.5}  pb={.5} display='flex'  
+                                    fontWeight={400} fontSize={fonts?.H4FontSize} fontFamily={fonts?.HeaderFont} component={Paper} 
+                                    borderBottom={`1px solid ${theme.palette.primary.main}`} sx={{backgroundColor:theme?.palette?.background?.default}}  container size={12}>
                                 <Quantom_Grid  border={border}  size={gridSizes.item} >
                                     <Quantom_Grid container size={12}>
                                         
@@ -1176,7 +1195,7 @@ export interface BasicSelectProps{
             // }}
             sx={{
                  fontFamily:fonts.HeaderFont,
-                fontSize:'14px',
+                fontSize:fonts?.H4FontSize,
             }}
             
             onChange={handleChange}

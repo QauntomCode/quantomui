@@ -233,7 +233,7 @@ export const Quantom_Input1=(props: {
           sx={{
                 // borderBottom:`1px solid ${theme.palette.secondary.contrastText}`,
                 fontFamily:font.HeaderFont,
-                fontSize:'14px',
+                fontSize:font?.H4FontSize,
                 // fontWeight:'700',       
                 // fontSize: '11px', // Change this value to adjust the input font size
                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
