@@ -914,7 +914,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                              {
                                 willHideAm?(<></>):(<>
                                    <Quantom_Grid border={border} size={gridSizes.amount}>
-                                     <Quantom_Input disabled   willHideLabel value={lineObj?.Amount??0} />
+                                     <Quantom_Input disabled   willHideLabel value={lineObj?.NetAmount??0} />
                                     </Quantom_Grid>
                                 </>)
                             } 

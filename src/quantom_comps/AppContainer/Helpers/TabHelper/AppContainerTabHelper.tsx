@@ -1085,6 +1085,8 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
     MenuCode:POS_SALE_FORM_MENU_CODE,
     MenuCaption:'Sale',
     GetComponent:(props?:MenuComponentProps<any>)=>(<POSSaleView1{...props}/>)
+    // GetComponent:(props?:MenuComponentProps<any>)=>(<SaleView{...props}/>)
+
   },
   {
     MenuCode:POS_SALE_FORM_WITH_EMPTY_MENU_CODE,
