@@ -18,7 +18,7 @@ export const InventoryItemHelperItemLocations=(props?:ItemHelperTabs)=>{
   const state= useSelector((state?:any)=>form_state_selector<VMInventoryItemsModel>(state,props?.baseProps?.UniqueId??""));
   const theme= useTheme();
   return(
-      <Quantom_Grid p={1} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  container size={{xs:6}} component={Paper}>
+      <Quantom_Grid p={1} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  container size={{xs:6}}>
          
           <BranchSelectionComp 
                 onChange={async(data)=>{
@@ -61,8 +61,8 @@ export const BranchSelectionComp=(props?:BranchSelectionCompProps)=>{
                         <Quantom_Grid container sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}} 
                                       display='flex' mb={.5} pl={1} pr={1} pt={.2} bp={.2} size={{xs:12}} component={Paper}>
                                 
-                                <Quantom_Grid display='flex' sx={{alignItems:'center'}}>
-                                    <QuantomSwitch onChange={(val)=>{
+                                <Quantom_Grid display='flex'  sx={{alignItems:'center'}}>
+                                    <QuantomSwitch  onChange={(val)=>{
                                         let items= [...props?.selectedBranches??[]];
                                         if(val){
                                             items=[...items,{...item}]
@@ -77,7 +77,7 @@ export const BranchSelectionComp=(props?:BranchSelectionCompProps)=>{
                                        
                                     }} value={isChecked}/>
                                 </Quantom_Grid>
-                               <Quantom_Grid display='flex' pl={1} sx={{color:theme?.palette?.text?.disabled,alignItems:'center'}}>
+                               <Quantom_Grid display='flex' pl={1} size={{xs:3,sm:3,md:2,lg:1}} sx={{color:theme?.palette?.text?.disabled,alignItems:'center'}}>
                                   <IconByName iconName="Tag"  fontSize="16px"/>
                                   {item?.LocId}
                                </Quantom_Grid>
