@@ -18,7 +18,7 @@ import { HTTP_RESPONSE_TYPE } from "../../../../../../HTTP/QuantomHttpMethods";
 import { POSToolBarComp } from "../../../../../../quantom_comps/AppContainer/POSHelpers/POSToolBarComp";
 import { Quantom_LOV1 } from "../../../../../../quantom_comps/Quantom_Lov";
 import { CustomersGetCodeNameMethod } from "../../../../config/customer/impl/CustomerImpl";
-import { RenderItemGrid } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
+import { RenderItemGrid, RenderItemsGridV1 } from "../../../../../Purchase/Processing/Purchase/view/POSPurchaseView";
 import { InventoryAction } from "../../../../../inventory/CommonComp/CommonInvDetail/Model/CommonInvDetailModel";
 import { SaleModel } from "../../model/SaleModel";
 // import { PrintSaleSlip } from "../../../../reports/SaleSlips/A4Slip";
@@ -176,13 +176,15 @@ export const POSSaleView1=(props?:MenuComponentProps<VmSale>)=>{
                     </div>
                 </div>
 
-                <div className="row g-2 mt-2" >
-                    <RenderItemGrid  items={props?.state?.SaleDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Sale} formNameString="SALE"
+                {/* <div className="row g-2 mt-2" > */}
+                <Quantom_Grid container>
+                    <RenderItemsGridV1  items={props?.state?.SaleDetails} vendorType="SUPPLIER" locId={locId} fromName={InventoryAction.Sale} formNameString="SALE"
                                         vendorCode={props?.state?.Sale?.CustCode} onChange={(items)=>{
                         props?.setState?.({...props?.state,SaleDetails:[...items??[]]})
                     }} baseProps={props}/>
+                </Quantom_Grid>
 
-                </div>
+                {/* </div> */}
             </div>
             <div className="col-md-3" >
                 <Quantom_Grid container display='flex' flexDirection='column' component={Paper} sx={{height:'calc(100vh - 40px)',

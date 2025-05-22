@@ -20,7 +20,7 @@ interface POSToolBarCompProps<T,>{
 export const POSToolBarComp=<T,>(props?:POSToolBarCompProps<T>)=>{
     const theme =useTheme();
     return(
-        <div style={{display:'flex',paddingBottom:'4px',marginBottom:'4px',}}>
+        <div style={{display:'flex',paddingBottom:'4px',marginBottom:'4px',paddingTop:'10px'}}>
 
                         <POSActionButton
                             onClick={()=>
