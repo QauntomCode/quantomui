@@ -19,6 +19,7 @@ export interface POSActionButtonProps{
     textColor?:string; 
     isIconOnly?:boolean;
     width?:string;
+    height?:string;
   }
   export const POSActionButton=(props?:POSActionButtonProps)=>{
       const fonts= useQuantomFonts();

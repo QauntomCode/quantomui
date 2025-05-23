@@ -42,14 +42,15 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
     }
     return(
        
-        <div onKeyDown={(e)=>{
+        <div  onKeyDown={(e)=>{
             if (e.key === 'Enter') {
                 props?.onClick?.()
             }
         }}  className="focused-element" tabIndex={0} style={{width:getWidth(),marginRight:props?.rightMargin,transition: 'background-color 0.3s ease'}}>
              
          <Toast  message={toastMessage} open={openToast} oncClose={()=>{setOpenToast(false)}}/>
-         <Box component={Paper} sx={{backgroundColor:props?.backgroundColor??undefined,borderBottom:`1px solid ${theme.palette.primary.main}`, '&:hover': {
+         <Box component={Paper} sx={{backgroundColor:props?.backgroundColor??undefined,borderBottom:`1px solid ${theme.palette.primary.main}`,
+          '&:hover': {
                     backgroundColor:theme?.palette?.primary.light,
                 }}}>
         {(props?.buttonType=== 'DELETE' ||props?.buttonType==='RESET')?(

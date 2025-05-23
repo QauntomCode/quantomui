@@ -186,12 +186,13 @@ React.useEffect(()=>{
        
 
        <Quantom_Grid container mt={1} size={{xs:12}}>
-          <Quantom_Grid container spacing={1} size={{xs:12,sm:12,md:12,lg:8,xl:8}}>
+          <Quantom_Grid container spacing={.5} size={{xs:12,sm:12,md:12,lg:8,xl:8}}>
              {
                 state?.itemUnits?.map((item,index)=>{
 
                   return(
-                    <Quantom_Grid p={1} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  container size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
+                    <Quantom_Grid pl={1} pr={1} pt={.3} pb={.3} borderBottom={`2px solid ${theme?.palette?.primary?.main}`}  
+                            container size={{xs:12,sm:12,md:12,lg:12,xl:12}} component={Paper}>
                         <Quantom_Grid  size={{xs:12}} display='flex' sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}}>
                               <Quantom_Grid display='flex' alignItems='center' size={{xs:4}}>
                                  <div style={{paddingRight:'5px'}}> {state?.item?.UnitName}</div>

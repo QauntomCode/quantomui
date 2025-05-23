@@ -1,33 +1,21 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React, { useEffect, useRef, useState } from 'react'
-import { ComponentTabProps, generateGUID, IconByName, MenuComponentProps, setFormBasicKeys, UserGetSelectedLocation } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
-import { Quantom_LOV, Quantom_LOV1 } from '../../../../../quantom_comps/Quantom_Lov'
-import { Quantom_Container, Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
+import React, { useEffect, useState } from 'react'
+import { ComponentTabProps, generateGUID, IconByName, MenuComponentProps, setFormBasicKeys } from '../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper'
+import { Quantom_LOV1 } from '../../../../../quantom_comps/Quantom_Lov'
+import { Quantom_Grid, Quantom_Input } from '../../../../../quantom_comps/base_comps'
 
-import { GroupContainer } from '../../../../account/processing/voucher/view/VoucherView'
 
 import { VMInventoryItemsModel } from '../model/VMInventory_itemsModel'
-import { getAttributevalueByAttributeCode, InventoryItemsDelete, InventoryItemsGetAll, InventoryItemsGetOne, InventoryItemsInsert } from '../impl/InventoryitemsImpl'
+import { InventoryItemsDelete, InventoryItemsGetAll, InventoryItemsGetOne, InventoryItemsInsert } from '../impl/InventoryitemsImpl'
 import { InventoryItemsModel } from '../model/InventoryItemsModel'
 import { SetupFormGetAllBulk } from '../../unit/impl/setupFormImp'
 import { SetupFormBulkResponseModel } from '../../unit/model/SetupFormBulkResponse'
 import { CommonCodeName } from '../../../../../database/db'
-import {  AsyncFindByIndex, safeParseToNumber } from '../../../../../CommonMethods'
-import { QUANTOM_Table } from '../../../../account/config/mainAccount/view/MainAccountView'
-import { ListCompButton } from '../../../../account/report/Ledger/view/LedgerView'
-import { useSelector } from 'react-redux'
-import store, { form_state_selector, get_current_user_locations, get_form_state_without_selector, get_helperData_by_key, set_form_state, useQuantomFonts } from '../../../../../redux/store'
-import { add_helper_data } from '../../../../../redux/reduxSlice'
-import { InventoryItemUnitsModel, UNIT_CALULATION_TYPE } from '../model/AssocicateModels/Inventory_ItemUnitsModel'
-import { InventoryItemUnitsPriorityModel } from '../model/AssocicateModels/Inventory_ItemUnitsPriorityModel'
-import { HTTP_RESPONSE_TYPE } from '../../../../../HTTP/QuantomHttpMethods'
-import { InventoryItemStockReplenishmentModel } from '../model/AssocicateModels/InventoryItemStockReplenishmentModel'
-import { InventoryItemAtributeValuesModel } from '../model/AssocicateModels/InventoryItemAtributeValuesModel'
+import {  safeParseToNumber } from '../../../../../CommonMethods'
+import store, { set_form_state, useQuantomFonts } from '../../../../../redux/store'
 import { InventoryItemLocationsModel } from '../model/AssocicateModels/InventoryItemLocationsModel'
-import { Paper, setRef, useTheme } from '@mui/material'
-import { InventoryCompItemMenus, QuantomBasiSelect } from '../../../../Purchase/Processing/Purchase/view/POSPurchaseView'
 import { AddHPD, useGetHelperData } from '../../../../sale/reports/Appointments/CustomerAppointmentReports'
 import { AccountSettings, useGetSetting } from '../../../../Settings/Settings/SettingMethods'
 import { InventoryItemHelperUnitPriorities } from './Helpers/InventoryItemHelperUnitPriorities'
@@ -36,11 +24,13 @@ import { InventoryItemHelperUnitForReport } from './Helpers/InventoryItemHelperU
 import { InventoryItemHelperStockReplenishment } from './Helpers/InventoryItemHelperStockReplenishment'
 import { InventoryItemHelperItemAttributes } from './Helpers/InventoryItemHelperItemAttributes'
 import { InventoryItemHelperItemLocations } from './Helpers/InventoryItemHelperItemLocations'
+import { Paper, useTheme } from '@mui/material'
+import { POSActionButton1 } from '../../../../../quantom_comps/AppContainer/POSHelpers/POSActionButton1'
 
 
 export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsModel>) => {
-   const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
-   const [searchText,setSearchText]=React.useState('');
+  
+
    const[refreshSetupMethod,setRefreshSetupMethod]=React.useState(0);
    const [refreshGuid,setRefreshGuid]=useState('')
    const[defaultItemType,setdefaultItemType]=useState<CommonCodeName>()
@@ -64,6 +54,12 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
         method();
        }
    },[setupFormData])
+   
+   React.useEffect(()=>{
+             setTimeout(() => {
+               props?.setListComponent?.((<List {...props} />))
+             }, 500);
+           },[])
    
   //const defaultItemType= setupFormData?.find(x=>x?.Type?.toUpperCase()==="ItemType".toUpperCase())?.Data?.find(x=>x?.Name?.toUpperCase()==="STOCK_ITEM");
 
@@ -98,10 +94,8 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
          baseProps:props??{},
          settings:{firstControlId:"inventory_items_item_name"},
          AfterResetMethod:async(loc)=>{
-          setAllLcoations();
+          setAllLocations();
          },
-        //  InitOnLocationChange:(loc)=>{ alert('chanegd')}
-        
         
       })
     },[props])
@@ -110,11 +104,11 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
     React.useEffect(()=>{
       if(props?.fullState?.IsFirstUseEffectCall){
         // alert('this is first call')
-        setAllLcoations();
+        setAllLocations();
       }
     },[props?.fullState?.IsFirstUseEffectCall])
 
-    const setAllLcoations=async()=>{
+    const setAllLocations=async()=>{
       // const state= await get_form_state_without_selector<VMInventoryItemsModel>(props?.UniqueId);
       const locs= store.getState().formsState.UserLocations?.map((x,index)=>{
        let loc:InventoryItemLocationsModel={
@@ -150,20 +144,13 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
        let res= await SetupFormGetAllBulk(['Unit','Category','Company','PriceGroup','ItemType','attributes']);
 
        AddHPD(props,'setup_data',res)
-      //  store.dispatch(add_helper_data({UniqueId:props?.UniqueId,data:[{
-      //     keyNo:'setup_data',
-      //     Data:res
-      //  }]}));
-       
+     
        setTimeout(() => {
           setRefreshSetupMethod((refreshSetupMethod??0)+1)
        }, 100);
     }
 
-    const handleGetSearchItems=async()=>{
-       let items= await InventoryItemsGetAll(searchText);
-       setSearchedItems(items)
-    }
+ 
 
     const getSetupDataWithSetupType=async(type?:string):Promise<CommonCodeName[]>=>{
 
@@ -216,16 +203,7 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
           <Quantom_Grid  size={{xs:12,sm:12,md:6,lg:4,xl:4}}>
               
               <Quantom_Grid item size={{xs:12,md:12,lg:12}}>
-                {/* <QuantomBasiSelect list={itemTypes}  label='ItemType' 
-                  editValue={props?.state?.item?.ItemType?.toString()}           
-                                  onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}/> */}
-                                  
-                {/* <Quantom_LOV FillDtaMethod={()=>getSetupDataWithSetupType('ItemType')} 
-                                  label='Item Type' 
-                                  RefreshFillDtaMethod={refreshSetupMethod}
-                                  selected={{Code:props?.state?.item?.ItemType?.toString(),Name:props?.state?.item?.InventoryItemType?.Name}}           
-                                  onChange={(obj)=>{setItem({ItemType:safeParseToNumber(obj?.Code),InventoryItemType:{Name:obj?.Name}})}}
-                      />  */}
+                
                 <Quantom_LOV1
                   keyNo='INVENTORY_ITEM_ITEM_TYPE'
                   uniqueKeyNo={props?.UniqueId??""}
@@ -242,7 +220,6 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
                      <Quantom_LOV1
                         keyNo='INVENTORY_ITEM_UNIT_MASTER_TYPE'
-                        // mobileSelectionButtonWidth='150px'
                         mobileSelectionButtonIcon='DynamicFormOutlined'
                         uniqueKeyNo={props?.UniqueId??""}
                         refreshMethod={refreshGuid}
@@ -262,7 +239,6 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
 
                 <Quantom_LOV1
                         keyNo='INVENTORY_ITEM_CATEGORY_MASTER_TYPE'
-                        // mobileSelectionButtonWidth='150px'
                         mobileSelectionButtonIcon='ClassOutlined'
                         uniqueKeyNo={props?.UniqueId??""}
                         refreshMethod={refreshGuid}
@@ -270,18 +246,11 @@ export const InventoryItemsView = (props?:MenuComponentProps<VMInventoryItemsMod
                         FillDtaMethod={()=>getSetupDataWithSetupType('Category')}
                         onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
                         selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}} />
-                {/* <Quantom_LOV 
-                                FillDtaMethod={()=>getSetupDataWithSetupType('Category')} 
-                                label='Category' 
-                                RefreshFillDtaMethod={refreshSetupMethod}
-                                selected={{Code:props?.state?.item?.CatCode,Name:props?.state?.item?.category?.Name}}           
-                                onChange={(obj)=>{setItem({CatCode:obj?.Code,category:{Code:obj?.Code,Name:obj?.Name}})}}
-                    /> */}
+               
                 </Quantom_Grid>
                 <Quantom_Grid mt={.5} item size={{xs:12,md:12,lg:12}}>
                   <Quantom_LOV1
                         keyNo='INVENTORY_ITEM_COMPANY_MASTER_TYPE'
-                        // mobileSelectionButtonWidth='150px'
                         mobileSelectionButtonIcon='BrandingWatermarkOutlined'
                         uniqueKeyNo={props?.UniqueId??""}
                         refreshMethod={refreshGuid}
@@ -363,6 +332,55 @@ export const getSetupDataWithSetupType=async(setupFormData:SetupFormBulkResponse
 
 
 
+export const List=(props?:MenuComponentProps<VMInventoryItemsModel>)=>{
+
+   const searchedItem= useGetHelperData<CommonCodeName[]>(props,'INVENTORY_ITEMS_LIST');
+   const searchText= useGetHelperData<string>(props,'INVENTORY_ITEMS_LIST_SEARCH_TEXT');
+  //  const[searchedItem,setSearchedItems]=React.useState<CommonCodeName[]>([]);
+  //  const [searchText,setSearchText]=React.useState('');
+   const handleGetSearchItems=async()=>{
+       let items= await InventoryItemsGetAll(searchText);
+       AddHPD(props,'INVENTORY_ITEMS_LIST',items)
+    }
+    useEffect(()=>{
+      handleGetSearchItems();
+    },[searchText])
+
+    const fonts= useQuantomFonts();
+    const theme= useTheme();
+  return(
+    <Quantom_Grid container size={{xs:12}}>
+        <Quantom_Grid size={{xs:12}}>
+           <Quantom_Input value={searchText} label='Search' onChange={(e)=>{AddHPD(props,'INVENTORY_ITEMS_LIST_SEARCH_TEXT',e?.target?.value)}}/>
+        </Quantom_Grid>
+        <Quantom_Grid mt={1} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize}} container spacing={1.5} size={{xs:12}}>
+           {
+            searchedItem?.map((item,index)=>{
+              return(
+                <Quantom_Grid p={1} container component={Paper} size={{xs:12,sm:12,md:6,lg:4}}>
+                      <Quantom_Grid display='flex' alignItems='center' borderBottom={`1px dotted ${theme?.palette?.text?.disabled}`} size={{xs:12}}>
+                        <IconByName iconName='Tag' fontSize='14px' color={theme?.palette?.text?.disabled}/>
+                        {item?.Code}
+                      </Quantom_Grid>
+                      <Quantom_Grid p={0} display='flex' alignItems='center' size={{xs:12}}>
+                        <div style={{flex:1}}>
+                          <IconByName iconName='LocalMallOutlined' fontSize='14px' color={theme?.palette?.text?.disabled}/>
+                          {item?.Name}
+                        </div>
+                        <div>
+                          <POSActionButton1 onClick={()=>{
+                             props?.setPrimaryKeyNo?.(item?.Code)
+                          }} height='25px' label='View' backgroundColor={theme?.palette?.secondary?.main}  iconName='ArrowRightAltOutlined'/>
+                        </div>
+                      </Quantom_Grid>
+                </Quantom_Grid>
+              )
+            })
+           }
+        </Quantom_Grid>
+    </Quantom_Grid>
+  )
+}
 
 
 
