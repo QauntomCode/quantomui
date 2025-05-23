@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { HideLoadingDialog, IconByName, QuantomConfirmationDialog, ShowLoadingDialog } from "../Helpers/TabHelper/AppContainerTabHelper";
 import { ShowQuantomError } from "../Helpers/TabHelper/QuantomError";
@@ -114,7 +115,7 @@ export const POSActionButton1=(props?:POSActionButtonProps)=>{
                 }
             }
         }    
-         style={{     justifyContent:'center',display:'flex',flexDirection:'row',alignItems:'center',width:'100%',height:'40px',
+         style={{     justifyContent:'center',display:'flex',flexDirection:'row',alignItems:'center',width:'100%',height:'37px',
                      border:'none',color:theme?.palette?.text?.primary,
                     fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:'12px'}}>
                       
