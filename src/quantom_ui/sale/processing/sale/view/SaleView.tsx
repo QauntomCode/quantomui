@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-pascal-case */
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { IconByName, MenuComponentProps, setFormBasicKeys, UserGetSelectedLocation } from "../../../../../quantom_comps/AppContainer/Helpers/TabHelper/AppContainerTabHelper"
 import { Quantom_Container, Quantom_Grid, Quantom_Input } from "../../../../../quantom_comps/base_comps"
 import { SaleModel } from "../model/SaleModel"
@@ -27,6 +27,18 @@ import { FilterHandler, useIsMobile } from "./POSSale/POSSaleViewWithEmpty"
 export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
 
     const location= UserGetSelectedLocation(props);
+     const summaryMinHeigh=550;
+    const[spaceBelow,setSpaceBelow]= useState(summaryMinHeigh);
+    
+    
+        const soldItemGridRef = useRef<any>(null);
+        React.useEffect(()=>{
+            const rect = soldItemGridRef?.current?.getBoundingClientRect();
+            const below = ((window.innerHeight ?? 0) - (rect?.bottom ?? 0)) - 65;
+            setSpaceBelow(below)
+        },[soldItemGridRef,window?.innerHeight])
+
+
 
     useEffect(()=>{
         if(!props?.state?.Sale?.BillDate){
@@ -140,8 +152,10 @@ export const SaleView=(props?:MenuComponentProps<VmSale>)=>{
                     </Quantom_Grid>
 
                  </Quantom_Grid>
-                 <Quantom_Grid size={{xs:12,ms:12,md:3}}>
-                    <Quantom_Grid container display='flex' flexDirection='column' component={Paper} sx={{height:'calc(100vh - 40px)',
+                
+                 <Quantom_Grid size={{xs:12,ms:12,md:3}} >
+                     <div ref={soldItemGridRef}></div>
+                    <Quantom_Grid  container display='flex' flexDirection='column' component={Paper} sx={{height:spaceBelow+'px',
                                         fontFamily:fonts.HeaderFont,fontWeight:600,fontSize:fonts.H4FontSize}}>
                         
                         <Quantom_Grid display='flex' container  sx={{padding:'5px',paddingTop:'30px',paddingBottom:'30px',

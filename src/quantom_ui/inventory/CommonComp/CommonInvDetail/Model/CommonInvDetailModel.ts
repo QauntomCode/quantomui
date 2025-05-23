@@ -80,7 +80,7 @@ export interface CommonInvDetailModel {
   ServiceStatus?: string;
   ServiceDate?: Date;
   IsDiscountPercentChanged?: boolean;
-  ShoulChangeLineTotals?: boolean;
+  ShouldChangeLineTotals?: boolean;
 }
 
 export class TaxLineDTOModel {

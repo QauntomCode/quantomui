@@ -638,10 +638,10 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     // alert('control placed'+rect?.bottom)
    
 
-    const getAmount=(qty?:number,price?:number)=>{
-         const amount= (qty??0)*(price??0)
-         return amount;
-    }
+    // const getAmount=(qty?:number,price?:number)=>{
+    //      const amount= (qty??0)*(price??0)
+    //      return amount;
+    // }
 
     useEffect(()=>{
         handleChangePirceUnitPrice()
@@ -669,11 +669,11 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
 
 
     useEffect(()=>{
-        if(lineObj?.ShoulChangeLineTotals){
+        if(lineObj?.ShouldChangeLineTotals){
             // alert('changed')
          handle_line_totals()
         }
-    },[lineObj?.ShoulChangeLineTotals])
+    },[lineObj?.ShouldChangeLineTotals])
 
     const handleChangePirceUnitPrice=()=>{
         if(priceUnitPrice && itemUnitsInfo && itemUnitsInfo?.length>0){
@@ -691,7 +691,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
             }
 
             let price= eachUnitPrice* selectedUnitPunits;
-            setLineObj({...lineObj,Price:price,ShoulChangeLineTotals:true})
+            setLineObj({...lineObj,Price:price,ShouldChangeLineTotals:true})
         }
     }
 
@@ -791,6 +791,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
     
     const handle_line_totals=()=>{
         
+        // alert('called')
         let total= safeParseToNumber(lineObj?.Qty)*safeParseToNumber(lineObj?.Price);
         let nlineObj={...lineObj}
         if(lineObj?.IsDiscountPercentChanged){
@@ -803,7 +804,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
         total= total-safeParseToNumber(nlineObj.DisAmount)
         //alert('total amount is'+total)
 
-        setLineObj({...lineObj,...nlineObj,Amount:total,ShoulChangeLineTotals:false,IsDiscountPercentChanged:false})
+        setLineObj({...lineObj,...nlineObj,Amount:total,ShouldChangeLineTotals:false,IsDiscountPercentChanged:false})
 
          
     }
@@ -892,7 +893,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                 <Quantom_Input  willHideLabel  value={lineObj?.Qty??0} onChange={(e)=>{
                                     
                                     const qty=safeParseToNumber(e?.target?.value);
-                                    setLineObj({...lineObj,Qty:qty,ShoulChangeLineTotals:true})
+                                    setLineObj({...lineObj,Qty:qty,ShouldChangeLineTotals:true})
                                 }}/>
                             </Quantom_Grid>
                             
@@ -901,7 +902,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                     <Quantom_Grid border={border} size={gridSizes.Price}>
                                         <Quantom_Input  willHideLabel  value={lineObj?.Price??0} onChange={(e)=>{
                                             const price=safeParseToNumber(e?.target?.value);
-                                            setLineObj({...lineObj,Price:price,ShoulChangeLineTotals:true})
+                                            setLineObj({...lineObj,Price:price,ShouldChangeLineTotals:true})
                                         }}/>
                                     </Quantom_Grid>
                                 </>)
@@ -911,7 +912,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                   <Quantom_Grid border={border} size={gridSizes.disRate}>
                                         <Quantom_Input  willHideLabel  value={safePreviewNumber(lineObj?.DisRate)} onChange={(e)=>{
                                             const disRate=safeParseToNumber(e?.target?.value);
-                                            setLineObj({...lineObj,DisRate:disRate,ShoulChangeLineTotals:true,IsDiscountPercentChanged:true})
+                                            setLineObj({...lineObj,DisRate:disRate,ShouldChangeLineTotals:true,IsDiscountPercentChanged:true})
                                         }}/>
                                  </Quantom_Grid>
                                 </>)
@@ -922,7 +923,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                                    <Quantom_Grid border={border} size={gridSizes.disAm}>
                                         <Quantom_Input  willHideLabel  value={safePreviewNumber(lineObj?.DisAmount)} onChange={(e)=>{
                                             const disAm=safeParseToNumber(e?.target?.value);
-                                            setLineObj({...lineObj,DisAmount:disAm,ShoulChangeLineTotals:true,IsDiscountPercentChanged:false})
+                                            setLineObj({...lineObj,DisAmount:disAm,ShouldChangeLineTotals:true,IsDiscountPercentChanged:false})
                                         }}/>
                                     </Quantom_Grid>
                                 </>)
@@ -931,7 +932,7 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                              {
                                 willHideAm?(<></>):(<>
                                    <Quantom_Grid border={border} size={gridSizes.amount}>
-                                     <Quantom_Input disabled   willHideLabel value={lineObj?.NetAmount??0} />
+                                     <Quantom_Input disabled   willHideLabel value={lineObj?.Amount??0} />
                                     </Quantom_Grid>
                                 </>)
                             } 
@@ -975,15 +976,18 @@ const RenderItemGrid_Erp=(props?:RenderItemGridProps)=>{
                 </Quantom_Grid>
 
                 <div ref={soldItemGridRef} style={{overflowY:'auto'}}></div>
-                <Quantom_Grid  mt={1}  container size={12}>
-                    <Quantom_Grid size={"grow"} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize,height:spaceBelow+'px',minHeight:'250px', backgroundColor:theme?.palette?.background?.paper,overflowY:'auto'}}>
+                <Quantom_Grid   mt={1} pb={2} container size={12}>
+                    <Quantom_Grid size={"grow"} sx={{fontFamily:fonts?.HeaderFont,fontSize:fonts?.H4FontSize,height:spaceBelow+'px',minHeight:'250px',overflowY:'auto',
+                      borderBottom:`3px solid ${theme?.palette?.text?.disabled}`
+                    }}>
                     
                 {
                     props?.items?.map((soldItem,index)=>{
                         return(
-                            <Quantom_Grid mb={.2} pt={.5}  pb={.5} display='flex'  
-                                    fontWeight={400} fontSize={fonts?.H4FontSize} fontFamily={fonts?.HeaderFont} component={Paper} 
-                                    borderBottom={`1px solid ${theme.palette.primary.main}`} sx={{backgroundColor:theme?.palette?.background?.default}}  container size={12}>
+                            
+                            <Quantom_Grid  mb={.2} pt={.5}  pb={.5} display='flex'  
+                                     fontSize={fonts?.H4FontSize} fontFamily={fonts?.HeaderFont} component={Paper}
+                                    borderBottom={`1px solid ${theme.palette.primary.main}`}   container size={12}>
                                 <Quantom_Grid  border={border}  size={gridSizes.item} >
                                     <Quantom_Grid container size={12}>
                                         
