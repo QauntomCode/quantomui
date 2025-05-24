@@ -68,6 +68,7 @@ import ActivityLogView from '../../../../quantom_ui/management/reports/activityL
 import { DesignationView } from '../../../../quantom_ui/payroll/config/designation/Views/DesignationView';
 import { POSActionButton } from '../../POSHelpers/POSActionButton';
 import { StockIssueView } from '../../../../quantom_ui/inventory/Processing/StockIssue/Views/StockIssueView';
+import { CustomerSetupView } from '../../../../quantom_ui/sale/config/customer/view/CustomerSetupView';
 
 
 
@@ -1011,6 +1012,11 @@ export const AccountMenus:MenuInfoModel<any>[]=[
 
 export const SaleMenus:MenuInfoModel<any>[]=[
   {
+    MenuCode:"005-001",
+    MenuCaption:"Sale",
+    GetComponent:(props?:MenuComponentProps<any>)=>(<CustomerSetupView {...props}/>)
+  },
+  {
     MenuCode:"005-007",
     MenuCaption:"Sale",
     GetComponent:(props?:MenuComponentProps<any>)=>(<SaleView {...props}/>)
@@ -1173,11 +1179,6 @@ export const POS_MENUS:MenuInfoModel<any>[]=[
 
 ]
 export const  AllCompMenus:MenuInfoModel<any>[]=[
-  // {
-  //   MenuCode:"001",
-  //   MenuCaption:"Menus",
-  //   GetComponent:(props?:MenuComponentProps<unknown>)=>(<AllMenuRenderer {...props}/>)
-  // },
   {
     MenuCode:"TEST_REPORT",
     MenuCaption:"All Reports",

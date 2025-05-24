@@ -537,7 +537,13 @@ export const mainMenusList:QuantomMenu[]=[
     SortNumber:1
   },
   //End Inventory Processing
-
+  {
+    MenuCode:'005-001',
+    MenuName:'Customer Setup',
+    ModuleCode:'005',
+    SubModuleCode:'01',
+    SortNumber:0
+  },
   {
     MenuCode:'005-007',
     MenuName:'Sale',
